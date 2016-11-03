@@ -29,22 +29,19 @@ FIRST: 'fst';
 SECOND: 'snd';
 
 PAIR: 'pair';
-
 NEWPAIR: 'newpair';
-
+PAIRLITERAL: 'null';
 LEN: 'len';
 ORD: 'ord';
 CHR: 'chr';
 
-PAIRLITERAL: 'null';
+TRUE: 'true';
+FALSE: 'false';
+EOL: [\n\r] -> skip;
+COMMENT: '#' .*? [\r\n] -> skip;
 
 DIGIT: [0-9] ;
 IDENT: ([a-zA-Z] | '_')(([a-zA-Z0-9]) | '_')* ;
-
-TRUE: 'true';
-FALSE: 'false';
-EOL: [\r\n] -> skip;
-COMMENT: '#' .*? [\r\n] -> skip;
 
 LPAREN: '(' ;
 RPAREN: ')' ;
@@ -69,11 +66,11 @@ EQUAL: '==';
 NOTEQUAL: '!=';
 AND: '&&';
 OR: '||';
-CHARLITERAL: '\'';
-STRINGLITERAL: '\"';
+CHARLITERAL: '\'' ;
+STRINGLITERAL: '\"' ;
+
 WS: ' ' -> skip;
 ESC_SLASH: '\\';
-
 ESC_0: '0';
 ESC_B: 'b';
 ESC_T: 't';
