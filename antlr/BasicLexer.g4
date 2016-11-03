@@ -38,6 +38,8 @@ CHR: 'chr';
 
 PAIRLITERAL: 'null';
 
+DIGIT: [0-9] ;
+
 ESC_0: '0';
 ESC_B: 'b';
 ESC_T: 't';
@@ -52,7 +54,7 @@ EOL: [\r\n] -> skip;
 COMMENT: '#' .*? [\r\n] -> skip;
 
 IDENT: ([a-zA-Z] | '_')(([a-zA-Z0-9]) | '_')* ;
-DIGIT: [0-9] ;
+
 LPAREN: '(' ;
 RPAREN: ')' ;
 LBRACKET: '[' ;
