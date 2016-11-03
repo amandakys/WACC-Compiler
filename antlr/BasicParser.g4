@@ -80,7 +80,7 @@ charliter: CHARLITERAL character CHARLITERAL;
 
 strliter: STRINGLITERAL character* STRINGLITERAL;
 
-character: ~(ESC_SLASH | STRINGLITERAL | CHARLITERAL) | escapedchar ;
+character: ~(ESC_SLASH | STRINGLITERAL | CHARLITERAL) | '\\' escapedchar ;
 
 escapedchar: ESC_0 | ESC_B | ESC_T | ESC_N | ESC_F | ESC_R | STRINGLITERAL | CHARLITERAL | ESC_SLASH;
 
