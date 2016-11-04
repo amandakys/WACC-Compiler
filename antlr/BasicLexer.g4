@@ -67,25 +67,20 @@ NOTEQUAL: '!=';
 AND: '&&';
 OR: '||';
 
-WS: [ \n\r] -> skip;
+WS: [ \n\r\t] -> skip;
+fragment ESCAPECHAR: '\\' ['"0btnfr\\];
+ESCAPE: ESCAPECHAR;
+ESC_SLASH: '\\';
 
 CHARLITERAL: '\'' -> pushMode(CHARMODE);
 STRINGLITERAL: '\"' -> pushMode(STRINGMODE);
 
 mode CHARMODE;
-EXCLUDECHAR: ~[\'\"\\];
+EXCLUDECHAR: ~['\\\r\n] | ESCAPECHAR ;
 CHARCLOSE: '\'' -> popMode;
 
 mode STRINGMODE;
-EXCLUDESTRING: ~[\\\'\"]+;
+EXCLUDESTRING: (~["\\] | ESCAPECHAR)+ ;
 STRINGCLOSE: '\"' -> popMode;
-
-ESC_SLASH: '\\';
-ESC_0: '0';
-ESC_B: 'b';
-ESC_T: 't';
-ESC_N: 'n';
-ESC_F: 'f';
-ESC_R: 'r';
 
 OTHER: ' ' .. '~';

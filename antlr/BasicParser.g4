@@ -23,6 +23,7 @@ statement: SKIP
 | PRINTLN expression
 | IF expression THEN statement ELSE statement ENDIF
 | WHILE expression DO statement DONE
+| BEGIN statement END
 | statement SEMI statement
 ;
 
@@ -80,8 +81,6 @@ charliter: CHARLITERAL EXCLUDECHAR CHARCLOSE;
 
 strliter: STRINGLITERAL EXCLUDESTRING* STRINGCLOSE;
 
-character: ~(ESC_SLASH | STRINGLITERAL | CHARLITERAL) | '\\' escapedchar ;
-
-escapedchar: ESC_0 | ESC_B | ESC_T | ESC_N | ESC_F | ESC_R | STRINGLITERAL | CHARLITERAL | ESC_SLASH;
+character: ~(ESC_SLASH | STRINGLITERAL | CHARLITERAL) | ESCAPE ;
 
 arrayliter: LBRACKET (expression (COMMA expression)*)? RBRACKET;
