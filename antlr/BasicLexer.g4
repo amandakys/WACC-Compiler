@@ -66,10 +66,20 @@ EQUAL: '==';
 NOTEQUAL: '!=';
 AND: '&&';
 OR: '||';
-CHARLITERAL: '\'' ;
-STRINGLITERAL: '\"' ;
 
-WS: ' ' -> skip;
+WS: [ \n\r] -> skip;
+
+CHARLITERAL: '\'' -> pushMode(CHARMODE);
+STRINGLITERAL: '\"' -> pushMode(STRINGMODE);
+
+mode CHARMODE;
+EXCLUDECHAR: ~[\'\"\\];
+CHARCLOSE: '\'' -> popMode;
+
+mode STRINGMODE;
+EXCLUDESTRING: ~[\\\'\"]+;
+STRINGCLOSE: '\"' -> popMode;
+
 ESC_SLASH: '\\';
 ESC_0: '0';
 ESC_B: 'b';

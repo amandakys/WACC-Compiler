@@ -43,7 +43,7 @@ type: basetype | arraytype | pairtype;
 
 basetype: INT | BOOL | CHAR | STRING;
 
-arraytype: basetype LBRACKET RBRACKET | pairtype LBRACKET RBRACKET;
+arraytype: basetype (LBRACKET RBRACKET)+ | pairtype (LBRACKET RBRACKET)+;
 
 pairtype: PAIR LPAREN pairelemtype COMMA pairelemtype RPAREN;
 
@@ -76,9 +76,9 @@ intsign: PLUS | MINUS ;
 
 boolliter: TRUE | FALSE;
 
-charliter: CHARLITERAL character CHARLITERAL;
+charliter: CHARLITERAL EXCLUDECHAR CHARCLOSE;
 
-strliter: STRINGLITERAL character* STRINGLITERAL;
+strliter: STRINGLITERAL EXCLUDESTRING* STRINGCLOSE;
 
 character: ~(ESC_SLASH | STRINGLITERAL | CHARLITERAL) | '\\' escapedchar ;
 
