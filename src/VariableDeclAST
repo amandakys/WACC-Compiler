@@ -1,6 +1,6 @@
 public class VariableDeclAST {
-  string typename;
-  string varname;
+  String typename;
+  String varname;
 
   VARIABLE varObj;
 

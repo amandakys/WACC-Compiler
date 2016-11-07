@@ -1,5 +1,5 @@
 public class SymbolTable {
-	SymbolTable encSymbolTable; //Ref to enclosing symbol table
+	SymbolTable encSymTable; //Ref to enclosing symbol table
 	HashMap dict;               //Maps names to objects
 
 	public SymbolTable(SymbolTable st) {
@@ -20,7 +20,7 @@ public class SymbolTable {
 		while (S != Null) {
 			IDENTIFIER obj = S.lookUp(name);
 			if (obj != Null) return obj;
-			S = encSymbolTable;
+			S = encSymTable;
 		}
 		return Null;
 	}

@@ -1,5 +1,5 @@
 public class AssignmentAST {
-  string varname;
+  String varname;
   ExpressionAST expr;
   VARIABLE varObj;
 
