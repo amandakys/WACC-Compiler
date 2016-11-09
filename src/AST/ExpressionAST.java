@@ -12,8 +12,9 @@ import java.util.List;
  * Created by andikoh on 08/11/2016.
  */
 public class ExpressionAST extends Node {
-    Node baseExpression;
-    List<Node> expressions;
+    private Node baseExpression;
+    private List<ExpressionAST> expressions;
+
     public ExpressionAST(String ident) {
         super();
         IDENTIFIER N = Visitor.ST.lookUp(ident);
@@ -22,14 +23,14 @@ public class ExpressionAST extends Node {
         this.expressions = null;
 
     }
-
+    //work on this taking in difrerent types of AST nodes w/o multiple constructors
     public ExpressionAST(Node child) {
         super();
         baseExpression = child;
         expressions = null;
     }
 
-    public ExpressionAST(List<Node> expressions) {
+    public ExpressionAST(List<ExpressionAST> expressions) {
         super();
         this.expressions = expressions;
         this.baseExpression = null;

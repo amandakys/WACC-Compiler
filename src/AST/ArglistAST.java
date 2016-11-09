@@ -3,6 +3,7 @@ package AST;
 import symbol_table.FUNCTION;
 import symbol_table.PARAM;
 import symbol_table.SymbolTable;
+import symbol_table.TYPE;
 
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  * Created by tsd15 on 09/11/16.
  */
 public class ArglistAST extends Node {
-    List<ExpressionAST> expressions;
+    private List<ExpressionAST> expressions;
 
     public ArglistAST(List<ExpressionAST> expressionNodes) {
         super();
@@ -21,10 +22,19 @@ public class ArglistAST extends Node {
         return expressions;
     }
 
-    public void check(ParamlistAST params) {
-        for (int i = 0; i < params.parameters.size(); i++) {
-            expressions.get(i).checkType(params.parameters.get(i));
-        }
+    /* getType takes an index, and return the type of the expression at that index in
+    * List<ExpressionAST> expressions
+    */
+    public TYPE getType(int x) {
+        return expressions.get(x).getType();
+    }
+
+    public ExpressionAST getExpression(int i) {
+        return expressions.get(i);
+    }
+
+    public int size() {
+        return expressions.size();
     }
 
     @Override

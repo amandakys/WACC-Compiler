@@ -3,7 +3,7 @@ package AST;
 /**
  * Created by andikoh on 09/11/2016.
  */
-public class ArraytypeAST extends Node {
+public class ArraytypeAST extends TypeAST {
     Node type;
     int arrayDepth;
     public ArraytypeAST(Node type, int arrayDepth){

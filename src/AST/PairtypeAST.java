@@ -3,7 +3,7 @@ package AST;
 /**
  * Created by andikoh on 09/11/2016.
  */
-public class PairtypeAST extends Node {
+public class PairtypeAST extends TypeAST {
     Node first;
     Node second;
 

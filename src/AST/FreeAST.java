@@ -1,5 +1,6 @@
 package AST;
 
+import main.Visitor;
 import symbol_table.SymbolTable;
 import symbol_table.TYPE;
 
@@ -7,9 +8,9 @@ import symbol_table.TYPE;
  * Created by tsd15 on 09/11/16.
  */
 public class FreeAST extends Node {
-    Node expression;
+    ExpressionAST expression;
 
-    public FreeAST(Node expression) {
+    public FreeAST(ExpressionAST expression) {
         super();
         this.expression = expression;
     }
@@ -17,7 +18,7 @@ public class FreeAST extends Node {
     @Override
     public void check() {
         expression.check();
-        TYPE arrayType = ST.lookUpAll("array").getType();
+        TYPE arrayType = Visitor.ST.lookUpAll("array").getType();
         if (expression.getType() != arrayType) {
             //error
         }

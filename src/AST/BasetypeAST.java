@@ -6,7 +6,7 @@ import symbol_table.IDENTIFIER;
 /**
  * Created by andikoh on 09/11/2016.
  */
-public class BasetypeAST extends Node {
+public class BasetypeAST extends TypeAST {
     String typename;
 
     public BasetypeAST(String typename) {

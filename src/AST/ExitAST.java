@@ -1,20 +1,27 @@
 package AST;
 
+import main.Visitor;
+import symbol_table.IDENTIFIER;
 import symbol_table.SymbolTable;
 
 /**
  * Created by tsd15 on 09/11/16.
  */
 public class ExitAST extends Node {
-    Node expression;
+    private ExpressionAST expression;
 
-    public ExitAST(Node expression) {
+    public ExitAST(ExpressionAST expression) {
         super();
         this.expression = expression;
     }
 
     @Override
     public void check() {
+        IDENTIFIER T = Visitor.ST.lookUpAll("int");
         expression.check();
+
+        if(!expression.getType().equals(T.getType())) {
+            System.err.println("Exit statement must take integer");
+        }
     }
 }

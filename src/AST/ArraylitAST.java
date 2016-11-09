@@ -8,10 +8,10 @@ import java.util.List;
  * Created by tsd15 on 09/11/16.
  */
 public class ArraylitAST extends Node {
-    List<Node> arraylits;
+    private List<Node> arraylits;
 
-    public ArraylitAST(SymbolTable ST, List<Node> arraylits) {
-        super(ST);
+    public ArraylitAST(List<Node> arraylits) {
+        super();
         this.arraylits = arraylits;
     }
 

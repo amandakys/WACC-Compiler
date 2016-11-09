@@ -10,11 +10,10 @@ import java.util.List;
  * Created by tsd15 on 09/11/16.
  */
 public class NewpairAST extends Node {
-    List<Node> pairelems;
-    String pairname;
+    List<ExpressionAST> pairelems;
 
-    public NewpairAST(SymbolTable ST, List<Node> pairelems) {
-        super(ST);
+    public NewpairAST(List<ExpressionAST> pairelems) {
+        super();
         this.pairelems = pairelems;
     }
 
