@@ -17,9 +17,11 @@ public class Main {
 
 
         BasicParser parser = new BasicParser(tokens);
+        parser.removeErrorListeners();
+        parser.addErrorListener(new SyntaxError());
         //Visitor v = new Visitor();
 
-	ParseTree tree = parser.program();
+	    ParseTree tree = parser.program();
 
         //v.visit(parser.program());
     }
