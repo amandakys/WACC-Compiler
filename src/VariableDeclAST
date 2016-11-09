@@ -1,0 +1,23 @@
+public class VariableDeclAST {
+  String typename;
+  String varname;
+
+  VARIABLE varObj;
+
+  public void Check() {
+    IDENTIFIER T = ST.lookUpAll(typename);
+    IDENTIFIER V = ST.lookUp(varname);
+    if ( T == Null) {
+      System.err.println("Unknown type "+typename);
+    } else if (! T instanceof TYPE) {
+      System.err.println(typename+" is not a type");
+    } else if (! T.isDeclarable()) {
+      System.err.println("cannot declare "+typename+" objects")
+    } else if (V != Null) {
+      System.err.println(varname+" is already declared")
+    } else {
+      varObj = new VARIABLE(T);
+      ST.add(varname, varObj);
+    }
+  }
+}

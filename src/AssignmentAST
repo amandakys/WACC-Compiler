@@ -1,0 +1,19 @@
+public class AssignmentAST {
+  String varname;
+  ExpressionAST expr;
+  VARIABLE varObj;
+
+  public void Check() {
+    IDENTIFIER V = ST.lookUpAll(varname)
+    expr.check();
+    if (V == Null) {
+      System.err.println("Unknown variable "+varname);
+    } else if (! V instanceof VARIABLE) {
+      System.err.println(varname+" is not a variable")
+    } else if (!V.equals(expr.type()) {
+      System.err.println("lhs and rhs not type compatible")
+    } else {
+      varObj = V;
+    }
+  }
+}
