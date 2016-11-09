@@ -13,18 +13,21 @@ import java.util.List;
  * Created by andikoh on 08/11/2016.
  */
 public class Visitor extends BasicParserBaseVisitor<Node>{
-    private SymbolTable ST = new SymbolTable(null);
+    public static SymbolTable ST = new SymbolTable(null);
 
     public Visitor() {
         ST.add("bool", new SCALAR("bool"));
         ST.add("int", new SCALAR("int"));
         ST.add("char", new SCALAR("char"));
         ST.add("string", new SCALAR("string"));
+
+        SymbolTable next = new SymbolTable(ST);
+        ST = next;
     }
 
     @Override
     public Node visitAssignment(BasicParser.AssignmentContext ctx) {
-        AssignmentAST assignment = new AssignmentAST(ST, visitAssignlhs(ctx.assignlhs()), visitAssignrhs(ctx.assignrhs()));
+        AssignmentAST assignment = new AssignmentAST(visitAssignlhs(ctx.assignlhs()), visitAssignrhs(ctx.assignrhs()));
         assignment.check();
         return assignment;
     }
@@ -33,11 +36,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     public Node visitAssignlhs(BasicParser.AssignlhsContext ctx) {
         AssignlhsAST lhs;
         if (ctx.IDENT() != null) {
-            lhs = new AssignlhsAST(ST, ctx.IDENT().getText());
+            lhs = new AssignlhsAST(ctx.IDENT().getText());
         } else if (ctx.arrayelem() != null){
-            lhs = new AssignlhsAST(ST, visitArrayelem(ctx.arrayelem()));
+            lhs = new AssignlhsAST(visitArrayelem(ctx.arrayelem()));
         } else {
-            lhs = new AssignlhsAST(ST, visitPairelem(ctx.pairelem()));
+            lhs = new AssignlhsAST(visitPairelem(ctx.pairelem()));
         }
         return lhs;
     }
@@ -84,7 +87,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public Node visitFunctioncall(BasicParser.FunctioncallContext ctx) {
-        CallAST call = new CallAST(ST, ctx.IDENT().getText(), visitArglist(ctx.arglist()));
+        CallAST call = new CallAST(ctx.IDENT().getText(), visitArglist(ctx.arglist()));
         return call;
     }
 
@@ -96,7 +99,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             expressionNodes.add(visitExpression(e));
         }
 
-        ArglistAST arglist = new ArglistAST(ST, expressionNodes);
+        ArglistAST arglist = new ArglistAST(expressionNodes);
         return arglist;
 
     }
@@ -107,7 +110,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         for (BasicParser.ExpressionContext e : expressions) {
             expressionNodes.add(visitExpression(e));
         }
-        ArrayelemAST arrayelem = new ArrayelemAST(ST, ctx.IDENT().getText(), expressionNodes);
+        ArrayelemAST arrayelem = new ArrayelemAST(ctx.IDENT().getText(), expressionNodes);
         return arrayelem;
     }
 
@@ -115,21 +118,21 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     public Node visitExpression(BasicParser.ExpressionContext ctx) {
         ExpressionAST expression = null;
         if (ctx.IDENT() != null) {
-            expression = new ExpressionAST(ST, ctx.IDENT().getText());
+            expression = new ExpressionAST(ctx.IDENT().getText());
         } else if (ctx.intliter() != null) {
-            expression = new ExpressionAST(ST, visitIntliter(ctx.intliter()));
+            expression = new ExpressionAST(visitIntliter(ctx.intliter()));
         } else if (ctx.boolliter() != null) {
-            expression = new ExpressionAST(ST, visitBoolliter(ctx.boolliter()));
+            expression = new ExpressionAST(visitBoolliter(ctx.boolliter()));
         } else if (ctx.charliter() != null) {
-            expression = new ExpressionAST(ST, visitCharliter(ctx.charliter()));
+            expression = new ExpressionAST(visitCharliter(ctx.charliter()));
         } else if (ctx.strliter() != null) {
-            expression = new ExpressionAST(ST, visitStrliter(ctx.strliter()));
+            expression = new ExpressionAST(visitStrliter(ctx.strliter()));
         } else if (ctx.arrayelem() != null) {
-            expression = new ExpressionAST(ST, visitArrayelem(ctx.arrayelem()));
+            expression = new ExpressionAST(visitArrayelem(ctx.arrayelem()));
         } else if (ctx.unop() != null) {
-            expression = new ExpressionAST(ST, visitUnop(ctx.unop()));
+            expression = new ExpressionAST(visitUnop(ctx.unop()));
         } else if (ctx.binop() != null) {
-            expression = new ExpressionAST(ST, visitBinop(ctx.binop()));
+            expression = new ExpressionAST(visitBinop(ctx.binop()));
         } else if (!ctx.expression().isEmpty()){
             List<BasicParser.ExpressionContext> expressions = ctx.expression();
             List<Node> expressionNodes = new ArrayList<>();
@@ -137,7 +140,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             for (BasicParser.ExpressionContext e : expressions) {
                 expressionNodes.add(visitExpression(e));
             }
-            expression = new ExpressionAST(ST, expressionNodes);
+            expression = new ExpressionAST(expressionNodes);
         }
 
         return expression;
@@ -145,20 +148,20 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public Node visitIntliter(BasicParser.IntliterContext ctx) {
-        return new IntLiterAST(ST, visitChildren(ctx), ctx.DIGIT());
+        return new IntLiterAST(visitChildren(ctx), ctx.DIGIT());
     }
 
     @Override
     public Node visitIntsign(BasicParser.IntsignContext ctx) {
-        return new IntSignAST(ST);
+        return new IntSignAST();
     }
 
     @Override
     public Node visitBoolliter(BasicParser.BoolliterContext ctx) {
-       new BoolLiterAST(ST)
     }
 
-    @Override Node visitBinop(BasicParser.BinopContext ctx) {
+    @Override
+    public Node visitBinop(BasicParser.BinopContext ctx) {
 
     }
 
@@ -169,16 +172,65 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             parameterNodes.add(visitParam(p));
         }
 
-        ParamlistAST paramlist = new ParamlistAST(ST, parameterNodes);
+        ParamlistAST paramlist = new ParamlistAST(parameterNodes);
         return paramlist;
     }
 
     @Override
     public Node visitParam(BasicParser.ParamContext ctx) {
-        return new ParamAST(ST, ctx.type().getText(), ctx.IDENT().getText());
+        return new ParamAST(ctx.type().getText(), ctx.IDENT().getText());
     }
 
+    @Override
     public Node visitVar_decl(BasicParser.Var_declContext ctx) {
-        return new VarDeclAST(ST, visitType(ctx.type()), ctx.IDENT().getText(), visitAssignrhs(ctx.assignrhs()));
+        return new VarDeclAST(visitType(ctx.type()), ctx.IDENT().getText(), visitAssignrhs(ctx.assignrhs()));
+    }
+
+    @Override
+    public Node visitType(BasicParser.TypeContext ctx) {
+        if (ctx instanceof BasicParser.BasetypeContext) {
+            return visitBasetype((BasicParser.BasetypeContext) ctx);
+        } else if (ctx instanceof BasicParser.ArraytypeContext) {
+            return visitArraytype((BasicParser.ArraytypeContext) ctx);
+        } else if (ctx instanceof BasicParser.PairelemtypeContext) {
+            return visitPairelemtype((BasicParser.PairelemtypeContext) ctx);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Node visitBasetype(BasicParser.BasetypeContext ctx) {
+        return new BasetypeAST(ctx.getText());
+    }
+
+    @Override
+    public Node visitArraytype(BasicParser.ArraytypeContext ctx) {
+
+        int arrayDepth = ctx.LBRACKET().size();
+        if (!ctx.basetype().isEmpty()) {
+            return new ArraytypeAST(visitBasetype(ctx.basetype()), arrayDepth);
+        } else if (!ctx.pairtype().isEmpty()) {
+            return new ArraytypeAST(visitPairtype(ctx.pairtype()), arrayDepth);
+        }
+        return null;
+
+
+    }
+
+    @Override
+    public Node visitPairtype(BasicParser.PairtypeContext ctx) {
+        return new PairtypeAST(visitPairelemtype(ctx.pairelemtype(0)), ctx.pairelemtype(1));
+    }
+
+    @Override
+    public Node visitPairelemtype(BasicParser.PairelemtypeContext ctx) {
+        if (ctx.PAIR() != null) {
+            return new PairelemtypeAST(ctx.PAIR().getText());
+        } else if (!ctx.basetype().isEmpty()) {
+            return new PairelemtypeAST(visitBasetype(ctx.basetype()));
+        } else if (!ctx.arraytype().isEmpty()) {
+            return new PairelemtypeAST(visitArraytype(ctx.arraytype()));
+        }
     }
 }

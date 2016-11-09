@@ -38,6 +38,10 @@ public class SymbolTable {
         }
         return null; 
     }
+
+    public void setEncSymbolTable(SymbolTable st) {
+        this.encSymbolTable = st;
+    }
 }
 
 

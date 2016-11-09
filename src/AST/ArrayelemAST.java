@@ -1,6 +1,7 @@
 package AST;
 
 import antlr.BasicParser;
+import main.Visitor;
 import symbol_table.IDENTIFIER;
 import symbol_table.SymbolTable;
 
@@ -14,8 +15,8 @@ public class ArrayelemAST extends Node {
     String ident;
     List<Node> expressions = new ArrayList<>();
 
-    public ArrayelemAST(SymbolTable ST, String ident, List<Node> expressionNodes) {
-        super(ST);
+    public ArrayelemAST(String ident, List<Node> expressionNodes) {
+        super();
         this.ident = ident;
         this.expressions = expressionNodes;
     }
@@ -23,7 +24,7 @@ public class ArrayelemAST extends Node {
     @Override
     public void check() {
         //check idents
-        IDENTIFIER N = ST.lookUp(ident);
+        IDENTIFIER N = Visitor.ST.lookUp(ident);
         if (N == null) {
             System.err.println("undeclared variable");
         } else {

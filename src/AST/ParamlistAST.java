@@ -10,8 +10,8 @@ import java.util.List;
 public class ParamlistAST extends Node {
     List<Node> parameters;
 
-    public ParamlistAST(SymbolTable ST, List<Node> parameters) {
-        super(ST);
+    public ParamlistAST(List<Node> parameters) {
+        super();
         this.parameters = parameters;
     }
 

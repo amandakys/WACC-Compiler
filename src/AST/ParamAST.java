@@ -10,8 +10,8 @@ public class ParamAST extends Node {
     String type;
     String ident;
 
-    public ParamAST(SymbolTable ST, String type, String ident) {
-        super(ST);
+    public ParamAST(String type, String ident) {
+        super();
         this.type = type;
         this.ident = ident;
     }

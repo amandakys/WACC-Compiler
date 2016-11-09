@@ -1,6 +1,7 @@
 package AST;
 
 import antlr.BasicParser;
+import main.Visitor;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import symbol_table.SymbolTable;
 
@@ -13,10 +14,10 @@ public class IntLiterAST extends Node {
 
     Node child; //intsign
 
-    public IntLiterAST(SymbolTable ST, Node intsign, List<TerminalNode> digit) {
-        super(ST);
+    public IntLiterAST( Node intsign, List<TerminalNode> digit) {
+        super();
 
-        identObj = ST.lookUpAll("int");
+        identObj = Visitor.ST.lookUpAll("int");
     }
 
     @Override

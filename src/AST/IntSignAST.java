@@ -7,8 +7,8 @@ import symbol_table.SymbolTable;
  */
 public class IntSignAST extends Node {
 
-    public IntSignAST(SymbolTable ST) {
-        super(ST);
+    public IntSignAST() {
+        super();
     }
 
     @Override

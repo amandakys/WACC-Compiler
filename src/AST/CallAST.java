@@ -1,5 +1,6 @@
 package AST;
 
+import main.Visitor;
 import symbol_table.FUNCTION;
 import symbol_table.IDENTIFIER;
 import symbol_table.SymbolTable;
@@ -14,14 +15,14 @@ public class CallAST extends Node {
     Node arglist;
     FUNCTION funcObj;
 
-    public CallAST(SymbolTable ST, String funcname, Node arglist) {
-        super(ST);
+    public CallAST(String funcname, Node arglist) {
+        super();
         this.funcname = funcname;
         this.arglist = arglist;
     }
     @Override
     public void check() {
-        IDENTIFIER F = ST.lookUpAll(funcname);
+        IDENTIFIER F = Visitor.ST.lookUpAll(funcname);
         if (F == null) {
             System.err.println("Unknown function "+funcname);
         } else if (!(F instanceof FUNCTION)) {

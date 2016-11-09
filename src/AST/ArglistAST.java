@@ -12,8 +12,8 @@ import java.util.List;
 public class ArglistAST extends Node {
     List<Node> expressions;
 
-    public ArglistAST(SymbolTable ST, List<Node> expressionNodes) {
-        super(ST);
+    public ArglistAST(List<Node> expressionNodes) {
+        super();
         expressions = expressionNodes;
     }
 

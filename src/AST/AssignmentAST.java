@@ -9,8 +9,8 @@ public class AssignmentAST extends Node {
     Node lhs;
     Node rhs;
 
-    public AssignmentAST(SymbolTable ST, Node lhs, Node rhs) {
-        super(ST);
+    public AssignmentAST(Node lhs, Node rhs) {
+        super();
         this.lhs = lhs;
         this.rhs = rhs;
     }

@@ -8,8 +8,8 @@ import symbol_table.SymbolTable;
 public class AssignrhsAST extends Node {
     Node child;
 
-    public AssignrhsAST(SymbolTable ST, Node child) {
-        super(ST);
+    public AssignrhsAST(Node child) {
+        super();
         this.child = child;
     }
 
