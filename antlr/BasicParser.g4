@@ -6,7 +6,7 @@ options {
 
 program: BEGIN function* statement END EOF;
 
-function: type IDENT LPAREN paramlist? RPAREN IS (statement)? RETURN expression END;
+function: type IDENT LPAREN paramlist? RPAREN IS statement END;
 
 paramlist: param (COMMA param)*;
 
@@ -38,13 +38,13 @@ assignrhs: expression
 
 arglist: expression (COMMA expression)*;
 
-pairelem: FIRST expression | SECOND expression;
+pairelem: (FIRST | SECOND) expression;
 
 type: basetype | arraytype | pairtype;
 
 basetype: INT | BOOL | CHAR | STRING;
 
-arraytype: basetype (LBRACKET RBRACKET)+ | pairtype (LBRACKET RBRACKET)+;
+arraytype: (basetype | pairtype) (LBRACKET RBRACKET)+;
 
 pairtype: PAIR LPAREN pairelemtype COMMA pairelemtype RPAREN;
 

@@ -17,11 +17,17 @@ public class Main {
 
 
         BasicParser parser = new BasicParser(tokens);
-        parser.removeErrorListeners();
-        parser.addErrorListener(new SyntaxError());
-        //Visitor v = new Visitor();
 
+        //Visitor v = new Visitor();
 	    ParseTree tree = parser.program();
+
+        int errors = parser.getNumberOfSyntaxErrors();
+        if (errors > 0) {
+            System.exit(100);
+        }
+
+        FunctionParser functionParser = new FunctionParser(tokens);
+        functionParser.parse(tree);
 
         //v.visit(parser.program());
     }
