@@ -9,6 +9,7 @@ public class SyntaxError extends BaseErrorListener {
     public void syntaxError(@NotNull Recognizer<?, ?> recognizer, @Nullable Object offendingSymbol,
                             int line, int charPositionLine, @NotNull String msg,
                             @Nullable RecognitionException e) {
-        System.err.println("SYNTAX ERROR: " + line + ": " + charPositionLine);
+        System.err.println("#syntax_error#");
+        System.exit(100);
     }
 }
