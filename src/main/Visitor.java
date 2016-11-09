@@ -44,6 +44,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     public Node visitAssignrhs(BasicParser.AssignrhsContext ctx) {
+        //can it be replaced with visitchildren?
+
+//        switch(ctx) {
+//            BasicParser.ExprContext: return visitExpr((BasicParser.ExprContext) ctx);
+//        }
         if (ctx instanceof BasicParser.ExprContext) {
             return visitExpr((BasicParser.ExprContext) ctx);
         } else if (ctx instanceof BasicParser.ArraylitContext) {
@@ -60,7 +65,8 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public Node visitExpr(BasicParser.ExprContext ctx) {
-        return null;
+        ExpressionAST expression = null;
+        if (ctx.)
     }
 
     @Override
@@ -97,7 +103,6 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public Node visitExpression(BasicParser.ExpressionContext ctx) {
         ExpressionAST expression = null;
-
         if (ctx.IDENT() != null) {
             expression = new ExpressionAST(ST, ctx.IDENT().getText());
         } else if (ctx.intliter() != null) {
@@ -115,7 +120,13 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else if (ctx.binop() != null) {
             expression = new ExpressionAST(ST, visitBinop(ctx.binop()));
         } else if (!ctx.expression().isEmpty()){
-            //expression = new ExpressionAST(ST, visitExpression(ctx.));
+            List<BasicParser.ExpressionContext> expressions = ctx.expression();
+            List<Node> expressionNodes = new ArrayList<>();
+
+            for (BasicParser.ExpressionContext e : expressions) {
+                expressionNodes.add(visitExpression(e));
+            }
+            expression = new ExpressionAST(ST, expressionNodes);
         }
 
         return expression;
@@ -129,5 +140,14 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public Node visitIntsign(BasicParser.IntsignContext ctx) {
         return new IntSignAST(ST);
+    }
+
+    @Override
+    public Node visitBoolliter(BasicParser.BoolliterContext ctx) {
+       new BoolLiterAST(ST)
+    }
+
+    @Override Node visitBinop(BasicParser.BinopContext ctx) {
+
     }
 }

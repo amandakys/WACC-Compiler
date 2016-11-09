@@ -16,8 +16,9 @@ public class Main {
         BasicLexer lexer = new BasicLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         BasicParser parser = new BasicParser(tokens);
-        Visitor v = new Visitor();
-
-        v.visit(parser.program());
+        parser.removeErrorListeners();
+        parser.addErrorListener(new SyntaxError());
+//        Visitor v = new Visitor();
+//        v.visit(parser.program());
     }
 }
