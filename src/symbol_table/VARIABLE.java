@@ -6,7 +6,12 @@ package symbol_table;
 public class VARIABLE extends IDENTIFIER {
     TYPE type;
 
+    public VARIABLE(TYPE type) {
+        this.type = type;
+    }
+
     public TYPE getType() {
         return this.type;
     }
+
 }

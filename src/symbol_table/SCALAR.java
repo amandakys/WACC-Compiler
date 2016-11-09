@@ -7,4 +7,7 @@ public class SCALAR extends TYPE {
     final int min = 0;
     final int max = 2000;
 
+    public SCALAR(String typeName) {
+        super(typeName);
+    }
 }
