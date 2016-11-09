@@ -2,6 +2,8 @@ package AST;
 
 import symbol_table.*;
 
+import java.util.List;
+
 /**
  * Created by tsd15 on 09/11/16.
  */
@@ -32,7 +34,8 @@ public class FunctionDeclarationAST extends Node {
         } else if (!(parameters instanceof ParamlistAST)) {
             System.err.println("Downcast error");
         } else {
-            funcObj= new FUNCTION(ST, (TYPE)T, ((ParamlistAST) parameters));
+            ParamlistAST paramlistAST;
+            funcObj= new FUNCTION(null, (TYPE)T, null);
             ST.add(funcname, funcObj);
         }
     }
@@ -42,7 +45,10 @@ public class FunctionDeclarationAST extends Node {
         CheckFunctionNameAndReturnType();
         ST = new SymbolTable(ST);
         funcObj.setSymbolTable(ST);
-        ((ParamlistAST)parameters).check(funcObj.getParams());
+        for (Node p : ((ParamlistAST)parameters).getExpressions()) {
+            p.check();
+            funcObj.getParamList().addParam(p);
+        }
         ST = ST.getEncSymbolTable();
     }
 }

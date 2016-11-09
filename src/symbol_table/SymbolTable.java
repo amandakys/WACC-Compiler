@@ -15,6 +15,10 @@ public class SymbolTable {
         encSymbolTable = st;
     }
 
+    public SymbolTable getEncSymbolTable() {
+        return this.encSymbolTable;
+    }
+
     public void add (String name, IDENTIFIER object) {
         dict.put(name, object);
     }

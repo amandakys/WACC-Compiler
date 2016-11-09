@@ -19,6 +19,10 @@ public class ParamlistAST extends Node {
         return parameters;
     }
 
+    public void addParam(Node param) {
+        parameters.add(param);
+    }
+
     public void check(ParamlistAST params) {
         for (int i = 0; i < params.parameters.size(); i++) {
             if(parameters.get(i).getType() != params.parameters.get(i).getType()) {

@@ -9,4 +9,8 @@ public class TYPE extends IDENTIFIER {
         return this;
     }
 
+    public boolean isReturnable() {
+        return true;
+    }
+
 }
