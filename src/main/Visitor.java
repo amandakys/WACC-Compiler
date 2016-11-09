@@ -64,8 +64,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public Node visitExpr(BasicParser.ExprContext ctx) {
-        ExpressionAST expression = null;
-        if (ctx.)
+        return visitExpression(ctx.expression());
     }
 
     @Override
