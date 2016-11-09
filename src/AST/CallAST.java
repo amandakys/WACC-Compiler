@@ -28,11 +28,11 @@ public class CallAST extends Node {
             System.err.println(funcname + " is not a function");
         } else if (!(arglist instanceof ArglistAST))     {
             System.err.println("downcast failure");
-        } else if (!(((FUNCTION)F).getParams().parameters.size() == ((ArglistAST)arglist).expressions.size())) {
+        } else if (!(((FUNCTION)F).getParamList().parameters.size() == ((ArglistAST)arglist).expressions.size())) {
             System.err.println("wrong no. of params");
         } else {
             arglist.check();
-            ((ArglistAST)arglist).check(((FUNCTION) F).getParams());
+            ((ArglistAST)arglist).check(((FUNCTION) F).getParamList());
             funcObj = (FUNCTION)F;
         }
     }

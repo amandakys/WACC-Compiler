@@ -84,9 +84,22 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public Node visitFunctioncall(BasicParser.FunctioncallContext ctx) {
-        return null;
+        CallAST call = new CallAST(ST, ctx.IDENT().getText(), visitArglist(ctx.arglist()));
+        return call;
     }
 
+    @Override
+    public Node visitArglist(BasicParser.ArglistContext ctx) {
+        List<BasicParser.ExpressionContext> expressions = ctx.expression();
+        List<Node> expressionNodes = new ArrayList<>();
+        for (BasicParser.ExpressionContext e : expressions) {
+            expressionNodes.add(visitExpression(e));
+        }
+
+        ArglistAST arglist = new ArglistAST(ST, expressionNodes);
+        return arglist;
+
+    }
     @Override
     public Node visitArrayelem(BasicParser.ArrayelemContext ctx) {
         List<BasicParser.ExpressionContext> expressions = ctx.expression();
@@ -146,6 +159,24 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override Node visitBinop(BasicParser.BinopContext ctx) {
+
+    }
+
+    public Node visitParamlist(BasicParser.ParamlistContext ctx) {
+        List<BasicParser.ParamContext> parameters = ctx.param();
+        List<Node> parameterNodes = new ArrayList<>();
+        for (BasicParser.ParamContext p :parameters) {
+            parameterNodes.add(visitParam(p));
+        }
+
+        ParamlistAST paramlist = new ParamlistAST(ST, parameterNodes);
+        return paramlist;
+    }
+
+    @Override
+    public Node visitParam(BasicParser.ParamContext ctx) {
+        return new ParamAST(ST, ctx.type().getText(), ctx.IDENT().getText());
+    }
 
     public Node visitVar_decl(BasicParser.Var_declContext ctx) {
         return new VarDeclAST(ST, visitType(ctx.type()), ctx.IDENT().getText(), visitAssignrhs(ctx.assignrhs()));

@@ -23,10 +23,7 @@ public class ArglistAST extends Node {
 
     public void check(ParamlistAST params) {
         for (int i = 0; i < params.parameters.size(); i++) {
-            if(expressions.get(i).getType() != params.parameters.get(i).getType()) {
-                System.err.println("type of func param "+i+" incompatible with declaration");
-
-            }
+            expressions.get(i).checkType(params.parameters.get(i));
         }
     }
 

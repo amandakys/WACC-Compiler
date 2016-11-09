@@ -19,7 +19,7 @@ public class FUNCTION extends IDENTIFIER {
         this.symtab = ST;
     }
 
-    public ParamlistAST getParams() {
+    public ParamlistAST getParamList() {
         return formals;
     }
     @Override
