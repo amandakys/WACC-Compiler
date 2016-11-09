@@ -7,7 +7,6 @@ import symbol_table.SCALAR;
 import symbol_table.SymbolTable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,10 +16,10 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     private SymbolTable ST = new SymbolTable(null);
 
     public Visitor() {
-        ST.add("bool", new SCALAR());
-        ST.add("int", new SCALAR());
-        ST.add("char", new SCALAR());
-        ST.add("string", new SCALAR());
+        ST.add("bool", new SCALAR("bool"));
+        ST.add("int", new SCALAR("int"));
+        ST.add("char", new SCALAR("char"));
+        ST.add("string", new SCALAR("string"));
     }
 
     @Override
@@ -149,5 +148,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override Node visitBinop(BasicParser.BinopContext ctx) {
 
+    public Node visitVar_decl(BasicParser.Var_declContext ctx) {
+        return new VarDeclAST(ST, visitType(ctx.type()), ctx.IDENT().getText(), visitAssignrhs(ctx.assignrhs()));
     }
 }
