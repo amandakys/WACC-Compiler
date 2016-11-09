@@ -69,23 +69,42 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public Node visitArraylit(BasicParser.ArraylitContext ctx) {
-        return null;
+        List<BasicParser.ExpressionContext> expressions = ctx.arrayliter().expression();
+        List<Node> expressionNodes = new ArrayList<>();
+        for (BasicParser.ExpressionContext e : expressions) {
+            expressionNodes.add(visitExpression(e));
+        }
+
+        ArraylitAST newpair = new ArraylitAST(ST, expressionNodes);
+        return  newpair;
     }
 
     @Override
     public Node visitNewpair(BasicParser.NewpairContext ctx) {
-        return null;
+        List<BasicParser.ExpressionContext> expressions = ctx.expression();
+        List<Node> expressionNodes = new ArrayList<>();
+        for (BasicParser.ExpressionContext e : expressions) {
+            expressionNodes.add(visitExpression(e));
+        }
+
+        NewpairAST newpair = new NewpairAST(ST, expressionNodes);
+        return  newpair;
     }
 
     //@Override
     public Node visitPairelement(BasicParser.PairelemContext ctx) {
-        return null;
+        return visitExpression(ctx.expression());
     }
 
     @Override
     public Node visitFunctioncall(BasicParser.FunctioncallContext ctx) {
         CallAST call = new CallAST(ST, ctx.IDENT().getText(), visitArglist(ctx.arglist()));
         return call;
+    }
+
+    @Override
+    public Node visitPairelem(BasicParser.PairelemContext ctx) {
+        return visitExpression(ctx.expression());
     }
 
     @Override
