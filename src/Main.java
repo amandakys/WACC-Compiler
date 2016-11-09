@@ -9,16 +9,18 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String args[]) throws IOException {
+        assert (args.length == 1): "The program only takes one argument";
+
         ANTLRInputStream input = new ANTLRFileStream(args[0]);
         BasicLexer lexer = new BasicLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-	
-        
+
+
         BasicParser parser = new BasicParser(tokens);
         //Visitor v = new Visitor();
 
 	ParseTree tree = parser.program();
-	
+
         //v.visit(parser.program());
     }
 }
