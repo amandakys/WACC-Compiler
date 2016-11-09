@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.SyntaxTree;
 
 import java.io.IOException;
 
@@ -18,7 +19,7 @@ public class Main {
 
         BasicParser parser = new BasicParser(tokens);
 
-        //Visitor v = new Visitor();
+        SyntaxVisitor v = new SyntaxVisitor();
 	    ParseTree tree = parser.program();
 
         int errors = parser.getNumberOfSyntaxErrors();
@@ -26,8 +27,7 @@ public class Main {
             System.exit(100);
         }
 
-        FunctionParser functionParser = new FunctionParser(tokens);
-        functionParser.parse(tree);
+        v.visit(tree);
 
         //v.visit(parser.program());
     }
