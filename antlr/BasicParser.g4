@@ -4,9 +4,9 @@ options {
   tokenVocab=BasicLexer;
 }
 
-program: BEGIN function* statement END;
+program: BEGIN function* statement END EOF;
 
-function: type IDENT LPAREN paramlist? RPAREN IS statement END;
+function: type IDENT LPAREN paramlist? RPAREN IS (statement)? RETURN expression END;
 
 paramlist: param (COMMA param)*;
 

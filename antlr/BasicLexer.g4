@@ -76,11 +76,11 @@ CHARLITERAL: '\'' -> pushMode(CHARMODE);
 STRINGLITERAL: '\"' -> pushMode(STRINGMODE);
 
 mode CHARMODE;
-EXCLUDECHAR: ~['\\\r\n] | ESCAPECHAR ;
+EXCLUDECHAR: ~['"\\\r\n] | ESCAPECHAR ;
 CHARCLOSE: '\'' -> popMode;
 
 mode STRINGMODE;
-EXCLUDESTRING: (~["\\] | ESCAPECHAR)+ ;
+EXCLUDESTRING: (~[''"\\] | ESCAPECHAR)+ ;
 STRINGCLOSE: '\"' -> popMode;
 
 OTHER: ' ' .. '~';
