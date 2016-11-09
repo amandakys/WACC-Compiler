@@ -1,5 +1,6 @@
 package AST;
 
+import symbol_table.IDENTIFIER;
 import symbol_table.SCALAR;
 import symbol_table.SymbolTable;
 
@@ -10,6 +11,7 @@ import java.util.List;
  */
 public class NewpairAST extends Node {
     List<Node> pairelems;
+    String pairname;
 
     public NewpairAST(SymbolTable ST, List<Node> pairelems) {
         super(ST);
@@ -20,7 +22,6 @@ public class NewpairAST extends Node {
     public void check() {
         for(Node p : pairelems) {
             p.check();
-
         }
     }
 }

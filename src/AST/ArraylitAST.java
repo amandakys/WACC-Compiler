@@ -20,7 +20,6 @@ public class ArraylitAST extends Node {
     public void check() {
         for(Node a : arraylits) {
             a.check();
-
         }
     }
 }

@@ -154,7 +154,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     //@Override
     public Node visitPairelement(BasicParser.PairelemContext ctx) {
-        return visitExpression(ctx.expression());
+        return new PairelemAST(visitExpression(ctx.expression()));
     }
 
     @Override
@@ -165,7 +165,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public Node visitPairelem(BasicParser.PairelemContext ctx) {
-        return visitExpression(ctx.expression());
+        return new PairelemAST(visitExpression(ctx.expression()));
     }
 
     @Override
