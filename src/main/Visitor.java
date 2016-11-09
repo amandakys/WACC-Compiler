@@ -45,6 +45,67 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return lhs;
     }
 
+    public Node visitStatement(BasicParser.StatementContext ctx) {
+        if (ctx instanceof BasicParser.SkipContext) {
+            return visitSkip((BasicParser.SkipContext)ctx);
+        } else if (ctx instanceof BasicParser.Var_declContext) {
+            return visitVar_decl((BasicParser.Var_declContext)ctx);
+        } else if (ctx instanceof BasicParser.AssignmentContext) {
+            return visitAssignment((BasicParser.AssignmentContext)ctx);
+        } else if (ctx instanceof BasicParser.ReadContext) {
+            return visitRead((BasicParser.ReadContext)ctx);
+        } else if (ctx instanceof BasicParser.FreeContext) {
+            return visitFree((BasicParser.FreeContext) ctx);
+        } else if (ctx instanceof BasicParser.ReturnContext) {
+            return visitReturn((BasicParser.ReturnContext)ctx);
+        } else if (ctx instanceof BasicParser.ExitContext) {
+            return visitExit((BasicParser.ExitContext)ctx);
+        } else if (ctx instanceof BasicParser.PrintContext) {
+            return visitPrint((BasicParser.PrintContext)ctx);
+        } else if (ctx instanceof BasicParser.PrintlnContext) {
+            return visitPrintln((BasicParser.PrintlnContext)ctx);
+        } else if (ctx instanceof BasicParser.IfContext) {
+            return visitIf((BasicParser.IfContext)ctx);
+        } else if (ctx instanceof BasicParser.WhileContext) {
+            return visitWhile((BasicParser.WhileContext)ctx);
+        } else if (ctx instanceof BasicParser.BeginContext) {
+            return visitBegin((BasicParser.BeginContext)ctx);
+        } else if (ctx instanceof BasicParser.SequenceContext) {
+            return visitSequence((BasicParser.SequenceContext)ctx);
+        }
+        return null;
+    }
+
+    @Override
+    public Node visitRead(BasicParser.ReadContext ctx) {
+        return new ReadAST(visitAssignlhs(ctx.assignlhs()));
+    }
+
+    @Override
+    public Node visitFree(BasicParser.FreeContext ctx) {
+        return new FreeAST(visitExpression(ctx.expression()));
+    }
+
+    @Override
+    public Node visitReturn(BasicParser.ReturnContext ctx) {
+        return new ReturnAST(visitExpression(ctx.expression()));
+    }
+
+    @Override
+    public Node visitExit(BasicParser.ExitContext ctx) {
+        return new ExitAST(visitExpression(ctx.expression()));
+    }
+
+    @Override
+    public Node visitPrint(BasicParser.PrintContext ctx) {
+        return new PrintAST(visitExpression(ctx.expression()));
+    }
+
+    @Override
+    public Node visitPrintln(BasicParser.PrintlnContext ctx) {
+        return new PrintlnAST(visitExpression(ctx.expression()));
+    }
+
     public Node visitAssignrhs(BasicParser.AssignrhsContext ctx) {
         //can it be replaced with visitchildren?
 
@@ -72,17 +133,31 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public Node visitArraylit(BasicParser.ArraylitContext ctx) {
-        return null;
+        List<BasicParser.ExpressionContext> expressions = ctx.arrayliter().expression();
+        List<Node> expressionNodes = new ArrayList<>();
+        for (BasicParser.ExpressionContext e : expressions) {
+            expressionNodes.add(visitExpression(e));
+        }
+
+        ArraylitAST newpair = new ArraylitAST(ST, expressionNodes);
+        return  newpair;
     }
 
     @Override
     public Node visitNewpair(BasicParser.NewpairContext ctx) {
-        return null;
+        List<BasicParser.ExpressionContext> expressions = ctx.expression();
+        List<Node> expressionNodes = new ArrayList<>();
+        for (BasicParser.ExpressionContext e : expressions) {
+            expressionNodes.add(visitExpression(e));
+        }
+
+        NewpairAST newpair = new NewpairAST(ST, expressionNodes);
+        return  newpair;
     }
 
     //@Override
     public Node visitPairelement(BasicParser.PairelemContext ctx) {
-        return null;
+        return new PairelemAST(visitExpression(ctx.expression()));
     }
 
     @Override
@@ -101,8 +176,12 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
         ArglistAST arglist = new ArglistAST(expressionNodes);
         return arglist;
-
     }
+
+    public Node visitPairelem(BasicParser.PairelemContext ctx) {
+        return new PairelemAST(visitExpression(ctx.expression()));
+    }
+
     @Override
     public ArrayelemAST visitArrayelem(BasicParser.ArrayelemContext ctx) {
         List<BasicParser.ExpressionContext> expressions = ctx.expression();
