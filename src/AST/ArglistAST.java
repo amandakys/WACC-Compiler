@@ -10,14 +10,14 @@ import java.util.List;
  * Created by tsd15 on 09/11/16.
  */
 public class ArglistAST extends Node {
-    List<Node> expressions;
+    List<ExpressionAST> expressions;
 
-    public ArglistAST(List<Node> expressionNodes) {
+    public ArglistAST(List<ExpressionAST> expressionNodes) {
         super();
         expressions = expressionNodes;
     }
 
-    public List<Node> getExpressions() {
+    public List<ExpressionAST> getExpressions() {
         return expressions;
     }
 

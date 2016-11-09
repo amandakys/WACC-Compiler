@@ -5,6 +5,7 @@ package symbol_table;
  */
 public class PARAM extends IDENTIFIER {
     TYPE type;
+
     @Override
     public TYPE getType() {
         return type;

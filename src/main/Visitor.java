@@ -26,14 +26,14 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public Node visitAssignment(BasicParser.AssignmentContext ctx) {
+    public AssignmentAST visitAssignment(BasicParser.AssignmentContext ctx) {
         AssignmentAST assignment = new AssignmentAST(visitAssignlhs(ctx.assignlhs()), visitAssignrhs(ctx.assignrhs()));
         assignment.check();
         return assignment;
     }
 
     @Override
-    public Node visitAssignlhs(BasicParser.AssignlhsContext ctx) {
+    public AssignlhsAST visitAssignlhs(BasicParser.AssignlhsContext ctx) {
         AssignlhsAST lhs;
         if (ctx.IDENT() != null) {
             lhs = new AssignlhsAST(ctx.IDENT().getText());
@@ -66,7 +66,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public Node visitExpr(BasicParser.ExprContext ctx) {
+    public ExpressionAST visitExpr(BasicParser.ExprContext ctx) {
         return visitExpression(ctx.expression());
     }
 
@@ -86,13 +86,13 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public Node visitFunctioncall(BasicParser.FunctioncallContext ctx) {
+    public CallAST visitFunctioncall(BasicParser.FunctioncallContext ctx) {
         CallAST call = new CallAST(ctx.IDENT().getText(), visitArglist(ctx.arglist()));
         return call;
     }
 
     @Override
-    public Node visitArglist(BasicParser.ArglistContext ctx) {
+    public ArglistAST visitArglist(BasicParser.ArglistContext ctx) {
         List<BasicParser.ExpressionContext> expressions = ctx.expression();
         List<Node> expressionNodes = new ArrayList<>();
         for (BasicParser.ExpressionContext e : expressions) {
@@ -104,7 +104,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     }
     @Override
-    public Node visitArrayelem(BasicParser.ArrayelemContext ctx) {
+    public ArrayelemAST visitArrayelem(BasicParser.ArrayelemContext ctx) {
         List<BasicParser.ExpressionContext> expressions = ctx.expression();
         List<Node> expressionNodes = new ArrayList<>();
         for (BasicParser.ExpressionContext e : expressions) {
@@ -115,7 +115,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public Node visitExpression(BasicParser.ExpressionContext ctx) {
+    public ExpressionAST visitExpression(BasicParser.ExpressionContext ctx) {
         ExpressionAST expression = null;
         if (ctx.IDENT() != null) {
             expression = new ExpressionAST(ctx.IDENT().getText());
@@ -147,25 +147,26 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public Node visitIntliter(BasicParser.IntliterContext ctx) {
+    public IntLiterAST visitIntliter(BasicParser.IntliterContext ctx) {
         return new IntLiterAST(visitChildren(ctx), ctx.DIGIT());
     }
 
     @Override
-    public Node visitIntsign(BasicParser.IntsignContext ctx) {
+    public IntSignAST visitIntsign(BasicParser.IntsignContext ctx) {
         return new IntSignAST();
     }
 
     @Override
     public Node visitBoolliter(BasicParser.BoolliterContext ctx) {
+        return null;
     }
 
     @Override
     public Node visitBinop(BasicParser.BinopContext ctx) {
-
+        return null;
     }
 
-    public Node visitParamlist(BasicParser.ParamlistContext ctx) {
+    public ParamlistAST visitParamlist(BasicParser.ParamlistContext ctx) {
         List<BasicParser.ParamContext> parameters = ctx.param();
         List<Node> parameterNodes = new ArrayList<>();
         for (BasicParser.ParamContext p :parameters) {
@@ -177,12 +178,12 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public Node visitParam(BasicParser.ParamContext ctx) {
+    public ParamAST visitParam(BasicParser.ParamContext ctx) {
         return new ParamAST(ctx.type().getText(), ctx.IDENT().getText());
     }
 
     @Override
-    public Node visitVar_decl(BasicParser.Var_declContext ctx) {
+    public VarDeclAST visitVar_decl(BasicParser.Var_declContext ctx) {
         return new VarDeclAST(visitType(ctx.type()), ctx.IDENT().getText(), visitAssignrhs(ctx.assignrhs()));
     }
 

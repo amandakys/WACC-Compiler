@@ -12,10 +12,10 @@ import java.util.List;
  */
 public class CallAST extends Node {
     String funcname;
-    Node arglist;
+    ArglistAST arglist;
     FUNCTION funcObj;
 
-    public CallAST(String funcname, Node arglist) {
+    public CallAST(String funcname, ArglistAST arglist) {
         super();
         this.funcname = funcname;
         this.arglist = arglist;
@@ -27,9 +27,7 @@ public class CallAST extends Node {
             System.err.println("Unknown function "+funcname);
         } else if (!(F instanceof FUNCTION)) {
             System.err.println(funcname + " is not a function");
-        } else if (!(arglist instanceof ArglistAST))     {
-            System.err.println("downcast failure");
-        } else if (!(((FUNCTION)F).getParamList().parameters.size() == ((ArglistAST)arglist).expressions.size())) {
+        } else if (((FUNCTION)F).getParamList().size() != arglist.expressions.size())) {
             System.err.println("wrong no. of params");
         } else {
             arglist.check();

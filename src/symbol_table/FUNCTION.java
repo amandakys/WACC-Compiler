@@ -9,9 +9,10 @@ import java.util.List;
  */
 public class FUNCTION extends IDENTIFIER {
     TYPE returntype;
-    List<PARAM> formals;
+    List<TYPE> formals;
     SymbolTable symtab;
-    public FUNCTION(SymbolTable ST,TYPE returntype, List<PARAM> formals) {
+
+    public FUNCTION(SymbolTable ST,TYPE returntype, List<TYPE> formals) {
         this.symtab = ST;
         this.returntype = returntype;
         this.formals = formals;
@@ -21,7 +22,7 @@ public class FUNCTION extends IDENTIFIER {
         this.symtab = ST;
     }
 
-    public List<PARAM> getParamList() {
+    public List<TYPE> getParamList() {
         return formals;
     }
     @Override
