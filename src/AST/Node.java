@@ -23,7 +23,7 @@ public abstract class Node  {
     }
 
     public void checkType(Node node) {
-        if (!this.getType().getClass().equals(node.getType().getClass())) {
+        if (!this.getType().equals(node.getType())) {
             System.err.println("types do not match");
         }
     }

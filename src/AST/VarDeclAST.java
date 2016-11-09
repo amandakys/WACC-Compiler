@@ -8,11 +8,11 @@ import symbol_table.VARIABLE;
 /**
  * Created by dtv15 on 09/11/16.
  */
+
 public class VarDeclAST extends Node {
-    String ident;
-    Node type;
-    Node rhs;
-    VARIABLE varObj;
+    private String ident;
+    private Node type;
+    private Node rhs;
 
     public VarDeclAST(SymbolTable ST, Node type, String ident, Node rhs) {
         super(ST);
@@ -35,9 +35,9 @@ public class VarDeclAST extends Node {
         } else if (!(V == null)) {
             System.err.println(ident + " is already declared");
         } else {
-            varObj = new VARIABLE((TYPE) T);
+            VARIABLE varObj = new VARIABLE((TYPE) T);
             ST.add(ident, varObj);
-            //NOT SURE about THESE 2 LAST LINES
+            //Checking rhs
             rhs.check();
             type.checkType(rhs);
         }

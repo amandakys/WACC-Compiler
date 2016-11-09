@@ -12,7 +12,7 @@ public class TYPE extends IDENTIFIER {
 
     @Override
     public TYPE getType() {
-        return this; // WHAT DOES THIS DO ?
+        return this;
     }
 
     public String getTypeName() {
