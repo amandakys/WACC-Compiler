@@ -1,7 +1,10 @@
 package AST.TypeAST;
 
 import AST.Node;
+import main.Visitor;
+import symbol_table.IDENTIFIER;
 import symbol_table.PAIR;
+import symbol_table.TYPE;
 
 /**
  * Created by andikoh on 09/11/2016.
@@ -14,8 +17,6 @@ public class PairelemtypeAST extends Node {
         super();
         pairtoken = pair;
         type = null;
-        identObj = new PAIR(null, null); //loss of type info for nested pairs
-
     }
 
     public PairelemtypeAST(TypeAST type) {
@@ -28,5 +29,14 @@ public class PairelemtypeAST extends Node {
         if (type != null) {
             type.check();
         }
+
+        IDENTIFIER T;
+        if (pairtoken != null) {
+            T = Visitor.ST.lookUpAll("pair"); //nested pair
+        } else {
+            T = Visitor.ST.lookUpAll(type.getType().getTypeName());
+        }
+
+        identObj = T;
     }
 }

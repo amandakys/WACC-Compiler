@@ -1,6 +1,8 @@
 package AST.TypeAST;
 
 import AST.Node;
+import main.Visitor;
+import symbol_table.IDENTIFIER;
 import symbol_table.PAIR;
 
 /**
@@ -20,9 +22,9 @@ public class PairtypeAST extends TypeAST {
     public void check() {
         first.check();
         second.check();
-        first.checkType(second);
 
-        identObj = new PAIR(first.getType(), second.getType());
+        IDENTIFIER T = Visitor.ST.lookUpAll("pair");
+        identObj = T;
     }
 
 

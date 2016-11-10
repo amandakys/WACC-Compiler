@@ -5,9 +5,7 @@ package symbol_table;
  */
 public abstract class IDENTIFIER {
     public abstract TYPE getType();
-
     public boolean isDeclarable() {
         return true;
     }
-
 }

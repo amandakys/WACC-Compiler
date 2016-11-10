@@ -10,6 +10,11 @@ public class PAIR extends TYPE{
     //maybe take two identifiers
 
 
+    public PAIR() {
+        super("pair");
+        this.first = null;
+        this.second = null;
+    }
     public PAIR(TYPE first, TYPE second) {
         super("pair");
         this.first = first;
@@ -18,7 +23,6 @@ public class PAIR extends TYPE{
 
     @Override
     public TYPE getType() {
-        //TODO: implement later
-        return null;
+        return this;
     }
 }

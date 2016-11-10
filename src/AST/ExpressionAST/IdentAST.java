@@ -13,7 +13,7 @@ public class IdentAST extends ExpressionAST {
         this.ident = ident;
         IDENTIFIER lookup = Visitor.ST.lookUpAll(ident);
         if (lookup == null) {
-            Utility.error("undefined variable");
+            Utility.error("undefined expression: " + ident);
         } else {
             identObj = lookup;
         }
@@ -23,7 +23,7 @@ public class IdentAST extends ExpressionAST {
     public void check() {
         IDENTIFIER I = Visitor.ST.lookUp(ident);
         if(I == null) {
-            Utility.error("cannot find identifier");
+            Utility.error("cannot find identifier: "+ ident);
         }
     }
 }
