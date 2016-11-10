@@ -1,6 +1,7 @@
 package AST.AssignmentAST;
 
 import AST.Node;
+import AST.Utility;
 import main.Visitor;
 import symbol_table.IDENTIFIER;
 import symbol_table.SymbolTable;
@@ -33,7 +34,7 @@ public class AssignlhsAST extends Node {
 
             if (N == null) {
                 //ident is not in symbol table
-                System.err.println("undefined variable");
+                Utility.error("undefined variable");
             } else {
                 this.identObj = N;
             }

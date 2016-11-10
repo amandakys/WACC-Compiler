@@ -1,6 +1,9 @@
 package AST.StatementAST;
 
 import AST.ExpressionAST.ExpressionAST;
+import AST.Utility;
+import main.Visitor;
+import symbol_table.IDENTIFIER;
 
 /**
  * Created by andikoh on 10/11/2016.
@@ -19,9 +22,10 @@ public class IfAST extends StatementAST {
     public void check() {
         //check expressions is valid
         expression.check();
-        //TODO: check expression is a boolean
-        //IDENTIFIER T = Visitor.ST.lookUpAll("bool");
-
+        IDENTIFIER T = Visitor.ST.lookUpAll("bool");
+        if (!expression.getType().equals(T)) {
+            Utility.error("If condition type mismatch");
+        }
         //check statements are valid
         then.check();
         elseSt.check();

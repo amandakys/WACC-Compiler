@@ -2,6 +2,7 @@ package AST.StatementAST;
 
 import AST.AssignmentAST.AssignrhsAST;
 import AST.TypeAST.TypeAST;
+import AST.Utility;
 import main.Visitor;
 import symbol_table.IDENTIFIER;
 import symbol_table.TYPE;
@@ -31,13 +32,13 @@ public class VarDeclAST extends StatementAST{
         IDENTIFIER V = Visitor.ST.lookUp(ident);
 
         if(T == null) {
-            System.err.println("unknown type " + typeName);
+            Utility.error("unknown type " + typeName);
         } else if (!(T instanceof TYPE)) {
-            System.err.println(typeName + " is not a type");
+            Utility.error(typeName + " is not a type");
         } else if (!(T.isDeclarable())) {
-            System.err.println("cannot declare " + typeName + " objects");
-        } else if (V != null) {
-            System.err.println(ident + " is already declared");
+            Utility.error("cannot declare " + typeName + " objects");
+        } else if (!(V == null)) {
+            Utility.error(ident + " is already declared");
         } else {
             VARIABLE varObj = new VARIABLE((TYPE) T);
             Visitor.ST.add(ident, varObj);

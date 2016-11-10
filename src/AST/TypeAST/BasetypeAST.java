@@ -1,5 +1,6 @@
 package AST.TypeAST;
 
+import AST.Utility;
 import main.Visitor;
 import symbol_table.IDENTIFIER;
 
@@ -19,7 +20,7 @@ public class BasetypeAST extends TypeAST {
         IDENTIFIER T = Visitor.ST.lookUpAll(typename);
         if (T == null) {
             //type does not exist
-            System.err.println("undefined type");
+            Utility.error("undefined type");
         }
         identObj = T;
     }

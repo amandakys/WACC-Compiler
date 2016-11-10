@@ -2,6 +2,7 @@ package AST.AssignmentAST;
 
 import AST.FunctionDecl.ArglistAST;
 import AST.Node;
+import AST.Utility;
 import main.Visitor;
 import symbol_table.FUNCTION;
 import symbol_table.IDENTIFIER;
@@ -24,17 +25,17 @@ public class CallAST extends AssignrhsAST{
         IDENTIFIER F = Visitor.ST.lookUpAll(funcname);
 
         if (F == null) {
-            System.err.println("Unknown function "+funcname);
+            Utility.error("Unknown function " + funcname);
         } else if (!(F instanceof FUNCTION)) {
-            System.err.println(funcname + " is not a function");
+            Utility.error(funcname + " is not a function");
         } else if (((FUNCTION)F).getParamList().size() != arglist.size()) {
-            System.err.println("wrong no. of params");
+            Utility.error("wrong no. of params");
         } else {
             arglist.check();
 
             for(int i = 0; i < arglist.size(); i++) {
                 if(arglist.getType(i).equals(((FUNCTION) F).getParamList().get(i))) {
-                    System.err.println("unexpected type in function " + funcname);
+                    Utility.error("unexpected type in function " + funcname);
                 }
             }
 

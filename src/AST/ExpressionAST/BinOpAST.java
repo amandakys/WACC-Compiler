@@ -1,12 +1,8 @@
 package AST.ExpressionAST;
 
-import main.Utility;
-import main.Visitor;
-import symbol_table.TYPE;
+import AST.Utility;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by donamphuong on 10/11/2016.

@@ -1,6 +1,7 @@
 package AST.StatementAST;
 
 import AST.ExpressionAST.ExpressionAST;
+import AST.Utility;
 import main.Visitor;
 import symbol_table.IDENTIFIER;
 
@@ -19,9 +20,8 @@ public class ExitAST extends StatementAST{
     public void check() {
         IDENTIFIER T = Visitor.ST.lookUpAll("int");
         expression.check();
-
         if(!expression.getType().equals(T.getType())) {
-            System.err.println("Exit statement must take integer");
+            Utility.error("Exit statement must take integer");
         }
     }
 }

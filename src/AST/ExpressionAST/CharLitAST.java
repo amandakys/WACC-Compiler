@@ -7,10 +7,10 @@ import java.util.List;
 /**
  * Created by donamphuong on 10/11/2016.
  */
-public class CharLit extends ExpressionAST {
+public class CharLitAST extends ExpressionAST {
     String charac;
 
-    public CharLit(String charac) {
+    public CharLitAST(String charac) {
         this.charac = charac;
     }
 
