@@ -103,10 +103,10 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return exit;
     }
 
-    @Override
+    /*@Override
     public OperatorAST visitBinop(BasicParser.BinopContext ctx) {
         return new OperatorAST(ctx.getText());
-    }
+    }*/
 
     @Override
     public OperatorAST visitUnop(BasicParser.UnopContext ctx) {
@@ -172,7 +172,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return lhs;
     }
 
-    public Node visitAssignrhs(BasicParser.AssignrhsContext ctx) {
+    public AssignrhsAST visitAssignrhs(BasicParser.AssignrhsContext ctx) {
         //can it be replaced with visitchildren?
 
 //        switch(ctx) {
@@ -286,7 +286,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
                 expressions.add(visitExpression(e));
             }
 
-            expression = new BinopAST(ctx.expression(), ctx.binop().getText(););
+            expression = new BinOpAST(ctx.expression(), ctx.binop().getText(););
 
         } else if (!ctx.expression().isEmpty()){
             List<BasicParser.ExpressionContext> expressions = ctx.expression();
