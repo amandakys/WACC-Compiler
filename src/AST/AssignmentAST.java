@@ -5,7 +5,7 @@ import symbol_table.SymbolTable;
 /**
  * Created by andikoh on 08/11/2016.
  */
-public class AssignmentAST extends Node {
+public class AssignmentAST extends StatementAST {
     Node lhs;
     Node rhs;
 

@@ -7,7 +7,7 @@ import symbol_table.TYPE;
 /**
  * Created by tsd15 on 09/11/16.
  */
-public class FreeAST extends Node {
+public class FreeAST extends StatementAST {
     ExpressionAST expression;
 
     public FreeAST(ExpressionAST expression) {

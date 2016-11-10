@@ -10,7 +10,7 @@ import symbol_table.VARIABLE;
  * Created by dtv15 on 09/11/16.
  */
 
-public class VarDeclAST extends Node {
+public class VarDeclAST extends StatementAST{
     private String ident;
     private Node type;
     private Node rhs;

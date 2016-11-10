@@ -6,7 +6,7 @@ import symbol_table.TYPE;
 /**
  * Created by tsd15 on 09/11/16.
  */
-public class ReadAST extends Node {
+public class ReadAST extends StatementAST {
     private AssignlhsAST expression;
 
     public ReadAST(AssignlhsAST expression) {

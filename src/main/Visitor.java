@@ -25,27 +25,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ST = next;
     }
 
-    @Override
-    public AssignmentAST visitAssignment(BasicParser.AssignmentContext ctx) {
-        AssignmentAST assignment = new AssignmentAST(visitAssignlhs(ctx.assignlhs()), visitAssignrhs(ctx.assignrhs()));
-        assignment.check();
-        return assignment;
-    }
-
-    @Override
-    public AssignlhsAST visitAssignlhs(BasicParser.AssignlhsContext ctx) {
-        AssignlhsAST lhs;
-        if (ctx.IDENT() != null) {
-            lhs = new AssignlhsAST(ctx.IDENT().getText());
-        } else if (ctx.arrayelem() != null){
-            lhs = new AssignlhsAST(visitArrayelem(ctx.arrayelem()));
-        } else {
-            lhs = new AssignlhsAST(visitPairelem(ctx.pairelem()));
-        }
-        return lhs;
-    }
-
-    public Node visitStatement(BasicParser.StatementContext ctx) {
+    public StatementAST visitStatement(BasicParser.StatementContext ctx) {
         if (ctx instanceof BasicParser.SkipContext) {
             return visitSkip((BasicParser.SkipContext)ctx);
         } else if (ctx instanceof BasicParser.Var_declContext) {
@@ -74,6 +54,24 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             return visitSequence((BasicParser.SequenceContext)ctx);
         }
         return null;
+    }
+
+    @Override
+    public SkipAST visitSkip(BasicParser.SkipContext ctx) {
+        //skip statement contains no information and has no checks;
+        return new SkipAST();
+    }
+
+    @Override
+    public VarDeclAST visitVar_decl(BasicParser.Var_declContext ctx) {
+        return new VarDeclAST(visitType(ctx.type()), ctx.IDENT().getText(), visitAssignrhs(ctx.assignrhs()));
+    }
+
+    @Override
+    public AssignmentAST visitAssignment(BasicParser.AssignmentContext ctx) {
+        AssignmentAST assignment = new AssignmentAST(visitAssignlhs(ctx.assignlhs()), visitAssignrhs(ctx.assignrhs()));
+        assignment.check();
+        return assignment;
     }
 
     @Override
@@ -106,6 +104,55 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public PrintlnAST visitPrintln(BasicParser.PrintlnContext ctx) {
         return new PrintlnAST(visitExpression(ctx.expression()));
+    }
+
+    @Override
+    public IfAST visitIf(BasicParser.IfContext ctx) {
+        //components
+        ExpressionAST expr = visitExpression(ctx.expression());
+        StatementAST then = visitStatement(ctx.statement(0));
+        StatementAST elseSt = visitStatement(ctx.statement(1));
+
+        return new IfAST(expr, then, elseSt);
+    }
+
+    @Override
+    public WhileAST visitWhile(BasicParser.WhileContext ctx) {
+        //components
+        ExpressionAST expr = visitExpression(ctx.expression());
+        StatementAST statement = visitStatement(ctx.statement());
+
+        return new WhileAST(expr, statement);
+    }
+
+    @Override
+    public BeginAST visitBegin(BasicParser.BeginContext ctx) {
+        return new BeginAST(visitStatement(ctx.statement()));
+    }
+
+    @Override
+    public SequenceAST visitSequence(BasicParser.SequenceContext ctx) {
+        List<BasicParser.StatementContext> statements = ctx.statement();
+        List<StatementAST> statementASTs = new ArrayList<>();
+
+        for (BasicParser.StatementContext s : statements) {
+            statementASTs.add(visitStatement(s));
+        }
+
+        return new SequenceAST(statementASTs);
+    }
+
+    @Override
+    public AssignlhsAST visitAssignlhs(BasicParser.AssignlhsContext ctx) {
+        AssignlhsAST lhs;
+        if (ctx.IDENT() != null) {
+            lhs = new AssignlhsAST(ctx.IDENT().getText());
+        } else if (ctx.arrayelem() != null){
+            lhs = new AssignlhsAST(visitArrayelem(ctx.arrayelem()));
+        } else {
+            lhs = new AssignlhsAST(visitPairelem(ctx.pairelem()));
+        }
+        return lhs;
     }
 
     public Node visitAssignrhs(BasicParser.AssignrhsContext ctx) {
@@ -157,9 +204,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return  newpair;
     }
 
-    //@Override
-    public PairelemAST visitPairelement(BasicParser.PairelemContext ctx) {
-        return new PairelemAST(visitExpression(ctx.expression()));
+    @Override
+    public PairelemAST visitPairelement(BasicParser.PairelementContext ctx) {
+        return visitPairelem(ctx.pairelem());
     }
 
     @Override
@@ -213,6 +260,13 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else if (ctx.unop() != null) {
             expression = new ExpressionAST(visitUnop(ctx.unop()));
         } else if (ctx.binop() != null) {
+            List<ExpressionAST> expressions =;
+            for (BasicParser.ExpressionContext e: ctx.expression()) {
+                expressions.add(visitExpression(e));
+            }
+
+            expression = new BinopAST(ctx.expression(), ctx.binop().getText(););
+
             expression = new ExpressionAST(visitBinop(ctx.binop()));
         } else if (!ctx.expression().isEmpty()){
             List<BasicParser.ExpressionContext> expressions = ctx.expression();
@@ -237,13 +291,16 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return new IntSignAST();
     }
 
-    /*@Override
+    @Override
     public BoolliterAST visitBoolliter(BasicParser.BoolliterContext ctx) {
+        //TODO: implement
         return null;
-    }*/
+    }
 
     @Override
     public Node visitBinop(BasicParser.BinopContext ctx) {
+
+        //TODOL implement
         return null;
     }
 
@@ -263,10 +320,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return new ParamAST(ctx.type().getText(), ctx.IDENT().getText());
     }
 
-    @Override
-    public VarDeclAST visitVar_decl(BasicParser.Var_declContext ctx) {
-        return new VarDeclAST(visitType(ctx.type()), ctx.IDENT().getText(), visitAssignrhs(ctx.assignrhs()));
-    }
+
 
     @Override
     public TypeAST visitType(BasicParser.TypeContext ctx) {
@@ -316,4 +370,6 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         }
         return null;
     }
+
+
 }
