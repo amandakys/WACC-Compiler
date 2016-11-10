@@ -37,6 +37,7 @@ CHR: 'chr';
 
 TRUE: 'true';
 FALSE: 'false';
+
 EOL: [\n\r] -> skip;
 COMMENT: '#' .*? [\r\n] -> skip;
 

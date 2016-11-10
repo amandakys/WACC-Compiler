@@ -1,11 +1,11 @@
+package main;
+
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
 
 import java.util.List;
 
-/**
- * Created by donamphuong on 09/11/2016.
- */
+
 public class SyntaxVisitor extends BasicParserBaseVisitor<Void> {
     private String sign = "";
 
@@ -43,25 +43,33 @@ public class SyntaxVisitor extends BasicParserBaseVisitor<Void> {
     }
 
     private BasicParser.StatementContext getLast(BasicParser.StatementContext statement) {
-        List<BasicParser.StatementContext> list = statement.statement();
-        if(list.size() > 0) {
-            return getLast(list.get(list.size() - 1));
+        if(statement instanceof BasicParser.SequenceContext) {
+            List<BasicParser.StatementContext> list = ((BasicParser
+                    .SequenceContext) statement).statement();
+
+            if(list.size() > 0) {
+                return getLast(list.get(list.size() - 1));
+            }
         }
 
         return statement;
     }
 
     private boolean check(BasicParser.StatementContext last) {
-        if(last.IF() != null) {
-            List<BasicParser.StatementContext> stats = last.statement();
+        if(last instanceof BasicParser.IfContext) {
+            List<BasicParser.StatementContext> stats = ((BasicParser
+                    .IfContext) last).statement();
+
             for (int i = 0; i < last.getChildCount(); i++) {
-                if(stats.get(i).RETURN() == null && stats.get(i).EXIT()  == null) {
+                if(stats.get(i) instanceof BasicParser.ReturnContext &&
+                        stats.get(i) instanceof BasicParser.ExitContext) {
                     return true;
                 }
             }
             return false;
         }
 
-        return last.RETURN() == null && last.EXIT() == null;
+        return (last instanceof BasicParser.ReturnContext) && (last
+                instanceof BasicParser.ExitContext);
     }
 }

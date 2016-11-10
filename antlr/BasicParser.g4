@@ -12,28 +12,28 @@ paramlist: param (COMMA param)*;
 
 param: type IDENT;
 
-statement: SKIP
-| type IDENT ASSIGN assignrhs
-| assignlhs ASSIGN assignrhs
-| READ assignlhs
-| FREE expression
-| RETURN expression
-| EXIT expression
-| PRINT expression
-| PRINTLN expression
-| IF expression THEN statement ELSE statement ENDIF
-| WHILE expression DO statement DONE
-| BEGIN statement END
-| statement SEMI statement
+statement: SKIP                                         #skip
+| type IDENT ASSIGN assignrhs                           #var_decl
+| assignlhs ASSIGN assignrhs                            #assignment
+| READ assignlhs                                        #read
+| FREE expression                                       #free
+| RETURN expression                                     #return
+| EXIT expression                                       #exit
+| PRINT expression                                      #print
+| PRINTLN expression                                    #println
+| IF expression THEN statement ELSE statement ENDIF     #if
+| WHILE expression DO statement DONE                    #while
+| BEGIN statement END                                   #begin
+| statement SEMI statement                              #sequence
 ;
 
 assignlhs: IDENT | arrayelem | pairelem ;
 
-assignrhs: expression
-| arrayliter
-| NEWPAIR LPAREN expression COMMA expression RPAREN
-| pairelem
-| CALL IDENT LPAREN arglist? RPAREN
+assignrhs: expression                                   #expr
+| arrayliter                                            #arraylit
+| NEWPAIR LPAREN expression COMMA expression RPAREN     #newpair
+| pairelem                                              #pairelement
+| CALL IDENT LPAREN arglist? RPAREN                     #functioncall
 ;
 
 arglist: expression (COMMA expression)*;
@@ -63,8 +63,8 @@ expression: intliter
 ;
 
 
-binop: STAR | DIV | MOD | PLUS | MINUS | GREATER | GREATEREQUAL
-| LESS | LESSEQUAL | EQUAL | NOTEQUAL | AND | OR
+binop: OR | AND | NOTEQUAL | EQUAL | LESSEQUAL |  LESS | GREATEREQUAL | GREATER
+| MINUS | PLUS | MOD | DIV | STAR
 ;
 
 unop: FACTORIAL | MINUS | LEN | ORD | CHR ;
