@@ -18,4 +18,12 @@ public class IdentAST extends ExpressionAST {
             identObj = lookup;
         }
     }
+
+    @Override
+    public void check() {
+        IDENTIFIER I = Visitor.ST.lookUp(ident);
+        if(I == null) {
+            Utility.error("cannot find identifier");
+        }
+    }
 }

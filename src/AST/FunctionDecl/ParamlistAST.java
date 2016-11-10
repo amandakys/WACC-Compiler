@@ -1,8 +1,6 @@
 package AST.FunctionDecl;
 
 import AST.Node;
-import symbol_table.PARAM;
-import symbol_table.SymbolTable;
 import symbol_table.TYPE;
 
 import java.util.ArrayList;
@@ -12,14 +10,14 @@ import java.util.List;
  * Created by tsd15 on 09/11/16.
  */
 public class ParamlistAST extends Node {
-    List<Node> parameters;
+    List<ParamAST> parameters;
 
-    public ParamlistAST(List<Node> parameters) {
+    public ParamlistAST(List<ParamAST> parameters) {
         super();
         this.parameters = parameters;
     }
 
-    public List<Node> getExpressions() {
+    public List<ParamAST> getExpressions() {
         return parameters;
     }
 
@@ -33,7 +31,7 @@ public class ParamlistAST extends Node {
 
     public List<TYPE> getParamTypes() {
         List<TYPE> paramTypes = new ArrayList<>();
-        for(Node n : parameters) {
+        for(ParamAST n : parameters) {
             paramTypes.add(n.getType());
         }
 
@@ -42,7 +40,7 @@ public class ParamlistAST extends Node {
 
     @Override
     public void check() {
-        for(Node n : parameters) {
+        for(ParamAST n : parameters) {
             n.check();
         }
     }

@@ -1,12 +1,6 @@
 package AST.ExpressionAST;
 
-import AST.Node;
-import antlr.BasicParser;
 import main.Visitor;
-import org.antlr.v4.runtime.tree.TerminalNode;
-import symbol_table.SymbolTable;
-
-import java.util.List;
 
 /**
  * Created by andikoh on 08/11/2016.
@@ -19,11 +13,6 @@ public class IntLiterAST extends ExpressionAST {
     public IntLiterAST(String intsign, String value) {
         this.value = value;
         this.intsign = intsign;
-    }
-
-    public IntLiterAST(String value) {
-        this.value = value;
-        this.intsign = null;
     }
 
     @Override

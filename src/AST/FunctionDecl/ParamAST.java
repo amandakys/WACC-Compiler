@@ -1,7 +1,8 @@
 package AST.FunctionDecl;
 
 import AST.Node;
-import symbol_table.SymbolTable;
+import main.Visitor;
+import symbol_table.PARAM;
 import symbol_table.TYPE;
 
 /**
@@ -19,6 +20,6 @@ public class ParamAST extends Node {
 
     @Override
     public void check() {
-
+        identObj = new PARAM((TYPE) Visitor.ST.lookUpAll(type));
     }
 }

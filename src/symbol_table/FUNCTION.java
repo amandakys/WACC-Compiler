@@ -23,8 +23,9 @@ public class FUNCTION extends IDENTIFIER {
     public List<TYPE> getParamList() {
         return formals;
     }
+
     @Override
     public TYPE getType() {
-        return returntype;
+        return null;
     }
 }

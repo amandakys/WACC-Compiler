@@ -1,7 +1,6 @@
 package AST.StatementAST;
 
 import AST.AssignmentAST.AssignrhsAST;
-import AST.Node;
 import AST.TypeAST.TypeAST;
 import AST.Utility;
 import main.Visitor;
@@ -31,13 +30,14 @@ public class VarDeclAST extends StatementAST{
         String typeName = type.getType().getTypeName();
         IDENTIFIER T = Visitor.ST.lookUpAll(typeName);
         IDENTIFIER V = Visitor.ST.lookUp(ident);
+
         if(T == null) {
             Utility.error("unknown type " + typeName);
         } else if (!(T instanceof TYPE)) {
             Utility.error(typeName + " is not a type");
         } else if (!(T.isDeclarable())) {
             Utility.error("cannot declare " + typeName + " objects");
-        } else if (!(V == null)) {
+        } else if (V != null) {
             Utility.error(ident + " is already declared");
         } else {
             VARIABLE varObj = new VARIABLE((TYPE) T);

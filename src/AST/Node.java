@@ -1,7 +1,6 @@
 package AST;
 
 import symbol_table.IDENTIFIER;
-import symbol_table.SymbolTable;
 import symbol_table.TYPE;
 
 /**
