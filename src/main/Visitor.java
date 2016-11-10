@@ -4,6 +4,7 @@ import AST.*;
 import AST.AssignmentAST.*;
 import AST.ExpressionAST.*;
 import AST.FunctionDecl.ArglistAST;
+import AST.FunctionDecl.FunctionDeclAST;
 import AST.FunctionDecl.ParamAST;
 import AST.FunctionDecl.ParamlistAST;
 import AST.StatementAST.*;
@@ -56,10 +57,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else if (ctx instanceof BasicParser.WhileContext) {
             return visitWhile((BasicParser.WhileContext)ctx);
         } else if (ctx instanceof BasicParser.BeginContext) {
-            return visitBegin((BasicParser.BeginContext)ctx);
-        } else if (ctx instanceof BasicParser.SequenceContext) {
-            return visitSequence((BasicParser.SequenceContext)ctx);
+            return visitBegin((BasicParser.BeginContext) ctx);
         }
+//        } else if (ctx instanceof BasicParser.SequenceContext) {
+//            return visitSequence((BasicParser.SequenceContext)ctx);
+//        }
         return null;
     }
 
@@ -71,7 +73,10 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public VarDeclAST visitVar_decl(BasicParser.Var_declContext ctx) {
-        return new VarDeclAST(visitType(ctx.type()), ctx.IDENT().getText(), visitAssignrhs(ctx.assignrhs()));
+        VarDeclAST var = new VarDeclAST(visitType(ctx.type()), ctx.IDENT()
+                .getText(), visitAssignrhs(ctx.assignrhs()));
+        var.check();
+        return var;
     }
 
     @Override
@@ -119,6 +124,15 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
+    public FunctionDeclAST visitFunction(BasicParser.FunctionContext ctx) {
+        FunctionDeclAST function = new FunctionDeclAST(ctx.type().getText(), ctx
+                .IDENT().getText(),
+                visitParamlist(ctx.paramlist()));
+        function.check();
+        return function;
+    }
+
+    @Override
     public PrintlnAST visitPrintln(BasicParser.PrintlnContext ctx) {
         return new PrintlnAST(visitExpression(ctx.expression()));
     }
@@ -147,17 +161,17 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return new BeginAST(visitStatement(ctx.statement()));
     }
 
-    @Override
-    public SequenceAST visitSequence(BasicParser.SequenceContext ctx) {
-        List<BasicParser.StatementContext> statements = ctx.statement();
-        List<StatementAST> statementASTs = new ArrayList<>();
-
-        for (BasicParser.StatementContext s : statements) {
-            statementASTs.add(visitStatement(s));
-        }
-
-        return new SequenceAST(statementASTs);
-    }
+//    @Override
+//    public SequenceAST visitSequence(BasicParser.SequenceContext ctx) {
+//        List<BasicParser.StatementContext> statements = ctx.statement();
+//        List<StatementAST> statementASTs = new ArrayList<>();
+//
+//        for (BasicParser.StatementContext s : statements) {
+//            statementASTs.add(visitStatement(s));
+//        }
+//
+//        return new SequenceAST(statementASTs);
+//    }
 
     @Override
     public AssignlhsAST visitAssignlhs(BasicParser.AssignlhsContext ctx) {
@@ -238,14 +252,18 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public ArglistAST visitArglist(BasicParser.ArglistContext ctx) {
-        List<BasicParser.ExpressionContext> expressions = ctx.expression();
-        List<ExpressionAST> expressionNodes = new ArrayList<>();
-        for (BasicParser.ExpressionContext e : expressions) {
-            expressionNodes.add(visitExpression(e));
+        if(ctx != null) {
+            List<BasicParser.ExpressionContext> expressions = ctx.expression();
+            List<ExpressionAST> expressionNodes = new ArrayList<>();
+            for (BasicParser.ExpressionContext e : expressions) {
+                expressionNodes.add(visitExpression(e));
+            }
+
+            ArglistAST arglist = new ArglistAST(expressionNodes);
+            return arglist;
         }
 
-        ArglistAST arglist = new ArglistAST(expressionNodes);
-        return arglist;
+        return new ArglistAST(new ArrayList<ExpressionAST>());
     }
 
     public PairelemAST visitPairelem(BasicParser.PairelemContext ctx) {
@@ -288,7 +306,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
                 expressions.add(visitExpression(e));
             }
 
-            expression = new UnopAST(expressions, ctx.unop().getText());
+            //expression = new UnopAST(expressions, ctx.unop().getText());
 
         } else if (ctx.binop() != null) {
             List<ExpressionAST> expressions = new ArrayList<>();
@@ -317,7 +335,8 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public IntLiterAST visitIntliter(BasicParser.IntliterContext ctx) {
-        return new IntLiterAST(ctx.intsign().getText(), ctx.DIGIT().toString());
+        String sign = ctx.intsign() != null ? ctx.intsign().getText() : "";
+        return new IntLiterAST(sign, ctx.DIGIT().toString());
     }
 
     @Override
@@ -348,19 +367,25 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public ParamlistAST visitParamlist(BasicParser.ParamlistContext ctx) {
-        List<BasicParser.ParamContext> parameters = ctx.param();
-        List<Node> parameterNodes = new ArrayList<>();
-        for (BasicParser.ParamContext p :parameters) {
-            parameterNodes.add(visitParam(p));
-        }
+        if(ctx != null) {
+            List<BasicParser.ParamContext> parameters = ctx.param();
+            List<ParamAST> parameterNodes = new ArrayList<>();
+            for (BasicParser.ParamContext p :parameters) {
+                parameterNodes.add(visitParam(p));
+            }
 
-        ParamlistAST paramlist = new ParamlistAST(parameterNodes);
-        return paramlist;
+            ParamlistAST paramlist = new ParamlistAST(parameterNodes);
+            paramlist.check();
+            return paramlist;
+        }
+        return new ParamlistAST(new ArrayList<ParamAST>());
     }
 
     @Override
     public ParamAST visitParam(BasicParser.ParamContext ctx) {
-        return new ParamAST(ctx.type().getText(), ctx.IDENT().getText());
+        ParamAST param = new ParamAST(ctx.type().getText(), ctx.IDENT()
+                .getText());
+        return param;
     }
 
 
@@ -380,7 +405,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public BasetypeAST visitBasetype(BasicParser.BasetypeContext ctx) {
-        return new BasetypeAST(ctx.getText());
+        BasetypeAST baseType = new BasetypeAST(ctx.getText());
+        baseType.check();
+        return baseType;
     }
 
     @Override

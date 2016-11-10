@@ -1,7 +1,6 @@
 package AST;
 
 import symbol_table.IDENTIFIER;
-import symbol_table.SymbolTable;
 import symbol_table.TYPE;
 
 /**
@@ -17,7 +16,7 @@ public abstract class Node  {
     }
 
     public void checkType(Node node) {
-        if (!this.getType().equals(node.getType())) {
+        if (this.getType() != (node.getType())) {
             System.err.println("types do not match");
         }
     }

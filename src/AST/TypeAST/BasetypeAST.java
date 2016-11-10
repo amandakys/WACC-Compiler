@@ -21,5 +21,6 @@ public class BasetypeAST extends TypeAST {
             //type does not exist
             System.err.println("undefined type");
         }
+        identObj = T;
     }
 }

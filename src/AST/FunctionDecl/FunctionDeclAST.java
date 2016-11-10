@@ -11,11 +11,12 @@ public class FunctionDeclAST extends Node {
     private String returntypename;
     private String funcname;
     private ParamlistAST parameters;
-    private FUNCTION funcObj;
 
     public FunctionDeclAST(String returntypename, String funcname, ParamlistAST paramList) {
         super();
-        this.returntypename = returntypename;
+        //return type name will remove all non alphanumeric characters to
+        // search for primitive types
+        this.returntypename = returntypename.replaceAll("^[^a-zA-Z0-9\\s]+|[^a-zA-Z0-9\\s]+$", "");
         this.funcname = funcname;
         this.parameters = paramList;
     }
@@ -32,8 +33,8 @@ public class FunctionDeclAST extends Node {
         } else if (F != null) {
             System.err.println(funcname+" is already declared");
         } else {
-            funcObj= new FUNCTION(null, (TYPE)T, parameters.getParamTypes());
-            Visitor.ST.add(funcname, funcObj);
+            identObj= new FUNCTION(null, (TYPE)T, parameters.getParamTypes());
+            Visitor.ST.add(funcname, identObj);
         }
     }
 
@@ -42,8 +43,7 @@ public class FunctionDeclAST extends Node {
         CheckFunctionNameAndReturnType();
 
         Visitor.ST = new SymbolTable(Visitor.ST);
-        funcObj.setSymbolTable(Visitor.ST);
-        parameters.check();
+        ((FUNCTION) identObj).setSymbolTable(Visitor.ST);
 
         Visitor.ST = Visitor.ST.getEncSymbolTable();
     }

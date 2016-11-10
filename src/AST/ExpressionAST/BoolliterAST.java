@@ -2,8 +2,6 @@ package AST.ExpressionAST;
 
 import main.Visitor;
 
-import java.util.List;
-
 /**
  * Created by npd215 on 09/11/16.
  */

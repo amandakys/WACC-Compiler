@@ -1,6 +1,7 @@
 package AST.StatementAST;
 
-import AST.Node;
+import AST.AssignmentAST.AssignrhsAST;
+import AST.TypeAST.TypeAST;
 import main.Visitor;
 import symbol_table.IDENTIFIER;
 import symbol_table.TYPE;
@@ -12,10 +13,10 @@ import symbol_table.VARIABLE;
 
 public class VarDeclAST extends StatementAST{
     private String ident;
-    private Node type;
-    private Node rhs;
+    private TypeAST type;
+    private AssignrhsAST rhs;
 
-    public VarDeclAST(Node type, String ident, Node rhs) {
+    public VarDeclAST(TypeAST type, String ident, AssignrhsAST rhs) {
         super();
         this.ident = ident;
         this.type = type;
@@ -28,13 +29,14 @@ public class VarDeclAST extends StatementAST{
         String typeName = type.getType().getTypeName();
         IDENTIFIER T = Visitor.ST.lookUpAll(typeName);
         IDENTIFIER V = Visitor.ST.lookUp(ident);
+
         if(T == null) {
             System.err.println("unknown type " + typeName);
         } else if (!(T instanceof TYPE)) {
             System.err.println(typeName + " is not a type");
         } else if (!(T.isDeclarable())) {
             System.err.println("cannot declare " + typeName + " objects");
-        } else if (!(V == null)) {
+        } else if (V != null) {
             System.err.println(ident + " is already declared");
         } else {
             VARIABLE varObj = new VARIABLE((TYPE) T);
