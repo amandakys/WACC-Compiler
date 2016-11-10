@@ -14,6 +14,6 @@ public class BeginAST extends StatementAST {
     }
     @Override
     public void check() {
-        Visitor.ST = new SymbolTable(Visitor.ST.getEncSymbolTable());
+        statement.check();
     }
 }

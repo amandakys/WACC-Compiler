@@ -11,7 +11,7 @@ public class FUNCTION extends IDENTIFIER {
     SymbolTable symtab;
 
     public FUNCTION(SymbolTable ST,TYPE returntype, List<TYPE> formals) {
-        this.symtab = ST;
+        symtab = ST;
         this.returntype = returntype;
         this.formals = formals;
     }

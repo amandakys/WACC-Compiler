@@ -8,9 +8,9 @@ import symbol_table.SymbolTable;
  * Created by tsd15 on 09/11/16.
  */
 public class PairelemAST extends AssignrhsAST{
-    Node expression;
+    ExpressionAST expression;
 
-    public PairelemAST(Node expression) {
+    public PairelemAST(ExpressionAST expression) {
         super();
         this.expression = expression;
     }
@@ -18,5 +18,6 @@ public class PairelemAST extends AssignrhsAST{
     @Override
     public void check() {
         expression.check();
+        identObj = expression.getType();
     }
 }

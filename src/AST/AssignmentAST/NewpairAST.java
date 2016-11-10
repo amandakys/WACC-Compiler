@@ -2,6 +2,9 @@ package AST.AssignmentAST;
 
 import AST.ExpressionAST.ExpressionAST;
 import AST.Node;
+import main.Visitor;
+import symbol_table.IDENTIFIER;
+import symbol_table.PAIR;
 
 import java.util.List;
 
@@ -21,5 +24,7 @@ public class NewpairAST extends AssignrhsAST {
         for(Node p : pairelems) {
             p.check();
         }
+        IDENTIFIER type = Visitor.ST.lookUpAll("pair");
+        identObj = type;
     }
 }
