@@ -29,7 +29,7 @@ public class BinOpAST extends ExpressionAST {
         if(expectedElemType.contains(firstType)) {
             for(int i = 0; i < expr.size() - 1; i++) {
                 if(!expr.get(i).getType().equals(expr.get(i+1).getType())) {
-                    Utility.error("not the same size");
+                    Utility.error("not the same type");
                 }
             }
         } else {
