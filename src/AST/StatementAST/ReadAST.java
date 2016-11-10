@@ -1,5 +1,6 @@
 package AST.StatementAST;
 
+import AST.AssignmentAST.AssignlhsAST;
 import AST.AssignmentAST.AssignmentAST;
 import main.Visitor;
 import symbol_table.TYPE;
@@ -8,9 +9,9 @@ import symbol_table.TYPE;
  * Created by tsd15 on 09/11/16.
  */
 public class ReadAST extends StatementAST {
-    private AssignmentAST.AssignlhsAST expression;
+    private AssignlhsAST expression;
 
-    public ReadAST(AssignmentAST.AssignlhsAST expression) {
+    public ReadAST(AssignlhsAST expression) {
         super();
         this.expression = expression;
     }

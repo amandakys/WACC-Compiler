@@ -9,7 +9,7 @@ import symbol_table.IDENTIFIER;
 /**
  * Created by tsd15 on 09/11/16.
  */
-public class CallAST extends Node {
+public class CallAST extends AssignrhsAST{
     private String funcname;
     private ArglistAST arglist;
     private FUNCTION funcObj;
