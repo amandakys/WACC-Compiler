@@ -16,9 +16,13 @@ public abstract class Node  {
         return identObj.getType();
     }
 
+    public IDENTIFIER getIdentObj() {
+        return identObj;
+    }
+
     public void checkType(Node node) {
         if (!this.getType().equals(node.getType())) {
-            System.err.println("types do not match");
+            Utility.error("types do not match\nexpected: " + this.getType().getTypeName() + "\nactual: " + node.getType().getTypeName());
         }
     }
 }

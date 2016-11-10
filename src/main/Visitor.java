@@ -10,6 +10,8 @@ import AST.StatementAST.*;
 import AST.TypeAST.*;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
+import symbol_table.ARRAY;
+import symbol_table.PAIR;
 import symbol_table.SCALAR;
 import symbol_table.SymbolTable;
 
@@ -93,7 +95,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public FreeAST visitFree(BasicParser.FreeContext ctx) {
-        return new FreeAST(visitExpression(ctx.expression()));
+        FreeAST freeAST = new FreeAST(visitExpression(ctx.expression()));
+        freeAST.check();
+        return freeAST;
     }
 
     @Override
@@ -397,38 +401,49 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public BasetypeAST visitBasetype(BasicParser.BasetypeContext ctx) {
-        return new BasetypeAST(ctx.getText());
+        BasetypeAST basetype = new BasetypeAST(ctx.getText());
+        basetype.check();
+        return basetype;
     }
 
     @Override
     public ArraytypeAST visitArraytype(BasicParser.ArraytypeContext ctx) {
-
+        ArraytypeAST arraytype = null;
         int arrayDepth = ctx.LBRACKET().size();
         if (!ctx.basetype().isEmpty()) {
-            return new ArraytypeAST(visitBasetype(ctx.basetype()), arrayDepth);
+            arraytype = new ArraytypeAST(visitBasetype(ctx.basetype()), arrayDepth);
+            arraytype.check();
         } else if (!ctx.pairtype().isEmpty()) {
-            return new ArraytypeAST(visitPairtype(ctx.pairtype()), arrayDepth);
+            arraytype = new ArraytypeAST(visitPairtype(ctx.pairtype()), arrayDepth);
+            arraytype.check();
         }
-        return null;
+
+        return arraytype;
 
 
     }
 
    @Override
     public PairtypeAST visitPairtype(BasicParser.PairtypeContext ctx) {
-        return new PairtypeAST(visitPairelemtype(ctx.pairelemtype(0)), visit(ctx.pairelemtype(1)));
-    }
+       PairtypeAST pairtype = new PairtypeAST(visitPairelemtype(ctx.pairelemtype(0)), visitPairelemtype(ctx.pairelemtype(1)));
+       pairtype.check();
+       return pairtype;
+   }
 
     @Override
     public PairelemtypeAST visitPairelemtype(BasicParser.PairelemtypeContext ctx) {
+        PairelemtypeAST pairelemtype = null;
         if (ctx.PAIR() != null) {
-            return new PairelemtypeAST(ctx.PAIR().getText());
+            pairelemtype = new PairelemtypeAST(ctx.PAIR().getText());
+            pairelemtype.check();
         } else if (!ctx.basetype().isEmpty()) {
-            return new PairelemtypeAST(visitBasetype(ctx.basetype()));
+            pairelemtype = new PairelemtypeAST(visitBasetype(ctx.basetype()));
+            pairelemtype.check();
         } else if (!ctx.arraytype().isEmpty()) {
-            return new PairelemtypeAST(visitArraytype(ctx.arraytype()));
+            pairelemtype =  new PairelemtypeAST(visitArraytype(ctx.arraytype()));
+            pairelemtype.check();
         }
-        return null;
+        return pairelemtype;
     }
 
 

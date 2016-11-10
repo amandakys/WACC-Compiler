@@ -1,15 +1,16 @@
 package AST.TypeAST;
 
 import AST.Node;
+import symbol_table.PAIR;
 
 /**
  * Created by andikoh on 09/11/2016.
  */
 public class PairtypeAST extends TypeAST {
-    Node first;
-    Node second;
+    PairelemtypeAST first;
+    PairelemtypeAST second;
 
-    public PairtypeAST(Node first, Node second) {
+    public PairtypeAST(PairelemtypeAST first, PairelemtypeAST second) {
         super();
         this.first = first;
         this.second = second;
@@ -20,5 +21,9 @@ public class PairtypeAST extends TypeAST {
         first.check();
         second.check();
         first.checkType(second);
+
+        identObj = new PAIR(first.getType(), second.getType());
     }
+
+
 }

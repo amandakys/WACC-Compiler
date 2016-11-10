@@ -34,7 +34,7 @@ public class SymbolTable {
             if (obj != null) {
                 return obj;
             }
-            S = encSymbolTable;
+            S = S.getEncSymbolTable();
         }
         return null; 
     }
