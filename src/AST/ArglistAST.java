@@ -1,8 +1,6 @@
 package AST;
 
-import symbol_table.FUNCTION;
-import symbol_table.PARAM;
-import symbol_table.SymbolTable;
+import AST.ExpressionAST.ExpressionAST;
 import symbol_table.TYPE;
 
 import java.util.List;
