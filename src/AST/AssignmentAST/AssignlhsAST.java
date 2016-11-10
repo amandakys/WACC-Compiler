@@ -4,12 +4,12 @@ import AST.Node;
 import AST.Utility;
 import main.Visitor;
 import symbol_table.IDENTIFIER;
-import symbol_table.SymbolTable;
 
 /**
  * Created by andikoh on 08/11/2016.
  */
 public class AssignlhsAST extends Node {
+
     String ident;
     Node child;
 

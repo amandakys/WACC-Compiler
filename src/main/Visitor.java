@@ -58,10 +58,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             return visitWhile((BasicParser.WhileContext)ctx);
         } else if (ctx instanceof BasicParser.BeginContext) {
             return visitBegin((BasicParser.BeginContext) ctx);
+        } else if (ctx instanceof  BasicParser.SequenceContext) {
+            return visitSequence((BasicParser.SequenceContext) ctx);
         }
-//        } else if (ctx instanceof BasicParser.SequenceContext) {
-//            return visitSequence((BasicParser.SequenceContext)ctx);
-//        }
         return null;
     }
 
@@ -117,16 +116,6 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return exit;
     }
 
-    /*@Override
-    public OperatorAST visitBinop(BasicParser.BinopContext ctx) {
-        return new OperatorAST(ctx.getText());
-    }*/
-
-    @Override
-    public OperatorAST visitUnop(BasicParser.UnopContext ctx) {
-        return new OperatorAST(ctx.getText());
-    }
-
     @Override
     public PrintAST visitPrint(BasicParser.PrintContext ctx) {
         return new PrintAST(visitExpression(ctx.expression()));
@@ -171,11 +160,13 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public BeginAST visitBegin(BasicParser.BeginContext ctx) {
-        return new BeginAST(visitStatement(ctx.statement()));
+        BeginAST begin = new BeginAST(visitStatement(ctx.statement()));
+        begin.check();
+        return begin;
     }
 
     @Override
-    public Node visitSequence(BasicParser.SequenceContext ctx) {
+    public SequenceAST visitSequence(BasicParser.SequenceContext ctx) {
         List<BasicParser.StatementContext> statements = ctx.statement();
         List<StatementAST> statementASTs = new ArrayList<>();
 
@@ -184,8 +175,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         }
 
         SequenceAST sequence = new SequenceAST(statementASTs);
-        sequence.check();
-        return visitChildren(ctx);
+        //sequence.check();
+        visitChildren(ctx);
+        return sequence;
     }
 
     @Override
@@ -303,6 +295,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         for(BasicParser.ExpressionContext expr: ctx.expression()) {
             list.add(visitExpression(expr));
         }
+
         if (ctx.IDENT()!= null) {
             expression = new IdentAST(ctx.IDENT().getText());
         } else if (ctx.intliter() != null) {
@@ -323,28 +316,23 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
             //expression = new UnopAST(expressions, ctx.unop().getText());
 
-        } else if (ctx.binop() != null) {
+        } else {
             List<ExpressionAST> expressions = new ArrayList<>();
+
             for (BasicParser.ExpressionContext e: ctx.expression()) {
                 expressions.add(visitExpression(e));
             }
-            //TODO:need to fix Binop
-            //expression = new BinOpAST(ctx.expression(), ctx.binop().getText());
 
-        } else if (!ctx.expression().isEmpty()){
-            List<BasicParser.ExpressionContext> expressions = ctx.expression();
-            List<ExpressionAST> expressionNodes = new ArrayList<>();
-
-            for (BasicParser.ExpressionContext e : expressions) {
-                expressionNodes.add(visitExpression(e));
+            if (ctx.binop() != null) {
+                expression = new BinOpAST(ctx.binop().getText(), expressions);
+            } else if (!ctx.expression().isEmpty()){
+                //TODO: need to fix instance where expression is called from expression
+                //should we make epxressionAST abstract?
+                //possible fix is to recursively call visitExpression here
+                //expression = new ExpressionAST(expressionNodes);
             }
-
-            //TODO: need to fix instance where expression is called from expression
-            //should we make epxressionAST abstract?
-            //possible fix is to recursively call visitExpression here
-            //expression = new ExpressionAST(expressionNodes);
         }
-
+        expression.check();
         return expression;
     }
 
@@ -361,11 +349,6 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public BoolliterAST visitBoolliter(BasicParser.BoolliterContext ctx) {
-        return new BoolliterAST(ctx.getText());
-    }
-
-    @Override
-    public Node visitBinop(BasicParser.BinopContext ctx) {
         return new BoolliterAST(ctx.getText());
     }
 

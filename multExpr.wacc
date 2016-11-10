@@ -1,0 +1,10 @@
+# evaluating multiplication
+
+# Output:
+# 15
+
+# Program:
+
+begin
+  println 3 * 5 || 5
+end

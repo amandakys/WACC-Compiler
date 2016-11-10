@@ -1,14 +1,14 @@
 package AST.StatementAST;
 
-import AST.Node;
+import AST.ExpressionAST.ExpressionAST;
 
 /**
  * Created by tsd15 on 09/11/16.
  */
 public class PrintAST extends StatementAST {
-    Node expression;
+    ExpressionAST expression;
 
-    public PrintAST(Node expression) {
+    public PrintAST(ExpressionAST expression) {
         super();
         this.expression = expression;
     }

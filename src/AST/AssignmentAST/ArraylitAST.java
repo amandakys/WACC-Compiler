@@ -2,14 +2,11 @@ package AST.AssignmentAST;
 
 import AST.ExpressionAST.ExpressionAST;
 import AST.Node;
-import symbol_table.SymbolTable;
 
 import java.util.List;
 
-/**
- * Created by tsd15 on 09/11/16.
- */
 public class ArraylitAST extends AssignrhsAST {
+    //Array list has stores a list of expression
     private List<ExpressionAST> arraylits;
 
     public ArraylitAST(List<ExpressionAST> arraylits) {
@@ -20,6 +17,7 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void check() {
+        //all expressions in the array list must have the same type
         for(Node a : arraylits) {
             a.check();
         }
