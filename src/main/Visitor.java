@@ -72,18 +72,18 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
+    public AssignmentAST visitAssignment(BasicParser.AssignmentContext ctx) {
+        AssignmentAST assignment = new AssignmentAST(visitAssignlhs(ctx.assignlhs()), visitAssignrhs(ctx.assignrhs()));
+        assignment.check();
+        return assignment;
+    }
+
+    @Override
     public VarDeclAST visitVar_decl(BasicParser.Var_declContext ctx) {
         VarDeclAST var = new VarDeclAST(visitType(ctx.type()), ctx.IDENT()
                 .getText(), visitAssignrhs(ctx.assignrhs()));
         var.check();
         return var;
-    }
-
-    @Override
-    public AssignmentAST visitAssignment(BasicParser.AssignmentContext ctx) {
-        AssignmentAST assignment = new AssignmentAST(visitAssignlhs(ctx.assignlhs()), visitAssignrhs(ctx.assignrhs()));
-        assignment.check();
-        return assignment;
     }
 
     @Override
@@ -133,17 +133,19 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public FunctionDeclAST visitFunction(BasicParser.FunctionContext ctx) {
+    public Node visitFunction(BasicParser.FunctionContext ctx) {
         FunctionDeclAST function = new FunctionDeclAST(ctx.type().getText(), ctx
                 .IDENT().getText(),
                 visitParamlist(ctx.paramlist()));
         function.check();
-        return function;
+        return visitChildren(ctx);
     }
 
     @Override
     public PrintlnAST visitPrintln(BasicParser.PrintlnContext ctx) {
-        return new PrintlnAST(visitExpression(ctx.expression()));
+        PrintlnAST print = new PrintlnAST(visitExpression(ctx.expression()));
+        print.check();
+        return print;
     }
 
     @Override
@@ -172,17 +174,19 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return new BeginAST(visitStatement(ctx.statement()));
     }
 
-//    @Override
-//    public SequenceAST visitSequence(BasicParser.SequenceContext ctx) {
-//        List<BasicParser.StatementContext> statements = ctx.statement();
-//        List<StatementAST> statementASTs = new ArrayList<>();
-//
-//        for (BasicParser.StatementContext s : statements) {
-//            statementASTs.add(visitStatement(s));
-//        }
-//
-//        return new SequenceAST(statementASTs);
-//    }
+    @Override
+    public Node visitSequence(BasicParser.SequenceContext ctx) {
+        List<BasicParser.StatementContext> statements = ctx.statement();
+        List<StatementAST> statementASTs = new ArrayList<>();
+
+        for (BasicParser.StatementContext s : statements) {
+            statementASTs.add(visitStatement(s));
+        }
+
+        SequenceAST sequence = new SequenceAST(statementASTs);
+        sequence.check();
+        return visitChildren(ctx);
+    }
 
     @Override
     public AssignlhsAST visitAssignlhs(BasicParser.AssignlhsContext ctx) {
