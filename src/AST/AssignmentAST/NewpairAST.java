@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by tsd15 on 09/11/16.
  */
-public class NewpairAST extends Node {
+public class NewpairAST extends AssignrhsAST {
     List<ExpressionAST> pairelems;
 
     public NewpairAST(List<ExpressionAST> pairelems) {

@@ -160,14 +160,14 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public AssignmentAST.AssignlhsAST visitAssignlhs(BasicParser.AssignlhsContext ctx) {
-        AssignmentAST.AssignlhsAST lhs;
+    public AssignlhsAST visitAssignlhs(BasicParser.AssignlhsContext ctx) {
+        AssignlhsAST lhs;
         if (ctx.IDENT() != null) {
-            lhs = new AssignmentAST.AssignlhsAST(ctx.IDENT().getText());
+            lhs = new AssignlhsAST(ctx.IDENT().getText());
         } else if (ctx.arrayelem() != null){
-            lhs = new AssignmentAST.AssignlhsAST(visitArrayelem(ctx.arrayelem()));
+            lhs = new AssignlhsAST(visitArrayelem(ctx.arrayelem()));
         } else {
-            lhs = new AssignmentAST.AssignlhsAST(visitPairelem(ctx.pairelem()));
+            lhs = new AssignlhsAST(visitPairelem(ctx.pairelem()));
         }
         return lhs;
     }
@@ -199,16 +199,20 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public ArraylitAST visitArraylit(BasicParser.ArraylitContext ctx) {
-        List<BasicParser.ExpressionContext> expressions = ctx.arrayliter().expression();
-        List<Node> expressionNodes = new ArrayList<>();
-        for (BasicParser.ExpressionContext e : expressions) {
-            expressionNodes.add(visitExpression(e));
-        }
-
-        ArraylitAST newpair = new ArraylitAST(expressionNodes);
-        return  newpair;
+        return visitArrayliter(ctx.arrayliter());
     }
 
+    @Override
+    public ArraylitAST visitArrayliter(BasicParser.ArrayliterContext ctx) {
+        List<BasicParser.ExpressionContext> expressions = ctx.expression();
+        List<ExpressionAST> expressionASTs = new ArrayList<>();
+
+        for (BasicParser.ExpressionContext e : expressions) {
+            expressionASTs.add(visitExpression(e));
+        }
+
+        return new ArraylitAST(expressionASTs);
+    }
     @Override
     public NewpairAST visitNewpair(BasicParser.NewpairContext ctx) {
         List<BasicParser.ExpressionContext> expressions = ctx.expression();
@@ -277,16 +281,22 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else if (ctx.strliter() != null) {
             expression = visitStrliter(ctx.strliter());
         } else if (ctx.arrayelem() != null) {
-            expression = visitArrayelem(ctx.arrayelem()));
+            expression = visitArrayelem(ctx.arrayelem());
         } else if (ctx.unop() != null) {
-            expression = visitUnop(ctx.unop()));
-        } else if (ctx.binop() != null) {
             List<ExpressionAST> expressions = new ArrayList<>();
             for (BasicParser.ExpressionContext e: ctx.expression()) {
                 expressions.add(visitExpression(e));
             }
 
-            expression = new BinOpAST(ctx.expression(), ctx.binop().getText(););
+            expression = new UnopAST(expressions, ctx.unop().getText());
+
+        } else if (ctx.binop() != null) {
+            List<ExpressionAST> expressions = new ArrayList<>();
+            for (BasicParser.ExpressionContext e: ctx.expression()) {
+                expressions.add(visitExpression(e));
+            }
+            //TODO:need to fix Binop
+            //expression = new BinOpAST(ctx.expression(), ctx.binop().getText());
 
         } else if (!ctx.expression().isEmpty()){
             List<BasicParser.ExpressionContext> expressions = ctx.expression();
@@ -295,7 +305,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             for (BasicParser.ExpressionContext e : expressions) {
                 expressionNodes.add(visitExpression(e));
             }
-            expression = new ExpressionAST(expressionNodes);
+
+            //TODO: need to fix instance where expression is called from expression
+            //should we make epxressionAST abstract?
+            //possible fix is to recursively call visitExpression here
+            //expression = new ExpressionAST(expressionNodes);
         }
 
         return expression;

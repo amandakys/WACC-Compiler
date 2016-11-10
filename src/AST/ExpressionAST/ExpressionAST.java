@@ -1,5 +1,6 @@
 package AST.ExpressionAST;
 
+import AST.AssignmentAST.AssignrhsAST;
 import AST.Node;
 import antlr.BasicParser;
 import main.Visitor;
@@ -12,5 +13,5 @@ import java.util.List;
 /**
  * Created by andikoh on 08/11/2016.
  */
-public abstract class ExpressionAST extends Node {
+public abstract class ExpressionAST extends AssignrhsAST {
 }
