@@ -1,16 +1,27 @@
 package main;
 
+<<<<<<< HEAD
+=======
+import AST.*;
+>>>>>>> semanticsV2
 import AST.AssignmentAST.*;
 import AST.ExpressionAST.*;
 import AST.FunctionDecl.ArglistAST;
 import AST.FunctionDecl.FunctionDeclAST;
 import AST.FunctionDecl.ParamAST;
 import AST.FunctionDecl.ParamlistAST;
+<<<<<<< HEAD
 import AST.Node;
+=======
+>>>>>>> semanticsV2
 import AST.StatementAST.*;
 import AST.TypeAST.*;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
+<<<<<<< HEAD
+=======
+import symbol_table.ARRAY;
+>>>>>>> semanticsV2
 import symbol_table.PAIR;
 import symbol_table.SCALAR;
 import symbol_table.SymbolTable;
@@ -36,6 +47,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ST = next;
     }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> semanticsV2
     public StatementAST visitStatement(BasicParser.StatementContext ctx) {
         if (ctx instanceof BasicParser.SkipContext) {
             return visitSkip((BasicParser.SkipContext)ctx);
@@ -318,7 +334,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
                 expressions.add(visitExpression(e));
             }
 
+<<<<<<< HEAD
             //expression = new UnopAST(expressions, ctx.unop().getText());
+=======
+            expression = new UnopAST(expressions, ctx.unop().getText());
+>>>>>>> semanticsV2
 
         } else {
             List<ExpressionAST> expressions = new ArrayList<>();

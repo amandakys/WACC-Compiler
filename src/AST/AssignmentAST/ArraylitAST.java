@@ -1,6 +1,10 @@
 package AST.AssignmentAST;
 
 import AST.ExpressionAST.ExpressionAST;
+<<<<<<< HEAD
+=======
+import AST.Node;
+>>>>>>> semanticsV2
 import AST.Utility;
 import symbol_table.ARRAY;
 import symbol_table.TYPE;

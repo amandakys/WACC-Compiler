@@ -4,6 +4,10 @@ import AST.ExpressionAST.ExpressionAST;
 import AST.Node;
 import main.Visitor;
 import symbol_table.IDENTIFIER;
+<<<<<<< HEAD
+=======
+import symbol_table.PAIR;
+>>>>>>> semanticsV2
 
 import java.util.List;
 
