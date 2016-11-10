@@ -1,8 +1,6 @@
 package AST;
 
-import symbol_table.IDENTIFIER;
-import symbol_table.SCALAR;
-import symbol_table.SymbolTable;
+import AST.ExpressionAST.ExpressionAST;
 
 import java.util.List;
 

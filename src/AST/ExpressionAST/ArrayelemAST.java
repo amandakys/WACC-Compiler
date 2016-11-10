@@ -1,5 +1,6 @@
-package AST;
+package AST.ExpressionAST;
 
+import AST.Node;
 import antlr.BasicParser;
 import main.Visitor;
 import symbol_table.IDENTIFIER;
@@ -11,7 +12,7 @@ import java.util.List;
 /**
  * Created by andikoh on 08/11/2016.
  */
-public class ArrayelemAST extends Node {
+public class ArrayelemAST extends ExpressionAST {
     String ident;
     List<Node> expressions = new ArrayList<>();
 

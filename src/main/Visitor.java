@@ -1,6 +1,7 @@
 package main;
 
 import AST.*;
+import AST.ExpressionAST.*;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
 import symbol_table.SCALAR;
@@ -94,6 +95,16 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ExitAST exit = new ExitAST(visitExpression(ctx.expression()));
         exit.check();
         return exit;
+    }
+
+    @Override
+    public OperatorAST visitBinop(BasicParser.BinopContext ctx) {
+        return new OperatorAST(ctx.getText());
+    }
+
+    @Override
+    public OperatorAST visitUnop(BasicParser.UnopContext ctx) {
+        return new OperatorAST(ctx.getText());
     }
 
     @Override
@@ -245,29 +256,32 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public ExpressionAST visitExpression(BasicParser.ExpressionContext ctx) {
         ExpressionAST expression = null;
-        if (ctx.getText() != null) {
-            expression = new ExpressionAST(ctx.getText());
-        } else if (ctx.intliter() != null) {
-            expression = new ExpressionAST(visitIntliter(ctx.intliter()));
+        List<ExpressionAST> list = new ArrayList<>();
+        for(BasicParser.ExpressionContext expr: ctx.expression()) {
+            list.add(visitExpression(expr));
+        }
+        /*if (ctx.IDENT()!= null) {
+            expression = new ExpressionAST(ctx.IDENT().getText());
+        } else*/ if (ctx.intliter() != null) {
+            expression = visitIntliter(ctx.intliter());
         } else if (ctx.boolliter() != null) {
-            expression = new ExpressionAST(visitBoolliter(ctx.boolliter()));
+            expression = visitBoolliter(ctx.boolliter());
         } else if (ctx.charliter() != null) {
-            expression = new ExpressionAST(visitCharliter(ctx.charliter()));
+            expression = visitCharliter(ctx.charliter());
         } else if (ctx.strliter() != null) {
-            expression = new ExpressionAST(visitStrliter(ctx.strliter()));
+            expression = visitStrliter(ctx.strliter());
         } else if (ctx.arrayelem() != null) {
-            expression = new ExpressionAST(visitArrayelem(ctx.arrayelem()));
+            expression = visitArrayelem(ctx.arrayelem()));
         } else if (ctx.unop() != null) {
-            expression = new ExpressionAST(visitUnop(ctx.unop()));
+            expression = visitUnop(ctx.unop()));
         } else if (ctx.binop() != null) {
-            List<ExpressionAST> expressions =;
+            List<ExpressionAST> expressions = new ArrayList<>();
             for (BasicParser.ExpressionContext e: ctx.expression()) {
                 expressions.add(visitExpression(e));
             }
 
             expression = new BinopAST(ctx.expression(), ctx.binop().getText(););
 
-            expression = new ExpressionAST(visitBinop(ctx.binop()));
         } else if (!ctx.expression().isEmpty()){
             List<BasicParser.ExpressionContext> expressions = ctx.expression();
             List<ExpressionAST> expressionNodes = new ArrayList<>();
@@ -283,7 +297,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public IntLiterAST visitIntliter(BasicParser.IntliterContext ctx) {
-        return new IntLiterAST(visitChildren(ctx), ctx.DIGIT());
+        return new IntLiterAST(ctx.intsign().getText(), ctx.DIGIT().toString());
     }
 
     @Override
@@ -299,11 +313,20 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public Node visitBinop(BasicParser.BinopContext ctx) {
-
-        //TODOL implement
-        return null;
+        return new BoolliterAST(ctx.getText());
     }
 
+    @Override
+    public CharLit visitCharliter(BasicParser.CharliterContext ctx) {
+        return new CharLit(ctx.getText());
+    }
+
+    @Override
+    public StringLiterAST visitStrliter(BasicParser.StrliterContext ctx) {
+        return new StringLiterAST(ctx.getText());
+    }
+
+    @Override
     public ParamlistAST visitParamlist(BasicParser.ParamlistContext ctx) {
         List<BasicParser.ParamContext> parameters = ctx.param();
         List<Node> parameterNodes = new ArrayList<>();

@@ -1,7 +1,7 @@
 package AST;
 
+import AST.ExpressionAST.ExpressionAST;
 import main.Visitor;
-import symbol_table.SymbolTable;
 import symbol_table.TYPE;
 
 /**
