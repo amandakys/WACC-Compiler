@@ -1,8 +1,6 @@
 package AST;
 
-import sun.awt.Symbol;
 import symbol_table.IDENTIFIER;
-import symbol_table.SymbolTable;
 import symbol_table.TYPE;
 
 /**

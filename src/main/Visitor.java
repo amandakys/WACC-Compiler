@@ -321,7 +321,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
                 expressions.add(visitExpression(e));
             }
 
-            //expression = new UnopAST(expressions, ctx.unop().getText());
+            expression = new UnopAST(expressions, ctx.unop().getText());
 
         } else {
             List<ExpressionAST> expressions = new ArrayList<>();
