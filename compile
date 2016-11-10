@@ -4,4 +4,4 @@
 # but do *not* change its name.
 
 name=$1
-java -ea -cp bin:lib/antlr-4.4-complete.jar Main $1
+java -ea -cp bin:lib/antlr-4.4-complete.jar main.Main $1
