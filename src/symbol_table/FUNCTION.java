@@ -1,7 +1,5 @@
 package symbol_table;
 
-import AST.ParamlistAST;
-
 import java.util.List;
 
 /**

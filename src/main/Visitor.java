@@ -1,7 +1,13 @@
 package main;
 
 import AST.*;
+import AST.AssignmentAST.*;
 import AST.ExpressionAST.*;
+import AST.FunctionDecl.ArglistAST;
+import AST.FunctionDecl.ParamAST;
+import AST.FunctionDecl.ParamlistAST;
+import AST.StatementAST.*;
+import AST.TypeAST.*;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
 import symbol_table.SCALAR;
@@ -154,14 +160,14 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public AssignlhsAST visitAssignlhs(BasicParser.AssignlhsContext ctx) {
-        AssignlhsAST lhs;
+    public AssignmentAST.AssignlhsAST visitAssignlhs(BasicParser.AssignlhsContext ctx) {
+        AssignmentAST.AssignlhsAST lhs;
         if (ctx.IDENT() != null) {
-            lhs = new AssignlhsAST(ctx.IDENT().getText());
+            lhs = new AssignmentAST.AssignlhsAST(ctx.IDENT().getText());
         } else if (ctx.arrayelem() != null){
-            lhs = new AssignlhsAST(visitArrayelem(ctx.arrayelem()));
+            lhs = new AssignmentAST.AssignlhsAST(visitArrayelem(ctx.arrayelem()));
         } else {
-            lhs = new AssignlhsAST(visitPairelem(ctx.pairelem()));
+            lhs = new AssignmentAST.AssignlhsAST(visitPairelem(ctx.pairelem()));
         }
         return lhs;
     }
