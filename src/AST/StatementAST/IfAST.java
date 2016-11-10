@@ -1,5 +1,7 @@
 package AST.StatementAST;
 
+import AST.ExpressionAST.ExpressionAST;
+
 /**
  * Created by andikoh on 10/11/2016.
  */
