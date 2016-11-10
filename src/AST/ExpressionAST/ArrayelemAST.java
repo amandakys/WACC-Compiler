@@ -1,6 +1,7 @@
 package AST.ExpressionAST;
 
 import AST.Node;
+import AST.Utility;
 import antlr.BasicParser;
 import main.Visitor;
 import symbol_table.IDENTIFIER;
@@ -27,7 +28,7 @@ public class ArrayelemAST extends ExpressionAST {
         //check idents
         IDENTIFIER N = Visitor.ST.lookUp(ident);
         if (N == null) {
-            System.err.println("undeclared variable");
+            Utility.error("undeclared variable");
         } else {
             identObj = N;
         }

@@ -1,6 +1,7 @@
 package AST.FunctionDecl;
 
 import AST.Node;
+import AST.Utility;
 import main.Visitor;
 import symbol_table.*;
 
@@ -24,13 +25,13 @@ public class FunctionDeclAST extends Node {
         IDENTIFIER T = Visitor.ST.lookUpAll(returntypename);
         IDENTIFIER F = Visitor.ST.lookUp(funcname);
         if (T == null) {
-            System.err.println("Unknown type "+returntypename);
+            Utility.error("Unknown type "+returntypename);
         } else if (!(T instanceof TYPE)) {
-            System.err.println(returntypename+" is not a type");
+            Utility.error(returntypename+" is not a type");
         } else if (!((TYPE)T).isReturnable()) {
-            System.err.println("cannot return "+returntypename+" objects");
+            Utility.error("cannot return "+returntypename+" objects");
         } else if (F != null) {
-            System.err.println(funcname+" is already declared");
+            Utility.error(funcname+" is already declared");
         } else {
             funcObj= new FUNCTION(null, (TYPE)T, parameters.getParamTypes());
             Visitor.ST.add(funcname, funcObj);

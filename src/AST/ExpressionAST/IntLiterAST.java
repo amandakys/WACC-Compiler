@@ -21,6 +21,11 @@ public class IntLiterAST extends ExpressionAST {
         this.intsign = intsign;
     }
 
+    public IntLiterAST(String value) {
+        this.value = value;
+        this.intsign = null;
+    }
+
     @Override
     public void check() {
         identObj = Visitor.ST.lookUpAll("int");

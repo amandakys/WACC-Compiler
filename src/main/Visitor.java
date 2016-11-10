@@ -71,7 +71,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public VarDeclAST visitVar_decl(BasicParser.Var_declContext ctx) {
-        return new VarDeclAST(visitType(ctx.type()), ctx.IDENT().getText(), visitAssignrhs(ctx.assignrhs()));
+        VarDeclAST varDecl = new VarDeclAST(visitType(ctx.type()), ctx.IDENT().getText(), visitAssignrhs(ctx.assignrhs()));
+        varDecl.check();
+        return varDecl;
     }
 
     @Override
@@ -83,7 +85,10 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public ReadAST visitRead(BasicParser.ReadContext ctx) {
-        return new ReadAST(visitAssignlhs(ctx.assignlhs()));
+
+        ReadAST readAST = new ReadAST(visitAssignlhs(ctx.assignlhs()));
+        readAST.check();
+        return  readAST;
     }
 
     @Override
@@ -93,12 +98,18 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public ReturnAST visitReturn(BasicParser.ReturnContext ctx) {
-        return new ReturnAST(visitExpression(ctx.expression()));
+        if(!(ctx.getParent() instanceof BasicParser.FunctionContext)) {
+            System.err.println("Global return statement");
+        }
+        ReturnAST returnAST = new ReturnAST(visitExpression(ctx.expression()));
+        returnAST.check();
+        return returnAST;
     }
 
     @Override
     public ExitAST visitExit(BasicParser.ExitContext ctx) {
-        ExitAST exit = new ExitAST(visitExpression(ctx.expression()));
+        ExpressionAST expression = visitExpression(ctx.expression());
+        ExitAST exit = new ExitAST(expression);
         exit.check();
         return exit;
     }
@@ -130,7 +141,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         StatementAST then = visitStatement(ctx.statement(0));
         StatementAST elseSt = visitStatement(ctx.statement(1));
 
-        return new IfAST(expr, then, elseSt);
+        IfAST ifAST = new IfAST(expr, then, elseSt);
+        ifAST.check();
+        return ifAST;
     }
 
     @Override
@@ -270,9 +283,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         for(BasicParser.ExpressionContext expr: ctx.expression()) {
             list.add(visitExpression(expr));
         }
-        /*if (ctx.IDENT()!= null) {
-            expression = new ExpressionAST(ctx.IDENT().getText());
-        } else*/ if (ctx.intliter() != null) {
+        if (ctx.IDENT()!= null) {
+            expression = new IdentAST(ctx.IDENT().getText());
+        } else if (ctx.intliter() != null) {
             expression = visitIntliter(ctx.intliter());
         } else if (ctx.boolliter() != null) {
             expression = visitBoolliter(ctx.boolliter());
@@ -317,7 +330,12 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public IntLiterAST visitIntliter(BasicParser.IntliterContext ctx) {
-        return new IntLiterAST(ctx.intsign().getText(), ctx.DIGIT().toString());
+        if (ctx.intsign() != null) {
+            return new IntLiterAST(ctx.intsign().getText(), ctx.DIGIT().toString());
+        } else {
+            return new IntLiterAST(ctx.DIGIT().toString());
+        }
+
     }
 
     @Override
@@ -327,8 +345,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public BoolliterAST visitBoolliter(BasicParser.BoolliterContext ctx) {
-        //TODO: implement
-        return null;
+        return new BoolliterAST(ctx.getText());
     }
 
     @Override
@@ -337,8 +354,8 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public CharLit visitCharliter(BasicParser.CharliterContext ctx) {
-        return new CharLit(ctx.getText());
+    public CharLitAST visitCharliter(BasicParser.CharliterContext ctx) {
+        return new CharLitAST(ctx.getText());
     }
 
     @Override

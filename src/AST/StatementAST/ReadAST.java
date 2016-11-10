@@ -2,6 +2,7 @@ package AST.StatementAST;
 
 import AST.AssignmentAST.AssignlhsAST;
 import AST.AssignmentAST.AssignmentAST;
+import AST.Utility;
 import main.Visitor;
 import symbol_table.TYPE;
 
@@ -24,8 +25,9 @@ public class ReadAST extends StatementAST {
 
         TYPE charType = Visitor.ST.lookUpAll("char").getType();
 
-        if (t != intType && t != charType) {
+        if (!t.equals(intType) && !t.equals(charType)){
             //error
+            Utility.error("read only takes int or char types");
         }
 
 
