@@ -31,7 +31,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ST.add("char", new SCALAR("char"));
         ST.add("string", new SCALAR("string"));
 
-        ST.add("pair", new PAIR());
+//        ST.add("pair", new PAIR());
 
         SymbolTable next = new SymbolTable(ST);
         ST = next;
@@ -151,6 +151,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         function.check();
         Visitor.ST = Visitor.ST.getEncSymbolTable();
         Visitor.ST.add(ctx.IDENT().getText(), function.getIdentObj());
+        visitChildren(ctx);
         return function;
     }
 
@@ -297,7 +298,13 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     public PairelemAST visitPairelem(BasicParser.PairelemContext ctx) {
-        return new PairelemAST(visitExpression(ctx.expression()));
+        String token = null;
+        if (ctx.FIRST() != null) {
+            token = ctx.FIRST().getText();
+        } else if (ctx.SECOND() != null) {
+            token = ctx.SECOND().getText();
+        }
+        return new PairelemAST( token, visitExpression(ctx.expression()));
     }
 
     @Override
@@ -321,6 +328,8 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
         if (ctx.IDENT()!= null) {
             expression = new IdentAST(ctx.IDENT().getText());
+        } else if (ctx.PAIRLITERAL() != null) {
+            expression = new PairliterAST(ctx.PAIRLITERAL().getText());
         } else if (ctx.intliter() != null) {
             expression = visitIntliter(ctx.intliter());
         } else if (ctx.boolliter() != null) {

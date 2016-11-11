@@ -32,7 +32,9 @@ public class PairelemtypeAST extends Node {
 
         IDENTIFIER T;
         if (pairtoken != null) {
-            T = Visitor.ST.lookUpAll("pair"); //nested pair
+            //nested pair
+            T = new PAIR(null, null);
+            //TODO: do we need to add nested pair to symbol table
         } else {
             T = Visitor.ST.lookUpAll(type.getType().getTypeName());
         }

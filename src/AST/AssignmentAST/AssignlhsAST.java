@@ -40,6 +40,7 @@ public class AssignlhsAST extends Node {
             }
         } else {
             child.check();
+            this.identObj = child.getType();
         }
     }
 }

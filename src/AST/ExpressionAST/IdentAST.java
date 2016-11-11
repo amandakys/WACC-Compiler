@@ -11,11 +11,11 @@ public class IdentAST extends ExpressionAST {
     String ident;
     public IdentAST(String ident) {
         this.ident = ident;
-        IDENTIFIER lookup = Visitor.ST.lookUpAll(ident);
-        if (lookup == null) {
+        IDENTIFIER identType = Visitor.ST.lookUpAll(ident);
+        if (identType == null) {
             Utility.error("undefined expression: " + ident);
         } else {
-            identObj = lookup;
+            identObj = identType;
         }
     }
 
@@ -25,5 +25,9 @@ public class IdentAST extends ExpressionAST {
         if(I == null) {
             Utility.error("cannot find identifier: "+ ident);
         }
+    }
+
+    public String getIdent() {
+        return this.ident;
     }
 }
