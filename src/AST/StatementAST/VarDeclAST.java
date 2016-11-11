@@ -39,7 +39,7 @@ public class VarDeclAST extends StatementAST{
             IDENTIFIER T = new PAIR(f, s);
             IDENTIFIER V = Visitor.ST.lookUp(ident);
             if (V != null) {
-                Utility.error(ident + "is already declared");
+                Utility.error(ident + " is already declared");
             } else {
                 Visitor.ST.add(ident, T);
             }
