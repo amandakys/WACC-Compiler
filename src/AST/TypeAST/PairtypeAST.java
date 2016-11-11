@@ -25,8 +25,7 @@ public class PairtypeAST extends TypeAST {
         second.check();
 
         identObj = new PAIR(first.getType(), second.getType());
-//        IDENTIFIER T = Visitor.ST.lookUpAll("pair");
-//        identObj = T;
+
     }
 
     public TYPE typeFirst() {

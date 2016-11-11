@@ -136,7 +136,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             ctx = ctx.getParent();
 
             if(ctx instanceof BasicParser.ProgramContext) {
-                Utility.error("Global return error");
+                Utility.error(ctx, "is supposed to be in a function");
             }
         }
 
@@ -177,7 +177,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         if(ST.lookUp(funcName) == null) {
             Visitor.ST.add(funcName, function.getIdentObj());
         } else {
-            Utility.error("Function already existed");
+            Utility.error(ctx, "function " + " already existed");
         }
 
         return function;
