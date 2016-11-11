@@ -23,6 +23,9 @@ public class SymbolTable {
         dict.put(name, object);
     }
 
+    public boolean containsValue(IDENTIFIER ident) {
+        return dict.containsValue(ident);
+    }
     public IDENTIFIER lookUp(String name) {
         return dict.get(name);
     }

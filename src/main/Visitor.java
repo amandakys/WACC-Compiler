@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class Visitor extends BasicParserBaseVisitor<Node>{
     public static SymbolTable ST = new SymbolTable(null);
+    private static List<ParserRuleContext> toBeVisited = new ArrayList<>();
 
     public Visitor() {
         ST.add("bool", new SCALAR("bool"));
@@ -309,6 +310,15 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public CallAST visitFunctioncall(BasicParser.FunctioncallContext ctx) {
         CallAST call = new CallAST(ctx.IDENT().getText(), visitArglist(ctx.arglist()));
+
+        /*
+        If the function has not been declared, put the assignment statement (callAST's parent) inside the toBeVisited
+        list and revisit it at the end
+         */
+        if(ST.lookUp(ctx.IDENT().getText()) == null) {
+            toBeVisited.add(ctx.getParent());
+        }
+
         return call;
     }
 
@@ -615,5 +625,10 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return pairelemtype;
     }
 
+    public void checkUndefinedFunc() {
+       while(!toBeVisited.isEmpty()) {
+           
+       }
+    }
 
 }

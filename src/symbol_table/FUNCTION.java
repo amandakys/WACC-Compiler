@@ -6,9 +6,9 @@ import java.util.List;
  * Created by tsd15 on 09/11/16.
  */
 public class FUNCTION extends IDENTIFIER {
-    TYPE returntype;
-    List<TYPE> formals;
-    SymbolTable symtab;
+    private TYPE returntype;
+    private List<TYPE> formals;
+    private SymbolTable symtab;
 
     public FUNCTION(SymbolTable ST,TYPE returntype, List<TYPE> formals) {
         symtab = ST;
