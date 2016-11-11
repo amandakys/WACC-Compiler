@@ -22,8 +22,9 @@ public class Main {
         BasicParser parser = new BasicParser(tokens);
         ParseTree tree = parser.program();
 
-        parser.removeErrorListeners();
-        parser.addErrorListener(new SyntaxError());
+        if(parser.getNumberOfSyntaxErrors() > 0) {
+            System.exit(100);
+        }
 
         //syntax checking
         SyntaxVisitor syntaxVisitor = new SyntaxVisitor();

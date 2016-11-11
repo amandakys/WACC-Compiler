@@ -52,7 +52,7 @@ RBRACKET: ']' ;
 COMMA: ',' ;
 SEMI: ';' ;
 
-FACTORIAL: '!';
+NOT: '!';
 MINUS: '-';
 
 STAR: '*';
