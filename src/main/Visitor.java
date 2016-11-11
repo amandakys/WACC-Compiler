@@ -14,10 +14,7 @@ import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import symbol_table.PAIR;
-import symbol_table.SCALAR;
-import symbol_table.STRING;
-import symbol_table.SymbolTable;
+import symbol_table.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -174,10 +171,14 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
         Visitor.ST = Visitor.ST.getEncSymbolTable();
         String funcName = ctx.IDENT().getText();
-        if(ST.lookUp(funcName) == null) {
+
+        IDENTIFIER func = ST.lookUp(funcName);
+
+        if(func == null ||
+                ((func instanceof FUNCTION) && ((FUNCTION) func).getReturntype() == null)) {
             Visitor.ST.add(funcName, function.getIdentObj());
         } else {
-            Utility.error(ctx, "function " + " already existed");
+            Utility.error(ctx, "function " + funcName + " already existed");
         }
 
         return function;

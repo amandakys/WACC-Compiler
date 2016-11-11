@@ -27,15 +27,15 @@ public class CallAST extends AssignrhsAST{
         IDENTIFIER F = Visitor.ST.lookUpAll(funcname);
 
         if (F == null) {
-            Visitor.ST.getEncSymbolTable().add(funcname, null);
-           isDeclared = false;
-//            Utility.error("Unknown function " + funcname);
+            Visitor.ST.getEncSymbolTable().add(funcname, new FUNCTION(null, null, null));
+            isDeclared = false;
         } else if (!(F instanceof FUNCTION)) {
             Utility.error(funcname + " is not a function");
+        } else if (((FUNCTION) F).getReturntype() == null) { // case when function F is not declared
+            Utility.error("Unknown function " + funcname);
         } else if (((FUNCTION)F).getParamList().size() != arglist.size()) {
             Utility.error("wrong no. of params");
         } else {
-            isDeclared = true;
             arglist.check();
 
             for(int i = 0; i < arglist.size(); i++) {

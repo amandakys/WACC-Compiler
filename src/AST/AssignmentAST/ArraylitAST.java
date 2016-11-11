@@ -7,6 +7,9 @@ import symbol_table.TYPE;
 
 import java.util.List;
 
+/*
+    ArraylitAST represents an AST Node which has a list of expression
+ */
 public class ArraylitAST extends AssignrhsAST {
     //Array list has stores a list of expression
     private List<ExpressionAST> arraylits;
