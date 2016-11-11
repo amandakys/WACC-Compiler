@@ -19,7 +19,7 @@ public class FunctionDeclAST extends Node {
         super();
         //return type name will remove all non alphanumeric characters to
         // search for primitive types
-        this.returntypename = returntypename.replaceAll("^[^a-zA-Z0-9\\s]+|[^a-zA-Z0-9\\s]+$", "");
+        this.returntypename = returntypename;
         this.funcname = funcname;
         this.parameters = paramList;
     }
@@ -27,6 +27,7 @@ public class FunctionDeclAST extends Node {
     public void CheckFunctionNameAndReturnType() {
         IDENTIFIER T = Visitor.ST.lookUpAll(returntypename);
         IDENTIFIER F = Visitor.ST.lookUp(funcname);
+
         if (T == null) {
             Utility.error("Unknown type "+returntypename);
         } else if (!(T instanceof TYPE)) {
@@ -45,8 +46,6 @@ public class FunctionDeclAST extends Node {
     public void check() {
         CheckFunctionNameAndReturnType();
 
-        //Visitor.ST = new SymbolTable(Visitor.ST);
-        //add function parameters into symbol table
         List<ParamAST> params = parameters.getParams();
 
         for (ParamAST p: params) {
@@ -54,7 +53,5 @@ public class FunctionDeclAST extends Node {
         }
 
         ((FUNCTION) identObj).setSymbolTable(Visitor.ST);
-
-        //Visitor.ST = Visitor.ST.getEncSymbolTable();
     }
 }

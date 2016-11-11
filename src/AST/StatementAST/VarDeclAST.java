@@ -4,6 +4,7 @@ import AST.AssignmentAST.AssignrhsAST;
 import AST.TypeAST.TypeAST;
 import AST.Utility;
 import main.Visitor;
+import symbol_table.FUNCTION;
 import symbol_table.IDENTIFIER;
 import symbol_table.TYPE;
 import symbol_table.VARIABLE;
@@ -37,11 +38,14 @@ public class VarDeclAST extends StatementAST{
             Utility.error(typeName + " is not a type");
         } else if (!(T.isDeclarable())) {
             Utility.error("cannot declare " + typeName + " objects");
-        } else if (V != null) {
+        } else if (V == T) {
             Utility.error(ident + " is already declared");
         } else {
-            VARIABLE varObj = new VARIABLE((TYPE) T);
-            Visitor.ST.add(ident, varObj);
+            if(V == null) {
+                identObj = new VARIABLE((TYPE) T);
+                Visitor.ST.add(ident, identObj);
+            }
+
             //Checking rhs
             rhs.check();
             type.checkType(rhs);
