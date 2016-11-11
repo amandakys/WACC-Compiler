@@ -26,8 +26,6 @@ public class TYPE extends IDENTIFIER {
 
     @Override
     public boolean equals(Object o) {
-
-
         if ((this instanceof PAIR) && (o instanceof PAIR)) {
             //both are pairs
             TYPE thisFirst = ((PAIR)this.getType()).getFirst();
@@ -35,7 +33,9 @@ public class TYPE extends IDENTIFIER {
             TYPE objFirst = ((PAIR) o).getFirst();
             TYPE objSecond = ((PAIR) o).getSecond();
 
+            if (objFirst == null) {
 
+            }
 
             if (((PAIR) this).getFirst().equals(((PAIR) o).getFirst())) {
                 //firsts match, check seconds

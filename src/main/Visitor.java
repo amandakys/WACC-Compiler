@@ -159,12 +159,17 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public FunctionDeclAST visitFunction(BasicParser.FunctionContext ctx) {
         Visitor.ST = new SymbolTable(Visitor.ST);
+        FunctionDeclAST function;
+        if (ctx.paramlist() == null) {
+            //no params
+            function = new FunctionDeclAST(visitType(ctx.type()), ctx.IDENT().getText());
+        } else {
+            //has params
+            function = new FunctionDeclAST(visitType(ctx.type()), ctx.IDENT().getText(),
+                    visitParamlist(ctx.paramlist()));
+        }
 
-        FunctionDeclAST function = new FunctionDeclAST(ctx.type().getText(), ctx
-                .IDENT().getText(),
-                visitParamlist(ctx.paramlist()));
         function.check();
-
         visitChildren(ctx);
 
         Visitor.ST = Visitor.ST.getEncSymbolTable();
@@ -526,7 +531,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public ParamlistAST visitParamlist(BasicParser.ParamlistContext ctx) {
-        if(ctx != null) {
+        if(!ctx.param().isEmpty()) {
             List<BasicParser.ParamContext> parameters = ctx.param();
             List<ParamAST> parameterNodes = new ArrayList<>();
             for (BasicParser.ParamContext p :parameters) {
@@ -536,13 +541,14 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             ParamlistAST paramlist = new ParamlistAST(parameterNodes);
             paramlist.check();
             return paramlist;
+        } else {
+            return new ParamlistAST(new ArrayList<ParamAST>());
         }
-        return new ParamlistAST(new ArrayList<ParamAST>());
     }
 
     @Override
     public ParamAST visitParam(BasicParser.ParamContext ctx) {
-        ParamAST param = new ParamAST(ctx.type().getText(), ctx.IDENT()
+        ParamAST param = new ParamAST(visitType(ctx.type()), ctx.IDENT()
                 .getText());
         return param;
     }
