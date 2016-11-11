@@ -58,7 +58,7 @@ public class SyntaxVisitor extends BasicParserBaseVisitor<Void> {
 
     /*
         Check function takes the last statement and returns true if the last
-        statement is either EXIT or RETURN
+        statement is neither RETURN nor EXIT
      */
     private boolean check(BasicParser.StatementContext last) {
         if(last instanceof BasicParser.IfContext) {
@@ -75,7 +75,7 @@ public class SyntaxVisitor extends BasicParserBaseVisitor<Void> {
             return false;
         }
 
-        return !((last instanceof BasicParser.ReturnContext) && (last
+        return !((last instanceof BasicParser.ReturnContext) || (last
                 instanceof BasicParser.ExitContext));
     }
 }
