@@ -12,6 +12,7 @@ import AST.StatementAST.*;
 import AST.TypeAST.*;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.PAIR;
 import symbol_table.SCALAR;
 import symbol_table.SymbolTable;
@@ -118,15 +119,27 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public ReturnAST visitReturn(BasicParser.ReturnContext ctx) {
-        if(!(ctx.getParent() instanceof BasicParser.FunctionContext)) {
-            Utility.error("Global return statement");
-        }
-        TypeAST returnType = visitType(((BasicParser.FunctionContext) ctx.getParent()).type());
+
+        TypeAST returnType = visitType((checkReturnInFunction(ctx)).type());
         ExpressionAST expression = visitExpression(ctx.expression());
         returnType.checkType(expression);
+
         ReturnAST returnAST = new ReturnAST(visitExpression(ctx.expression()));
         returnAST.check();
         return returnAST;
+    }
+
+    private BasicParser.FunctionContext checkReturnInFunction(ParserRuleContext ctx) {
+        if(ctx.getParent() instanceof BasicParser.SequenceContext || ctx
+                .getParent() instanceof BasicParser.IfContext) {
+            return checkReturnInFunction(ctx.getParent());
+        }
+
+        if(!(ctx.getParent() instanceof BasicParser.FunctionContext)) {
+            Utility.error("Global return statement");
+        }
+
+        return (BasicParser.FunctionContext) ctx.getParent();
     }
 
     @Override
@@ -145,13 +158,22 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public FunctionDeclAST visitFunction(BasicParser.FunctionContext ctx) {
         Visitor.ST = new SymbolTable(Visitor.ST);
+
         FunctionDeclAST function = new FunctionDeclAST(ctx.type().getText(), ctx
                 .IDENT().getText(),
                 visitParamlist(ctx.paramlist()));
         function.check();
-        Visitor.ST = Visitor.ST.getEncSymbolTable();
-        Visitor.ST.add(ctx.IDENT().getText(), function.getIdentObj());
+
         visitChildren(ctx);
+
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
+        String funcName = ctx.IDENT().getText();
+        if(ST.lookUp(funcName) == null) {
+            Visitor.ST.add(funcName, function.getIdentObj());
+        } else {
+            Utility.error("Function already existed");
+        }
+
         return function;
     }
 
@@ -180,7 +202,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ExpressionAST expr = visitExpression(ctx.expression());
         StatementAST statement = visitStatement(ctx.statement());
 
-        return new WhileAST(expr, statement);
+        WhileAST whileAST = new WhileAST(expr, statement);
+        whileAST.check();
+        return whileAST;
     }
 
     @Override
@@ -258,6 +282,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
         return new ArraylitAST(expressionASTs);
     }
+
     @Override
     public NewpairAST visitNewpair(BasicParser.NewpairContext ctx) {
         List<BasicParser.ExpressionContext> expressions = ctx.expression();
@@ -321,10 +346,6 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public ExpressionAST visitExpression(BasicParser.ExpressionContext ctx) {
         ExpressionAST expression = null;
-        List<ExpressionAST> list = new ArrayList<>();
-        for(BasicParser.ExpressionContext expr: ctx.expression()) {
-            list.add(visitExpression(expr));
-        }
 
         if (ctx.IDENT()!= null) {
             expression = new IdentAST(ctx.IDENT().getText());
@@ -340,27 +361,19 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             expression = visitStrliter(ctx.strliter());
         } else if (ctx.arrayelem() != null) {
             expression = visitArrayelem(ctx.arrayelem());
-        } else if (ctx.unop() != null) {
-            List<ExpressionAST> expressions = new ArrayList<>();
-            for (BasicParser.ExpressionContext e: ctx.expression()) {
-                expressions.add(visitExpression(e));
-            }
-
-            expression = new UnopAST(expressions, ctx.unop().getText());
         } else {
             List<ExpressionAST> expressions = new ArrayList<>();
 
-            for (BasicParser.ExpressionContext e: ctx.expression()) {
+            for (BasicParser.ExpressionContext e : ctx.expression()) {
                 expressions.add(visitExpression(e));
             }
 
             if (ctx.binop() != null) {
                 expression = new BinOpAST(ctx.binop().getText(), expressions);
-            } else if (!ctx.expression().isEmpty()){
-                //TODO: need to fix instance where expression is called from expression
-                //should we make epxressionAST abstract?
-                //possible fix is to recursively call visitExpression here
-                //expression = new ExpressionAST(expressionNodes);
+            } else if(ctx.unop() != null) {
+                expression = new UnopAST(expressions, ctx.unop().getText());
+            } else if (ctx.LPAREN() != null) {
+                expression = visitExpression(ctx.expression(0));
             }
         }
         expression.check();

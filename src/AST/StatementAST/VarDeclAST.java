@@ -5,6 +5,7 @@ import AST.TypeAST.PairtypeAST;
 import AST.TypeAST.TypeAST;
 import AST.Utility;
 import main.Visitor;
+import symbol_table.FUNCTION;
 import symbol_table.IDENTIFIER;
 import symbol_table.PAIR;
 import symbol_table.TYPE;
@@ -18,16 +19,19 @@ public class VarDeclAST extends StatementAST{
     private String ident;
     private TypeAST type;
     private AssignrhsAST rhs;
+    private boolean isChecked;
 
     public VarDeclAST(TypeAST type, String ident, AssignrhsAST rhs) {
         super();
         this.ident = ident;
         this.type = type;
         this.rhs = rhs;
+        isChecked = false;
     }
 
     @Override
     public void check() {
+        if(isChecked) return;
         type.check();
 
         if (type instanceof PairtypeAST) {
@@ -41,9 +45,9 @@ public class VarDeclAST extends StatementAST{
                 Visitor.ST.add(ident, T);
             }
         } else {
-        String typeName = type.getType().getTypeName();
-        IDENTIFIER T = Visitor.ST.lookUpAll(typeName);
-        IDENTIFIER V = Visitor.ST.lookUp(ident);
+            String typeName = type.getType().getTypeName();
+            IDENTIFIER T = Visitor.ST.lookUpAll(typeName);
+            IDENTIFIER V = Visitor.ST.lookUp(ident);
 
             if(T == null) {
                 Utility.error("unknown type " + typeName);
@@ -51,14 +55,19 @@ public class VarDeclAST extends StatementAST{
                 Utility.error(typeName + " is not a type");
             } else if (!(T.isDeclarable())) {
                 Utility.error("cannot declare " + typeName + " objects");
-            } else if (V != null) {
+            } else if (V != null && !(V instanceof FUNCTION)) {
                 Utility.error(ident + " is already declared");
             } else {
-                VARIABLE varObj = new VARIABLE((TYPE) T);
-                Visitor.ST.add(ident, varObj);
+                if(V == null) {
+                    identObj = new VARIABLE((TYPE) T);
+                    Visitor.ST.add(ident, identObj);
+                }
+
+            //Checking rhs
+            rhs.check();
+            type.checkType(rhs);
+            isChecked = true;
             }
         }
-        rhs.check();
-        type.checkType(rhs);
     }
 }

@@ -14,7 +14,7 @@ public class ParamAST extends Node {
 
     public ParamAST(String type, String ident) {
         super();
-        this.type = type;
+        this.type = type.replaceAll("^[^a-zA-Z0-9\\s]+|[^a-zA-Z0-9\\s]+$", "");
         this.ident = ident;
     }
 

@@ -1,6 +1,8 @@
 package AST.StatementAST;
 
 import AST.ExpressionAST.ExpressionAST;
+import AST.Utility;
+import main.Visitor;
 
 /**
  * Created by andikoh on 10/11/2016.
@@ -18,8 +20,12 @@ public class WhileAST extends StatementAST {
     public void check() {
         //check that expression is valid
         expression.check();
-        //TODO:check that expression is a boolean
-        //check that statement is valid
-        statement.check();
+
+        if(expression.getType().equals(Visitor.ST.lookUpAll("bool"))) {
+            //check that statement is valid
+            statement.check();
+        } else {
+            Utility.error("expression is not of type boolean");
+        }
     }
 }
