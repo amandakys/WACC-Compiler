@@ -58,9 +58,7 @@ public class VarDeclAST extends StatementAST{
                 Utility.error("declared type and given type do not match");
             }
 
-        }
-
-        else {
+        } else {
             String typeName = type.getType().getTypeName();
             IDENTIFIER T = Visitor.ST.lookUpAll(typeName);
             IDENTIFIER V = Visitor.ST.lookUp(ident);
