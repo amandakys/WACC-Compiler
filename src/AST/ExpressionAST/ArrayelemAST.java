@@ -4,8 +4,10 @@ import AST.Node;
 import AST.Utility;
 import antlr.BasicParser;
 import main.Visitor;
+import symbol_table.ARRAY;
 import symbol_table.IDENTIFIER;
 import symbol_table.SymbolTable;
+import symbol_table.TYPE;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,13 +31,17 @@ public class ArrayelemAST extends ExpressionAST {
         IDENTIFIER N = Visitor.ST.lookUp(ident);
         if (N == null) {
             Utility.error("undeclared variable");
-        }
+        } else {
 
-        identObj = N;
+            for (Node n : expressions) {
+                n.check();
+                TYPE T = Visitor.ST.lookUpAll("int").getType();
+                if (!T.equals(n.getType())) {
+                    Utility.error("arrayelement only takes integers, actual: " + T.getTypeName());
+                }
+            }
 
-        for (Node n : expressions) {
-            n.check();
-            this.checkType(n);
+            identObj = ((ARRAY) N).getElementType();
         }
     }
 }
