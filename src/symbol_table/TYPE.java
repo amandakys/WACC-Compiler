@@ -23,6 +23,10 @@ public class TYPE extends IDENTIFIER {
         return typeName;
 
     }
+    @Override
+    public String toString() {
+        return typeName;
+    }
 //
 //    @Override
 //    public boolean equals(Object o) {
