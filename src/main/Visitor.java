@@ -461,10 +461,10 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     public ArraytypeAST visitArraytype(BasicParser.ArraytypeContext ctx) {
         ArraytypeAST arraytype = null;
         int arrayDepth = ctx.LBRACKET().size();
-        if (!ctx.basetype().isEmpty()) {
+        if (ctx.basetype() != null) {
             arraytype = new ArraytypeAST(visitBasetype(ctx.basetype()), arrayDepth);
             arraytype.check();
-        } else if (!ctx.pairtype().isEmpty()) {
+        } else if (ctx.pairtype() != null) {
             arraytype = new ArraytypeAST(visitPairtype(ctx.pairtype()), arrayDepth);
             arraytype.check();
         }
@@ -487,10 +487,10 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         if (ctx.PAIR() != null) {
             pairelemtype = new PairelemtypeAST(ctx.PAIR().getText());
             pairelemtype.check();
-        } else if (!ctx.basetype().isEmpty()) {
+        } else if (ctx.basetype() != null) {
             pairelemtype = new PairelemtypeAST(visitBasetype(ctx.basetype()));
             pairelemtype.check();
-        } else if (!ctx.arraytype().isEmpty()) {
+        } else if (ctx.arraytype() != null) {
             pairelemtype =  new PairelemtypeAST(visitArraytype(ctx.arraytype()));
             pairelemtype.check();
         }

@@ -2,6 +2,8 @@ package main;
 
 import antlr.BasicLexer;
 import antlr.BasicParser;
+import main.error_handler.SyntaxError;
+import main.error_handler.SyntaxVisitor;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -20,10 +22,8 @@ public class Main {
         BasicParser parser = new BasicParser(tokens);
         ParseTree tree = parser.program();
 
-        int errors = parser.getNumberOfSyntaxErrors();
-        if (errors > 0) {
-            System.exit(100);
-        }
+        parser.removeErrorListeners();
+        parser.addErrorListener(new SyntaxError());
 
         //syntax checking
         SyntaxVisitor syntaxVisitor = new SyntaxVisitor();
