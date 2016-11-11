@@ -5,6 +5,7 @@ import AST.Utility;
 import main.Visitor;
 import symbol_table.FUNCTION;
 import symbol_table.IDENTIFIER;
+import symbol_table.SymbolTable;
 import symbol_table.TYPE;
 
 /**
@@ -14,6 +15,7 @@ public class CallAST extends AssignrhsAST{
     private String funcname;
     private ArglistAST arglist;
     private FUNCTION funcObj;
+    private boolean isDeclared = true;
 
     public CallAST(String funcname, ArglistAST arglist) {
         super();
@@ -25,7 +27,9 @@ public class CallAST extends AssignrhsAST{
         IDENTIFIER F = Visitor.ST.lookUpAll(funcname);
 
         if (F == null) {
-            Utility.error("Unknown function " + funcname);
+            Visitor.ST.getEncSymbolTable().add(funcname, null);
+           isDeclared = false;
+//            Utility.error("Unknown function " + funcname);
         } else if (!(F instanceof FUNCTION)) {
             Utility.error(funcname + " is not a function");
         } else if (((FUNCTION)F).getParamList().size() != arglist.size()) {
@@ -42,6 +46,10 @@ public class CallAST extends AssignrhsAST{
             funcObj = (FUNCTION)F;
             identObj = F;
         }
+    }
+
+    public boolean isDeclared() {
+        return isDeclared;
     }
 
     @Override

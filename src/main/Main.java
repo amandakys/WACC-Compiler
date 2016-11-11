@@ -33,5 +33,6 @@ public class Main {
         //semantic checking
         Visitor semanticVisit = new Visitor();
         semanticVisit.visit(tree);
+        semanticVisit.checkUndefinedFunc();
     }
 }

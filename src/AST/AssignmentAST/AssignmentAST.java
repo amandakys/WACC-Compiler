@@ -21,6 +21,10 @@ public class AssignmentAST extends StatementAST {
     public void check() {
         lhs.check();
         rhs.check();
-        lhs.checkType(rhs);
+
+        if(!(rhs instanceof CallAST) ||
+                (rhs instanceof CallAST && ((CallAST) rhs).isDeclared())) {
+            lhs.checkType(rhs);
+        }
     }
 }

@@ -2,6 +2,7 @@ package AST.StatementAST;
 
 import AST.AssignmentAST.ArraylitAST;
 import AST.AssignmentAST.AssignrhsAST;
+import AST.AssignmentAST.CallAST;
 import AST.TypeAST.ArraytypeAST;
 import AST.TypeAST.PairtypeAST;
 import AST.TypeAST.TypeAST;
@@ -79,7 +80,12 @@ public class VarDeclAST extends StatementAST{
 
             //Checking rhs
             rhs.check();
-            type.checkType(rhs);
+
+                if(!(rhs instanceof CallAST) ||
+                        (rhs instanceof CallAST && ((CallAST) rhs).isDeclared())) {
+                    type.checkType(rhs);
+                }
+
             isChecked = true;
             }
         }
