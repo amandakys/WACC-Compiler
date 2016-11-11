@@ -1,5 +1,6 @@
 package AST.AssignmentAST;
 
+import AST.Compare;
 import AST.FunctionDecl.ArglistAST;
 import AST.Utility;
 import main.Visitor;
@@ -38,8 +39,8 @@ public class CallAST extends AssignrhsAST{
             arglist.check();
 
             for(int i = 0; i < arglist.size(); i++) {
-                if(!arglist.getType(i).equals(((FUNCTION) F).getParamList().get(i))) {
-                    Utility.error("unexpected type in function " + funcname + "\nexpected: " + ((FUNCTION) F).getParamList().get(i).getTypeName() + "\nactual: " + arglist.getType(i).getTypeName());
+                if (!Compare.types(arglist.getType(i), ((FUNCTION) F).getParamList().get(i))){
+                    Utility.error("unexpected type in function " + funcname + "\nexpected: " + ((FUNCTION) F).getParamList().get(i)+ "\nactual: " + arglist.getType(i));
                 }
             }
 
