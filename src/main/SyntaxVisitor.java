@@ -55,21 +55,27 @@ public class SyntaxVisitor extends BasicParserBaseVisitor<Void> {
         return statement;
     }
 
+
+    /*
+        Check function takes the last statement and returns true if the last
+        statement is either EXIT or RETURN
+     */
     private boolean check(BasicParser.StatementContext last) {
         if(last instanceof BasicParser.IfContext) {
+
             List<BasicParser.StatementContext> stats = ((BasicParser
                     .IfContext) last).statement();
 
-            for (int i = 0; i < last.getChildCount(); i++) {
-                if(stats.get(i) instanceof BasicParser.ReturnContext &&
-                        stats.get(i) instanceof BasicParser.ExitContext) {
+            for (int i = 0; i < stats.size(); i++) {
+                if(!(stats.get(i) instanceof BasicParser.ReturnContext ||
+                        stats.get(i) instanceof BasicParser.ExitContext)) {
                     return true;
                 }
             }
             return false;
         }
 
-        return (last instanceof BasicParser.ReturnContext) && (last
-                instanceof BasicParser.ExitContext);
+        return !((last instanceof BasicParser.ReturnContext) && (last
+                instanceof BasicParser.ExitContext));
     }
 }
