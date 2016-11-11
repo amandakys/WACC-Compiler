@@ -35,7 +35,6 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ST.add("char", new SCALAR("char"));
         ST.add("string", new SCALAR("string"));
 
-//        ST.add("pair", new PAIR());
 
         SymbolTable next = new SymbolTable(ST);
         ST = next;

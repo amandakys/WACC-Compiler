@@ -14,7 +14,6 @@ import symbol_table.TYPE;
 public class CallAST extends AssignrhsAST{
     private String funcname;
     private ArglistAST arglist;
-    private FUNCTION funcObj;
     private boolean isDeclared = true;
 
     public CallAST(String funcname, ArglistAST arglist) {
@@ -35,6 +34,7 @@ public class CallAST extends AssignrhsAST{
         } else if (((FUNCTION)F).getParamList().size() != arglist.size()) {
             Utility.error("wrong no. of params");
         } else {
+            isDeclared = true;
             arglist.check();
 
             for(int i = 0; i < arglist.size(); i++) {
@@ -43,7 +43,6 @@ public class CallAST extends AssignrhsAST{
                 }
             }
 
-            funcObj = (FUNCTION)F;
             identObj = F;
         }
     }
@@ -54,7 +53,7 @@ public class CallAST extends AssignrhsAST{
 
     @Override
     public TYPE getType() {
-        return funcObj.getReturntype();
+        return ((FUNCTION) identObj).getReturntype();
     }
 
 }

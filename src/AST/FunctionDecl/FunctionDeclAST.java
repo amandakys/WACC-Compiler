@@ -36,7 +36,17 @@ public class FunctionDeclAST extends Node {
     }
 
     public void CheckFunctionNameAndReturnType() {
-        IDENTIFIER returnType = null;
+        IDENTIFIER returnType = returntype.getType();
+
+        FUNCTION f;
+        if (parameters == null) {
+            //no parameters
+            f = new FUNCTION(null, (TYPE) returnType, new ArrayList<TYPE>());
+        } else {
+            f = new FUNCTION(null, (TYPE) returnType, parameters.getParamTypes());
+        }
+        identObj = f;
+
         if (returntype.getType() instanceof PAIR) {
             //return type is a pair
              returnType = new PAIR(((PAIR) returntype.getType()).getFirst(), ((PAIR) returntype.getType()).getSecond());
@@ -59,14 +69,6 @@ public class FunctionDeclAST extends Node {
                 Visitor.ST.add(funcname, identObj);
             }
         }
-        FUNCTION f;
-        if (parameters == null) {
-            //no parameters
-            f = new FUNCTION(null, (TYPE) returnType, new ArrayList<TYPE>());
-        } else {
-            f = new FUNCTION(null, (TYPE) returnType, parameters.getParamTypes());
-        }
-        identObj = f;
     }
 
     @Override
