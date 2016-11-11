@@ -21,7 +21,7 @@ public class WhileAST extends StatementAST {
         //check that expression is valid
         expression.check();
 
-        if(expression.getType().equals(Visitor.ST.lookUp("boolean"))) {
+        if(expression.getType().equals(Visitor.ST.lookUpAll("bool"))) {
             //check that statement is valid
             statement.check();
         } else {

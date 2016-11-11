@@ -17,16 +17,19 @@ public class VarDeclAST extends StatementAST{
     private String ident;
     private TypeAST type;
     private AssignrhsAST rhs;
+    private boolean isChecked;
 
     public VarDeclAST(TypeAST type, String ident, AssignrhsAST rhs) {
         super();
         this.ident = ident;
         this.type = type;
         this.rhs = rhs;
+        isChecked = false;
     }
 
     @Override
     public void check() {
+        if(isChecked) return;
         type.check();
         String typeName = type.getType().getTypeName();
         IDENTIFIER T = Visitor.ST.lookUpAll(typeName);
@@ -49,6 +52,7 @@ public class VarDeclAST extends StatementAST{
             //Checking rhs
             rhs.check();
             type.checkType(rhs);
+            isChecked = true;
         }
     }
 }
