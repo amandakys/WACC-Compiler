@@ -11,10 +11,7 @@ import AST.StatementAST.*;
 import AST.TypeAST.*;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
-import symbol_table.ARRAY;
-import symbol_table.PAIR;
-import symbol_table.SCALAR;
-import symbol_table.SymbolTable;
+import symbol_table.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,8 +106,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public ReturnAST visitReturn(BasicParser.ReturnContext ctx) {
         if(!(ctx.getParent() instanceof BasicParser.FunctionContext)) {
-            System.err.println("Global return statement");
+            Utility.error("Global return statement");
         }
+        TypeAST returnType = visitType(((BasicParser.FunctionContext) ctx.getParent()).type());
+        ExpressionAST expression = visitExpression(ctx.expression());
+        returnType.checkType(expression);
         ReturnAST returnAST = new ReturnAST(visitExpression(ctx.expression()));
         returnAST.check();
         return returnAST;

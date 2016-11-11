@@ -15,6 +15,7 @@ public class ReturnAST extends StatementAST {
 
     @Override
     public void check() {
+        //check that return expression returns correct type
         expression.check();
     }
 }

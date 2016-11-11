@@ -6,6 +6,7 @@ import AST.Utility;
 import main.Visitor;
 import symbol_table.FUNCTION;
 import symbol_table.IDENTIFIER;
+import symbol_table.TYPE;
 
 /**
  * Created by tsd15 on 09/11/16.
@@ -34,8 +35,8 @@ public class CallAST extends AssignrhsAST{
             arglist.check();
 
             for(int i = 0; i < arglist.size(); i++) {
-                if(arglist.getType(i).equals(((FUNCTION) F).getParamList().get(i))) {
-                    Utility.error("unexpected type in function " + funcname);
+                if(!arglist.getType(i).equals(((FUNCTION) F).getParamList().get(i))) {
+                    Utility.error("unexpected type in function " + funcname + "\nexpected: " + ((FUNCTION) F).getParamList().get(i).getTypeName() + "\nactual: " + arglist.getType(i).getTypeName());
                 }
             }
 
@@ -43,4 +44,10 @@ public class CallAST extends AssignrhsAST{
             identObj = F;
         }
     }
+
+    @Override
+    public TYPE getType() {
+        return funcObj.getReturntype();
+    }
+
 }
