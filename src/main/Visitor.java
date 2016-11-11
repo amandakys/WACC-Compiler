@@ -16,6 +16,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import symbol_table.PAIR;
 import symbol_table.SCALAR;
+import symbol_table.STRING;
 import symbol_table.SymbolTable;
 
 import java.util.ArrayList;
@@ -33,8 +34,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ST.add("bool", new SCALAR("bool"));
         ST.add("int", new SCALAR("int"));
         ST.add("char", new SCALAR("char"));
-        ST.add("string", new SCALAR("string"));
-
+        ST.add("string", new STRING());
 
         SymbolTable next = new SymbolTable(ST);
         ST = next;

@@ -41,7 +41,7 @@ public class ArrayelemAST extends ExpressionAST {
                 }
             }
 
-            identObj = ((ARRAY) N).getElementType();
+            identObj = ((ARRAY) N.getType()).getElementType();
         }
     }
 }
