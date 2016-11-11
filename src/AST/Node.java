@@ -22,6 +22,11 @@ public abstract class Node {
     }
 
     public void checkType(Node node) {
+
+        if (!Compare.types(this.getType(), node.getType())) {
+            Utility.error("types do not match\nexpected: " + this.getType() + "\nactual: " + node.getType());
+        }
+
         if (this.getType() == null) {
             //this value cannot be assigned to
             Utility.error("trying to assign to unassignable value");
