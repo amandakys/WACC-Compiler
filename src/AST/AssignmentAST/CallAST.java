@@ -16,7 +16,7 @@ public class CallAST extends AssignrhsAST{
     private String funcname;
     private ArglistAST arglist;
     private boolean isDeclared = true;
-
+    
     public CallAST(String funcname, ArglistAST arglist) {
         super();
         this.funcname = funcname;
@@ -25,7 +25,7 @@ public class CallAST extends AssignrhsAST{
     @Override
     public void check() {
         IDENTIFIER F = Visitor.ST.lookUpAll(funcname);
-
+        
         if (F == null) {
             Visitor.ST.getEncSymbolTable().add(funcname, new FUNCTION(null, null, null));
             isDeclared = false;
@@ -37,24 +37,24 @@ public class CallAST extends AssignrhsAST{
             Utility.error("wrong no. of params");
         } else {
             arglist.check();
-
+            
             for(int i = 0; i < arglist.size(); i++) {
                 if (!Compare.types(arglist.getType(i), ((FUNCTION) F).getParamList().get(i))){
                     Utility.error("unexpected type in function " + funcname + "\nexpected: " + ((FUNCTION) F).getParamList().get(i)+ "\nactual: " + arglist.getType(i));
                 }
             }
-
+            
             identObj = F;
         }
     }
-
+    
     public boolean isDeclared() {
         return isDeclared;
     }
-
+    
     @Override
     public TYPE getType() {
         return ((FUNCTION) identObj).getReturntype();
     }
-
+    
 }
