@@ -19,6 +19,7 @@ import symbol_table.SCALAR;
 import symbol_table.SymbolTable;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -132,13 +133,12 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     private BasicParser.FunctionContext checkReturnInFunction(ParserRuleContext ctx) {
-        if(ctx.getParent() instanceof BasicParser.SequenceContext || ctx
-                .getParent() instanceof BasicParser.IfContext) {
-            return checkReturnInFunction(ctx.getParent());
-        }
+        while(!(ctx.getParent() instanceof BasicParser.FunctionContext)) {
+            ctx = ctx.getParent();
 
-        if(!(ctx.getParent() instanceof BasicParser.FunctionContext)) {
-            Utility.error("Global return statement");
+            if(ctx instanceof BasicParser.ProgramContext) {
+                Utility.error("Global return error");
+            }
         }
 
         return (BasicParser.FunctionContext) ctx.getParent();
@@ -626,8 +626,8 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     public void checkUndefinedFunc() {
-       while(!toBeVisited.isEmpty()) {
-           
+       for(Iterator<ParserRuleContext> iter = toBeVisited.iterator(); iter.hasNext(); ) {
+           visit(iter.next());
        }
     }
 
