@@ -29,10 +29,9 @@ public class ArrayelemAST extends ExpressionAST {
         IDENTIFIER N = Visitor.ST.lookUp(ident);
         if (N == null) {
             Utility.error("undeclared variable");
-        } else {
-            identObj = N;
         }
 
+        identObj = N;
 
         for (Node n : expressions) {
             n.check();

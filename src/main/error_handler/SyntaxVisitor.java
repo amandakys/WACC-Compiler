@@ -1,4 +1,4 @@
-package main;
+package main.error_handler;
 
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;

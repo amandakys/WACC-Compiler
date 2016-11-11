@@ -1328,7 +1328,7 @@ public class BasicParser extends Parser {
 			case 1:
 				{
 				setState(199); unop();
-				setState(200); expression(3);
+				setState(200); expression(2);
 				}
 				break;
 			case 2:
@@ -1387,9 +1387,9 @@ public class BasicParser extends Parser {
 					_localctx = new ExpressionContext(_parentctx, _parentState);
 					pushNewRecursionContext(_localctx, _startState, RULE_expression);
 					setState(215);
-					if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
+					if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
 					setState(216); binop();
-					setState(217); expression(3);
+					setState(217); expression(6);
 					}
 					} 
 				}
@@ -1940,7 +1940,7 @@ public class BasicParser extends Parser {
 	}
 	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 1: return precpred(_ctx, 2);
+		case 1: return precpred(_ctx, 5);
 		}
 		return true;
 	}
@@ -2020,14 +2020,14 @@ public class BasicParser extends Parser {
 		"\3\2\2\2\u00c3\u00c7\5\26\f\2\u00c4\u00c7\5\30\r\2\u00c5\u00c7\7\34\2"+
 		"\2\u00c6\u00c3\3\2\2\2\u00c6\u00c4\3\2\2\2\u00c6\u00c5\3\2\2\2\u00c7\35"+
 		"\3\2\2\2\u00c8\u00c9\b\20\1\2\u00c9\u00ca\5\"\22\2\u00ca\u00cb\5\36\20"+
-		"\5\u00cb\u00d8\3\2\2\2\u00cc\u00d8\5&\24\2\u00cd\u00d8\5*\26\2\u00ce\u00d8"+
+		"\4\u00cb\u00d8\3\2\2\2\u00cc\u00d8\5&\24\2\u00cd\u00d8\5*\26\2\u00ce\u00d8"+
 		"\5,\27\2\u00cf\u00d8\5.\30\2\u00d0\u00d8\7\36\2\2\u00d1\u00d8\7\'\2\2"+
 		"\u00d2\u00d8\5$\23\2\u00d3\u00d4\7(\2\2\u00d4\u00d5\5\36\20\2\u00d5\u00d6"+
 		"\7)\2\2\u00d6\u00d8\3\2\2\2\u00d7\u00c8\3\2\2\2\u00d7\u00cc\3\2\2\2\u00d7"+
 		"\u00cd\3\2\2\2\u00d7\u00ce\3\2\2\2\u00d7\u00cf\3\2\2\2\u00d7\u00d0\3\2"+
 		"\2\2\u00d7\u00d1\3\2\2\2\u00d7\u00d2\3\2\2\2\u00d7\u00d3\3\2\2\2\u00d8"+
-		"\u00df\3\2\2\2\u00d9\u00da\f\4\2\2\u00da\u00db\5 \21\2\u00db\u00dc\5\36"+
-		"\20\5\u00dc\u00de\3\2\2\2\u00dd\u00d9\3\2\2\2\u00de\u00e1\3\2\2\2\u00df"+
+		"\u00df\3\2\2\2\u00d9\u00da\f\7\2\2\u00da\u00db\5 \21\2\u00db\u00dc\5\36"+
+		"\20\b\u00dc\u00de\3\2\2\2\u00dd\u00d9\3\2\2\2\u00de\u00e1\3\2\2\2\u00df"+
 		"\u00dd\3\2\2\2\u00df\u00e0\3\2\2\2\u00e0\37\3\2\2\2\u00e1\u00df\3\2\2"+
 		"\2\u00e2\u00e3\t\4\2\2\u00e3!\3\2\2\2\u00e4\u00e5\t\5\2\2\u00e5#\3\2\2"+
 		"\2\u00e6\u00eb\7\'\2\2\u00e7\u00e8\7*\2\2\u00e8\u00e9\5\36\20\2\u00e9"+
