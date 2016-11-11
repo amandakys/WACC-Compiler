@@ -40,17 +40,17 @@ public class FunctionDeclAST extends Node {
             //return type is a pair
              returnType = new PAIR(((PAIR) returntype.getType()).getFirst(), ((PAIR) returntype.getType()).getSecond());
             //Visitor.ST.add();
-        } else if (returnType.getType() instanceof ARRAY) {
+        } else if (returntype.getType() instanceof ARRAY) {
             returnType = new ARRAY(((ARRAY) returnType.getType()).getElementType(), 0);
         } else {
             returnType = Visitor.ST.lookUpAll(returntypename);
             IDENTIFIER F = Visitor.ST.lookUp(funcname);
 
-            if (returnType == null) {
+            if (returntype == null) {
                 Utility.error("Unknown type " + returntypename);
-            } else if (!(returnType instanceof TYPE)) {
+            } else if (!(returntype.getType() instanceof TYPE)) {
                 Utility.error(returntypename + " is not a type");
-            } else if (!((TYPE) returnType).isReturnable()) {
+            } else if (!(returntype.getType()).isReturnable()) {
                 Utility.error("cannot return " + returntypename + " objects");
             } else if (F != null) {
                 Utility.error(funcname + " is already declared");
