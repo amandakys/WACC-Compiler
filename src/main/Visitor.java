@@ -34,7 +34,17 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ST = next;
     }
 
+    @Override
+    public ProgramAST visitProgram(BasicParser.ProgramContext ctx) {
+        List<BasicParser.FunctionContext> functions = ctx.function();
+        List<FunctionDeclAST> functionASTs = new ArrayList<>();
 
+        for (BasicParser.FunctionContext f: functions) {
+            functionASTs.add(visitFunction(f));
+        }
+
+        return new ProgramAST(functionASTs, visitStatement(ctx.statement()));
+    }
 
     public StatementAST visitStatement(BasicParser.StatementContext ctx) {
         if (ctx instanceof BasicParser.SkipContext) {
@@ -130,12 +140,15 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public Node visitFunction(BasicParser.FunctionContext ctx) {
+    public FunctionDeclAST visitFunction(BasicParser.FunctionContext ctx) {
+        Visitor.ST = new SymbolTable(Visitor.ST);
         FunctionDeclAST function = new FunctionDeclAST(ctx.type().getText(), ctx
                 .IDENT().getText(),
                 visitParamlist(ctx.paramlist()));
         function.check();
-        return visitChildren(ctx);
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
+        Visitor.ST.add(ctx.IDENT().getText(), function.getIdentObj());
+        return function;
     }
 
     @Override

@@ -9,8 +9,8 @@ import symbol_table.TYPE;
  * Created by tsd15 on 09/11/16.
  */
 public class ParamAST extends Node {
-    String type;
-    String ident;
+    private String type;
+    private String ident;
 
     public ParamAST(String type, String ident) {
         super();
@@ -21,5 +21,9 @@ public class ParamAST extends Node {
     @Override
     public void check() {
         identObj = new PARAM((TYPE) Visitor.ST.lookUpAll(type));
+    }
+
+    public String getIdent() {
+        return this.ident;
     }
 }
