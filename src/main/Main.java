@@ -29,8 +29,8 @@ public class Main {
         SyntaxVisitor syntaxVisitor = new SyntaxVisitor();
         syntaxVisitor.visit(tree);
 
-        //semantic checking
-        Visitor semanticVisit = new Visitor();
-        semanticVisit.visit(tree);
+//        //semantic checking
+//        Visitor semanticVisit = new Visitor();
+//        semanticVisit.visit(tree);
     }
 }
