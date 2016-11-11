@@ -24,4 +24,34 @@ public class TYPE extends IDENTIFIER {
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+
+
+        if ((this instanceof PAIR) && (o instanceof PAIR)) {
+            //both are pairs
+            TYPE thisFirst = ((PAIR)this.getType()).getFirst();
+            TYPE thisSecond = ((PAIR) this.getType()).getSecond();
+            TYPE objFirst = ((PAIR) o).getFirst();
+            TYPE objSecond = ((PAIR) o).getSecond();
+
+
+
+            if (((PAIR) this).getFirst().equals(((PAIR) o).getFirst())) {
+                //firsts match, check seconds
+                if ((((PAIR) this).getSecond()).equals(((PAIR) o).getSecond())) {
+                    return true;
+                }
+            }
+        } else if (!((this instanceof PAIR) || (o instanceof PAIR))) {
+            //neither are pairs
+            return (this.getTypeName().equals(((TYPE) o).getTypeName()));
+        } else {
+            //one of them is a pair , the other is a primitive
+            //automatically flase
+        }
+
+        return false;
+    }
+
 }

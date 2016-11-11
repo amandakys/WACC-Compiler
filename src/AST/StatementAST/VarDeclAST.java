@@ -1,15 +1,13 @@
 package AST.StatementAST;
 
+import AST.AssignmentAST.ArraylitAST;
 import AST.AssignmentAST.AssignrhsAST;
+import AST.TypeAST.ArraytypeAST;
 import AST.TypeAST.PairtypeAST;
 import AST.TypeAST.TypeAST;
 import AST.Utility;
 import main.Visitor;
-import symbol_table.FUNCTION;
-import symbol_table.IDENTIFIER;
-import symbol_table.PAIR;
-import symbol_table.TYPE;
-import symbol_table.VARIABLE;
+import symbol_table.*;
 
 /**
  * Created by dtv15 on 09/11/16.
@@ -44,7 +42,25 @@ public class VarDeclAST extends StatementAST{
             } else {
                 Visitor.ST.add(ident, T);
             }
-        } else {
+        } else if (type instanceof ArraytypeAST) {
+            //assumes that this means rhs MUST be an arraylit
+            if (rhs instanceof ArraylitAST) {
+                TYPE elementType = ((ArraytypeAST) type).getelementType();
+                int arraysize = ((ArraylitAST) rhs).getSize();
+                IDENTIFIER V = Visitor.ST.lookUp(ident);
+                if (V != null) {
+                    Utility.error(ident + " is already declared");
+                } else {
+                    IDENTIFIER T = new ARRAY(elementType, arraysize);
+                    Visitor.ST.add(ident, T);
+                }
+            } else {
+                Utility.error("declared type and given type do not match");
+            }
+
+        }
+
+        else {
             String typeName = type.getType().getTypeName();
             IDENTIFIER T = Visitor.ST.lookUpAll(typeName);
             IDENTIFIER V = Visitor.ST.lookUp(ident);

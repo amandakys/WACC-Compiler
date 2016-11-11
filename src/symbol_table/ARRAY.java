@@ -8,7 +8,7 @@ public class ARRAY extends TYPE{
     private int size;
 
     public ARRAY(TYPE type, int size) {
-        super(type.getTypeName());
+        super("array");
         this.type = type;
         this.size = size;
     }
@@ -16,6 +16,10 @@ public class ARRAY extends TYPE{
 
     @Override
     public TYPE getType() {
+        return this;
+    }
+
+    public TYPE getElementType() {
         return type;
     }
 }

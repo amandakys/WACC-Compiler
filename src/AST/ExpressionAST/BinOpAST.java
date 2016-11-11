@@ -61,6 +61,7 @@ public class BinOpAST extends ExpressionAST {
                 expectedElemType.add("int");
                 expectedElemType.add("char");
                 expectedElemType.add("string");
+                expectedElemType.add("pair");
                 returnType = "bool";
             case "&&":
             case "||":

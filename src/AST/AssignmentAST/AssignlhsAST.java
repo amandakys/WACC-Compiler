@@ -30,7 +30,7 @@ public class AssignlhsAST extends Node {
     public void check() {
         if (ident != null) {
             //lhs is an ident
-            IDENTIFIER N = Visitor.ST.lookUp(ident);
+            IDENTIFIER N = Visitor.ST.lookUpAll(ident);
 
             if (N == null) {
                 //ident is not in symbol table

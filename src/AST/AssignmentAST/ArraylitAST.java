@@ -35,4 +35,8 @@ public class ArraylitAST extends AssignrhsAST {
         //initialies IDENTOBJ to array type
         identObj = new ARRAY(type, arraylits.size());
     }
+
+    public int getSize() {
+        return arraylits.size();
+    }
 }
