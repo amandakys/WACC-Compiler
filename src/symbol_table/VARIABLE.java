@@ -14,4 +14,5 @@ public class VARIABLE extends IDENTIFIER {
         return this.type;
     }
 
+
 }

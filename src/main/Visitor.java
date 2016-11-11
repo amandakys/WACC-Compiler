@@ -202,7 +202,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ExpressionAST expr = visitExpression(ctx.expression());
         StatementAST statement = visitStatement(ctx.statement());
 
-        return new WhileAST(expr, statement);
+        WhileAST whileAST = new WhileAST(expr, statement);
+        whileAST.check();
+        return whileAST;
     }
 
     @Override

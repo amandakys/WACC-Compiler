@@ -38,7 +38,7 @@ public class VarDeclAST extends StatementAST{
             Utility.error(typeName + " is not a type");
         } else if (!(T.isDeclarable())) {
             Utility.error("cannot declare " + typeName + " objects");
-        } else if (V == T) {
+        } else if (V != null && !(V instanceof FUNCTION)) {
             Utility.error(ident + " is already declared");
         } else {
             if(V == null) {
