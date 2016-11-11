@@ -13,24 +13,29 @@ public class BinOpAST extends ExpressionAST {
     private String op;
     private List<String> expectedElemType = new ArrayList<>();
     private String returnType;
-    private List<ExpressionAST> expr;
 
-    public BinOpAST(String op, List<ExpressionAST> expr) {
+    private ExpressionAST rhs;
+    private ExpressionAST lhs;
+
+    public BinOpAST(String op, ExpressionAST rhs, ExpressionAST lhs) {
         this.op = op;
-        this.expr = expr;
+        this.rhs = rhs;
+        this.lhs = lhs;
         initialise();
     }
 
     @Override
     public void check() {
         identObj = Visitor.ST.lookUpAll(returnType);
-        String firstType = expr.get(0).getType().getTypeName();
+
+        lhs.check();
+        rhs.check();
+
+        String firstType = lhs.getType().getTypeName();
 
         if(expectedElemType.contains(firstType)) {
-            for(int i = 0; i < expr.size() - 1; i++) {
-                if(!expr.get(i).getType().equals(expr.get(i+1).getType())) {
-                    Utility.error("not the same type");
-                }
+            if(!rhs.getType().equals(lhs.getType())) {
+                Utility.error("not the same type");
             }
         } else {
             Utility.error("not expected type");

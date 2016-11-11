@@ -13,6 +13,7 @@ import AST.TypeAST.*;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import symbol_table.PAIR;
 import symbol_table.SCALAR;
 import symbol_table.SymbolTable;
@@ -339,18 +340,28 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         for (BasicParser.ExpressionContext e : expressions) {
             expressionNodes.add(visitExpression(e));
         }
-        ArrayelemAST arrayelem = new ArrayelemAST(ctx.IDENT().getText(), expressionNodes);
-        return arrayelem;
+        return new ArrayelemAST(ctx.IDENT().getText(), expressionNodes);
     }
 
     @Override
     public ExpressionAST visitExpression(BasicParser.ExpressionContext ctx) {
+        if(ctx.exprNoBinOp() != null) {
+            return visitExprNoBinOp(ctx.exprNoBinOp());
+        } else if(ctx.binOp() != null) {
+            return visitBinOp(ctx.binOp());
+        }
+
+        return null;
+    }
+
+    @Override
+    public ExpressionAST visitExprNoBinOp(BasicParser.ExprNoBinOpContext ctx) {
         ExpressionAST expression = null;
 
         if (ctx.IDENT()!= null) {
             expression = new IdentAST(ctx.IDENT().getText());
         } else if (ctx.PAIRLITERAL() != null) {
-            expression = new PairliterAST(ctx.PAIRLITERAL().getText());
+            expression = new PairliterAST(ctx.PAIRLITERAL() .getText());
         } else if (ctx.intliter() != null) {
             expression = visitIntliter(ctx.intliter());
         } else if (ctx.boolliter() != null) {
@@ -361,23 +372,130 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             expression = visitStrliter(ctx.strliter());
         } else if (ctx.arrayelem() != null) {
             expression = visitArrayelem(ctx.arrayelem());
-        } else {
-            List<ExpressionAST> expressions = new ArrayList<>();
-
-            for (BasicParser.ExpressionContext e : ctx.expression()) {
-                expressions.add(visitExpression(e));
-            }
-
-            if (ctx.binop() != null) {
-                expression = new BinOpAST(ctx.binop().getText(), expressions);
-            } else if(ctx.unop() != null) {
-                expression = new UnopAST(expressions, ctx.unop().getText());
-            } else if (ctx.LPAREN() != null) {
-                expression = visitExpression(ctx.expression(0));
-            }
+        } else if (ctx.unop() != null){
+            expression = new UnopAST(visitExpression(ctx.expression()), ctx.unop().getText());
+        } else if (ctx.LPAREN() != null) {
+            expression = visitExpression(ctx.expression());
         }
-        expression.check();
+
+        if(expression != null) {
+            expression.check();
+        }
+
         return expression;
+    }
+
+    @Override
+    public ExpressionAST visitBinOp(BasicParser.BinOpContext ctx) {
+        ExpressionAST binOpAST = null;
+
+        if(ctx.p1() != null) {
+            binOpAST = visitP1(ctx.p1());
+        } else if(ctx.p2() != null) {
+            binOpAST = visitP2(ctx.p2());
+        } else if(ctx.p3() != null) {
+            binOpAST = visitP3(ctx.p3());
+        } else if(ctx.p4() != null) {
+            binOpAST = visitP4(ctx.p4());
+        } else if(ctx.p5() != null) {
+            binOpAST = visitP5(ctx.p5());
+        } else if(ctx.p6() != null) {
+            binOpAST = visitP6(ctx.p6());
+        }
+
+        if(binOpAST != null) {
+            binOpAST.check();
+        }
+        return binOpAST;
+    }
+
+    @Override
+    public ExpressionAST visitP1(BasicParser.P1Context ctx) {
+        String op;
+
+        if (ctx.p1() == null) {
+            return visitExprNoBinOp(ctx.exprNoBinOp());
+        }
+
+        if(ctx.DIV() != null) {
+            op = ctx.DIV().getText();
+        } else if (ctx.MOD() != null) {
+            op = ctx.MOD().getText();
+        } else {
+            op = ctx.STAR().getText();
+        }
+        return new BinOpAST(op,visitExprNoBinOp(ctx.exprNoBinOp()), visitP1(ctx.p1()));
+    }
+
+    @Override
+    public ExpressionAST visitP2(BasicParser.P2Context ctx) {
+        String op;
+
+        if(ctx.p2() == null) {
+            return visitP1(ctx.p1());
+        }
+
+        if(ctx.MINUS() != null) {
+            op = ctx.MINUS().getText();
+        } else {
+            op = ctx.PLUS().getText();
+        }
+
+        return new BinOpAST(op,visitP1(ctx.p1()), visitP2(ctx.p2()));
+    }
+
+    @Override
+    public ExpressionAST visitP3(BasicParser.P3Context ctx) {
+        String op;
+
+        if(ctx.p3() == null) {
+            return visitP2(ctx.p2());
+        }
+
+        if(ctx.GREATER() != null) {
+            op = ctx.GREATER().getText();
+        } else if (ctx.GREATEREQUAL() != null) {
+            op = ctx.GREATEREQUAL().getText();
+        } else if(ctx.LESS() != null) {
+            op = ctx.LESS().getText();
+        } else {
+            op = ctx.LESSEQUAL().getText();
+        }
+        return new BinOpAST(op,visitP2(ctx.p2()), visitP3(ctx.p3()));
+    }
+
+    @Override
+    public ExpressionAST visitP4(BasicParser.P4Context ctx) {
+        String op;
+
+        if(ctx.p4() == null) {
+            return visitP3(ctx.p3());
+        }
+
+        if(ctx.EQUAL()!= null) {
+            op = ctx.EQUAL().getText();
+        } else {
+            op = ctx.NOTEQUAL().getText();
+        }
+        return new BinOpAST(op,visitP3(ctx.p3()), visitP4(ctx.p4()));
+    }
+
+    @Override
+    public ExpressionAST visitP5(BasicParser.P5Context ctx) {
+        if(ctx.p5() == null) {
+            return visitP4(ctx.p4());
+        }
+
+        return new BinOpAST(ctx.AND().getText(),visitP4(ctx.p4()), visitP5(ctx.p5()));
+    }
+
+    @Override
+    public ExpressionAST visitP6(BasicParser.P6Context ctx) {
+        if(ctx.p6() == null) {
+            return visitP5(ctx.p5());
+        }
+
+        return new BinOpAST(ctx.OR().getText(),visitP5(ctx.p5()), visitP6(ctx.p6()));
     }
 
     @Override

@@ -12,12 +12,48 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	/**
+	 * Visit a parse tree produced by {@link BasicParser#p1}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitP1(@NotNull BasicParser.P1Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link BasicParser#p2}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitP2(@NotNull BasicParser.P2Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link BasicParser#p3}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitP3(@NotNull BasicParser.P3Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link BasicParser#p4}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitP4(@NotNull BasicParser.P4Context ctx);
+	/**
+	 * Visit a parse tree produced by {@link BasicParser#p5}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitP5(@NotNull BasicParser.P5Context ctx);
+	/**
 	 * Visit a parse tree produced by the {@code functioncall}
 	 * labeled alternative in {@link BasicParser#assignrhs}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitFunctioncall(@NotNull BasicParser.FunctioncallContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BasicParser#p6}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitP6(@NotNull BasicParser.P6Context ctx);
 	/**
 	 * Visit a parse tree produced by the {@code skip}
 	 * labeled alternative in {@link BasicParser#statement}.
@@ -76,6 +112,12 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCharacter(@NotNull BasicParser.CharacterContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link BasicParser#exprNoBinOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitExprNoBinOp(@NotNull BasicParser.ExprNoBinOpContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link BasicParser#param}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -126,6 +168,12 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitIf(@NotNull BasicParser.IfContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link BasicParser#binOp}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBinOp(@NotNull BasicParser.BinOpContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code read}
 	 * labeled alternative in {@link BasicParser#statement}.
@@ -269,10 +317,4 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitPairelement(@NotNull BasicParser.PairelementContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link BasicParser#binop}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBinop(@NotNull BasicParser.BinopContext ctx);
 }

@@ -14,8 +14,8 @@ public class UnopAST extends ExpressionAST {
     private ExpressionAST expression;
     private String unop;
 
-    public UnopAST(List<ExpressionAST> expressions, String unop) {
-        this.expression = expressions.get(0);
+    public UnopAST(ExpressionAST expression, String unop) {
+        this.expression = expression;
         this.unop = unop;
         initialise();
     }
