@@ -38,6 +38,10 @@ public class ParamlistAST extends Node {
         return paramTypes;
     }
 
+    public List<ParamAST> getParams() {
+        return parameters;
+    }
+
     @Override
     public void check() {
         for(ParamAST n : parameters) {

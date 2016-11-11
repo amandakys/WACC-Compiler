@@ -26,6 +26,11 @@ public class FUNCTION extends IDENTIFIER {
 
     @Override
     public TYPE getType() {
+        //returns null to void being assigned values that match its return type
         return null;
+    }
+
+    public TYPE getReturntype() {
+        return this.returntype;
     }
 }

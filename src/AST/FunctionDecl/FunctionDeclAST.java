@@ -5,6 +5,8 @@ import AST.Utility;
 import main.Visitor;
 import symbol_table.*;
 
+import java.util.List;
+
 /**
  * Created by tsd15 on 09/11/16.
  */
@@ -43,9 +45,16 @@ public class FunctionDeclAST extends Node {
     public void check() {
         CheckFunctionNameAndReturnType();
 
-        Visitor.ST = new SymbolTable(Visitor.ST);
+        //Visitor.ST = new SymbolTable(Visitor.ST);
+        //add function parameters into symbol table
+        List<ParamAST> params = parameters.getParams();
+
+        for (ParamAST p: params) {
+            Visitor.ST.add(p.getIdent(), p.getType());
+        }
+
         ((FUNCTION) identObj).setSymbolTable(Visitor.ST);
 
-        Visitor.ST = Visitor.ST.getEncSymbolTable();
+        //Visitor.ST = Visitor.ST.getEncSymbolTable();
     }
 }
