@@ -19,14 +19,14 @@ public class BasicParser extends Parser {
 	public static final int
 		PRINT=10, NEWPAIR=27, DO=18, CHR=31, MINUS=45, PAIRLITERAL=28, ELSE=15, 
 		EXCLUDECHAR=63, IF=13, LESSEQUAL=53, DONE=19, LPAREN=38, TRUE=32, IS=3, 
-		RPAREN=39, STRINGLITERAL=62, READ=6, NOTEQUAL=55, CHARCLOSE=64, AND=56, 
-		END=2, THEN=14, LESS=52, EXIT=9, PLUS=49, ORD=30, CALL=12, EXCLUDESTRING=65, 
+		RPAREN=39, STRINGLITERAL=62, READ=6, NOTEQUAL=55, NOT=44, CHARCLOSE=64, 
+		AND=56, END=2, THEN=14, LESS=52, EXIT=9, PLUS=49, ORD=30, CALL=12, EXCLUDESTRING=65, 
 		PRINTLN=11, SEMI=43, CHAR=22, BEGIN=1, ASSIGN=5, FREE=7, INT=20, COMMENT=35, 
 		RETURN=8, CHARLITERAL=61, SKIP=4, WS=58, COMMA=42, EOL=34, MOD=48, OR=57, 
 		STRINGCLOSE=66, EQUAL=54, ENDIF=16, GREATER=50, LBRACKET=40, RBRACKET=41, 
 		FIRST=24, DIGIT=36, ESCAPE=59, DIV=47, OTHER=67, LEN=29, IDENT=37, STAR=46, 
 		BOOL=21, ESC_SLASH=60, GREATEREQUAL=51, STRING=23, WHILE=17, SECOND=25, 
-		FALSE=33, PAIR=26, FACTORIAL=44;
+		FALSE=33, PAIR=26;
 	public static final String[] tokenNames = {
 		"<INVALID>", "'begin'", "'end'", "'is'", "'skip'", "'='", "'read'", "'free'", 
 		"'return'", "'exit'", "'print'", "'println'", "'call'", "'if'", "'then'", 
@@ -814,7 +814,7 @@ public class BasicParser extends Parser {
 			case DIGIT:
 			case IDENT:
 			case LPAREN:
-			case FACTORIAL:
+			case NOT:
 			case MINUS:
 			case PLUS:
 			case CHARLITERAL:
@@ -861,7 +861,7 @@ public class BasicParser extends Parser {
 				setState(165); match(LPAREN);
 				setState(167);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PAIRLITERAL) | (1L << LEN) | (1L << ORD) | (1L << CHR) | (1L << TRUE) | (1L << FALSE) | (1L << DIGIT) | (1L << IDENT) | (1L << LPAREN) | (1L << FACTORIAL) | (1L << MINUS) | (1L << PLUS) | (1L << CHARLITERAL) | (1L << STRINGLITERAL))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PAIRLITERAL) | (1L << LEN) | (1L << ORD) | (1L << CHR) | (1L << TRUE) | (1L << FALSE) | (1L << DIGIT) | (1L << IDENT) | (1L << LPAREN) | (1L << NOT) | (1L << MINUS) | (1L << PLUS) | (1L << CHARLITERAL) | (1L << STRINGLITERAL))) != 0)) {
 					{
 					setState(166); arglist();
 					}
@@ -1855,10 +1855,10 @@ public class BasicParser extends Parser {
 	}
 
 	public static class UnopContext extends ParserRuleContext {
+		public TerminalNode NOT() { return getToken(BasicParser.NOT, 0); }
 		public TerminalNode ORD() { return getToken(BasicParser.ORD, 0); }
 		public TerminalNode LEN() { return getToken(BasicParser.LEN, 0); }
 		public TerminalNode MINUS() { return getToken(BasicParser.MINUS, 0); }
-		public TerminalNode FACTORIAL() { return getToken(BasicParser.FACTORIAL, 0); }
 		public TerminalNode CHR() { return getToken(BasicParser.CHR, 0); }
 		public UnopContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1880,7 +1880,7 @@ public class BasicParser extends Parser {
 			{
 			setState(282);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LEN) | (1L << ORD) | (1L << CHR) | (1L << FACTORIAL) | (1L << MINUS))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << LEN) | (1L << ORD) | (1L << CHR) | (1L << NOT) | (1L << MINUS))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			consume();
@@ -2290,7 +2290,7 @@ public class BasicParser extends Parser {
 			setState(322); match(LBRACKET);
 			setState(331);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PAIRLITERAL) | (1L << LEN) | (1L << ORD) | (1L << CHR) | (1L << TRUE) | (1L << FALSE) | (1L << DIGIT) | (1L << IDENT) | (1L << LPAREN) | (1L << FACTORIAL) | (1L << MINUS) | (1L << PLUS) | (1L << CHARLITERAL) | (1L << STRINGLITERAL))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << PAIRLITERAL) | (1L << LEN) | (1L << ORD) | (1L << CHR) | (1L << TRUE) | (1L << FALSE) | (1L << DIGIT) | (1L << IDENT) | (1L << LPAREN) | (1L << NOT) | (1L << MINUS) | (1L << PLUS) | (1L << CHARLITERAL) | (1L << STRINGLITERAL))) != 0)) {
 				{
 				setState(323); expression();
 				setState(328);

@@ -13,6 +13,5 @@ public class SyntaxError extends BaseErrorListener {
                             @Nullable RecognitionException e) {
         System.err.println("line "+ line + ":" + charPositionLine + " : " +
                 msg);
-        System.exit(100);
     }
 }

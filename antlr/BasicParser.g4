@@ -91,7 +91,7 @@ p6: p5 OR p6
 | p5
 ;
 
-unop: FACTORIAL | MINUS | LEN | ORD | CHR ;
+unop: NOT | MINUS | LEN | ORD | CHR ;
 
 arrayelem: IDENT (LBRACKET expression RBRACKET)+ ;
 
