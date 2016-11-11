@@ -44,21 +44,47 @@ public class PAIR extends TYPE{
 //    public TYPE getType() {
 //        return this;
 //    }
-    @Override
-    public boolean equals(Object o) {
-        if (o == null) {//notsure
-            return true;
-        }else if (!(o instanceof PAIR)) {
-            return false;
-        } else {
-            //both are pairs
-            if (!this.getFirst().equals(((PAIR) o).getFirst())) {
-                return false;
-            } else if (!this.getSecond().equals(((PAIR) o).getSecond()))  {
-                return false;
-            }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (o == null) {//notsure
+//            return true;
+//        }else if (!(o instanceof PAIR)) {
+//            return false;
+//        } else {
+//            //both are pairs
+//            TYPE thisFirst = this.getFirst();
+//            TYPE thisSecond = this.getSecond();
+//            TYPE objFirst = this.getFirst();
+//            TYPE objSecond = this.getSecond();
+//
+//            if (objFirst == null) {
+//                if (objSecond == null) {
+//                } else {
+//                    return thisSecond.equals(objSecond);
+//                }
+//            } else {
+//                if (thisFirst.equals(objFirst)) {
+//                    if (objSecond == null) {
+//                        //pass
+//                    } else {
+//                        return thisSecond.equals(objFirst);
+//                    }
+//                } else {
+//                    return false;
+//                }
+//            }
+////            if (!this.getFirst().equals(((PAIR) o).getFirst())) {
+////                return false;
+////            } else if (!this.getSecond().equals(((PAIR) o).getSecond()))  {
+////                return false;
+////            }
+//
+//        }
+//        return true;
+//    }
 
-        }
-        return true;
+    @Override
+    public String toString() {
+        return "pair(" + first.getTypeName()+ ", " + second.getTypeName() + ")";
     }
 }

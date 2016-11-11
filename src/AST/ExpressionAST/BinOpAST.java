@@ -17,7 +17,7 @@ public class BinOpAST extends ExpressionAST {
     private ExpressionAST rhs;
     private ExpressionAST lhs;
 
-    public BinOpAST(String op, ExpressionAST rhs, ExpressionAST lhs) {
+    public BinOpAST(String op, ExpressionAST lhs, ExpressionAST rhs) {
         this.op = op;
         this.rhs = rhs;
         this.lhs = lhs;
@@ -34,7 +34,7 @@ public class BinOpAST extends ExpressionAST {
         String firstType = lhs.getType().getTypeName();
 
         if(expectedElemType.contains(firstType)) {
-            if(!rhs.getType().equals(lhs.getType())) {
+            if(!rhs.getType().getTypeName().equals(lhs.getType().getTypeName())) {
                 Utility.error("not the same type");
             }
         } else {

@@ -33,9 +33,14 @@ public abstract class Node {
             }
 
         }
-
-        if (!this.getType().equals(node.getType())) {
-            Utility.error("types do not match\nexpected: " + this.getType().getTypeName() + "\nactual: " + node.getType().getTypeName());
+//        if (this.getType() instanceof PAIR) {
+//            if (!this.getType().equals(node.getType())) {
+//                //error
+//                Utility.error("types do not match\nexpected " + this.getType().getTypeName() + "\nactual: " + node.getType().getTypeName());
+//            }
+//        }
+        if (!this.getType().getTypeName().equals(node.getType().getTypeName())) {
+            Utility.error("types do not match\nexpected: " + this.getType().toString() /*this.getType().getTypeName()*/ + "\nactual: " + node.getType().toString() /*node.getType().getTypeName()*/);
         }
     }
 

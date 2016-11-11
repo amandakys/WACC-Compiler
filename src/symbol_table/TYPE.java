@@ -23,35 +23,56 @@ public class TYPE extends IDENTIFIER {
         return typeName;
 
     }
+//
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this instanceof PAIR) {
+//            if (o instanceof PAIR) {
+//                //both pair
+//                //compare with string
+//
+//            } else {
+//                return false;
+//            }
+//        } else if(this instanceof ARRAY) {
+//            if (o instanceof ARRAY) {
+//                //both array
+//                //check element types
+//            } else {
+//                return false;
+//            }
+//        } else {
+//            //must be primitive type
+//            return this.getType().equals(((TYPE) o).getType();
+//        }
+//    }
 
-    @Override
-    public boolean equals(Object o) {
-        if ((this instanceof PAIR) && (o instanceof PAIR)) {
-            //both are pairs
-            TYPE thisFirst = ((PAIR)this.getType()).getFirst();
-            TYPE thisSecond = ((PAIR) this.getType()).getSecond();
-            TYPE objFirst = ((PAIR) o).getFirst();
-            TYPE objSecond = ((PAIR) o).getSecond();
-
-            if (objFirst == null) {
-
-            }
-
-            if (((PAIR) this).getFirst().equals(((PAIR) o).getFirst())) {
-                //firsts match, check seconds
-                if ((((PAIR) this).getSecond()).equals(((PAIR) o).getSecond())) {
-                    return true;
-                }
-            }
-        } else if (!((this instanceof PAIR) || (o instanceof PAIR))) {
-            //neither are pairs
-            return (this.getTypeName().equals(((TYPE) o).getTypeName()));
-        } else {
-            //one of them is a pair , the other is a primitive
-            //automatically flase
-        }
-
-        return false;
-    }
+//        if ((this instanceof PAIR) && (o instanceof PAIR)) {
+//            //both are pairs
+//            TYPE thisFirst = ((PAIR)this.getType()).getFirst();
+//            TYPE thisSecond = ((PAIR) this.getType()).getSecond();
+//            TYPE objFirst = ((PAIR) o).getFirst();
+//            TYPE objSecond = ((PAIR) o).getSecond();
+//
+//            if (objFirst == null) {
+//
+//            }
+//
+//            if (((PAIR) this).getFirst().equals(((PAIR) o).getFirst())) {
+//                //firsts match, check seconds
+//                if ((((PAIR) this).getSecond()).equals(((PAIR) o).getSecond())) {
+//                    return true;
+//                }
+//            }
+//        } else if (!((this instanceof PAIR) || (o instanceof PAIR))) {
+//            //neither are pairs
+//            return (this.getTypeName().equals(((TYPE) o).getTypeName()));
+//        } else {
+//            //one of them is a pair , the other is a primitive
+//            //automatically flase
+//        }
+//
+//        return false;
+//    }
 
 }

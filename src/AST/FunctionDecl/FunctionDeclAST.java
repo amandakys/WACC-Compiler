@@ -6,6 +6,7 @@ import AST.Utility;
 import main.Visitor;
 import symbol_table.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
@@ -61,7 +62,7 @@ public class FunctionDeclAST extends Node {
         FUNCTION f;
         if (parameters == null) {
             //no parameters
-            f = new FUNCTION(null, (TYPE) returnType, null);
+            f = new FUNCTION(null, (TYPE) returnType, new ArrayList<TYPE>());
         } else {
             f = new FUNCTION(null, (TYPE) returnType, parameters.getParamTypes());
         }

@@ -26,17 +26,17 @@ public class PairelemAST extends AssignrhsAST{
         expression.check();
 
         //expression is an ident - referencing a pair
-        IDENTIFIER pair = Visitor.ST.lookUp(((IdentAST) expression).getIdent());
+        IDENTIFIER type = Visitor.ST.lookUp(((IdentAST) expression).getIdent());
 
-        if (!expression.getType().equals(pair.getType())) {
+        if (!(type instanceof PAIR)) {
             Utility.error("fst/snd can only take pair types, actual: " + expression.getType().getTypeName());
         } else {
             //expression is a pair
 
             switch(token) {
-                case "fst": identObj = ((PAIR) pair).getFirst();
+                case "fst": identObj = ((PAIR) type).getFirst();
                     break;
-                case "snd": identObj = ((PAIR) pair).getSecond();
+                case "snd": identObj = ((PAIR) type).getSecond();
                     break;
             }
 
