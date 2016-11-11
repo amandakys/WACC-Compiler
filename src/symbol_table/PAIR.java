@@ -44,4 +44,21 @@ public class PAIR extends TYPE{
 //    public TYPE getType() {
 //        return this;
 //    }
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {//notsure
+            return true;
+        }else if (!(o instanceof PAIR)) {
+            return false;
+        } else {
+            //both are pairs
+            if (!this.getFirst().equals(((PAIR) o).getFirst())) {
+                return false;
+            } else if (!this.getSecond().equals(((PAIR) o).getSecond()))  {
+                return false;
+            }
+
+        }
+        return true;
+    }
 }
