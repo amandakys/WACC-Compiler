@@ -50,7 +50,7 @@ pairtype: PAIR LPAREN pairelemtype COMMA pairelemtype RPAREN;
 
 pairelemtype: basetype | arraytype | PAIR;
 
-expression: intliter
+exprNoBinOp:intliter
 | boolliter
 | charliter
 | strliter
@@ -58,13 +58,37 @@ expression: intliter
 | IDENT
 | arrayelem
 | unop expression
-| expression binop expression
 | LPAREN expression RPAREN
 ;
 
+expression: exprNoBinOp
+| binOp
+;
 
-binop: OR | AND | NOTEQUAL |  EQUAL | LESSEQUAL |  LESS | GREATEREQUAL | GREATER
-| MINUS | PLUS | MOD | DIV | STAR
+binOp: (p1 | p2 | p3 | p4 | p5 | p6);
+
+p1: exprNoBinOp (STAR | DIV | MOD) p1
+| exprNoBinOp
+;
+
+p2: p1 (PLUS | MINUS) p2
+|p1
+;
+
+p3: p2 (GREATER | GREATEREQUAL | LESS | LESSEQUAL) p3
+| p2
+;
+
+p4: p3 (EQUAL | NOTEQUAL) p4
+| p3
+;
+
+p5: p4 AND p5
+| p4
+;
+
+p6: p5 OR p6
+| p5
 ;
 
 unop: FACTORIAL | MINUS | LEN | ORD | CHR ;
