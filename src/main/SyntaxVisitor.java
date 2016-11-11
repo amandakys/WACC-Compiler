@@ -43,11 +43,18 @@ public class SyntaxVisitor extends BasicParserBaseVisitor<Void> {
     }
 
     private BasicParser.StatementContext getLast(BasicParser.StatementContext statement) {
-        if(statement instanceof BasicParser.SequenceContext) {
-            List<BasicParser.StatementContext> list = ((BasicParser
-                    .SequenceContext) statement).statement();
+        if (statement instanceof BasicParser.SequenceContext
+                || statement instanceof BasicParser.IfContext) {
 
-            if(list.size() > 0) {
+            List<BasicParser.StatementContext> list;
+
+            if (statement instanceof BasicParser.SequenceContext) {
+                list = ((BasicParser.SequenceContext) statement).statement();
+            } else {
+                list = ((BasicParser.IfContext) statement).statement();
+            }
+
+            if (list.size() > 0) {
                 return getLast(list.get(list.size() - 1));
             }
         }
@@ -61,20 +68,6 @@ public class SyntaxVisitor extends BasicParserBaseVisitor<Void> {
         statement is neither RETURN nor EXIT
      */
     private boolean check(BasicParser.StatementContext last) {
-        if(last instanceof BasicParser.IfContext) {
-
-            List<BasicParser.StatementContext> stats = ((BasicParser
-                    .IfContext) last).statement();
-
-            for (int i = 0; i < stats.size(); i++) {
-                if(!(stats.get(i) instanceof BasicParser.ReturnContext ||
-                        stats.get(i) instanceof BasicParser.ExitContext)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         return !((last instanceof BasicParser.ReturnContext) || (last
                 instanceof BasicParser.ExitContext));
     }
