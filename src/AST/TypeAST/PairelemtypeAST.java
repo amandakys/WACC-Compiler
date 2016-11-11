@@ -1,6 +1,7 @@
 package AST.TypeAST;
 
 import AST.Node;
+import AST.Utility;
 import main.Visitor;
 import symbol_table.IDENTIFIER;
 import symbol_table.PAIR;
@@ -34,7 +35,6 @@ public class PairelemtypeAST extends Node {
         if (pairtoken != null) {
             //nested pair
             T = new PAIR(null, null);
-            //TODO: do we need to add nested pair to symbol table
         } else {
             T = Visitor.ST.lookUpAll(type.getType().getTypeName());
         }
