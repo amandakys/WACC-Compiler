@@ -2,6 +2,7 @@ package AST.TypeAST;
 
 import AST.Node;
 import main.Visitor;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.IDENTIFIER;
 import symbol_table.PAIR;
 import symbol_table.TYPE;
@@ -13,8 +14,8 @@ public class PairtypeAST extends TypeAST {
     PairelemtypeAST first;
     PairelemtypeAST second;
 
-    public PairtypeAST(PairelemtypeAST first, PairelemtypeAST second) {
-        super();
+    public PairtypeAST(ParserRuleContext ctx, PairelemtypeAST first, PairelemtypeAST second) {
+        super(ctx);
         this.first = first;
         this.second = second;
     }

@@ -1,7 +1,7 @@
 package AST.ExpressionAST;
 
-import AST.Utility;
 import main.Visitor;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,8 @@ public class BinOpAST extends ExpressionAST {
     private ExpressionAST rhs;
     private ExpressionAST lhs;
 
-    public BinOpAST(String op, ExpressionAST lhs, ExpressionAST rhs) {
+    public BinOpAST(ParserRuleContext ctx, String op, ExpressionAST lhs, ExpressionAST rhs) {
+        super(ctx);
         this.op = op;
         this.rhs = rhs;
         this.lhs = lhs;
@@ -28,17 +29,17 @@ public class BinOpAST extends ExpressionAST {
     public void check() {
         identObj = Visitor.ST.lookUpAll(returnType);
 
-        lhs.check();
-        rhs.check();
+        lhs.checkNode();
+        rhs.checkNode();
 
         String firstType = lhs.getType().getTypeName();
 
         if(expectedElemType.contains(firstType)) {
             if(!rhs.getType().getTypeName().equals(lhs.getType().getTypeName())) {
-                Utility.error("not the same type");
+                error("not the same type");
             }
         } else {
-            Utility.error("not expected type");
+            error("not expected type");
         }
     }
 

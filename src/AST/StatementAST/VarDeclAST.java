@@ -6,8 +6,8 @@ import AST.AssignmentAST.CallAST;
 import AST.TypeAST.ArraytypeAST;
 import AST.TypeAST.PairtypeAST;
 import AST.TypeAST.TypeAST;
-import AST.Utility;
 import main.Visitor;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.*;
 
 /**
@@ -18,20 +18,17 @@ public class VarDeclAST extends StatementAST{
     private String ident;
     private TypeAST type;
     private AssignrhsAST rhs;
-    private boolean isChecked;
 
-    public VarDeclAST(TypeAST type, String ident, AssignrhsAST rhs) {
-        super();
+    public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
+        super(ctx);
         this.ident = ident;
         this.type = type;
         this.rhs = rhs;
-        isChecked = false;
     }
 
     @Override
     public void check() {
-        if(isChecked) return;
-        type.check();
+        type.checkNode();
 
         if (type instanceof PairtypeAST) {
             TYPE f = ((PairtypeAST) type).typeFirst();
@@ -39,7 +36,7 @@ public class VarDeclAST extends StatementAST{
             IDENTIFIER T = new PAIR(f, s);
             IDENTIFIER V = Visitor.ST.lookUp(ident);
             if (V != null) {
-                Utility.error(ident + " is already declared");
+                error(ident + " is already declared");
             } else {
                 Visitor.ST.add(ident, T);
             }
@@ -50,13 +47,13 @@ public class VarDeclAST extends StatementAST{
                 int arraysize = ((ArraylitAST) rhs).getSize();
                 IDENTIFIER V = Visitor.ST.lookUp(ident);
                 if (V != null) {
-                    Utility.error(ident + " is already declared");
+                    error(ident + " is already declared");
                 } else {
                     IDENTIFIER T = new ARRAY(elementType, arraysize);
                     Visitor.ST.add(ident, T);
                 }
             } else {
-                Utility.error("declared type and given type do not match");
+                error("declared type and given type do not match");
             }
 
         } else {
@@ -65,28 +62,24 @@ public class VarDeclAST extends StatementAST{
             IDENTIFIER V = Visitor.ST.lookUp(ident);
 
             if(T == null) {
-                Utility.error("unknown type " + typeName);
+                error("unknown type " + typeName);
             } else if (!(T instanceof TYPE)) {
-                Utility.error(typeName + " is not a type");
-            } else if (!(T.isDeclarable())) {
-                Utility.error("cannot declare " + typeName + " objects");
+                error(typeName + " is not a type");
             } else if (V != null && !(V instanceof FUNCTION)) {
-                Utility.error(ident + " is already declared");
+                error(ident + " is already declared");
             } else {
                 if(V == null) {
                     identObj = new VARIABLE((TYPE) T);
                     Visitor.ST.add(ident, identObj);
                 }
 
-            //Checking rhs
-            rhs.check();
-
+                //Checking rhs
+                rhs.checkNode();
                 if(!(rhs instanceof CallAST) ||
                         (rhs instanceof CallAST && ((CallAST) rhs).isDeclared())) {
                     type.checkType(rhs);
                 }
 
-            isChecked = true;
             }
         }
     }

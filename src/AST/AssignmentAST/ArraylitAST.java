@@ -1,7 +1,7 @@
 package AST.AssignmentAST;
 
 import AST.ExpressionAST.ExpressionAST;
-import AST.Utility;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.ARRAY;
 import symbol_table.TYPE;
 
@@ -11,8 +11,8 @@ public class ArraylitAST extends AssignrhsAST {
     //Array list has stores a list of expression
     private List<ExpressionAST> arraylits;
 
-    public ArraylitAST(List<ExpressionAST> arraylits) {
-        super();
+    public ArraylitAST(ParserRuleContext ctx, List<ExpressionAST> arraylits) {
+        super(ctx);
         this.arraylits = arraylits;
     }
 
@@ -20,7 +20,7 @@ public class ArraylitAST extends AssignrhsAST {
     @Override
     public void check() {
         for(ExpressionAST a : arraylits) {
-            a.check();
+            a.checkNode();
         }
 
         //check all expressions are of the same type
@@ -28,7 +28,7 @@ public class ArraylitAST extends AssignrhsAST {
 
         for (ExpressionAST a: arraylits) {
             if (!type.equals(a.getType())) {
-                Utility.error("array elements must all be of same type");
+                error("array elements must all be of same type");
             }
         }
 

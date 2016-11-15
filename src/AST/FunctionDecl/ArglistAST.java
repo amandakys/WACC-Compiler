@@ -2,6 +2,7 @@ package AST.FunctionDecl;
 
 import AST.ExpressionAST.ExpressionAST;
 import AST.Node;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.TYPE;
 
 import java.util.List;
@@ -12,8 +13,8 @@ import java.util.List;
 public class ArglistAST extends Node {
     private List<ExpressionAST> expressions;
 
-    public ArglistAST(List<ExpressionAST> expressionNodes) {
-        super();
+    public ArglistAST(ParserRuleContext ctx, List<ExpressionAST> expressionNodes) {
+        super(ctx);
         expressions = expressionNodes;
     }
 
@@ -39,7 +40,7 @@ public class ArglistAST extends Node {
     @Override
     public void check() {
         for(Node e : expressions) {
-            e.check();
+            e.checkNode();
         }
     }
 }

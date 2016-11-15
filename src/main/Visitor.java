@@ -13,16 +13,12 @@ import AST.TypeAST.*;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.TerminalNode;
 import symbol_table.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by andikoh on 08/11/2016.
- */
 public class Visitor extends BasicParserBaseVisitor<Node>{
     public static SymbolTable ST = new SymbolTable(null);
     private static List<ParserRuleContext> toBeVisited = new ArrayList<>();
@@ -33,26 +29,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ST.add("char", new SCALAR("char"));
         ST.add("string", new STRING());
 
-        SymbolTable next = new SymbolTable(ST);
-        ST = next;
-    }
-
-    @Override
-    public ProgramAST visitProgram(BasicParser.ProgramContext ctx) {
-        List<BasicParser.FunctionContext> functions = ctx.function();
-        List<FunctionDeclAST> functionASTs = new ArrayList<>();
-
-        for (BasicParser.FunctionContext f: functions) {
-            functionASTs.add(visitFunction(f));
-        }
-
-        return new ProgramAST(functionASTs, visitStatement(ctx.statement()));
+        ST = new SymbolTable(ST);
     }
 
     public StatementAST visitStatement(BasicParser.StatementContext ctx) {
-        if (ctx instanceof BasicParser.SkipContext) {
-            return visitSkip((BasicParser.SkipContext)ctx);
-        } else if (ctx instanceof BasicParser.Var_declContext) {
+        if (ctx instanceof BasicParser.Var_declContext) {
             return visitVar_decl((BasicParser.Var_declContext)ctx);
         } else if (ctx instanceof BasicParser.AssignmentContext) {
             return visitAssignment((BasicParser.AssignmentContext)ctx);
@@ -81,59 +62,67 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public SkipAST visitSkip(BasicParser.SkipContext ctx) {
-        //skip statement contains no information and has no checks;
-        return new SkipAST();
-    }
-
-    @Override
     public AssignmentAST visitAssignment(BasicParser.AssignmentContext ctx) {
-        AssignmentAST assignment = new AssignmentAST(visitAssignlhs(ctx.assignlhs()), visitAssignrhs(ctx.assignrhs()));
-        assignment.check();
+        AssignmentAST assignment = new AssignmentAST(ctx, visitAssignlhs(ctx.assignlhs()), visitAssignrhs(ctx.assignrhs()));
+        assignment.checkNode();
         return assignment;
     }
 
     @Override
     public VarDeclAST visitVar_decl(BasicParser.Var_declContext ctx) {
-        VarDeclAST var = new VarDeclAST(visitType(ctx.type()), ctx.IDENT()
+        VarDeclAST var = new VarDeclAST(ctx, visitType(ctx.type()), ctx.IDENT()
                 .getText(), visitAssignrhs(ctx.assignrhs()));
-        var.check();
+        var.checkNode();
         return var;
     }
 
     @Override
-    public ReadAST visitRead(BasicParser.ReadContext ctx) {
+    public StatementAST visitRead(BasicParser.ReadContext ctx) {
+        AssignlhsAST assignlhs = visitAssignlhs(ctx.assignlhs());
+        assignlhs.check();
+        TYPE t = assignlhs.getType(); //check that expresison is of a type acceptable to read
 
-        ReadAST readAST = new ReadAST(visitAssignlhs(ctx.assignlhs()));
-        readAST.check();
-        return  readAST;
+        TYPE intType = Visitor.ST.lookUpAll("int").getType();
+
+        TYPE charType = Visitor.ST.lookUpAll("char").getType();
+
+        if (!t.equals(intType) && !t.equals(charType)){
+            //error
+            error(ctx,"read only takes int or char types");
+        }
+        return null;
     }
 
     @Override
-    public FreeAST visitFree(BasicParser.FreeContext ctx) {
-        FreeAST freeAST = new FreeAST(visitExpression(ctx.expression()));
-        freeAST.check();
-        return freeAST;
-    }
-
-    @Override
-    public ReturnAST visitReturn(BasicParser.ReturnContext ctx) {
-
-        TypeAST returnType = visitType((checkReturnInFunction(ctx)).type());
+    public StatementAST visitFree(BasicParser.FreeContext ctx) {
         ExpressionAST expression = visitExpression(ctx.expression());
+        expression.checkNode();
+
+        if (!(expression.getType() instanceof PAIR)) {
+            error(ctx, "free must take a pair type");
+        }
+
+        return null;
+    }
+
+    @Override
+    public StatementAST visitReturn(BasicParser.ReturnContext ctx) {
+
+        TypeAST returnType = visitType((checkNodeReturnInFunction(ctx)).type());
+        ExpressionAST expression = visitExpression(ctx.expression());
+        //check that the expression returns the same type as the expected type
         returnType.checkType(expression);
 
-        ReturnAST returnAST = new ReturnAST(visitExpression(ctx.expression()));
-        returnAST.check();
-        return returnAST;
+        expression.checkNode();
+        return null;
     }
 
-    private BasicParser.FunctionContext checkReturnInFunction(ParserRuleContext ctx) {
+    private BasicParser.FunctionContext checkNodeReturnInFunction(ParserRuleContext ctx) {
         while(!(ctx.getParent() instanceof BasicParser.FunctionContext)) {
             ctx = ctx.getParent();
 
             if(ctx instanceof BasicParser.ProgramContext) {
-                Utility.error(ctx, "is supposed to be in a function");
+                error(ctx, "is supposed to be in a function");
             }
         }
 
@@ -141,16 +130,21 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public ExitAST visitExit(BasicParser.ExitContext ctx) {
-        ExpressionAST expression = visitExpression(ctx.expression());
-        ExitAST exit = new ExitAST(expression);
-        exit.check();
-        return exit;
+    public StatementAST visitExit(BasicParser.ExitContext ctx) {
+        ExpressionAST expression = visitExpression(ctx.expression());;
+        IDENTIFIER T = Visitor.ST.lookUpAll("int");
+        expression.checkNode();
+        if(!expression.getType().equals(T.getType())) {
+            error(ctx, "Exit statement must take integer");
+        }
+        return null;
     }
 
     @Override
-    public PrintAST visitPrint(BasicParser.PrintContext ctx) {
-        return new PrintAST(visitExpression(ctx.expression()));
+    public StatementAST visitPrint(BasicParser.PrintContext ctx) {
+        ExpressionAST expression = visitExpression(ctx.expression());
+        expression.checkNode();
+        return null;
     }
 
     @Override
@@ -159,14 +153,14 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         FunctionDeclAST function;
         if (ctx.paramlist() == null) {
             //no params
-            function = new FunctionDeclAST(visitType(ctx.type()), ctx.IDENT().getText());
+            function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText());
         } else {
             //has params
-            function = new FunctionDeclAST(visitType(ctx.type()), ctx.IDENT().getText(),
+            function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText(),
                     visitParamlist(ctx.paramlist()));
         }
 
-        function.check();
+        function.checkNode();
         visitChildren(ctx);
 
         Visitor.ST = Visitor.ST.getEncSymbolTable();
@@ -178,72 +172,82 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
                 ((func instanceof FUNCTION) && ((FUNCTION) func).getReturntype() == null)) {
             Visitor.ST.add(funcName, function.getIdentObj());
         } else {
-            Utility.error(ctx, "function " + funcName + " already existed");
+            error(ctx, "function " + funcName + " already existed");
         }
 
         return function;
     }
 
     @Override
-    public PrintlnAST visitPrintln(BasicParser.PrintlnContext ctx) {
-        PrintlnAST print = new PrintlnAST(visitExpression(ctx.expression()));
-        print.check();
-        return print;
+    public StatementAST visitPrintln(BasicParser.PrintlnContext ctx) {
+        ExpressionAST expr = visitExpression(ctx.expression());
+        expr.checkNode();
+        return null;
     }
 
     @Override
-    public IfAST visitIf(BasicParser.IfContext ctx) {
+    public StatementAST visitIf(BasicParser.IfContext ctx) {
         //components
         ExpressionAST expr = visitExpression(ctx.expression());
         StatementAST then = visitStatement(ctx.statement(0));
         StatementAST elseSt = visitStatement(ctx.statement(1));
 
-        IfAST ifAST = new IfAST(expr, then, elseSt);
-        ifAST.check();
-        return ifAST;
+        expr.checkNode();
+        IDENTIFIER T = Visitor.ST.lookUpAll("bool");
+        if (!expr.getType().equals(T)) {
+            error(ctx, "If condition type mismatch");
+        }
+        //check statements are valid
+        then.checkNode();
+        elseSt.checkNode();
+        return null;
     }
 
     @Override
-    public WhileAST visitWhile(BasicParser.WhileContext ctx) {
+    public StatementAST visitWhile(BasicParser.WhileContext ctx) {
         //components
-        ExpressionAST expr = visitExpression(ctx.expression());
+        ExpressionAST expression = visitExpression(ctx.expression());
         StatementAST statement = visitStatement(ctx.statement());
 
-        WhileAST whileAST = new WhileAST(expr, statement);
-        whileAST.check();
-        return whileAST;
+        //check that expression is valid
+        expression.checkNode();
+
+        if(expression.getType().equals(Visitor.ST.lookUpAll("bool"))) {
+            //check that statement is valid
+            statement.checkNode();
+        } else {
+            error(ctx, "expression is not of type boolean");
+        }
+        return null;
     }
 
     @Override
-    public BeginAST visitBegin(BasicParser.BeginContext ctx) {
+    public StatementAST visitBegin(BasicParser.BeginContext ctx) {
         Visitor.ST = new SymbolTable(Visitor.ST);
-        BeginAST begin = new BeginAST(visitStatement(ctx.statement()));
+        visitStatement(ctx.statement());
         Visitor.ST = Visitor.ST.getEncSymbolTable();
-        return begin;
+        return null;
     }
 
     @Override
-    public SequenceAST visitSequence(BasicParser.SequenceContext ctx) {
+    public StatementAST visitSequence(BasicParser.SequenceContext ctx) {
         List<BasicParser.StatementContext> statements = ctx.statement();
-        List<StatementAST> statementASTs = new ArrayList<>();
 
         for (BasicParser.StatementContext s : statements) {
-            statementASTs.add(visitStatement(s));
+            visitStatement(s);
         }
-
-        SequenceAST sequence = new SequenceAST(statementASTs);
-        return sequence;
+        return null;
     }
 
     @Override
     public AssignlhsAST visitAssignlhs(BasicParser.AssignlhsContext ctx) {
         AssignlhsAST lhs;
         if (ctx.IDENT() != null) {
-            lhs = new AssignlhsAST(ctx.IDENT().getText());
+            lhs = new AssignlhsAST(ctx, ctx.IDENT().getText());
         } else if (ctx.arrayelem() != null){
-            lhs = new AssignlhsAST(visitArrayelem(ctx.arrayelem()));
+            lhs = new AssignlhsAST(ctx, visitArrayelem(ctx.arrayelem()));
         } else {
-            lhs = new AssignlhsAST(visitPairelem(ctx.pairelem()));
+            lhs = new AssignlhsAST(ctx, visitPairelem(ctx.pairelem()));
         }
         return lhs;
     }
@@ -287,7 +291,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             expressionASTs.add(visitExpression(e));
         }
 
-        return new ArraylitAST(expressionASTs);
+        return new ArraylitAST(ctx, expressionASTs);
     }
 
     @Override
@@ -298,7 +302,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             expressionNodes.add(visitExpression(e));
         }
 
-        NewpairAST newpair = new NewpairAST(expressionNodes);
+        NewpairAST newpair = new NewpairAST(ctx, expressionNodes);
         return  newpair;
     }
 
@@ -309,7 +313,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public CallAST visitFunctioncall(BasicParser.FunctioncallContext ctx) {
-        CallAST call = new CallAST(ctx.IDENT().getText(), visitArglist(ctx.arglist()));
+        CallAST call = new CallAST(ctx, ctx.IDENT().getText(), visitArglist(ctx.arglist()));
 
         /*
         If the function has not been declared, put the assignment statement (callAST's parent) inside the toBeVisited
@@ -331,11 +335,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
                 expressionNodes.add(visitExpression(e));
             }
 
-            ArglistAST arglist = new ArglistAST(expressionNodes);
+            ArglistAST arglist = new ArglistAST(ctx, expressionNodes);
             return arglist;
         }
 
-        return new ArglistAST(new ArrayList<ExpressionAST>());
+        return new ArglistAST(ctx, new ArrayList<ExpressionAST>());
     }
 
     public PairelemAST visitPairelem(BasicParser.PairelemContext ctx) {
@@ -345,7 +349,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else if (ctx.SECOND() != null) {
             token = ctx.SECOND().getText();
         }
-        return new PairelemAST( token, visitExpression(ctx.expression()));
+        return new PairelemAST(ctx, token, visitExpression(ctx.expression()));
     }
 
     @Override
@@ -355,7 +359,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         for (BasicParser.ExpressionContext e : expressions) {
             expressionNodes.add(visitExpression(e));
         }
-        return new ArrayelemAST(ctx.IDENT().getText(), expressionNodes);
+        return new ArrayelemAST(ctx, ctx.IDENT().getText(), expressionNodes);
     }
 
     @Override
@@ -374,9 +378,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ExpressionAST expression = null;
 
         if (ctx.IDENT()!= null) {
-            expression = new IdentAST(ctx.IDENT().getText());
+            expression = new IdentAST(ctx, ctx.IDENT().getText());
         } else if (ctx.PAIRLITERAL() != null) {
-            expression = new PairliterAST(ctx.PAIRLITERAL() .getText());
+            expression = new PairliterAST(ctx, ctx.PAIRLITERAL() .getText());
         } else if (ctx.intliter() != null) {
             expression = visitIntliter(ctx.intliter());
         } else if (ctx.boolliter() != null) {
@@ -388,13 +392,13 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else if (ctx.arrayelem() != null) {
             expression = visitArrayelem(ctx.arrayelem());
         } else if (ctx.unop() != null){
-            expression = new UnopAST(visitExpression(ctx.expression()), ctx.unop().getText());
+            expression = new UnopAST(ctx, visitExpression(ctx.expression()), ctx.unop().getText());
         } else if (ctx.LPAREN() != null) {
             expression = visitExpression(ctx.expression());
         }
 
         if(expression != null) {
-            expression.check();
+            expression.checkNode();
         }
 
         return expression;
@@ -419,7 +423,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         }
 
         if(binOpAST != null) {
-            binOpAST.check();
+            binOpAST.checkNode();
         }
         return binOpAST;
     }
@@ -439,7 +443,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else {
             op = ctx.STAR().getText();
         }
-        return new BinOpAST(op,visitExprNoBinOp(ctx.exprNoBinOp()), visitP1(ctx.p1()));
+        return new BinOpAST(ctx, op,visitExprNoBinOp(ctx.exprNoBinOp()), visitP1(ctx.p1()));
     }
 
     @Override
@@ -456,7 +460,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             op = ctx.PLUS().getText();
         }
 
-        return new BinOpAST(op,visitP1(ctx.p1()), visitP2(ctx.p2()));
+        return new BinOpAST(ctx, op,visitP1(ctx.p1()), visitP2(ctx.p2()));
     }
 
     @Override
@@ -476,7 +480,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else {
             op = ctx.LESSEQUAL().getText();
         }
-        return new BinOpAST(op,visitP2(ctx.p2()), visitP3(ctx.p3()));
+        return new BinOpAST(ctx, op,visitP2(ctx.p2()), visitP3(ctx.p3()));
     }
 
     @Override
@@ -492,7 +496,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else {
             op = ctx.NOTEQUAL().getText();
         }
-        return new BinOpAST(op,visitP3(ctx.p3()), visitP4(ctx.p4()));
+        return new BinOpAST(ctx, op,visitP3(ctx.p3()), visitP4(ctx.p4()));
     }
 
     @Override
@@ -501,7 +505,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             return visitP4(ctx.p4());
         }
 
-        return new BinOpAST(ctx.AND().getText(),visitP4(ctx.p4()), visitP5(ctx.p5()));
+        return new BinOpAST(ctx, ctx.AND().getText(),visitP4(ctx.p4()), visitP5(ctx.p5()));
     }
 
     @Override
@@ -510,33 +514,28 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             return visitP5(ctx.p5());
         }
 
-        return new BinOpAST(ctx.OR().getText(),visitP5(ctx.p5()), visitP6(ctx.p6()));
+        return new BinOpAST(ctx, ctx.OR().getText(),visitP5(ctx.p5()), visitP6(ctx.p6()));
     }
 
     @Override
     public IntLiterAST visitIntliter(BasicParser.IntliterContext ctx) {
         String sign = ctx.intsign() != null ? ctx.intsign().getText() : "";
-        return new IntLiterAST(sign, ctx.DIGIT().toString());
-    }
-
-    @Override
-    public IntSignAST visitIntsign(BasicParser.IntsignContext ctx) {
-        return new IntSignAST();
+        return new IntLiterAST(ctx, sign, ctx.DIGIT().toString());
     }
 
     @Override
     public BoolliterAST visitBoolliter(BasicParser.BoolliterContext ctx) {
-        return new BoolliterAST(ctx.getText());
+        return new BoolliterAST(ctx, ctx.getText());
     }
 
     @Override
     public CharLitAST visitCharliter(BasicParser.CharliterContext ctx) {
-        return new CharLitAST(ctx.getText());
+        return new CharLitAST(ctx, ctx.getText());
     }
 
     @Override
     public StringLiterAST visitStrliter(BasicParser.StrliterContext ctx) {
-        return new StringLiterAST(ctx.getText());
+        return new StringLiterAST(ctx, ctx.getText());
     }
 
     @Override
@@ -548,17 +547,17 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
                 parameterNodes.add(visitParam(p));
             }
 
-            ParamlistAST paramlist = new ParamlistAST(parameterNodes);
-            paramlist.check();
+            ParamlistAST paramlist = new ParamlistAST(ctx, parameterNodes);
+            paramlist.checkNode();
             return paramlist;
         } else {
-            return new ParamlistAST(new ArrayList<ParamAST>());
+            return new ParamlistAST(ctx, new ArrayList<ParamAST>());
         }
     }
 
     @Override
     public ParamAST visitParam(BasicParser.ParamContext ctx) {
-        ParamAST param = new ParamAST(visitType(ctx.type()), ctx.IDENT()
+        ParamAST param = new ParamAST(ctx, visitType(ctx.type()), ctx.IDENT()
                 .getText());
         return param;
     }
@@ -580,8 +579,8 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public BasetypeAST visitBasetype(BasicParser.BasetypeContext ctx) {
-        BasetypeAST baseType = new BasetypeAST(ctx.getText());
-        baseType.check();
+        BasetypeAST baseType = new BasetypeAST(ctx, ctx.getText());
+        baseType.checkNode();
         return baseType;
     }
 
@@ -590,11 +589,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ArraytypeAST arraytype = null;
         int arrayDepth = ctx.LBRACKET().size();
         if (ctx.basetype() != null) {
-            arraytype = new ArraytypeAST(visitBasetype(ctx.basetype()), arrayDepth);
-            arraytype.check();
+            arraytype = new ArraytypeAST(ctx, visitBasetype(ctx.basetype()), arrayDepth);
+            arraytype.checkNode();
         } else if (ctx.pairtype() != null) {
-            arraytype = new ArraytypeAST(visitPairtype(ctx.pairtype()), arrayDepth);
-            arraytype.check();
+            arraytype = new ArraytypeAST(ctx, visitPairtype(ctx.pairtype()), arrayDepth);
+            arraytype.checkNode();
         }
 
         return arraytype;
@@ -604,8 +603,8 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
    @Override
     public PairtypeAST visitPairtype(BasicParser.PairtypeContext ctx) {
-       PairtypeAST pairtype = new PairtypeAST(visitPairelemtype(ctx.pairelemtype(0)), visitPairelemtype(ctx.pairelemtype(1)));
-       pairtype.check();
+       PairtypeAST pairtype = new PairtypeAST(ctx, visitPairelemtype(ctx.pairelemtype(0)), visitPairelemtype(ctx.pairelemtype(1)));
+       pairtype.checkNode();
        return pairtype;
    }
 
@@ -613,22 +612,28 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     public PairelemtypeAST visitPairelemtype(BasicParser.PairelemtypeContext ctx) {
         PairelemtypeAST pairelemtype = null;
         if (ctx.PAIR() != null) {
-            pairelemtype = new PairelemtypeAST(ctx.PAIR().getText());
-            pairelemtype.check();
+            pairelemtype = new PairelemtypeAST(ctx, ctx.PAIR().getText());
+            pairelemtype.checkNode();
         } else if (ctx.basetype() != null) {
-            pairelemtype = new PairelemtypeAST(visitBasetype(ctx.basetype()));
-            pairelemtype.check();
+            pairelemtype = new PairelemtypeAST(ctx, visitBasetype(ctx.basetype()));
+            pairelemtype.checkNode();
         } else if (ctx.arraytype() != null) {
-            pairelemtype =  new PairelemtypeAST(visitArraytype(ctx.arraytype()));
-            pairelemtype.check();
+            pairelemtype =  new PairelemtypeAST(ctx, visitArraytype(ctx.arraytype()));
+            pairelemtype.checkNode();
         }
         return pairelemtype;
     }
 
     public void checkUndefinedFunc() {
-       for(Iterator<ParserRuleContext> iter = toBeVisited.iterator(); iter.hasNext(); ) {
-           visit(iter.next());
+       for(ParserRuleContext ctx : toBeVisited ) {
+           visit(ctx);
        }
+    }
+
+    public static void error(ParserRuleContext ctx, String message) {
+        System.err.println("line: " + ctx.start.getLine() + ":" + ctx.start.getCharPositionInLine()
+                + " " + ctx.start.getText() + " " + message);
+        System.exit(200);
     }
 
 }

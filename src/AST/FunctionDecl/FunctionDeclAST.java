@@ -2,13 +2,12 @@ package AST.FunctionDecl;
 
 import AST.Node;
 import AST.TypeAST.TypeAST;
-import AST.Utility;
 import main.Visitor;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * Created by tsd15 on 09/11/16.
@@ -19,14 +18,15 @@ public class FunctionDeclAST extends Node {
     private String funcname;
     private ParamlistAST parameters;
 
-    public FunctionDeclAST(TypeAST returntype, String funcname) {
+    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname) {
+        super(ctx);
         this.returntype = returntype;
         this.returntypename = returntype.getType().getTypeName();
         this.funcname = funcname;
         this.parameters = null;
     }
-    public FunctionDeclAST(TypeAST returntype, String funcname, ParamlistAST paramList) {
-        super();
+    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, ParamlistAST paramList) {
+        super(ctx);
         //return type name will remove all non alphanumeric characters to
         // search for primitive types
         this.returntype = returntype;
@@ -58,13 +58,13 @@ public class FunctionDeclAST extends Node {
             IDENTIFIER F = Visitor.ST.lookUp(funcname);
 
             if (returntype == null) {
-                Utility.error("Unknown type " + returntypename);
+                error("Unknown type " + returntypename);
             } else if (!(returntype.getType() instanceof TYPE)) {
-                Utility.error(returntypename + " is not a type");
+                error(returntypename + " is not a type");
             } else if (!(returntype.getType()).isReturnable()) {
-                Utility.error("cannot return " + returntypename + " objects");
+                error("cannot return " + returntypename + " objects");
             } else if (F != null) {
-                Utility.error(funcname + " is already declared");
+                error(funcname + " is already declared");
             } else {
                 Visitor.ST.add(funcname, identObj);
             }

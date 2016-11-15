@@ -1,8 +1,8 @@
 package AST.AssignmentAST;
 
 import AST.Node;
-import AST.Utility;
 import main.Visitor;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.IDENTIFIER;
 
 /**
@@ -13,14 +13,14 @@ public class AssignlhsAST extends Node {
     String ident;
     Node child;
 
-    public AssignlhsAST(String ident) {
-        super();
+    public AssignlhsAST(ParserRuleContext ctx, String ident) {
+        super(ctx);
         this.ident = ident;
         this.child = null;
     }
 
-    public AssignlhsAST(Node child) {
-        super();
+    public AssignlhsAST(ParserRuleContext ctx, Node child) {
+        super(ctx);
         this.ident = null;
         this.child = child;
     }
@@ -34,12 +34,12 @@ public class AssignlhsAST extends Node {
 
             if (N == null) {
                 //ident is not in symbol table
-                Utility.error("undefined variable");
+                error("undefined variable");
             } else {
                 this.identObj = N;
             }
         } else {
-            child.check();
+            child.checkNode();
             this.identObj = child.getType();
         }
     }

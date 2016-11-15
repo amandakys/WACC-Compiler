@@ -1,12 +1,10 @@
 package AST.ExpressionAST;
 
 import AST.Node;
-import AST.Utility;
-import antlr.BasicParser;
 import main.Visitor;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.ARRAY;
 import symbol_table.IDENTIFIER;
-import symbol_table.SymbolTable;
 import symbol_table.TYPE;
 
 import java.util.ArrayList;
@@ -19,8 +17,8 @@ public class ArrayelemAST extends ExpressionAST {
     String ident;
     List<Node> expressions = new ArrayList<>();
 
-    public ArrayelemAST(String ident, List<Node> expressionNodes) {
-        super();
+    public ArrayelemAST(ParserRuleContext ctx, String ident, List<Node> expressionNodes) {
+        super(ctx);
         this.ident = ident;
         this.expressions = expressionNodes;
     }
@@ -30,14 +28,14 @@ public class ArrayelemAST extends ExpressionAST {
         //check idents
         IDENTIFIER N = Visitor.ST.lookUp(ident);
         if (N == null) {
-            Utility.error("undeclared variable");
+            error("undeclared variable");
         } else {
 
             for (Node n : expressions) {
-                n.check();
+                n.checkNode();
                 TYPE T = Visitor.ST.lookUpAll("int").getType();
                 if (!T.equals(n.getType())) {
-                    Utility.error("arrayelement only takes integers, actual: " + T.getTypeName());
+                    error("arrayelement only takes integers, actual: " + T.getTypeName());
                 }
             }
 

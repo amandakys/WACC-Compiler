@@ -1,20 +1,21 @@
 package AST.ExpressionAST;
 
-import AST.Utility;
 import main.Visitor;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.IDENTIFIER;
-import symbol_table.PAIR;
 
 /**
  * Created by tsd15 on 10/11/16.
  */
 public class IdentAST extends ExpressionAST {
     String ident;
-    public IdentAST(String ident) {
+
+    public IdentAST(ParserRuleContext ctx, String ident) {
+        super(ctx);
         this.ident = ident;
         IDENTIFIER identType = Visitor.ST.lookUpAll(ident);
         if (identType == null) {
-            Utility.error("undefined expression: " + ident);
+            error("undefined expression: " + ident);
         } else {
 //            if (ident == "null") {
 //                identObj = new PAIR(null, null);
@@ -28,7 +29,7 @@ public class IdentAST extends ExpressionAST {
     public void check() {
         IDENTIFIER I = Visitor.ST.lookUp(ident);
         if(I == null) {
-            Utility.error("cannot find identifier: "+ ident);
+            error("cannot find identifier: "+ ident);
         }
     }
 

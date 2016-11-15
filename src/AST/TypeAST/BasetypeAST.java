@@ -1,7 +1,7 @@
 package AST.TypeAST;
 
-import AST.Utility;
 import main.Visitor;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.IDENTIFIER;
 
 /**
@@ -10,7 +10,8 @@ import symbol_table.IDENTIFIER;
 public class BasetypeAST extends TypeAST {
     String typename;
 
-    public BasetypeAST(String typename) {
+    public BasetypeAST(ParserRuleContext ctx, String typename) {
+        super(ctx);
         this.typename = typename;
     }
 
@@ -20,7 +21,7 @@ public class BasetypeAST extends TypeAST {
         IDENTIFIER T = Visitor.ST.lookUpAll(typename);
         if (T == null) {
             //type does not exist
-            Utility.error("undefined type");
+            error("undefined type");
         }
         identObj = T;
     }

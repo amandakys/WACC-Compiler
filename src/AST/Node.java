@@ -1,8 +1,8 @@
 package AST;
 
-import symbol_table.ARRAY;
+import main.Visitor;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.IDENTIFIER;
-import symbol_table.PAIR;
 import symbol_table.TYPE;
 
 /**
@@ -10,8 +10,21 @@ import symbol_table.TYPE;
  */
 public abstract class Node {
     protected IDENTIFIER identObj;
+    protected boolean isChecked = false;
+    protected ParserRuleContext ctx;
 
-    public abstract void check();
+    public Node(ParserRuleContext ctx) {
+        this.ctx = ctx;
+    }
+
+    public void checkNode() {
+        if(!isChecked) {
+            check();
+            isChecked = true;
+        }
+    }
+
+    protected abstract void check();
 
     public TYPE getType() {
         return identObj.getType();
@@ -25,31 +38,15 @@ public abstract class Node {
 
         if (this.getType() == null) {
             //this value cannot be assigned to
-            Utility.error("trying to assign to unassignable value");
+            error("trying to assign to unassignable value");
         }
 
         if (!Compare.types(this.getType(), node.getType())) {
-            Utility.error("types do not match\nexpected: " + this.getType() + "\nactual: " + node.getType());
+            error("types do not match\nexpected: " + this.getType() + "\nactual: " + node.getType());
         }
     }
 
-//        else if ((this.getType() instanceof ARRAY) && (node.getType() instanceof ARRAY)) {
-//            TYPE thisElemType = ((ARRAY) this.getType()).getElementType();
-//            TYPE nodeElemType = ((ARRAY) node.getType()).getElementType();
-//            if (!thisElemType.equals(nodeElemType)) {
-//                Utility.error("types do not match\nexpected: array of" + thisElemType.getTypeName() + "\nactual: array of" + nodeElemType.getTypeName());
-//            }
-//
-//        }
-//        if (this.getType() instanceof PAIR) {
-//            if (!this.getType().equals(node.getType())) {
-//                //error
-//                Utility.error("types do not match\nexpected " + this.getType().getTypeName() + "\nactual: " + node.getType().getTypeName());
-//            }
-//        }
-//        if (!this.getType().getTypeName().equals(node.getType().getTypeName())) {
-//            Utility.error("types do not match\nexpected: " + this.getType().toString() /*this.getType().getTypeName()*/ + "\nactual: " + node.getType().toString() /*node.getType().getTypeName()*/);
-//        }
-//    }
-
+    public void error(String message) {
+        Visitor.error(ctx, message);
+    }
 }

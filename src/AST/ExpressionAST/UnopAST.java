@@ -1,8 +1,7 @@
 package AST.ExpressionAST;
 
-import AST.Utility;
 import main.Visitor;
-import java.util.List;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
  * Created by andikoh on 10/11/2016.
@@ -14,7 +13,8 @@ public class UnopAST extends ExpressionAST {
     private ExpressionAST expression;
     private String unop;
 
-    public UnopAST(ExpressionAST expression, String unop) {
+    public UnopAST(ParserRuleContext ctx, ExpressionAST expression, String unop) {
+        super(ctx);
         this.expression = expression;
         this.unop = unop;
         initialise();
@@ -23,7 +23,7 @@ public class UnopAST extends ExpressionAST {
     public void check() {
         identObj = Visitor.ST.lookUpAll(returnType);
         if (!expectedElemType.equals(expression.getType().getTypeName())) {
-            Utility.error(unop +" received an unexpected type\nexpects: " + expectedElemType + "\nactual: "+ expression.getType().getTypeName());
+            error(unop +" received an unexpected type\nexpects: " + expectedElemType + "\nactual: "+ expression.getType().getTypeName());
         }
     }
 

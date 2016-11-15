@@ -3,6 +3,7 @@ package AST.FunctionDecl;
 import AST.Node;
 import AST.TypeAST.TypeAST;
 import main.Visitor;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.*;
 
 /**
@@ -12,10 +13,15 @@ public class ParamAST extends Node {
     private TypeAST type;
     private String ident;
 
-    public ParamAST(TypeAST type, String ident) {
-        super();
+    public ParamAST(ParserRuleContext ctx, TypeAST type, String ident) {
+        super(ctx);
         this.type = type;
         this.ident = ident;
+
+    }
+
+    @Override
+    public void check() {
         IDENTIFIER paramType;
         if (type.getType() instanceof ARRAY) {
             paramType = new PARAM(new ARRAY(((ARRAY) type.getType()).getElementType(), 0));
@@ -29,11 +35,6 @@ public class ParamAST extends Node {
         }
 
         identObj = paramType;
-    }
-
-    @Override
-    public void check() {
-
     }
 
     public String getIdent() {

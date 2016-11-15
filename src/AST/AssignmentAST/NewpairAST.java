@@ -3,6 +3,7 @@ package AST.AssignmentAST;
 import AST.ExpressionAST.ExpressionAST;
 import AST.Node;
 import main.Visitor;
+import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.IDENTIFIER;
 import symbol_table.PAIR;
 
@@ -14,18 +15,17 @@ import java.util.List;
 public class NewpairAST extends AssignrhsAST {
     List<ExpressionAST> pairelems;
 
-    public NewpairAST(List<ExpressionAST> pairelems) {
-        super();
+    public NewpairAST(ParserRuleContext ctx, List<ExpressionAST> pairelems) {
+        super(ctx);
         this.pairelems = pairelems;
     }
 
     @Override
     public void check() {
         for(Node p : pairelems) {
-            p.check();
+            p.checkNode();
         }
-//        IDENTIFIER type = Visitor.ST.lookUpAll("pair");
-//        identObj = type;
+
         identObj = new PAIR(pairelems.get(0).getType(), pairelems.get(1).getType());
     }
 }
