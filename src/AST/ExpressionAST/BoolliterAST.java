@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 /**
  * Created by npd215 on 09/11/16.
  */
-public class BoolliterAST extends ExpressionAST {
+public class BoolliterAST extends ExpressionAST{
     String boolVal;
 
     public BoolliterAST(ParserRuleContext ctx, String boolVal) {

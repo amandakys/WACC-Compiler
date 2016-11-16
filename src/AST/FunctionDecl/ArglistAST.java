@@ -40,7 +40,7 @@ public class ArglistAST extends Node {
     @Override
     public void check() {
         for(Node e : expressions) {
-            e.checkNode();
+            e.check();
         }
     }
 }

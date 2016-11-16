@@ -29,17 +29,17 @@ public class BinOpAST extends ExpressionAST {
     public void check() {
         identObj = Visitor.ST.lookUpAll(returnType);
 
-        lhs.checkNode();
-        rhs.checkNode();
+        lhs.check();
+        rhs.check();
 
         String firstType = lhs.getType().getTypeName();
 
         if(expectedElemType.contains(firstType)) {
             if(!rhs.getType().getTypeName().equals(lhs.getType().getTypeName())) {
-                error("not the same type");
+                Utility.error("not the same type");
             }
         } else {
-            error("not expected type");
+            Utility.error("not expected type");
         }
     }
 

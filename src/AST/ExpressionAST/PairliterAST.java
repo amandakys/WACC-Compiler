@@ -11,10 +11,11 @@ import symbol_table.PAIR;
  */
 public class PairliterAST extends ExpressionAST {
     String nullStr;
-
     public PairliterAST(ParserRuleContext ctx, String text) {
         super(ctx);
         nullStr = text;
+//        IDENTIFIER pair = Visitor.ST.lookUpAll("pair");
+//        identObj = pair;
     }
 
     @Override

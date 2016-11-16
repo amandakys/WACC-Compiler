@@ -25,7 +25,7 @@ public class FunctionDeclAST extends Node {
         this.funcname = funcname;
         this.parameters = null;
     }
-    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, ParamlistAST paramList) {
+    public FunctionDeclAST(ParserRuleContext ctx,TypeAST returntype, String funcname, ParamlistAST paramList) {
         super(ctx);
         //return type name will remove all non alphanumeric characters to
         // search for primitive types

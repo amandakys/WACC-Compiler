@@ -23,9 +23,10 @@ public class NewpairAST extends AssignrhsAST {
     @Override
     public void check() {
         for(Node p : pairelems) {
-            p.checkNode();
+            p.check();
         }
-
+//        IDENTIFIER type = Visitor.ST.lookUpAll("pair");
+//        identObj = type;
         identObj = new PAIR(pairelems.get(0).getType(), pairelems.get(1).getType());
     }
 }

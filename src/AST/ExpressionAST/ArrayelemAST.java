@@ -32,7 +32,7 @@ public class ArrayelemAST extends ExpressionAST {
         } else {
 
             for (Node n : expressions) {
-                n.checkNode();
+                n.check();
                 TYPE T = Visitor.ST.lookUpAll("int").getType();
                 if (!T.equals(n.getType())) {
                     error("arrayelement only takes integers, actual: " + T.getTypeName());

@@ -22,7 +22,7 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void check() {
-        expression.checkNode();
+        expression.check();
 
         //expression is an ident - referencing a pair
         IDENTIFIER type = Visitor.ST.lookUp(((IdentAST) expression).getIdent());

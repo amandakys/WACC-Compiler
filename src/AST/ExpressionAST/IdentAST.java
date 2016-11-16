@@ -9,7 +9,6 @@ import symbol_table.IDENTIFIER;
  */
 public class IdentAST extends ExpressionAST {
     String ident;
-
     public IdentAST(ParserRuleContext ctx, String ident) {
         super(ctx);
         this.ident = ident;

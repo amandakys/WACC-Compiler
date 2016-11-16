@@ -20,8 +20,8 @@ public class AssignmentAST extends StatementAST {
 
     @Override
     public void check() {
-        lhs.checkNode();
-        rhs.checkNode();
+        lhs.check();
+        rhs.check();
 
         if(!(rhs instanceof CallAST) ||
                 (rhs instanceof CallAST && ((CallAST) rhs).isDeclared())) {

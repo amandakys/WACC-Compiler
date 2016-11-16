@@ -17,11 +17,6 @@ public class ParamAST extends Node {
         super(ctx);
         this.type = type;
         this.ident = ident;
-
-    }
-
-    @Override
-    public void check() {
         IDENTIFIER paramType;
         if (type.getType() instanceof ARRAY) {
             paramType = new PARAM(new ARRAY(((ARRAY) type.getType()).getElementType(), 0));
@@ -35,6 +30,11 @@ public class ParamAST extends Node {
         }
 
         identObj = paramType;
+    }
+
+    @Override
+    public void check() {
+
     }
 
     public String getIdent() {

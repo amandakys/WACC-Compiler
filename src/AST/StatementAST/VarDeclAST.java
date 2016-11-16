@@ -18,17 +18,20 @@ public class VarDeclAST extends StatementAST{
     private String ident;
     private TypeAST type;
     private AssignrhsAST rhs;
+    private boolean isChecked;
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
         this.ident = ident;
         this.type = type;
         this.rhs = rhs;
+        isChecked = false;
     }
 
     @Override
     public void check() {
-        type.checkNode();
+        if(isChecked) return;
+        type.check();
 
         if (type instanceof PairtypeAST) {
             TYPE f = ((PairtypeAST) type).typeFirst();
@@ -65,6 +68,8 @@ public class VarDeclAST extends StatementAST{
                 error("unknown type " + typeName);
             } else if (!(T instanceof TYPE)) {
                 error(typeName + " is not a type");
+            } else if (!(T.isDeclarable())) {
+                error("cannot declare " + typeName + " objects");
             } else if (V != null && !(V instanceof FUNCTION)) {
                 error(ident + " is already declared");
             } else {
@@ -73,13 +78,15 @@ public class VarDeclAST extends StatementAST{
                     Visitor.ST.add(ident, identObj);
                 }
 
-                //Checking rhs
-                rhs.checkNode();
+            //Checking rhs
+            rhs.check();
+
                 if(!(rhs instanceof CallAST) ||
                         (rhs instanceof CallAST && ((CallAST) rhs).isDeclared())) {
                     type.checkType(rhs);
                 }
 
+            isChecked = true;
             }
         }
     }

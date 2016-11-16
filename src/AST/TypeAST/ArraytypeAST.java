@@ -18,6 +18,7 @@ public class ArraytypeAST extends TypeAST {
     }
     @Override
     public void check() {
+
         identObj = new ARRAY(type.getType(), 0);
     }
 

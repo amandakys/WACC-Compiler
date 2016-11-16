@@ -13,12 +13,16 @@ import AST.TypeAST.*;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import symbol_table.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Created by andikoh on 08/11/2016.
+ */
 public class Visitor extends BasicParserBaseVisitor<Node>{
     public static SymbolTable ST = new SymbolTable(null);
     private static List<ParserRuleContext> toBeVisited = new ArrayList<>();
@@ -29,11 +33,26 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ST.add("char", new SCALAR("char"));
         ST.add("string", new STRING());
 
-        ST = new SymbolTable(ST);
+        SymbolTable next = new SymbolTable(ST);
+        ST = next;
+    }
+
+    @Override
+    public ProgramAST visitProgram(BasicParser.ProgramContext ctx) {
+        List<BasicParser.FunctionContext> functions = ctx.function();
+        List<FunctionDeclAST> functionASTs = new ArrayList<>();
+
+        for (BasicParser.FunctionContext f: functions) {
+            functionASTs.add(visitFunction(f));
+        }
+
+        return new ProgramAST(ctx, functionASTs, visitStatement(ctx.statement()));
     }
 
     public StatementAST visitStatement(BasicParser.StatementContext ctx) {
-        if (ctx instanceof BasicParser.Var_declContext) {
+        if (ctx instanceof BasicParser.SkipContext) {
+            return visitSkip((BasicParser.SkipContext)ctx);
+        } else if (ctx instanceof BasicParser.Var_declContext) {
             return visitVar_decl((BasicParser.Var_declContext)ctx);
         } else if (ctx instanceof BasicParser.AssignmentContext) {
             return visitAssignment((BasicParser.AssignmentContext)ctx);
@@ -62,9 +81,15 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
+    public SkipAST visitSkip(BasicParser.SkipContext ctx) {
+        //skip statement contains no information and has no checks;
+        return new SkipAST(ctx);
+    }
+
+    @Override
     public AssignmentAST visitAssignment(BasicParser.AssignmentContext ctx) {
         AssignmentAST assignment = new AssignmentAST(ctx, visitAssignlhs(ctx.assignlhs()), visitAssignrhs(ctx.assignrhs()));
-        assignment.checkNode();
+        assignment.check();
         return assignment;
     }
 
@@ -72,52 +97,38 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     public VarDeclAST visitVar_decl(BasicParser.Var_declContext ctx) {
         VarDeclAST var = new VarDeclAST(ctx, visitType(ctx.type()), ctx.IDENT()
                 .getText(), visitAssignrhs(ctx.assignrhs()));
-        var.checkNode();
+        var.check();
         return var;
     }
 
     @Override
-    public StatementAST visitRead(BasicParser.ReadContext ctx) {
-        AssignlhsAST assignlhs = visitAssignlhs(ctx.assignlhs());
-        assignlhs.check();
-        TYPE t = assignlhs.getType(); //check that expresison is of a type acceptable to read
+    public ReadAST visitRead(BasicParser.ReadContext ctx) {
 
-        TYPE intType = Visitor.ST.lookUpAll("int").getType();
-
-        TYPE charType = Visitor.ST.lookUpAll("char").getType();
-
-        if (!t.equals(intType) && !t.equals(charType)){
-            //error
-            error(ctx,"read only takes int or char types");
-        }
-        return null;
+        ReadAST readAST = new ReadAST(ctx, visitAssignlhs(ctx.assignlhs()));
+        readAST.check();
+        return  readAST;
     }
 
     @Override
-    public StatementAST visitFree(BasicParser.FreeContext ctx) {
-        ExpressionAST expression = visitExpression(ctx.expression());
-        expression.checkNode();
-
-        if (!(expression.getType() instanceof PAIR)) {
-            error(ctx, "free must take a pair type");
-        }
-
-        return null;
+    public FreeAST visitFree(BasicParser.FreeContext ctx) {
+        FreeAST freeAST = new FreeAST(ctx, visitExpression(ctx.expression()));
+        freeAST.check();
+        return freeAST;
     }
 
     @Override
-    public StatementAST visitReturn(BasicParser.ReturnContext ctx) {
+    public ReturnAST visitReturn(BasicParser.ReturnContext ctx) {
 
-        TypeAST returnType = visitType((checkNodeReturnInFunction(ctx)).type());
+        TypeAST returnType = visitType((checkReturnInFunction(ctx)).type());
         ExpressionAST expression = visitExpression(ctx.expression());
-        //check that the expression returns the same type as the expected type
         returnType.checkType(expression);
 
-        expression.checkNode();
-        return null;
+        ReturnAST returnAST = new ReturnAST(ctx, visitExpression(ctx.expression()));
+        returnAST.check();
+        return returnAST;
     }
 
-    private BasicParser.FunctionContext checkNodeReturnInFunction(ParserRuleContext ctx) {
+    private BasicParser.FunctionContext checkReturnInFunction(ParserRuleContext ctx) {
         while(!(ctx.getParent() instanceof BasicParser.FunctionContext)) {
             ctx = ctx.getParent();
 
@@ -130,21 +141,16 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public StatementAST visitExit(BasicParser.ExitContext ctx) {
-        ExpressionAST expression = visitExpression(ctx.expression());;
-        IDENTIFIER T = Visitor.ST.lookUpAll("int");
-        expression.checkNode();
-        if(!expression.getType().equals(T.getType())) {
-            error(ctx, "Exit statement must take integer");
-        }
-        return null;
+    public ExitAST visitExit(BasicParser.ExitContext ctx) {
+        ExpressionAST expression = visitExpression(ctx.expression());
+        ExitAST exit = new ExitAST(ctx, expression);
+        exit.check();
+        return exit;
     }
 
     @Override
-    public StatementAST visitPrint(BasicParser.PrintContext ctx) {
-        ExpressionAST expression = visitExpression(ctx.expression());
-        expression.checkNode();
-        return null;
+    public PrintAST visitPrint(BasicParser.PrintContext ctx) {
+        return new PrintAST(ctx, visitExpression(ctx.expression()));
     }
 
     @Override
@@ -160,7 +166,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
                     visitParamlist(ctx.paramlist()));
         }
 
-        function.checkNode();
+        function.check();
         visitChildren(ctx);
 
         Visitor.ST = Visitor.ST.getEncSymbolTable();
@@ -179,64 +185,54 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
-    public StatementAST visitPrintln(BasicParser.PrintlnContext ctx) {
-        ExpressionAST expr = visitExpression(ctx.expression());
-        expr.checkNode();
-        return null;
+    public PrintlnAST visitPrintln(BasicParser.PrintlnContext ctx) {
+        PrintlnAST print = new PrintlnAST(ctx, visitExpression(ctx.expression()));
+        print.check();
+        return print;
     }
 
     @Override
-    public StatementAST visitIf(BasicParser.IfContext ctx) {
+    public IfAST visitIf(BasicParser.IfContext ctx) {
         //components
         ExpressionAST expr = visitExpression(ctx.expression());
         StatementAST then = visitStatement(ctx.statement(0));
         StatementAST elseSt = visitStatement(ctx.statement(1));
 
-        expr.checkNode();
-        IDENTIFIER T = Visitor.ST.lookUpAll("bool");
-        if (!expr.getType().equals(T)) {
-            error(ctx, "If condition type mismatch");
-        }
-        //check statements are valid
-        then.checkNode();
-        elseSt.checkNode();
-        return null;
+        IfAST ifAST = new IfAST(ctx, expr, then, elseSt);
+        ifAST.check();
+        return ifAST;
     }
 
     @Override
-    public StatementAST visitWhile(BasicParser.WhileContext ctx) {
+    public WhileAST visitWhile(BasicParser.WhileContext ctx) {
         //components
-        ExpressionAST expression = visitExpression(ctx.expression());
+        ExpressionAST expr = visitExpression(ctx.expression());
         StatementAST statement = visitStatement(ctx.statement());
 
-        //check that expression is valid
-        expression.checkNode();
-
-        if(expression.getType().equals(Visitor.ST.lookUpAll("bool"))) {
-            //check that statement is valid
-            statement.checkNode();
-        } else {
-            error(ctx, "expression is not of type boolean");
-        }
-        return null;
+        WhileAST whileAST = new WhileAST(ctx, expr, statement);
+        whileAST.check();
+        return whileAST;
     }
 
     @Override
-    public StatementAST visitBegin(BasicParser.BeginContext ctx) {
+    public BeginAST visitBegin(BasicParser.BeginContext ctx) {
         Visitor.ST = new SymbolTable(Visitor.ST);
-        visitStatement(ctx.statement());
+        BeginAST begin = new BeginAST(ctx, visitStatement(ctx.statement()));
         Visitor.ST = Visitor.ST.getEncSymbolTable();
-        return null;
+        return begin;
     }
 
     @Override
-    public StatementAST visitSequence(BasicParser.SequenceContext ctx) {
+    public SequenceAST visitSequence(BasicParser.SequenceContext ctx) {
         List<BasicParser.StatementContext> statements = ctx.statement();
+        List<StatementAST> statementASTs = new ArrayList<>();
 
         for (BasicParser.StatementContext s : statements) {
-            visitStatement(s);
+            statementASTs.add(visitStatement(s));
         }
-        return null;
+
+        SequenceAST sequence = new SequenceAST(ctx, statementASTs);
+        return sequence;
     }
 
     @Override
@@ -398,7 +394,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         }
 
         if(expression != null) {
-            expression.checkNode();
+            expression.check();
         }
 
         return expression;
@@ -423,7 +419,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         }
 
         if(binOpAST != null) {
-            binOpAST.checkNode();
+            binOpAST.check();
         }
         return binOpAST;
     }
@@ -524,6 +520,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
+    public IntSignAST visitIntsign(BasicParser.IntsignContext ctx) {
+        return new IntSignAST(ctx);
+    }
+
+    @Override
     public BoolliterAST visitBoolliter(BasicParser.BoolliterContext ctx) {
         return new BoolliterAST(ctx, ctx.getText());
     }
@@ -548,7 +549,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             }
 
             ParamlistAST paramlist = new ParamlistAST(ctx, parameterNodes);
-            paramlist.checkNode();
+            paramlist.check();
             return paramlist;
         } else {
             return new ParamlistAST(ctx, new ArrayList<ParamAST>());
@@ -580,7 +581,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public BasetypeAST visitBasetype(BasicParser.BasetypeContext ctx) {
         BasetypeAST baseType = new BasetypeAST(ctx, ctx.getText());
-        baseType.checkNode();
+        baseType.check();
         return baseType;
     }
 
@@ -590,10 +591,10 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         int arrayDepth = ctx.LBRACKET().size();
         if (ctx.basetype() != null) {
             arraytype = new ArraytypeAST(ctx, visitBasetype(ctx.basetype()), arrayDepth);
-            arraytype.checkNode();
+            arraytype.check();
         } else if (ctx.pairtype() != null) {
             arraytype = new ArraytypeAST(ctx, visitPairtype(ctx.pairtype()), arrayDepth);
-            arraytype.checkNode();
+            arraytype.check();
         }
 
         return arraytype;
@@ -604,7 +605,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
    @Override
     public PairtypeAST visitPairtype(BasicParser.PairtypeContext ctx) {
        PairtypeAST pairtype = new PairtypeAST(ctx, visitPairelemtype(ctx.pairelemtype(0)), visitPairelemtype(ctx.pairelemtype(1)));
-       pairtype.checkNode();
+       pairtype.check();
        return pairtype;
    }
 
@@ -613,20 +614,20 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         PairelemtypeAST pairelemtype = null;
         if (ctx.PAIR() != null) {
             pairelemtype = new PairelemtypeAST(ctx, ctx.PAIR().getText());
-            pairelemtype.checkNode();
+            pairelemtype.check();
         } else if (ctx.basetype() != null) {
             pairelemtype = new PairelemtypeAST(ctx, visitBasetype(ctx.basetype()));
-            pairelemtype.checkNode();
+            pairelemtype.check();
         } else if (ctx.arraytype() != null) {
             pairelemtype =  new PairelemtypeAST(ctx, visitArraytype(ctx.arraytype()));
-            pairelemtype.checkNode();
+            pairelemtype.check();
         }
         return pairelemtype;
     }
 
     public void checkUndefinedFunc() {
-       for(ParserRuleContext ctx : toBeVisited ) {
-           visit(ctx);
+       for(Iterator<ParserRuleContext> iter = toBeVisited.iterator(); iter.hasNext(); ) {
+           visit(iter.next());
        }
     }
 

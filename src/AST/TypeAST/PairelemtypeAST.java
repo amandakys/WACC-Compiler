@@ -5,6 +5,7 @@ import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.IDENTIFIER;
 import symbol_table.PAIR;
+import symbol_table.TYPE;
 
 /**
  * Created by andikoh on 09/11/2016.
@@ -28,13 +29,14 @@ public class PairelemtypeAST extends Node {
     @Override
     public void check() {
         if (type != null) {
-            type.checkNode();
+            type.check();
         }
 
         IDENTIFIER T;
         if (pairtoken != null) {
             //nested pair
             T = new PAIR(null, null);
+            //TODO: do we need to add nested pair to symbol table
         } else {
             T = Visitor.ST.lookUpAll(type.getType().getTypeName());
         }

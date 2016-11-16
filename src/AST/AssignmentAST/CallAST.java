@@ -39,7 +39,7 @@ public class CallAST extends AssignrhsAST{
             
             for(int i = 0; i < arglist.size(); i++) {
                 if (!Compare.types(arglist.getType(i), ((FUNCTION) F).getParamList().get(i))){
-                    error("unexpected type in function " + funcname + " expected: " + ((FUNCTION) F).getParamList().get(i)+ " actual: " + arglist.getType(i));
+                    error("unexpected type in function " + funcname + "\nexpected: " + ((FUNCTION) F).getParamList().get(i)+ "\nactual: " + arglist.getType(i));
                 }
             }
             
