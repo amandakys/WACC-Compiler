@@ -36,10 +36,10 @@ public class BinOpAST extends ExpressionAST {
 
         if(expectedElemType.contains(firstType)) {
             if(!rhs.getType().getTypeName().equals(lhs.getType().getTypeName())) {
-                Utility.error("not the same type");
+                error("not the same type");
             }
         } else {
-            Utility.error("not expected type");
+            error("not expected type");
         }
     }
 

@@ -9,7 +9,7 @@ import symbol_table.SymbolTable;
  */
 public class IntSignAST extends Node {
 
-    public IntSignAST(ParserRuleContext ctx,) {
+    public IntSignAST(ParserRuleContext ctx) {
         super(ctx);
     }
 
