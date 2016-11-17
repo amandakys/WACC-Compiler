@@ -3,6 +3,7 @@ package AST.TypeAST;
 import AST.Node;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
+import symbol_table.ARRAY;
 import symbol_table.IDENTIFIER;
 import symbol_table.PAIR;
 import symbol_table.TYPE;
@@ -37,6 +38,8 @@ public class PairelemtypeAST extends Node {
             //nested pair
             T = new PAIR(null, null);
             //TODO: do we need to add nested pair to symbol table
+        } else if(type instanceof ArraytypeAST) {
+            T = new ARRAY(((ArraytypeAST) type).getelementType(), ((ArraytypeAST) type).arrayDepth);
         } else {
             T = Visitor.ST.lookUpAll(type.getType().getTypeName());
         }

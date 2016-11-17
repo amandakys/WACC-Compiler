@@ -14,8 +14,9 @@ public class IdentAST extends ExpressionAST {
         super(ctx);
         this.ident = ident;
         IDENTIFIER identType = Visitor.ST.lookUpAll(ident);
+
         if (identType == null) {
-            error("undefined expression: " + ident);
+            error("is an undefined expression");
         } else {
             identObj = identType;
         }

@@ -2,6 +2,7 @@ package AST.AssignmentAST;
 
 import AST.ExpressionAST.ExpressionAST;
 import AST.ExpressionAST.IdentAST;
+import AST.TypeAST.TypeAST;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import symbol_table.IDENTIFIER;
@@ -41,6 +42,10 @@ public class PairelemAST extends AssignrhsAST{
 
         }
 
+    }
+
+    public ExpressionAST getExpression() {
+        return expression;
     }
 
 }

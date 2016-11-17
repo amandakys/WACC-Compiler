@@ -42,6 +42,9 @@ public abstract class Node {
     }
 
     public TYPE getType() {
+        if(identObj == null) {
+            System.out.print("hello");
+        }
         return identObj.getType();
     }
 

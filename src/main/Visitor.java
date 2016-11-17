@@ -223,9 +223,10 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public BeginAST visitBegin(BasicParser.BeginContext ctx) {
-        Visitor.ST = new SymbolTable(Visitor.ST);
+        ST = new SymbolTable(Visitor.ST);
         BeginAST begin = new BeginAST(ctx, visitStatement(ctx.statement()));
-        Visitor.ST = Visitor.ST.getEncSymbolTable();
+        ST = ST.getEncSymbolTable();
+
         return begin;
     }
 
@@ -294,7 +295,10 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             expressionASTs.add(visitExpression(e));
         }
 
-        return new ArraylitAST(ctx, expressionASTs);
+        ArraylitAST array = new ArraylitAST(ctx, expressionASTs);
+
+        array.check();
+        return array;
     }
 
     @Override
@@ -352,7 +356,10 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else if (ctx.SECOND() != null) {
             token = ctx.SECOND().getText();
         }
-        return new PairelemAST(ctx, token, visitExpression(ctx.expression()));
+
+        PairelemAST pairElem = new PairelemAST(ctx, token, visitExpression(ctx.expression()));
+        pairElem.check();
+        return pairElem;
     }
 
     @Override

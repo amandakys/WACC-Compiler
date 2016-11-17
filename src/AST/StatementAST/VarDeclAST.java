@@ -37,7 +37,7 @@ public class VarDeclAST extends StatementAST{
             TYPE f = ((PairtypeAST) type).typeFirst();
             TYPE s = ((PairtypeAST) type).typeSecond();
             IDENTIFIER T = new PAIR(f, s);
-            IDENTIFIER V = Visitor.ST.lookUpAll(ident);
+            IDENTIFIER V = Visitor.ST.lookUp(ident);
             if (V != null) {
                 error(ident + " is already declared");
             } else {
@@ -45,14 +45,16 @@ public class VarDeclAST extends StatementAST{
             }
         } else if (type instanceof ArraytypeAST) {
             //assumes that this means rhs MUST be an arraylit
-            if (rhs instanceof ArraylitAST) {
+            if (rhs.getType() instanceof ARRAY) {
                 TYPE elementType = ((ArraytypeAST) type).getelementType();
-                int arraysize = ((ArraylitAST) rhs).getSize();
-                IDENTIFIER V = Visitor.ST.lookUpAll(ident);
+                //int arraysize = ((ArraylitAST) rhs).getSize();
+
+
+                IDENTIFIER V = Visitor.ST.lookUp(ident);
                 if (V != null) {
                     error(ident + " is already declared");
                 } else {
-                    IDENTIFIER T = new ARRAY(elementType, arraysize);
+                    IDENTIFIER T = new ARRAY(elementType, 0);
                     Visitor.ST.add(ident, T);
                 }
             } else {
@@ -62,7 +64,7 @@ public class VarDeclAST extends StatementAST{
         } else {
             String typeName = type.getType().getTypeName();
             IDENTIFIER T = Visitor.ST.lookUpAll(typeName);
-            IDENTIFIER V = Visitor.ST.lookUpAll(ident);
+            IDENTIFIER V = Visitor.ST.lookUp(ident);
 
             if(T == null) {
                 error("unknown type " + typeName);
