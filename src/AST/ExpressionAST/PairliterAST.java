@@ -20,6 +20,7 @@ public class PairliterAST extends ExpressionAST {
 
     @Override
     public void check() {
+        checkIfInScope(nullStr);
         identObj = new PAIR(null, null);
     }
 }

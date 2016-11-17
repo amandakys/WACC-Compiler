@@ -20,7 +20,7 @@ public class ArraylitAST extends AssignrhsAST {
     @Override
     public void check() {
         for(ExpressionAST a : arraylits) {
-            a.check();
+            a.checkNode();
         }
 
         //check all expressions are of the same type

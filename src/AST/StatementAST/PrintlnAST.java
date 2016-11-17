@@ -17,6 +17,6 @@ public class PrintlnAST extends StatementAST {
     @Override
     public void check() {
        // identObj =
-        expression.check();
+        expression.checkNode();
     }
 }

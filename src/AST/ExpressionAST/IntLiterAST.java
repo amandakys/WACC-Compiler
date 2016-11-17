@@ -19,6 +19,7 @@ public class IntLiterAST extends ExpressionAST {
 
     @Override
     public void check() {
+        checkIfInScope(value);
         identObj = Visitor.ST.lookUpAll("int");
     }
 }

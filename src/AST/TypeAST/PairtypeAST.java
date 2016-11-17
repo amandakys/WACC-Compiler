@@ -37,5 +37,4 @@ public class PairtypeAST extends TypeAST {
         return second.getType();
     }
 
-
 }

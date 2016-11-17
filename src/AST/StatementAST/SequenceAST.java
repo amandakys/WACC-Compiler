@@ -15,7 +15,7 @@ public class SequenceAST extends StatementAST {
     @Override
     public void check() {
         for (StatementAST s : statements) {
-                s.check();
+            s.checkNode();
         }
     }
 }

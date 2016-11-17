@@ -29,7 +29,7 @@ public class PairelemtypeAST extends Node {
     @Override
     public void check() {
         if (type != null) {
-            type.check();
+            type.checkNode();
         }
 
         IDENTIFIER T;

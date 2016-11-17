@@ -18,6 +18,7 @@ public class StringLiterAST extends ExpressionAST{
 
     @Override
     public void check() {
+        checkIfInScope(value);
         identObj = Visitor.ST.lookUpAll("string");
     }
 }

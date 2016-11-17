@@ -26,13 +26,13 @@ public class ArrayelemAST extends ExpressionAST {
     @Override
     public void check() {
         //check idents
-        IDENTIFIER N = Visitor.ST.lookUp(ident);
+        IDENTIFIER N = Visitor.ST.lookUpAll(ident);
         if (N == null) {
             error("undeclared variable");
         } else {
 
             for (Node n : expressions) {
-                n.check();
+                n.checkNode();
                 TYPE T = Visitor.ST.lookUpAll("int").getType();
                 if (!T.equals(n.getType())) {
                     error("arrayelement only takes integers, actual: " + T.getTypeName());

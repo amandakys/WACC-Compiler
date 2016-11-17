@@ -31,13 +31,13 @@ public class VarDeclAST extends StatementAST{
     @Override
     public void check() {
         if(isChecked) return;
-        type.check();
+        type.checkNode();
 
         if (type instanceof PairtypeAST) {
             TYPE f = ((PairtypeAST) type).typeFirst();
             TYPE s = ((PairtypeAST) type).typeSecond();
             IDENTIFIER T = new PAIR(f, s);
-            IDENTIFIER V = Visitor.ST.lookUp(ident);
+            IDENTIFIER V = Visitor.ST.lookUpAll(ident);
             if (V != null) {
                 error(ident + " is already declared");
             } else {
@@ -48,7 +48,7 @@ public class VarDeclAST extends StatementAST{
             if (rhs instanceof ArraylitAST) {
                 TYPE elementType = ((ArraytypeAST) type).getelementType();
                 int arraysize = ((ArraylitAST) rhs).getSize();
-                IDENTIFIER V = Visitor.ST.lookUp(ident);
+                IDENTIFIER V = Visitor.ST.lookUpAll(ident);
                 if (V != null) {
                     error(ident + " is already declared");
                 } else {
@@ -62,7 +62,7 @@ public class VarDeclAST extends StatementAST{
         } else {
             String typeName = type.getType().getTypeName();
             IDENTIFIER T = Visitor.ST.lookUpAll(typeName);
-            IDENTIFIER V = Visitor.ST.lookUp(ident);
+            IDENTIFIER V = Visitor.ST.lookUpAll(ident);
 
             if(T == null) {
                 error("unknown type " + typeName);
@@ -73,21 +73,19 @@ public class VarDeclAST extends StatementAST{
             } else if (V != null && !(V instanceof FUNCTION)) {
                 error(ident + " is already declared");
             } else {
-                if(V == null) {
-                    identObj = new VARIABLE((TYPE) T);
-                    Visitor.ST.add(ident, identObj);
-                }
+                identObj = new VARIABLE((TYPE) T);
+                Visitor.ST.add(ident, identObj);
 
-            //Checking rhs
-            rhs.check();
+                //Checking rhs
+                rhs.checkNode();
 
                 if(!(rhs instanceof CallAST) ||
                         (rhs instanceof CallAST && ((CallAST) rhs).isDeclared())) {
                     type.checkType(rhs);
                 }
-
-            isChecked = true;
             }
         }
+
+        isChecked = true;
     }
 }

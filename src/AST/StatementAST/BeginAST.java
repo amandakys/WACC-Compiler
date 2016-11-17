@@ -16,6 +16,6 @@ public class BeginAST extends StatementAST {
     }
     @Override
     public void check() {
-        statement.check();
+        statement.checkNode();
     }
 }

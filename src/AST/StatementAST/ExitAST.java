@@ -19,7 +19,7 @@ public class ExitAST extends StatementAST{
     @Override
     public void check() {
         IDENTIFIER T = Visitor.ST.lookUpAll("int");
-        expression.check();
+        expression.checkNode();
         if(!expression.getType().equals(T.getType())) {
             error("Exit statement must take integer");
         }

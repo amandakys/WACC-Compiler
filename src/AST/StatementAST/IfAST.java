@@ -23,13 +23,13 @@ public class IfAST extends StatementAST {
     @Override
     public void check() {
         //check expressions is valid
-        expression.check();
+        expression.checkNode();
         IDENTIFIER T = Visitor.ST.lookUpAll("bool");
         if (!expression.getType().equals(T)) {
             error("If condition type mismatch");
         }
         //check statements are valid
-        then.check();
-        elseSt.check();
+        then.checkNode();
+        elseSt.checkNode();
     }
 }

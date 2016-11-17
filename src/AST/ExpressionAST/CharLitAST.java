@@ -18,6 +18,7 @@ public class CharLitAST extends ExpressionAST {
 
     @Override
     public void check() {
+        checkIfInScope(charac);
         identObj = Visitor.ST.lookUpAll("char");
     }
 }

@@ -7,7 +7,7 @@ import main.Visitor;
  */
 public class STRING extends ARRAY {
     public STRING() {
-        super((TYPE) Visitor.ST.lookUpAll("char"), 2147483647);
+        super((TYPE) Visitor.ST.lookUpAll("char"), (int) Math.pow(2, 31) - 1);
     }
 
     @Override

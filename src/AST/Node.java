@@ -10,16 +10,20 @@ import symbol_table.*;
 public abstract class Node {
     protected IDENTIFIER identObj;
     protected ParserRuleContext ctx;
+    protected boolean isChecked = false;
 
     public Node(ParserRuleContext ctx) {
         this.ctx = ctx;
     }
 
-    public abstract void check();
-
-    public TYPE getType() {
-        return identObj.getType();
+    public void checkNode() {
+        if(!isChecked) {
+            check();
+            isChecked = true;
+        }
     }
+
+    protected abstract void check();
 
     public IDENTIFIER getIdentObj() {
         return identObj;
@@ -27,7 +31,7 @@ public abstract class Node {
 
     public void checkType(Node node) {
 
-        if (this.getType() == null) {
+        if (getType() == null) {
             //this value cannot be assigned to
             error("trying to assign to unassignable value");
         }
@@ -37,7 +41,18 @@ public abstract class Node {
         }
     }
 
-    public void error(String message) {
+    public TYPE getType() {
+        return identObj.getType();
+    }
+
+    protected void error(String message) {
         Visitor.error(ctx, message);
+    }
+
+    protected void checkIfInScope(String name) {
+        IDENTIFIER N = Visitor.ST.lookUpAll(name);
+        if(N != null) {
+            error(name + " has already been declared");
+        }
     }
 }

@@ -20,11 +20,11 @@ public class WhileAST extends StatementAST {
     @Override
     public void check() {
         //check that expression is valid
-        expression.check();
+        expression.checkNode();
 
         if(expression.getType().equals(Visitor.ST.lookUpAll("bool"))) {
             //check that statement is valid
-            statement.check();
+            statement.checkNode();
         } else {
             error("expression is not of type boolean");
         }

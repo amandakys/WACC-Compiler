@@ -17,7 +17,7 @@ public class FreeAST extends StatementAST {
 
     @Override
     public void check() {
-        expression.check();
+        expression.checkNode();
 
         if (!(expression.getType() instanceof PAIR)) {
             error("free must take a pair type");

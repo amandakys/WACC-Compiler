@@ -22,13 +22,13 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void check() {
-        expression.check();
+        expression.checkNode();
 
         //expression is an ident - referencing a pair
-        IDENTIFIER type = Visitor.ST.lookUp(((IdentAST) expression).getIdent());
+        IDENTIFIER type = Visitor.ST.lookUpAll(((IdentAST) expression).getIdent());
 
         if (!(type instanceof PAIR)) {
-            error("fst/snd can only take pair types, actual: " + expression.getType().getTypeName());
+            error("can only take pair types, actual: " + expression.getType().getTypeName());
         } else {
             //expression is a pair
 

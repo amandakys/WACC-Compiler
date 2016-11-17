@@ -15,6 +15,7 @@ public class CallAST extends AssignrhsAST{
     private String funcname;
     private ArglistAST arglist;
     private boolean isDeclared = true;
+    private boolean isReVisited = false;
     
     public CallAST(ParserRuleContext ctx, String funcname, ArglistAST arglist) {
         super(ctx);
@@ -26,12 +27,14 @@ public class CallAST extends AssignrhsAST{
         IDENTIFIER F = Visitor.ST.lookUpAll(funcname);
         
         if (F == null) {
-            Visitor.ST.getEncSymbolTable().add(funcname, new FUNCTION(null, null, null));
-            isDeclared = false;
+            if(!isReVisited) {
+                Visitor.ST.getEncSymbolTable().add(funcname, null);
+                isDeclared = false;
+            } else {
+                error("Unknown function " + funcname);
+            }
         } else if (!(F instanceof FUNCTION)) {
-            error(funcname + " is not a function");
-        } else if (((FUNCTION) F).getReturntype() == null) { // case when function F is not declared
-            error("Unknown function " + funcname);
+             error(funcname + " is not a function");
         } else if (((FUNCTION)F).getParamList().size() != arglist.size()) {
             error("wrong no. of params");
         } else {
@@ -54,6 +57,10 @@ public class CallAST extends AssignrhsAST{
     @Override
     public TYPE getType() {
         return ((FUNCTION) identObj).getReturntype();
+    }
+
+    public void setReVisited() {
+        isReVisited = true;
     }
     
 }

@@ -29,8 +29,8 @@ public class BinOpAST extends ExpressionAST {
     public void check() {
         identObj = Visitor.ST.lookUpAll(returnType);
 
-        lhs.check();
-        rhs.check();
+        lhs.checkNode();
+        rhs.checkNode();
 
         String firstType = lhs.getType().getTypeName();
 

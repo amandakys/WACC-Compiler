@@ -16,6 +16,6 @@ public class PrintAST extends StatementAST {
 
     @Override
     public void check() {
-        expression.check();
+        expression.checkNode();
     }
 }

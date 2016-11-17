@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class Visitor extends BasicParserBaseVisitor<Node>{
     public static SymbolTable ST = new SymbolTable(null);
-    private static List<ParserRuleContext> toBeVisited = new ArrayList<>();
+    private static List<CallAST> toBeVisited = new ArrayList<>();
 
     public Visitor() {
         ST.add("bool", new SCALAR("bool"));
@@ -195,8 +195,13 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     public IfAST visitIf(BasicParser.IfContext ctx) {
         //components
         ExpressionAST expr = visitExpression(ctx.expression());
+        Visitor.ST = new SymbolTable(Visitor.ST);
         StatementAST then = visitStatement(ctx.statement(0));
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
+
+        Visitor.ST = new SymbolTable(Visitor.ST);
         StatementAST elseSt = visitStatement(ctx.statement(1));
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
 
         IfAST ifAST = new IfAST(ctx, expr, then, elseSt);
         ifAST.check();
@@ -205,12 +210,14 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public WhileAST visitWhile(BasicParser.WhileContext ctx) {
+        Visitor.ST = new SymbolTable(Visitor.ST);
         //components
         ExpressionAST expr = visitExpression(ctx.expression());
         StatementAST statement = visitStatement(ctx.statement());
 
         WhileAST whileAST = new WhileAST(ctx, expr, statement);
         whileAST.check();
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
         return whileAST;
     }
 
@@ -316,7 +323,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         list and revisit it at the end
          */
         if(ST.lookUp(ctx.IDENT().getText()) == null) {
-            toBeVisited.add(ctx.getParent());
+            toBeVisited.add(call);
         }
 
         return call;
@@ -394,7 +401,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         }
 
         if(expression != null) {
-            expression.check();
+            expression.checkNode();
         }
 
         return expression;
@@ -419,7 +426,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         }
 
         if(binOpAST != null) {
-            binOpAST.check();
+            binOpAST.checkNode();
         }
         return binOpAST;
     }
@@ -626,8 +633,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     public void checkUndefinedFunc() {
-       for(Iterator<ParserRuleContext> iter = toBeVisited.iterator(); iter.hasNext(); ) {
-           visit(iter.next());
+       for(CallAST node : toBeVisited) {
+           node.setReVisited();
+           node.check();
        }
     }
 

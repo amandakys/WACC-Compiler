@@ -9,6 +9,7 @@ import symbol_table.IDENTIFIER;
  */
 public class IdentAST extends ExpressionAST {
     String ident;
+
     public IdentAST(ParserRuleContext ctx, String ident) {
         super(ctx);
         this.ident = ident;
@@ -16,17 +17,13 @@ public class IdentAST extends ExpressionAST {
         if (identType == null) {
             error("undefined expression: " + ident);
         } else {
-//            if (ident == "null") {
-//                identObj = new PAIR(null, null);
-//            } else {
-                identObj = identType;
-//            }
+            identObj = identType;
         }
     }
 
     @Override
     public void check() {
-        IDENTIFIER I = Visitor.ST.lookUp(ident);
+        IDENTIFIER I = Visitor.ST.lookUpAll(ident);
         if(I == null) {
             error("cannot find identifier: "+ ident);
         }
