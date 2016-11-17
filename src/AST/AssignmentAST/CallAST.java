@@ -26,15 +26,13 @@ public class CallAST extends AssignrhsAST{
     public void check() {
         IDENTIFIER F = Visitor.ST.lookUpAll(funcname);
         
-        if (F == null) {
+        if (F == null || !(F instanceof FUNCTION)) {
             if(!isReVisited) {
                 Visitor.ST.getEncSymbolTable().add(funcname, null);
                 isDeclared = false;
             } else {
                 error("Unknown function " + funcname);
             }
-        } else if (!(F instanceof FUNCTION)) {
-             error(funcname + " is not a function");
         } else if (((FUNCTION)F).getParamList().size() != arglist.size()) {
             error("wrong no. of params");
         } else {

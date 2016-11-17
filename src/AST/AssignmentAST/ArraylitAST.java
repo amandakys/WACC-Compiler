@@ -23,15 +23,19 @@ public class ArraylitAST extends AssignrhsAST {
             a.checkNode();
         }
 
-        //check all expressions are of the same type
-        Node firstElem = arraylits.get(0);
+        if(!arraylits.isEmpty()) {
+            //check all expressions are of the same type
+            Node firstElem = arraylits.get(0);
 
-        for (ExpressionAST a: arraylits) {
-            firstElem.checkType(a);
+            for (ExpressionAST a: arraylits) {
+                firstElem.checkType(a);
+            }
+
+            //initialies IDENTOBJ to array type
+            identObj = new ARRAY(firstElem.getType(), arraylits.size());
+        } else {
+            identObj = new ARRAY(null, arraylits.size());
         }
-
-        //initialies IDENTOBJ to array type
-        identObj = new ARRAY(firstElem.getType(), arraylits.size());
     }
 
     public int getSize() {
