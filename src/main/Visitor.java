@@ -1,23 +1,21 @@
 package main;
 
-import AST.*;
-import AST.AssignmentAST.*;
-import AST.ExpressionAST.*;
-import AST.FunctionDecl.ArglistAST;
-import AST.FunctionDecl.FunctionDeclAST;
-import AST.FunctionDecl.ParamAST;
-import AST.FunctionDecl.ParamlistAST;
-import AST.Node;
-import AST.StatementAST.*;
-import AST.TypeAST.*;
+import front_end.AST.*;
+import front_end.AST.AssignmentAST.*;
+import front_end.AST.ExpressionAST.*;
+import front_end.AST.FunctionDecl.ArglistAST;
+import front_end.AST.FunctionDecl.FunctionDeclAST;
+import front_end.AST.FunctionDecl.ParamAST;
+import front_end.AST.FunctionDecl.ParamlistAST;
+import front_end.AST.Node;
+import front_end.AST.StatementAST.*;
+import front_end.AST.TypeAST.*;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.TerminalNode;
-import symbol_table.*;
+import front_end.symbol_table.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
