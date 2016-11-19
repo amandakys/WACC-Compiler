@@ -1,16 +1,13 @@
 package front_end.AST.StatementAST;
 
-import back_end.instruction.Instruction;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
 import front_end.AST.TypeAST.ArraytypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
 import front_end.AST.TypeAST.TypeAST;
+import front_end.symbol_table.*;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
-import front_end.symbol_table.*;
-
-import java.util.List;
 
 /**
  * Created by dtv15 on 09/11/16.
@@ -46,7 +43,7 @@ public class VarDeclAST extends StatementAST{
             //assumes that this means rhs MUST be an arraylit
             if (rhs.getType() instanceof ARRAY) {
                 TYPE elementType = ((ArraytypeAST) type).getelementType();
-                //i need to fix this asap
+                // TODO:i need to fix this asap
                 //int arraysize = ((ArraylitAST) rhs).getSize();
 
 
