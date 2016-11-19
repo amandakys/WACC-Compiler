@@ -18,11 +18,17 @@ public class ARRAY extends TYPE{
     public TYPE getType() {
         return this;
     }
+
     @Override
     public String toString() {
         return type.toString() + "[]";
     }
+
     public TYPE getElementType() {
         return type;
+    }
+
+    public int getSize() {
+        return size;
     }
 }

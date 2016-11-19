@@ -13,11 +13,9 @@ import AST.TypeAST.*;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.TerminalNode;
 import symbol_table.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -106,7 +104,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
         ReadAST readAST = new ReadAST(ctx, visitAssignlhs(ctx.assignlhs()));
         readAST.check();
-        return  readAST;
+        return readAST;
     }
 
     @Override
@@ -239,8 +237,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             statementASTs.add(visitStatement(s));
         }
 
-        SequenceAST sequence = new SequenceAST(ctx, statementASTs);
-        return sequence;
+        return new SequenceAST(ctx, statementASTs);
     }
 
     @Override
@@ -257,11 +254,6 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     public AssignrhsAST visitAssignrhs(BasicParser.AssignrhsContext ctx) {
-        //can it be replaced with visitchildren?
-
-//        switch(ctx) {
-//            BasicParser.ExprContext: return visitExpr((BasicParser.ExprContext) ctx);
-//        }
         if (ctx instanceof BasicParser.ExprContext) {
             return visitExpr((BasicParser.ExprContext) ctx);
         } else if (ctx instanceof BasicParser.ArraylitContext) {
@@ -309,8 +301,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             expressionNodes.add(visitExpression(e));
         }
 
-        NewpairAST newpair = new NewpairAST(ctx, expressionNodes);
-        return  newpair;
+        return new NewpairAST(ctx, expressionNodes);
     }
 
     @Override
@@ -342,8 +333,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
                 expressionNodes.add(visitExpression(e));
             }
 
-            ArglistAST arglist = new ArglistAST(ctx, expressionNodes);
-            return arglist;
+            return new ArglistAST(ctx, expressionNodes);
         }
 
         return new ArglistAST(ctx, new ArrayList<ExpressionAST>());

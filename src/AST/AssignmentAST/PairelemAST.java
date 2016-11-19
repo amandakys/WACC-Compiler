@@ -41,11 +41,5 @@ public class PairelemAST extends AssignrhsAST{
             }
 
         }
-
     }
-
-    public ExpressionAST getExpression() {
-        return expression;
-    }
-
 }

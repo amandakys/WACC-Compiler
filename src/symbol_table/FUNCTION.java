@@ -33,4 +33,8 @@ public class FUNCTION extends IDENTIFIER {
     public TYPE getReturntype() {
         return this.returntype;
     }
+
+    public SymbolTable getSymtab() {
+        return symtab;
+    }
 }

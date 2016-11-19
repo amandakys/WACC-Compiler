@@ -3,7 +3,9 @@ package AST.StatementAST;
 import AST.AssignmentAST.ArraylitAST;
 import AST.AssignmentAST.AssignrhsAST;
 import AST.AssignmentAST.CallAST;
+import AST.AssignmentAST.PairelemAST;
 import AST.TypeAST.ArraytypeAST;
+import AST.TypeAST.PairelemtypeAST;
 import AST.TypeAST.PairtypeAST;
 import AST.TypeAST.TypeAST;
 import main.Visitor;
@@ -18,14 +20,12 @@ public class VarDeclAST extends StatementAST{
     private String ident;
     private TypeAST type;
     private AssignrhsAST rhs;
-    private boolean isChecked;
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
         this.ident = ident;
         this.type = type;
         this.rhs = rhs;
-        isChecked = false;
     }
 
     @Override
@@ -47,14 +47,13 @@ public class VarDeclAST extends StatementAST{
             //assumes that this means rhs MUST be an arraylit
             if (rhs.getType() instanceof ARRAY) {
                 TYPE elementType = ((ArraytypeAST) type).getelementType();
-                //int arraysize = ((ArraylitAST) rhs).getSize();
-
+                int arraysize = ((ARRAY) rhs.getType()).getSize();
 
                 IDENTIFIER V = Visitor.ST.lookUp(ident);
                 if (V != null) {
                     error(ident + " is already declared");
                 } else {
-                    IDENTIFIER T = new ARRAY(elementType, 0);
+                    IDENTIFIER T = new ARRAY(elementType, arraysize);
                     Visitor.ST.add(ident, T);
                 }
             } else {
@@ -87,7 +86,5 @@ public class VarDeclAST extends StatementAST{
                 }
             }
         }
-
-        isChecked = true;
     }
 }
