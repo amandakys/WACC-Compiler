@@ -1,5 +1,6 @@
 package main;
 
+import back_end.instruction.Directive;
 import back_end.instruction.Instruction;
 
 import java.io.BufferedWriter;
@@ -14,12 +15,11 @@ public class CodeGen {
     public static List<Instruction> data = new ArrayList<>();
     public static List<Instruction> text = new ArrayList<>();
     public static List<Instruction> globalMain = new ArrayList<>();
-    private List<Instruction> result = new ArrayList<>();
 
     public CodeGen() {
-        result.addAll(data);
-        result.addAll(text);
-        result.addAll(globalMain);
+        data.add(new Directive("data"));
+        text.add(new Directive("text"));
+        globalMain.add(new Directive("global main"));
     }
 
     public void writeFile(String name) throws IOException {
@@ -27,12 +27,23 @@ public class CodeGen {
         FileWriter fw = new FileWriter(file.getAbsoluteFile());
         BufferedWriter bw = new BufferedWriter(fw);
 
-        String content = "";
-        for(Instruction instr : result) {
-            content += instr.toString() + "\n";
+        if(data.size() != 1){
+            for(Instruction instr : data) {
+                bw.newLine();
+                bw.write(instr.toString() + "\n");
+            }
+            bw.newLine();
         }
 
-        bw.write(content);
+        for(Instruction instr : text) {
+            bw.write(instr.toString() + "\n") ;
+        }
+        bw.newLine();
+
+        for(Instruction instr: globalMain) {
+            bw.write(instr.toString() + "\n");
+        }
+
         bw.close();
     }
 }

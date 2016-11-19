@@ -2,17 +2,15 @@ package front_end.AST;
 
 import back_end.data_type.Address;
 import back_end.data_type.Label;
-import back_end.instruction.Instruction;
 import back_end.instruction.Pop;
 import back_end.instruction.Push;
-import back_end.instruction.directives.LTORG;
+import back_end.instruction.Directive;
 import back_end.instruction.load_store.Load;
 import front_end.AST.FunctionDecl.FunctionDeclAST;
 import front_end.AST.StatementAST.StatementAST;
 import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,6 +46,6 @@ public class ProgramAST extends Node {
 
         CodeGen.globalMain.add(new Load(r0, new Address(0)));
         CodeGen.globalMain.add(new Pop(pc));
-        CodeGen.globalMain.add(new LTORG());
+        CodeGen.globalMain.add(new Directive("ltorg"));
     }
 }

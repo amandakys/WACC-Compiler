@@ -53,6 +53,7 @@ public class Main {
 
         //code generation
         CodeGen codeGen = new CodeGen();
+        program.translate();
         codeGen.writeFile(fileName);
     }
 }
