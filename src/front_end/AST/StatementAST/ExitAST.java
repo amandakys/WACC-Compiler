@@ -1,7 +1,10 @@
 package front_end.AST.StatementAST;
 
+import back_end.data_type.Register;
 import back_end.instruction.Instruction;
+import back_end.instruction.data_manipulation.Mov;
 import front_end.AST.ExpressionAST.ExpressionAST;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
@@ -30,6 +33,9 @@ public class ExitAST extends StatementAST{
 
     @Override
     public void translate() {
+        expression.translate();
+
+        CodeGen.globalMain.add(new Mov(r0, r4));
 
     }
 }

@@ -33,7 +33,7 @@ public abstract class Node {
 
     protected IDENTIFIER identObj;
     protected ParserRuleContext ctx;
-    private boolean isChecked = false;
+    protected boolean isChecked;
 
     public Node(ParserRuleContext ctx) {
         this.ctx = ctx;

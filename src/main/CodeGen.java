@@ -18,6 +18,8 @@ public class CodeGen {
 
     public CodeGen() {
         data.add(new Directive("data"));
+
+
         text.add(new Directive("text"));
         globalMain.add(new Directive("global main"));
     }
