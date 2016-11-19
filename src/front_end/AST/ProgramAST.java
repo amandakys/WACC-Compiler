@@ -40,12 +40,12 @@ public class ProgramAST extends Node {
         }
 
         CodeGen.globalMain.add(new Label("main"));
-        CodeGen.globalMain.add(new Push(lr));
+        CodeGen.globalMain.add(new Push(getRegister(LR)));
 
         statement.translate();
 
-        CodeGen.globalMain.add(new Load(r0, new Address(0)));
-        CodeGen.globalMain.add(new Pop(pc));
+        CodeGen.globalMain.add(new Load(getRegister(0), new Address(0)));
+        CodeGen.globalMain.add(new Pop(getRegister(PC)));
         CodeGen.globalMain.add(new Directive("ltorg"));
     }
 }
