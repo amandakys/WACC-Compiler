@@ -52,8 +52,8 @@ public class Main {
         semanticVisit.checkUndefinedFunc();
 
         //code generation
-        CodeGen codeGen = new CodeGen();
-        program.translate();
-        codeGen.writeFile(fileName);
+        //CodeGen codeGen = new CodeGen();
+        //program.translate();
+        //codeGen.writeFile(fileName);
     }
 }

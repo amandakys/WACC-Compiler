@@ -44,38 +44,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             functionASTs.add(visitFunction(f));
         }
 
-        return new ProgramAST(ctx, functionASTs, visitStatement(ctx.statement()));
-    }
-
-    public StatementAST visitStatement(BasicParser.StatementContext ctx) {
-        if (ctx instanceof BasicParser.SkipContext) {
-            return visitSkip((BasicParser.SkipContext)ctx);
-        } else if (ctx instanceof BasicParser.Var_declContext) {
-            return visitVar_decl((BasicParser.Var_declContext)ctx);
-        } else if (ctx instanceof BasicParser.AssignmentContext) {
-            return visitAssignment((BasicParser.AssignmentContext)ctx);
-        } else if (ctx instanceof BasicParser.ReadContext) {
-            return visitRead((BasicParser.ReadContext)ctx);
-        } else if (ctx instanceof BasicParser.FreeContext) {
-            return visitFree((BasicParser.FreeContext) ctx);
-        } else if (ctx instanceof BasicParser.ReturnContext) {
-            return visitReturn((BasicParser.ReturnContext)ctx);
-        } else if (ctx instanceof BasicParser.ExitContext) {
-            return visitExit((BasicParser.ExitContext)ctx);
-        } else if (ctx instanceof BasicParser.PrintContext) {
-            return visitPrint((BasicParser.PrintContext)ctx);
-        } else if (ctx instanceof BasicParser.PrintlnContext) {
-            return visitPrintln((BasicParser.PrintlnContext)ctx);
-        } else if (ctx instanceof BasicParser.IfContext) {
-            return visitIf((BasicParser.IfContext)ctx);
-        } else if (ctx instanceof BasicParser.WhileContext) {
-            return visitWhile((BasicParser.WhileContext)ctx);
-        } else if (ctx instanceof BasicParser.BeginContext) {
-            return visitBegin((BasicParser.BeginContext) ctx);
-        } else if (ctx instanceof  BasicParser.SequenceContext) {
-            return visitSequence((BasicParser.SequenceContext) ctx);
-        }
-        return null;
+        return new ProgramAST(ctx, functionASTs, (StatementAST) visit(ctx.statement()));
     }
 
     @Override
@@ -86,7 +55,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public AssignmentAST visitAssignment(BasicParser.AssignmentContext ctx) {
-        AssignmentAST assignment = new AssignmentAST(ctx, visitAssignlhs(ctx.assignlhs()), visitAssignrhs(ctx.assignrhs()));
+        AssignmentAST assignment = new AssignmentAST(ctx, visitAssignlhs(ctx.assignlhs()), (AssignrhsAST) visit(ctx.assignrhs()));
         assignment.check();
         return assignment;
     }
@@ -94,7 +63,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public VarDeclAST visitVar_decl(BasicParser.Var_declContext ctx) {
         VarDeclAST var = new VarDeclAST(ctx, visitType(ctx.type()), ctx.IDENT()
-                .getText(), visitAssignrhs(ctx.assignrhs()));
+                .getText(), (AssignrhsAST) visit(ctx.assignrhs()));
         var.check();
         return var;
     }
@@ -194,11 +163,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         //components
         ExpressionAST expr = visitExpression(ctx.expression());
         Visitor.ST = new SymbolTable(Visitor.ST);
-        StatementAST then = visitStatement(ctx.statement(0));
+        StatementAST then = (StatementAST) visit(ctx.statement(0));
         Visitor.ST = Visitor.ST.getEncSymbolTable();
 
         Visitor.ST = new SymbolTable(Visitor.ST);
-        StatementAST elseSt = visitStatement(ctx.statement(1));
+        StatementAST elseSt = (StatementAST) visit(ctx.statement(1));
         Visitor.ST = Visitor.ST.getEncSymbolTable();
 
         IfAST ifAST = new IfAST(ctx, expr, then, elseSt);
@@ -211,7 +180,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         Visitor.ST = new SymbolTable(Visitor.ST);
         //components
         ExpressionAST expr = visitExpression(ctx.expression());
-        StatementAST statement = visitStatement(ctx.statement());
+        StatementAST statement = (StatementAST) visit(ctx.statement());
 
         WhileAST whileAST = new WhileAST(ctx, expr, statement);
         whileAST.check();
@@ -222,7 +191,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public BeginAST visitBegin(BasicParser.BeginContext ctx) {
         ST = new SymbolTable(Visitor.ST);
-        BeginAST begin = new BeginAST(ctx, visitStatement(ctx.statement()));
+        BeginAST begin = new BeginAST(ctx, (StatementAST) visit(ctx.statement()));
         ST = ST.getEncSymbolTable();
 
         return begin;
@@ -234,7 +203,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         List<StatementAST> statementASTs = new ArrayList<>();
 
         for (BasicParser.StatementContext s : statements) {
-            statementASTs.add(visitStatement(s));
+            statementASTs.add((StatementAST) visit(s));
         }
 
         SequenceAST sequence = new SequenceAST(ctx, statementASTs);
@@ -252,26 +221,6 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             lhs = new AssignlhsAST(ctx, visitPairelem(ctx.pairelem()));
         }
         return lhs;
-    }
-
-    public AssignrhsAST visitAssignrhs(BasicParser.AssignrhsContext ctx) {
-        //can it be replaced with visitchildren?
-
-//        switch(ctx) {
-//            BasicParser.ExprContext: return visitExpr((BasicParser.ExprContext) ctx);
-//        }
-        if (ctx instanceof BasicParser.ExprContext) {
-            return visitExpr((BasicParser.ExprContext) ctx);
-        } else if (ctx instanceof BasicParser.ArraylitContext) {
-            return visitArraylit((BasicParser.ArraylitContext) ctx);
-        } else if (ctx instanceof BasicParser.NewpairContext) {
-            return visitNewpair((BasicParser.NewpairContext) ctx);
-        } else if (ctx instanceof BasicParser.PairelementContext) {
-            return visitPairelement((BasicParser.PairelementContext) ctx);
-        } else if(ctx instanceof BasicParser.FunctioncallContext) {
-            return visitFunctioncall((BasicParser.FunctioncallContext) ctx);
-        }
-        return null;
     }
 
     @Override

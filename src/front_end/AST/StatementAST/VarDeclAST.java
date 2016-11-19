@@ -87,6 +87,7 @@ public class VarDeclAST extends StatementAST{
                 }
             }
         }
+        isChecked = true;
     }
 
     @Override
