@@ -6,13 +6,10 @@ import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-/**
- * Created by andikoh on 08/11/2016.
- */
 public class IntLiterAST extends ExpressionAST {
 
-    String intsign; //intsign
-    String value;
+    private String intsign; //intsign
+    private String value;
 
     public IntLiterAST(ParserRuleContext ctx, String intsign, String value) {
         super(ctx);
@@ -29,7 +26,7 @@ public class IntLiterAST extends ExpressionAST {
     @Override
     public void translate() {
         if(intsign.equals("")){
-            CodeGen.globalMain.add(new Load(getRegister(4), new ImmValue
+            CodeGen.globalMain.add(new Load(getNextRegister(), new ImmValue
                     (value)));
         }
     }

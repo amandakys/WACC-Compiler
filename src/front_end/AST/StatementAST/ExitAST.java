@@ -7,9 +7,6 @@ import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-/**
- * Created by tsd15 on 09/11/16.
- */
 public class ExitAST extends StatementAST{
     private ExpressionAST expression;
 
@@ -31,7 +28,7 @@ public class ExitAST extends StatementAST{
     public void translate() {
         expression.translate();
 
-        CodeGen.globalMain.add(new Mov(getRegister(0), getRegister(4)));
+        CodeGen.globalMain.add(new Mov(getNextParamReg(), getNextRegister()));
 
     }
 }

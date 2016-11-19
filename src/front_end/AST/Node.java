@@ -3,13 +3,9 @@ package front_end.AST;
 import back_end.data_type.Register;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.TYPE;
-import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-/**
- * Created by andikoh on 08/11/2016.
- */
 public abstract class Node {
     protected final static int SP = 13;
     protected final static int LR = 14;
@@ -65,7 +61,11 @@ public abstract class Node {
 
     public abstract void translate();
 
-    public Register getRegister(int i) {
-        return CodeGen.registers.get(i);
+    protected Register getNextRegister() {
+        return Register.notUsedRegisters.pop();
+    }
+
+    protected Register getNextParamReg() {
+        return Register.paramRegister.pop();
     }
 }
