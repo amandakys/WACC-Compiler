@@ -1,29 +1,26 @@
 package back_end.instruction.load_store;
 
 import back_end.data_type.Expression;
-import back_end.data_type.ImmValue;
 import back_end.data_type.Register;
 import back_end.instruction.Instruction;
 
-public class Load implements Instruction {
+/*
+    STR instructions store a register value into memory
+ */
+public class Store implements Instruction {
     private Register dst;
     //TODO: chage it to expression that includes shifted register & address & label
     private Expression expression;
 
-    public Load(Register dst, Expression expression) {
+    public Store(Register dst, Expression expression) {
         this.dst = dst;
         this.expression = expression;
     }
 
     @Override
     public String toString() {
-        String expr = expression.toString();
-
-        if(expression instanceof ImmValue) {
-            expr = "=" + expr.substring(1);
-        }
-
-        return "\tLDR " + dst + ", " + expr;
+        //TODO: It's not STRB all the time
+        return "\tSTRB " + dst + ", " + expression ;
     }
 
     @Override

@@ -48,7 +48,7 @@ public class Main {
 
         //code generation
         CodeGen codeGen = new CodeGen();
-        program.translate();
+        program.translate(CodeGen.notUsedRegisters, CodeGen.paramRegister);
         codeGen.writeFile(fileName);
     }
 }

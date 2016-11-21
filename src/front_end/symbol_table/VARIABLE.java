@@ -14,5 +14,8 @@ public class VARIABLE extends IDENTIFIER {
         return this.type;
     }
 
-
+    @Override
+    public int getSize() {
+        return 0;
+    }
 }

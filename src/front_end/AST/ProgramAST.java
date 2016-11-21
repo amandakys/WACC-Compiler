@@ -1,18 +1,18 @@
 package front_end.AST;
 
-import back_end.data_type.Address;
-import back_end.data_type.Label;
-import back_end.data_type.Register;
+import back_end.Utility;
+import back_end.data_type.*;
 import back_end.instruction.Directive;
+import back_end.instruction.LabelInstr;
 import back_end.instruction.Pop;
 import back_end.instruction.Push;
 import back_end.instruction.load_store.Load;
 import front_end.AST.FunctionDecl.FunctionDeclAST;
 import front_end.AST.StatementAST.StatementAST;
-import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
+import java.util.Stack;
 
 public class ProgramAST extends Node {
     private List<FunctionDeclAST> functions;
@@ -31,19 +31,20 @@ public class ProgramAST extends Node {
     }
 
     @Override
-    public void translate() {
+    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
 
         for(FunctionDeclAST func : functions) {
-            func.translate();
+            func.translate(unusedRegs, paramRegs);
         }
 
-        CodeGen.globalMain.add(new Label("main"));
-        CodeGen.globalMain.add(new Push(Register.lr));
+        Utility.addMain(new LabelInstr("main"));
+        Utility.addMain(new Push(Register.LR));
 
-        statement.translate();
+        statement.translate(unusedRegs, paramRegs);
 
-        CodeGen.globalMain.add(new Load(getNextRegister(), new Address(0)));
-        CodeGen.globalMain.add(new Pop(Register.pc));
-        CodeGen.globalMain.add(new Directive("ltorg"));
+        Utility.addMain(new Load(unusedRegs.pop(), new ImmValue(0)));
+        Utility.addMain(new Pop(Register.PC));
+
+        Utility.addMain(new Directive("ltorg"));
     }
 }

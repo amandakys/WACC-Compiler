@@ -26,9 +26,18 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     private static List<CallAST> toBeVisited = new ArrayList<>();
 
     public Visitor() {
-        ST.add("bool", new SCALAR("bool"));
-        ST.add("int", new SCALAR("int"));
-        ST.add("char", new SCALAR("char"));
+        SCALAR boolSca = new SCALAR("bool");
+        SCALAR intSca = new SCALAR("int");
+        SCALAR charSca = new SCALAR("char");
+
+        //set byte size for each scalar type
+        boolSca.setSize(1);
+        intSca.setSize(4);
+        charSca.setSize(1);
+
+        ST.add("bool", boolSca);
+        ST.add("int", intSca);
+        ST.add("char", charSca);
         ST.add("string", new STRING());
 
         SymbolTable next = new SymbolTable(ST);

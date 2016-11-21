@@ -3,10 +3,8 @@ package back_end.instruction.data_manipulation;
 import back_end.data_type.Operand;
 import back_end.data_type.Register;
 import back_end.instruction.Instruction;
+import main.CodeGen;
 
-/**
- * Created by npd215 on 18/11/16.
- */
 public class Mov implements Instruction {
     private Register dst;
     private Operand rhs;
@@ -18,6 +16,11 @@ public class Mov implements Instruction {
 
     @Override
     public String toString() {
-        return "\tmov " + dst + " " + rhs;
+        return "\tMOV " + dst + ", " + rhs;
+    }
+
+    @Override
+    public String getValue() {
+        return rhs.toString();
     }
 }

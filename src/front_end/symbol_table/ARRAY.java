@@ -5,12 +5,15 @@ package front_end.symbol_table;
  */
 public class ARRAY extends TYPE{
     private TYPE type;
-    private int size;
+    private int elem_size;
+    private int SIZE = 4;
+
 
     public ARRAY(TYPE type, int size) {
         super("array");
         this.type = type;
-        this.size = size;
+        this.elem_size = size;
+        this.SIZE *= type.getSize();
     }
 
 
@@ -18,11 +21,21 @@ public class ARRAY extends TYPE{
     public TYPE getType() {
         return this;
     }
+
     @Override
     public String toString() {
         return type.toString() + "[]";
     }
+
     public TYPE getElementType() {
         return type;
+    }
+
+    public int getSize() {
+        return SIZE;
+    }
+
+    public int getElem_size() {
+        return elem_size;
     }
 }

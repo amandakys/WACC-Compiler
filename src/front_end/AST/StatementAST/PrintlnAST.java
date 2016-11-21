@@ -1,7 +1,21 @@
 package front_end.AST.StatementAST;
 
-import front_end.AST.ExpressionAST.ExpressionAST;
+import back_end.Utility;
+import back_end.data_type.*;
+import back_end.instruction.LabelInstr;
+import back_end.instruction.Branch;
+import back_end.instruction.Pop;
+import back_end.instruction.Push;
+import back_end.instruction.data_manipulation.Add;
+import back_end.instruction.data_manipulation.Mov;
+import back_end.instruction.load_store.Load;
+import front_end.AST.ExpressionAST.*;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import java.util.Stack;
+
+import static back_end.Utility.*;
+import static back_end.data_type.Register.*;
 
 public class PrintlnAST extends StatementAST {
     private ExpressionAST expression;
@@ -13,12 +27,24 @@ public class PrintlnAST extends StatementAST {
 
     @Override
     public void check() {
-       // identObj =
+        // identObj =
         expression.checkNode();
     }
 
     @Override
-    public void translate() {
+    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
+        Utility.pushData("\0");
 
+        (new PrintAST(null, expression)).translate(unusedRegs, paramRegs);
+        addMain(new Branch("p_print_ln"));
+
+        addFunction(new LabelInstr("p_print_ln"));
+        addFunction(new Push(LR));
+        addFunction(new Load(R0, new LabelExpr(getLastMessage())));
+        addFunction(new Add(R0, R0, new ImmValue(4)));
+        addFunction(new Branch("puts"));
+        addFunction(new Mov(Register.R0, new ImmValue(0)));
+        addFunction(new Branch("fflush"));
+        addFunction(new Pop(PC));
     }
 }

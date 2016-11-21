@@ -30,6 +30,11 @@ public class FUNCTION extends IDENTIFIER {
         return null;
     }
 
+    @Override
+    public int getSize() {
+        return 0;
+    }
+
     public TYPE getReturntype() {
         return this.returntype;
     }

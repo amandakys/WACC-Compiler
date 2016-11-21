@@ -1,7 +1,7 @@
 package back_end.data_type;
 
 /**
- * Created by npd215 on 18/11/16.
+ * Created by donamphuong on 21/11/2016.
  */
-public class Expression {
+public class Expression implements Operand {
 }

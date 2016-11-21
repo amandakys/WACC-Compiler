@@ -1,20 +1,32 @@
 package back_end.instruction;
 
-import back_end.instruction.Instruction;
-
-/**
- * Created by npd215 on 18/11/16.
- */
 public class Directive implements Instruction {
     private String name;
+    private String value;
 
     public Directive(String name) {
         this.name = name;
+        value = "";
+    }
+
+    public Directive(String name, String value) {
+        this.name = name;
+        this.value = value;
     }
 
     @Override
     public String toString() {
-        String res = name.equals("ltorg") ? "\t" : "";
-        return res +  "." + name;
+        String res = "\t";
+
+        if(name.equals("text") || name.equals("data") || name.equals("global main")) {
+          res = "";
+        }
+
+        return res +  "." + name + " " + value;
+    }
+
+    @Override
+    public String getValue() {
+        return name;
     }
 }

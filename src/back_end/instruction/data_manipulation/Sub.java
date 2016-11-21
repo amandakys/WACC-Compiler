@@ -5,26 +5,26 @@ import back_end.data_type.Register;
 import back_end.instruction.Instruction;
 
 /*
-    The ADD instruction adds the values in Rn and Operand2.
+    The SUB instruction subtracts the value of Operand2 from the value in Rn
  */
-public class Add implements Instruction {
-    private Register dest;
+public class Sub implements Instruction {
+    private Register dst;
     private Register lhs;
     private Operand rhs;
 
-    public Add(Register dest, Register lhs, Operand rhs) {
-        this.dest = dest;
+    public Sub(Register dst, Register lhs, Operand rhs) {
+        this.dst = dst;
         this.lhs = lhs;
         this.rhs = rhs;
     }
 
     @Override
     public String toString() {
-        return "\tADD " + dest + ", " + lhs + ", " + rhs;
+        return "\tSUB " + dst + ", " + lhs + ", " + rhs;
     }
 
     @Override
     public String getValue() {
-        return lhs.toString() + " + " + rhs.toString();
+        return lhs.toString() + " - " + rhs.toString();
     }
 }

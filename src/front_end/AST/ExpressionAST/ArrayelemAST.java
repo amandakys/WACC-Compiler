@@ -1,6 +1,6 @@
 package front_end.AST.ExpressionAST;
 
-import back_end.instruction.Instruction;
+import back_end.data_type.Register;
 import front_end.AST.Node;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -10,6 +10,7 @@ import front_end.symbol_table.TYPE;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by andikoh on 08/11/2016.
@@ -45,7 +46,7 @@ public class ArrayelemAST extends ExpressionAST {
     }
 
     @Override
-    public void translate() {
+    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
 
     }
 }

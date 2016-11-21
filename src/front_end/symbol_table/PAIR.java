@@ -31,4 +31,10 @@ public class PAIR extends TYPE {
     public String toString() {
         return "pair(" + first.getTypeName()+ ", " + second.getTypeName() + ")";
     }
+
+    @Override
+    public int getSize() {
+        //TODO: Implement this
+        return 0;
+    }
 }

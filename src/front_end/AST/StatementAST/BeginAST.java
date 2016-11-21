@@ -1,9 +1,9 @@
 package front_end.AST.StatementAST;
 
-import back_end.instruction.Instruction;
+import back_end.data_type.Register;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by andikoh on 10/11/2016.
@@ -21,7 +21,7 @@ public class BeginAST extends StatementAST {
     }
 
     @Override
-    public void translate() {
+    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
 
     }
 }

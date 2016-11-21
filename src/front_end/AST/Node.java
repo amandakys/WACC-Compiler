@@ -6,11 +6,9 @@ import front_end.symbol_table.TYPE;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public abstract class Node {
-    protected final static int SP = 13;
-    protected final static int LR = 14;
-    protected final static int PC = 15;
+import java.util.Stack;
 
+public abstract class Node {
     protected IDENTIFIER identObj;
     protected ParserRuleContext ctx;
     protected boolean isChecked;
@@ -59,13 +57,5 @@ public abstract class Node {
         }
     }
 
-    public abstract void translate();
-
-    protected Register getNextRegister() {
-        return Register.notUsedRegisters.pop();
-    }
-
-    protected Register getNextParamReg() {
-        return Register.paramRegister.pop();
-    }
+    public abstract void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs);
 }

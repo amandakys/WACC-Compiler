@@ -15,4 +15,9 @@ public class PARAM extends IDENTIFIER {
     public TYPE getType() {
         return type;
     }
+
+    @Override
+    public int getSize() {
+        return 0;
+    }
 }
