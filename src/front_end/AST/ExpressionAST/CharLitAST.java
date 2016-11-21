@@ -1,6 +1,7 @@
 package front_end.AST.ExpressionAST;
 
 import back_end.Utility;
+import back_end.data_type.ImmValue;
 import back_end.data_type.Operand;
 import back_end.data_type.Register;
 import back_end.instruction.data_manipulation.Mov;
@@ -25,6 +26,6 @@ public class CharLitAST extends ExpressionAST {
 
     @Override
     public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
-        //Utility.addMain(new Mov(Utility.getNextRegister(), new Operand(charac)));
+        Utility.addMain(new Mov(Utility.popUnusedReg(), new ImmValue(charac)));
     }
 }

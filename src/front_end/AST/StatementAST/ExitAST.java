@@ -33,7 +33,7 @@ public class ExitAST extends StatementAST{
     public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
         expression.translate(unusedRegs, paramRegs);
 
-        Utility.addMain(new Mov(unusedRegs.pop(), paramRegs.pop()));
+        Utility.addMain(new Mov(Utility.popUnusedReg(), Utility.popParamReg()));
         Utility.addMain(new Branch("exit"));
     }
 }

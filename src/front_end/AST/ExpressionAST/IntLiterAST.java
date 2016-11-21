@@ -34,7 +34,7 @@ public class IntLiterAST extends ExpressionAST {
 
     @Override
     public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
-        Utility.addMain(new Load(unusedRegs.pop(), new ImmValue(value)));
+        Utility.addMain(new Load(Utility.popUnusedReg(), new ImmValue(value)));
 
         if(intsign.equals("-")){
             //TODO: take care of when int is less than 0

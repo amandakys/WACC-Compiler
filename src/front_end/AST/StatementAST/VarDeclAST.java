@@ -103,7 +103,7 @@ public class VarDeclAST extends StatementAST{
 
         rhs.translate(unusedRegs, paramRegs);
 
-        Utility.addMain(new Store(unusedRegs.pop(), new Address(Register.SP)));
+        Utility.addMain(new Store(Utility.popUnusedReg(), new Address(Register.SP)));
         //increment stack pointer
         Utility.addMain(new Add(Register.SP, Register.SP, size));
     }

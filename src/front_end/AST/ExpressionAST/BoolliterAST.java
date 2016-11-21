@@ -26,7 +26,7 @@ public class BoolliterAST extends ExpressionAST{
 
     @Override
     public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
-        Utility.addMain(new Mov(unusedRegs.pop(), new ImmValue(boolVal.equals("true") ? 1 : 0)));
+        Utility.addMain(new Mov(Utility.popUnusedReg(), new ImmValue(boolVal.equals("true") ? 1 : 0)));
     }
 
     public String getBoolVal() {

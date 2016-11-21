@@ -42,7 +42,7 @@ public class ProgramAST extends Node {
 
         statement.translate(unusedRegs, paramRegs);
 
-        Utility.addMain(new Load(unusedRegs.pop(), new ImmValue(0)));
+        Utility.addMain(new Load(Register.R0, new ImmValue(0)));
         Utility.addMain(new Pop(Register.PC));
 
         Utility.addMain(new Directive("ltorg"));

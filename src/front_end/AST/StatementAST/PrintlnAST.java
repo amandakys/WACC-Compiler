@@ -33,9 +33,9 @@ public class PrintlnAST extends StatementAST {
 
     @Override
     public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
-        Utility.pushData("\0");
-
         (new PrintAST(null, expression)).translate(unusedRegs, paramRegs);
+
+        Utility.pushData("\0");
         addMain(new Branch("p_print_ln"));
 
         addFunction(new LabelInstr("p_print_ln"));
@@ -46,5 +46,7 @@ public class PrintlnAST extends StatementAST {
         addFunction(new Mov(Register.R0, new ImmValue(0)));
         addFunction(new Branch("fflush"));
         addFunction(new Pop(PC));
+
+
     }
 }

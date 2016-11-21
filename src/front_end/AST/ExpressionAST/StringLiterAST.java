@@ -30,7 +30,7 @@ public class StringLiterAST extends ExpressionAST{
         String label = "msg_" + (CodeGen.data.size() - 1)/3;
 
         Utility.pushData(value);
-        Utility.addMain(new Load(unusedRegs.pop(), new LabelExpr(label)));
+        Utility.addMain(new Load(Utility.popUnusedReg(), new LabelExpr(label)));
     }
 
     public String getValue() {

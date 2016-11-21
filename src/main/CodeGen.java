@@ -18,6 +18,10 @@ public class CodeGen {
     public static Stack<Register> notUsedRegisters = new Stack<>();
     public static Stack<Register> paramRegister = new Stack<>();
 
+    //registers that are popped are saved to be pushed back after a function ended
+    public static Stack<Register> toPushParamReg = new Stack<>();
+    public static Stack<Register> toPushUnusedReg = new Stack<>();
+
     private final int NUM_RESERVED_REGS = 11;
     private final int NUM_PARAM_REGS = 3;
 
@@ -75,10 +79,10 @@ public class CodeGen {
         //an iterator to traverse through all components in enum class Register
         List<Register> allRegs = new ArrayList<>(EnumSet.allOf(Register.class));
 
-        for(int i = NUM_RESERVED_REGS; i >= 0; i--) {
+        for(int i = NUM_RESERVED_REGS; i >= 1; i--) {
 
             if(i <= NUM_PARAM_REGS || i == 12) {
-                //reg 0-3 and reg 12 are used to save parameters
+                //reg 1-3 and reg 12 are used to save parameters
                 paramRegister.push(allRegs.get(i));
             } else {
                 //reg 4-11 are preserved to be used in the program
