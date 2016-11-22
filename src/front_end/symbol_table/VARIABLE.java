@@ -7,16 +7,9 @@ import main.Visitor;
  */
 public class VARIABLE extends IDENTIFIER {
     private TYPE type;
-    private int index;
 
     public VARIABLE(TYPE type) {
         this.type = type;
-
-        for(IDENTIFIER ident : Visitor.ST.getDict().values()) {
-            if(ident instanceof VARIABLE) {
-                index++;
-            }
-        }
     }
 
     public TYPE getType() {
@@ -26,9 +19,5 @@ public class VARIABLE extends IDENTIFIER {
     @Override
     public int getSize() {
         return type.getSize();
-    }
-
-    public int getIndex() {
-        return index;
     }
 }

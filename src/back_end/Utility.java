@@ -40,9 +40,7 @@ public class Utility {
     }
 
     public static void pushData(String value) {
-        String label = "msg_" + (CodeGen.data.size() - 1)/3;
-
-        Utility.addData(new LabelInstr(label));
+        Utility.addData(new LabelInstr(getLastMessage()));
         //discard the "" in a string when finding the string's size
         Utility.addData(new Directive("word", String.valueOf(value.replaceAll("[\\\\\"]", "").length())));
         Utility.addData(new Directive("ascii", value));

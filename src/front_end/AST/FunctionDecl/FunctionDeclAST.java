@@ -1,13 +1,12 @@
 package front_end.AST.FunctionDecl;
 
-import back_end.Utility;
-
-
 import back_end.data_type.register.Register;
-import back_end.instruction.Branch;
+
 import back_end.instruction.Directive;
 import back_end.instruction.POP;
 import back_end.instruction.PUSH;
+
+import back_end.instruction.*;
 
 import front_end.AST.Node;
 import front_end.AST.StatementAST.StatementAST;
@@ -106,13 +105,12 @@ public class FunctionDeclAST extends Node {
 
     @Override
     public void translate() {
-        CodeGen.main.add(new Branch("L", funcname));
-
+        //Utility.pushData("\0");
+        CodeGen.main.add(new LabelInstr(funcname));
         CodeGen.main.add(new PUSH(Register.LR));
 
         statement.translate();
-
         CodeGen.main.add(new POP(Register.PC));
-        CodeGen.main.add(new Directive("ltorg"));
+        CodeGen.main.add (new Directive("ltorg"));
     }
 }

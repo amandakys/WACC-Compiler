@@ -126,25 +126,30 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public PrintAST visitPrint(BasicParser.PrintContext ctx) {
-        return new PrintAST(ctx, visitExpression(ctx.expression()));
+        PrintAST print = new PrintAST(ctx, visitExpression(ctx.expression()));
+        print.check();
+        return print;
     }
 
     @Override
     public FunctionDeclAST visitFunction(BasicParser.FunctionContext ctx) {
         Visitor.ST = new SymbolTable(Visitor.ST);
+        StatementAST statement = (StatementAST) visit(ctx.statement());
         FunctionDeclAST function;
 
         if (ctx.paramlist() == null) {
             //no params
-            function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText(), (StatementAST) visit(ctx.statement()));
+            function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText(), statement);
         } else {
             //has params
             function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText(),
-                    visitParamlist(ctx.paramlist()), (StatementAST) visit(ctx.statement()));
+                    visitParamlist(ctx.paramlist()), statement);
         }
 
         function.check();
         //visitChildren(ctx);
+
+        //statement.checkNode();
 
         Visitor.ST = Visitor.ST.getEncSymbolTable();
         String funcName = ctx.IDENT().getText();

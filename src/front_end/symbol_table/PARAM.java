@@ -1,5 +1,7 @@
 package front_end.symbol_table;
 
+import main.Visitor;
+
 /**
  * Created by tsd15 on 09/11/16.
  */
