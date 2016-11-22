@@ -144,7 +144,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         }
 
         function.check();
-        visitChildren(ctx);
+        //visitChildren(ctx);
 
         Visitor.ST = Visitor.ST.getEncSymbolTable();
         String funcName = ctx.IDENT().getText();

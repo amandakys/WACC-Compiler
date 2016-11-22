@@ -1,25 +1,24 @@
 package front_end.AST.FunctionDecl;
 
 import back_end.Utility;
-import back_end.data_type.ImmValue;
-import back_end.data_type.Register;
+
+
+import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 import back_end.instruction.Directive;
-import back_end.instruction.Pop;
-import back_end.instruction.Push;
-import back_end.instruction.data_manipulation.Add;
-import back_end.instruction.data_manipulation.Sub;
-import front_end.AST.Compare;
+import back_end.instruction.POP;
+import back_end.instruction.PUSH;
+
 import front_end.AST.Node;
 import front_end.AST.StatementAST.StatementAST;
 import front_end.AST.TypeAST.TypeAST;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import static back_end.Utility.addMain;
 
@@ -92,6 +91,7 @@ public class FunctionDeclAST extends Node {
     @Override
     public void check() {
         CheckFunctionNameAndReturnType();
+
         if (parameters != null) {
             List<ParamAST> paramASTs = parameters.getParams();
 
@@ -105,14 +105,14 @@ public class FunctionDeclAST extends Node {
     }
 
     @Override
-    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
-        Utility.pushData("\0");
-        addMain(new Branch(funcname));
+    public void translate() {
+        CodeGen.main.add(new Branch("L", funcname));
 
-        addMain(new Push(Register.LR));
-        statement.translate(unusedRegs, paramRegs);
+        CodeGen.main.add(new PUSH(Register.LR));
 
-        addMain(new Pop(Register.PC));
-        addMain(new Directive("ltorg"));
+        statement.translate();
+
+        CodeGen.main.add(new POP(Register.PC));
+        CodeGen.main.add(new Directive("ltorg"));
     }
 }

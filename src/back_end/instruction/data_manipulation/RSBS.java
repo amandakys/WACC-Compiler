@@ -1,7 +1,7 @@
 package back_end.instruction.data_manipulation;
 
 import back_end.data_type.ImmValue;
-import back_end.data_type.Register;
+import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
 
 /*

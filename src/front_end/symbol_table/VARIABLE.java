@@ -1,13 +1,22 @@
 package front_end.symbol_table;
 
+import main.Visitor;
+
 /**
  * Created by andikoh on 08/11/2016.
  */
 public class VARIABLE extends IDENTIFIER {
-    TYPE type;
+    private TYPE type;
+    private int index;
 
     public VARIABLE(TYPE type) {
         this.type = type;
+
+        for(IDENTIFIER ident : Visitor.ST.getDict().values()) {
+            if(ident instanceof VARIABLE) {
+                index++;
+            }
+        }
     }
 
     public TYPE getType() {
@@ -16,6 +25,10 @@ public class VARIABLE extends IDENTIFIER {
 
     @Override
     public int getSize() {
-        return 0;
+        return type.getSize();
+    }
+
+    public int getIndex() {
+        return index;
     }
 }

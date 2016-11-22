@@ -2,15 +2,14 @@ package back_end.instruction.load_store;
 
 import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
-import back_end.data_type.Register;
+import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
 
-public class Load implements Instruction {
+public class LOAD implements Instruction {
     private Register dst;
-    //TODO: chage it to expression that includes shifted register & address & label
     private Expression expression;
 
-    public Load(Register dst, Expression expression) {
+    public LOAD(Register dst, Expression expression) {
         this.dst = dst;
         this.expression = expression;
     }

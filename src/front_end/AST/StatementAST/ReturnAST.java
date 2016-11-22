@@ -1,15 +1,16 @@
 package front_end.AST.StatementAST;
 
-import back_end.data_type.Register;
-import back_end.instruction.data_manipulation.Mov;
+import back_end.data_type.register.Register;
+
+
+import back_end.instruction.data_manipulation.MOV;
 import front_end.AST.Compare;
+
 import front_end.AST.Node;
-import front_end.symbol_table.PAIR;
+import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.util.Stack;
 
-import static back_end.Utility.addMain;
 
 /**
  * Created by tsd15 on 09/11/16.
@@ -27,11 +28,13 @@ public class ReturnAST extends StatementAST {
         expression.checkNode();
     }
 
-    @Override
-    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
-        Register result = unusedRegs.peek();
 
-        expression.translate(unusedRegs, paramRegs);
-        addMain(new Mov(Register.R0, result));
+    @Override
+    public void translate() {
+        Register result = CodeGen.notUsedRegisters.peek();
+
+        expression.translate();
+
+        CodeGen.main.add(new MOV(Register.R0, result));
     }
 }

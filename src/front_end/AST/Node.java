@@ -1,12 +1,9 @@
 package front_end.AST;
 
-import back_end.data_type.Register;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.TYPE;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.util.Stack;
 
 public abstract class Node {
     protected IDENTIFIER identObj;
@@ -57,5 +54,5 @@ public abstract class Node {
         }
     }
 
-    public abstract void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs);
+    public abstract void translate();
 }
