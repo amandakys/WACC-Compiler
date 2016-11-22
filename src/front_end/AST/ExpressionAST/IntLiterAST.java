@@ -6,10 +6,9 @@ import back_end.instruction.Branch;
 import back_end.instruction.LabelInstr;
 import back_end.instruction.data_manipulation.RSBS;
 import back_end.instruction.load_store.Load;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.util.Stack;
 
 public class IntLiterAST extends ExpressionAST {
 
@@ -33,13 +32,13 @@ public class IntLiterAST extends ExpressionAST {
     }
 
     @Override
-    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
+    public void translate() {
         Utility.addMain(new Load(Utility.popUnusedReg(), new ImmValue(value)));
 
         if(intsign.equals("-")){
             //TODO: take care of when int is less than 0
             //negating the number stored in the next available register
-            Register next = unusedRegs.pop();
+            Register next = CodeGen.notUsedRegisters.pop();
             Utility.addMain(new RSBS(next, next));
 
             Utility.addMain(new Branch("BLVS", "p_throw_overflow_error"));
@@ -57,7 +56,7 @@ public class IntLiterAST extends ExpressionAST {
             Utility.addFunction(new LabelInstr("p_throw_runtime_error"));
             //function p_print_string will be defined after this
             Utility.addFunction(new Branch("p_print_string"));
-            //Utility.addFunction(new Mov(Utility.getNextParamReg(), new Operand(intsign + value)));
+            //Utility.addFunction(new MOV(Utility.getNextParamReg(), new Operand(intsign + value)));
             Utility.addFunction(new Branch("exit"));
 
             //(new PrintAST(null, new StringLiterAST(null, OVERFLOW_ERROR_MESSAGE))).translate();

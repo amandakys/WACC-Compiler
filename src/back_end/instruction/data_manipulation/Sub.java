@@ -7,20 +7,24 @@ import back_end.instruction.Instruction;
 /*
     The SUB instruction subtracts the value of Operand2 from the value in Rn
  */
-public class Sub implements Instruction {
+public class SUB implements Instruction {
     private Register dst;
     private Register lhs;
     private Operand rhs;
+    private String sFlag = "";
 
-    public Sub(Register dst, Register lhs, Operand rhs) {
+    public SUB(Register dst, Register lhs, Operand rhs) {
         this.dst = dst;
         this.lhs = lhs;
         this.rhs = rhs;
+        if (rhs instanceof Register) {
+            sFlag = "S";
+        }
     }
 
     @Override
     public String toString() {
-        return "\tSUB " + dst + ", " + lhs + ", " + rhs;
+        return "\tSUB" + sFlag + " " + dst + ", " + lhs + ", " + rhs;
     }
 
     @Override

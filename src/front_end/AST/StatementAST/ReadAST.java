@@ -1,12 +1,9 @@
 package front_end.AST.StatementAST;
 
-import back_end.data_type.Register;
 import front_end.AST.AssignmentAST.AssignlhsAST;
 import front_end.symbol_table.TYPE;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.util.Stack;
 
 public class ReadAST extends StatementAST {
     private AssignlhsAST expression;
@@ -32,7 +29,7 @@ public class ReadAST extends StatementAST {
     }
 
     @Override
-    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
+    public void translate() {
 
     }
 

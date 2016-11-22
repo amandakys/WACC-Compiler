@@ -2,11 +2,10 @@ package front_end.AST.StatementAST;
 
 import back_end.data_type.Register;
 import front_end.AST.ExpressionAST.ExpressionAST;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
-
-import java.util.Stack;
 
 /**
  * Created by andikoh on 10/11/2016.
@@ -37,7 +36,9 @@ public class IfAST extends StatementAST {
     }
 
     @Override
-    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
+    public void translate() {
+        Register result = CodeGen.notUsedRegisters.peek();
+        expression.translate();
 
     }
 }

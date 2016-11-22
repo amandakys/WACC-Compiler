@@ -3,15 +3,14 @@ package front_end.AST.StatementAST;
 import back_end.data_type.*;
 import back_end.instruction.Branch;
 import back_end.instruction.LabelInstr;
-import back_end.instruction.Pop;
-import back_end.instruction.Push;
-import back_end.instruction.data_manipulation.Add;
-import back_end.instruction.data_manipulation.Mov;
+import back_end.instruction.POP;
+import back_end.instruction.PUSH;
+import back_end.instruction.data_manipulation.ADD;
+import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.Load;
 import front_end.AST.ExpressionAST.*;
+import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.util.Stack;
 
 import static back_end.Utility.*;
 
@@ -29,11 +28,11 @@ public class PrintAST extends StatementAST {
     }
 
     @Override
-    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
-        Register result = unusedRegs.peek();
+    public void translate() {
+        Register result = CodeGen.notUsedRegisters.peek();
 
-        expression.translate(unusedRegs, paramRegs);
-        addMain(new Mov(Register.R0, result));
+        expression.translate();
+        addMain(new MOV(Register.R0, result));
 
         String placeholder = "";
         String typeName = expression.getType().getTypeName();
@@ -61,22 +60,22 @@ public class PrintAST extends StatementAST {
         String type = expression.getType().getTypeName();
         if(!(expression instanceof CharLitAST)) {
             addFunction(new LabelInstr("p_print_" + type));
-            addFunction(new Push(Register.LR));
+            addFunction(new PUSH(Register.LR));
 
             if(expression instanceof StringLiterAST) {
                 addFunction(new Load(popParamReg(), new Address(Register.R0)));
-                addFunction(new Add(popParamReg(), Register.R0, new ImmValue(exprSize)));
+                addFunction(new ADD(popParamReg(), Register.R0, new ImmValue(exprSize)));
             } else if(expression instanceof IntLiterAST) {
-                addFunction(new Mov(popParamReg(), Register.R0));
+                addFunction(new MOV(popParamReg(), Register.R0));
             }
 
             addFunction(new Load(Register.R0, new LabelExpr(getLastMessage())));
-            addFunction(new Add(Register.R0, Register.R0, new ImmValue(exprSize)));
+            addFunction(new ADD(Register.R0, Register.R0, new ImmValue(exprSize)));
 
             addFunction(new Branch("printf"));
-            addFunction(new Mov(Register.R0, new ImmValue(0)));
+            addFunction(new MOV(Register.R0, new ImmValue(0)));
             addFunction(new Branch("fflush"));
-            addFunction(new Pop(Register.PC));
+            addFunction(new POP(Register.PC));
         }
     }
 }
