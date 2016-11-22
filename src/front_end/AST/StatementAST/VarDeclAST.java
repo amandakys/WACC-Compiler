@@ -2,8 +2,6 @@ package front_end.AST.StatementAST;
 
 import back_end.Utility;
 import back_end.data_type.*;
-import back_end.instruction.data_manipulation.ADD;
-import back_end.instruction.data_manipulation.SUB;
 
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;

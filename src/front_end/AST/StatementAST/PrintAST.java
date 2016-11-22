@@ -8,10 +8,7 @@ import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.*;
-import front_end.AST.Node;
-import front_end.symbol_table.STRING;
 import main.CodeGen;
-import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import static back_end.Utility.*;
@@ -65,7 +62,8 @@ public class PrintAST extends StatementAST {
                     //functions that print string, bool, int have to be specified separately
                     if (expression instanceof StringLiterAST) {
                         addFunction(new LOAD(popParamReg(), new Address(Register.R0)));
-                        addFunction(new ADD(popParamReg(), Register.R0, new ImmValue(exprSize)));
+                        addFunction(new ADD(popParamReg(), Register.R0, new
+                                ImmValue(exprSize)));
                     } else if (expression instanceof IntLiterAST) {
                         addFunction(new MOV(popParamReg(), Register.R0));
                     }
