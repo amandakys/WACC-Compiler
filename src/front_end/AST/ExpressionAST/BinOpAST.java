@@ -1,6 +1,6 @@
 package front_end.AST.ExpressionAST;
 
-import back_end.data_type.Register;
+import back_end.data_type.register.Register;
 import back_end.instruction.condition.AND;
 import back_end.instruction.condition.CMP;
 import back_end.instruction.condition.ORR;

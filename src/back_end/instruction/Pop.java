@@ -1,6 +1,6 @@
 package back_end.instruction;
 
-import back_end.data_type.Register;
+import back_end.data_type.register.Register;
 import main.CodeGen;
 
 public class POP implements Instruction{
@@ -9,12 +9,20 @@ public class POP implements Instruction{
     public POP(Register reg) {
         this.reg = reg;
 
-        for(int i = CodeGen.toPushParamReg.size() - 1; i >= 0; i--) {
-            CodeGen.paramRegister.push(CodeGen.toPushParamReg.get(i));
+        while (!CodeGen.toPushParamReg.isEmpty()) {
+            Register r = CodeGen.toPushParamReg.pop();
+
+            if(!CodeGen.paramRegister.contains(r)) {
+                CodeGen.paramRegister.push(r);
+            }
         }
 
-        for(int j = CodeGen.toPushUnusedReg.size() - 1; j >= 0; j--) {
-            CodeGen.notUsedRegisters.push(CodeGen.toPushUnusedReg.get(j));
+        while (!CodeGen.toPushUnusedReg.isEmpty()) {
+            Register r = CodeGen.toPushUnusedReg.pop();
+
+            if(!CodeGen.notUsedRegisters.contains(r)) {
+                CodeGen.notUsedRegisters.push(r);
+            }
         }
     }
 

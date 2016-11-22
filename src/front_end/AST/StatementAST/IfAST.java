@@ -1,6 +1,6 @@
 package front_end.AST.StatementAST;
 
-import back_end.data_type.Register;
+import back_end.data_type.register.Register;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import main.CodeGen;
 import main.Visitor;

@@ -2,10 +2,11 @@ package front_end.AST.ExpressionAST;
 
 import back_end.Utility;
 import back_end.data_type.*;
+import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 import back_end.instruction.LabelInstr;
 import back_end.instruction.data_manipulation.RSBS;
-import back_end.instruction.load_store.Load;
+import back_end.instruction.load_store.LOAD;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -33,7 +34,7 @@ public class IntLiterAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        Utility.addMain(new Load(Utility.popUnusedReg(), new ImmValue(value)));
+        Utility.addMain(new LOAD(Utility.popUnusedReg(), new ImmValue(value)));
 
         if(intsign.equals("-")){
             //TODO: take care of when int is less than 0
@@ -48,7 +49,7 @@ public class IntLiterAST extends ExpressionAST {
             Utility.addFunction(new LabelInstr("p_throw_overflow_error"));
             //the next message that is put inside data will be loaded in the next free param register
             //this message should be an overflow message
-            //Utility.addFunction(new Load(Utility.getNextRegister(), new Expression("msg_" + CodeGen.data.size()%3)));
+            //Utility.addFunction(new LOAD(Utility.getNextRegister(), new Expression("msg_" + CodeGen.data.size()%3)));
             Utility.addFunction(new Branch("p_throw_runtime_error"));
 
 

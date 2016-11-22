@@ -1,13 +1,14 @@
 package front_end.AST.StatementAST;
 
 import back_end.data_type.*;
+import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 import back_end.instruction.LabelInstr;
 import back_end.instruction.POP;
 import back_end.instruction.PUSH;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
-import back_end.instruction.load_store.Load;
+import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.*;
 import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -63,13 +64,13 @@ public class PrintAST extends StatementAST {
             addFunction(new PUSH(Register.LR));
 
             if(expression instanceof StringLiterAST) {
-                addFunction(new Load(popParamReg(), new Address(Register.R0)));
+                addFunction(new LOAD(popParamReg(), new Address(Register.R0)));
                 addFunction(new ADD(popParamReg(), Register.R0, new ImmValue(exprSize)));
             } else if(expression instanceof IntLiterAST) {
                 addFunction(new MOV(popParamReg(), Register.R0));
             }
 
-            addFunction(new Load(Register.R0, new LabelExpr(getLastMessage())));
+            addFunction(new LOAD(Register.R0, new LabelExpr(getLastMessage())));
             addFunction(new ADD(Register.R0, Register.R0, new ImmValue(exprSize)));
 
             addFunction(new Branch("printf"));
