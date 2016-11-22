@@ -43,15 +43,12 @@ public class ReadAST extends StatementAST {
     @Override
     public void translate() {
         Register r = CodeGen.notUsedRegisters.peek();
-        int typeSize = expression.getType().getSize();
         addMain(new ADD(r, Register.SP, new ImmValue(0))); // why 0 ??
 
         addMain(new MOV(Register.R0, r));
 
         String functionName = "p_read_" + expression.getType().getTypeName();
         addMain(new Branch("L", functionName));
-
-//        addMain(new Add(Register.SP, Register.SP, new ImmValue(typeSize)));
 
         String placeholder = "";
         if (expression.getType().getTypeName().equals("char")) {
@@ -66,7 +63,7 @@ public class ReadAST extends StatementAST {
         addFunction(new MOV(popParamReg(), Register.R0));
         addFunction(new LOAD(Register.R0, new LabelExpr(getLastMessage())));
         
-        addFunction(new ADD(Register.R0, Register.R0, new ImmValue(typeSize)));
+        addFunction(new ADD(Register.R0, Register.R0, new ImmValue(4)));
         addFunction(new Branch("L", "scanf"));
         addFunction(new POP(Register.PC));
     }
