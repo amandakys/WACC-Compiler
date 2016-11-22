@@ -46,7 +46,7 @@ public class IfAST extends StatementAST {
         Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
         //jump to label if false
-        CodeGen.main.add(new CMP(CodeGen.notUsedRegisters.peek(), new ImmValue(0)));
+        CodeGen.main.add(new CMP(result, new ImmValue(0)));
         String l0 = CodeGen.labelCount.toString();
         CodeGen.main.add(new Branch("EQ", "L" + l0));
         CodeGen.labelCount ++;
