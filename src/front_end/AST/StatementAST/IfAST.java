@@ -17,7 +17,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
  */
 public class IfAST extends StatementAST {
     // count for generic label names
-    public static Integer labelCount = 0;
+    //public static Integer labelCount = 0;
     ExpressionAST expression;
     StatementAST then;
     StatementAST elseSt;
