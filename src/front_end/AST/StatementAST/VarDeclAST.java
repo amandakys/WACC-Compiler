@@ -10,6 +10,7 @@ import back_end.data_type.register.Register;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
+import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
 import front_end.AST.TypeAST.TypeAST;
@@ -26,9 +27,6 @@ public class VarDeclAST extends StatementAST{
     private String ident;
     private TypeAST type;
     private AssignrhsAST rhs;
-
-    protected static int nextAddress;
-    protected static int size;
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
@@ -102,31 +100,14 @@ public class VarDeclAST extends StatementAST{
     @Override
     public void translate() {
 
-        if(size == 0) {
-            size = Visitor.ST.findSizeVarDec();
-            nextAddress = size;
-        }
-
-        Operand operSize = new ImmValue(size);
-        int index = ((VARIABLE) identObj).getIndex();
-
-        if(index == 0) {
-            //decrement stack pointer
-            Utility.addMain(new SUB(Register.SP, Register.SP, operSize));
-        }
-
+        //nextReg specifies the register which stores the value of rhs.translate()
         Register nextReg = CodeGen.notUsedRegisters.peek();
         rhs.translate();
 
-        nextAddress = nextAddress - identObj.getSize();
-
+        //decrement the nextAddress according to the object's size
+        ProgramAST.nextAddress -= identObj.getSize();
         Utility.addMain(new STORE(nextReg, new PreIndex(Register.SP,
-                new ImmValue(nextAddress)), identObj.getSize()));
-
-        if(index == Visitor.ST.findNumVarDec() - 1) {
-            //increment stack pointer
-            Utility.addMain(new ADD(Register.SP, Register.SP, operSize));
-        }
+                new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
     }
 
 }

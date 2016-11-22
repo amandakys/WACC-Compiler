@@ -8,13 +8,17 @@ import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class StringLiterAST extends ExpressionAST{
-    public static final int NUM_DOUBLE_QUOTE = 2;
+    private static final int NUM_DOUBLE_QUOTE = 2;
+
+    //TODO: Check if occurrences can be deleted
+    public static int occurences = 0;
     private String value;
 
     public StringLiterAST(ParserRuleContext ctx, String value) {
         super(ctx);
         this.value = value;
-        identObj = Visitor.ST.lookUpAll("string");
+        this.identObj = Visitor.ST.lookUpAll("string");
+        occurences++;
     }
 
     @Override
@@ -24,7 +28,7 @@ public class StringLiterAST extends ExpressionAST{
 
     @Override
     public void translate() {
-        String label = "msg_" + (CodeGen.data.size() - 1)/3;
+        String label = "msg_" + Utility.getLastMessage();
 
         Utility.pushData(value);
         Utility.addMain(new LOAD(Utility.popUnusedReg(), new LabelExpr(label)));

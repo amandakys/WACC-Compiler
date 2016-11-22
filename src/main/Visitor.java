@@ -126,7 +126,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public PrintAST visitPrint(BasicParser.PrintContext ctx) {
-        return new PrintAST(ctx, visitExpression(ctx.expression()));
+        PrintAST print = new PrintAST(ctx, visitExpression(ctx.expression()));
+        print.check();
+        return print;
     }
 
     @Override

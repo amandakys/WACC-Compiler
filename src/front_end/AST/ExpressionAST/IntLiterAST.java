@@ -18,6 +18,8 @@ public class IntLiterAST extends ExpressionAST {
     private final String OVERFLOW_ERROR_MESSAGE = "\"OverflowError: the result is too small/large to store in a " +
             "4-byte signed-integer.\n\"";
 
+    public static int occurences = 0;
+
     public IntLiterAST(ParserRuleContext ctx, String intsign, String value) {
         super(ctx);
 
@@ -25,6 +27,7 @@ public class IntLiterAST extends ExpressionAST {
         this.value = value.replaceAll("\\D+","");;
         this.intsign = intsign;
         identObj = Visitor.ST.lookUpAll("int");
+        occurences++;
     }
 
     @Override
