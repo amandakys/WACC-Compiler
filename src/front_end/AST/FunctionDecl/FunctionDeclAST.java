@@ -1,6 +1,5 @@
 package front_end.AST.FunctionDecl;
 
-import back_end.data_type.Register;
 import front_end.AST.Node;
 import front_end.AST.TypeAST.TypeAST;
 import main.Visitor;
@@ -9,7 +8,6 @@ import front_end.symbol_table.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * Created by tsd15 on 09/11/16.
@@ -89,7 +87,7 @@ public class FunctionDeclAST extends Node {
     }
 
     @Override
-    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
+    public void translate() {
 
     }
 }

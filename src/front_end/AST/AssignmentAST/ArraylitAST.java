@@ -1,13 +1,11 @@
 package front_end.AST.AssignmentAST;
 
-import back_end.data_type.Register;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.Node;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.ARRAY;
 
 import java.util.List;
-import java.util.Stack;
 
 public class ArraylitAST extends AssignrhsAST {
     //Array list has stores a list of expression
@@ -41,7 +39,10 @@ public class ArraylitAST extends AssignrhsAST {
     }
 
     @Override
-    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
+    public void translate() {
+        for (ExpressionAST a: arraylits) {
+            a.translate();
+        }
     }
 
     public int getSize() {
