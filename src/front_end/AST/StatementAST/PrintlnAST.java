@@ -34,19 +34,26 @@ public class PrintlnAST extends StatementAST {
     public void translate() {
         (new PrintAST(null, expression)).translate();
 
-        Utility.pushData("\0");
-        addMain(new Branch("L", "p_print_ln"));
+        if(!Utility.hasPlaceholder("\\0")) {
+            Utility.pushToPushDatat("\\0");
+        }
 
-        addFunction(new LabelInstr("p_print_ln"));
-        addFunction(new PUSH(LR));
-        addFunction(new LOAD(R0, new LabelExpr(getLastMessage())));
-        addFunction(new ADD(R0, R0, new ImmValue(4)));
-        addFunction(new Branch("L", "puts"));
-        addFunction(new MOV(Register.R0, new ImmValue(0)));
-        addFunction(new Branch("L", "fflush"));
+       if(!Utility.hasFunction("p_print_ln")) {
+           addMain(new Branch("L", "p_print_ln"));
 
-        addFunction(new POP(PC));
+           addFunction(new LabelInstr("p_print_ln"));
+           addFunction(new PUSH(LR));
+           addFunction(new LOAD(R0, new LabelExpr(getLastMessage())));
+           addFunction(new ADD(R0, R0, new ImmValue(4)));
+           addFunction(new Branch("L", "puts"));
+           addFunction(new MOV(Register.R0, new ImmValue(0)));
+           addFunction(new Branch("L", "fflush"));
 
+           addFunction(new POP(PC));
+       }
+    }
 
+    public ExpressionAST getExpression() {
+        return expression;
     }
 }

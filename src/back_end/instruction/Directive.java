@@ -27,6 +27,6 @@ public class Directive implements Instruction {
 
     @Override
     public String getValue() {
-        return name;
+        return value;
     }
 }

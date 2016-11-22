@@ -10,15 +10,13 @@ import org.antlr.v4.runtime.ParserRuleContext;
 public class StringLiterAST extends ExpressionAST{
     private static final int NUM_DOUBLE_QUOTE = 2;
 
-    //TODO: Check if occurrences can be deleted
-    public static int occurences = 0;
+    public static int occurences;
     private String value;
 
     public StringLiterAST(ParserRuleContext ctx, String value) {
         super(ctx);
         this.value = value;
-        this.identObj = Visitor.ST.lookUpAll("string");
-        occurences++;
+        identObj = Visitor.ST.lookUpAll("string");
     }
 
     @Override
@@ -28,7 +26,7 @@ public class StringLiterAST extends ExpressionAST{
 
     @Override
     public void translate() {
-        String label = "msg_" + Utility.getLastMessage();
+        String label = "msg_" + (CodeGen.data.size() - 1)/3;
 
         Utility.pushData(value);
         Utility.addMain(new LOAD(Utility.popUnusedReg(), new LabelExpr(label)));

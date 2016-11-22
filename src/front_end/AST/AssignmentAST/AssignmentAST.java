@@ -1,5 +1,6 @@
 package front_end.AST.AssignmentAST;
 
+import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.StatementAST.StatementAST;
 import org.antlr.v4.runtime.ParserRuleContext;
 

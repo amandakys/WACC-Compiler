@@ -15,7 +15,7 @@ public class MOV implements Instruction {
         this.rhs = rhs;
         this.condition = "";
 
-        if(rhs instanceof Register && !dst.equals(rhs)) {
+        if(rhs instanceof Register && !dst.equals(rhs) && rhs != Register.R0) {
             CodeGen.notUsedRegisters.push((Register) rhs);
         }
     }

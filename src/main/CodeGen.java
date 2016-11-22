@@ -27,6 +27,9 @@ public class CodeGen {
 
     // for String
     public static List<Instruction> data = new ArrayList<>();
+    public static List<Instruction> toPushData = new ArrayList<>();
+    public static int numMessage = 0;
+
     // variables & any non-primitive
     public static List<Instruction> text = new ArrayList<>();
     //main
@@ -47,6 +50,7 @@ public class CodeGen {
         FileWriter fw = new FileWriter(file.getAbsoluteFile());
         BufferedWriter bw = new BufferedWriter(fw);
 
+        data.addAll(toPushData);
         if(data.size() != 1){
             for(Instruction instr : data) {
                 if(instr instanceof LabelInstr) {
