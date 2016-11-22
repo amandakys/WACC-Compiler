@@ -106,7 +106,7 @@ public class FunctionDeclAST extends Node {
     @Override
     public void translate() {
         //Utility.pushData("\0");
-        CodeGen.main.add(new LabelInstr(funcname));
+        CodeGen.main.add(new LabelInstr("f_"+funcname));
         CodeGen.main.add(new PUSH(Register.LR));
 
         statement.translate();
