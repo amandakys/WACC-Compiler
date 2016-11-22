@@ -42,8 +42,18 @@ public class SymbolTable {
         return null; 
     }
 
-    public void setEncSymbolTable(SymbolTable st) {
-        this.encSymbolTable = st;
+    public Map<String, IDENTIFIER> getDict() {
+        return dict;
+    }
+
+    public int findSize() {
+        int size = 0;
+
+        for(IDENTIFIER ident : dict.values()) {
+            size += ident.getSize();
+        }
+
+        return size;
     }
 }
 

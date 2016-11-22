@@ -1,10 +1,12 @@
 package front_end.symbol_table;
 
+import main.Visitor;
+
 /**
  * Created by andikoh on 08/11/2016.
  */
 public class VARIABLE extends IDENTIFIER {
-    TYPE type;
+    private TYPE type;
 
     public VARIABLE(TYPE type) {
         this.type = type;
@@ -16,6 +18,6 @@ public class VARIABLE extends IDENTIFIER {
 
     @Override
     public int getSize() {
-        return 0;
+        return type.getSize();
     }
 }

@@ -2,19 +2,22 @@ package front_end.AST.StatementAST;
 
 import back_end.Utility;
 import back_end.data_type.*;
-import back_end.instruction.data_manipulation.Add;
-import back_end.instruction.data_manipulation.Sub;
-import back_end.instruction.load_store.Store;
+import back_end.instruction.data_manipulation.ADD;
+import back_end.instruction.data_manipulation.SUB;
+
+import back_end.data_type.register.PreIndex;
+import back_end.data_type.register.Register;
+import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
+import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
 import front_end.AST.TypeAST.TypeAST;
 import front_end.symbol_table.*;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.util.Stack;
 
 /**
  * Created by dtv15 on 09/11/16.
@@ -95,16 +98,16 @@ public class VarDeclAST extends StatementAST{
     }
 
     @Override
-    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
-        Operand size = new ImmValue(identObj.getType().getSize());
+    public void translate() {
 
-        //decrement stack pointer
-        Utility.addMain(new Sub(Register.SP, Register.SP, size));
+        //nextReg specifies the register which stores the value of rhs.translate()
+        Register nextReg = CodeGen.notUsedRegisters.peek();
+        rhs.translate();
 
-        rhs.translate(unusedRegs, paramRegs);
-
-        Utility.addMain(new Store(Utility.popUnusedReg(), new Address(Register.SP)));
-        //increment stack pointer
-        Utility.addMain(new Add(Register.SP, Register.SP, size));
+        //decrement the nextAddress according to the object's size
+        ProgramAST.nextAddress -= identObj.getSize();
+        Utility.addMain(new STORE(nextReg, new PreIndex(Register.SP,
+                new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
     }
+
 }

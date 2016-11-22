@@ -45,7 +45,6 @@ public class ReadAST extends StatementAST {
 
     }
 
-    @Override
     public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
         Register r = unusedRegs.peek();
         int typeSize = expression.getType().getSize();
@@ -70,8 +69,7 @@ public class ReadAST extends StatementAST {
         addFunction(new Push(Register.LR));
         addFunction(new Mov(popParamReg(), Register.R0));
         addFunction(new Load(Register.R0, new LabelExpr(getLastMessage())));
-
-
+        
         addFunction(new Add(Register.R0, Register.R0, new ImmValue(typeSize)));
         addFunction(new Branch("scanf"));
         addFunction(new Pop(Register.PC));

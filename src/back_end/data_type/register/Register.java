@@ -1,6 +1,8 @@
-package back_end.data_type;
+package back_end.data_type.register;
 
-public enum Register implements Operand{
+import back_end.data_type.Operand;
+
+public enum Register implements Operand {
     R0,
     R1,
     R2,

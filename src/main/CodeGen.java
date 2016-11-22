@@ -1,7 +1,7 @@
 package main;
 
 import back_end.instruction.LabelInstr;
-import back_end.data_type.Register;
+import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
 import back_end.instruction.Instruction;
 
@@ -33,8 +33,6 @@ public class CodeGen {
     public static List<Instruction> main = new ArrayList<>();
     //functions used in main
     public static List<Instruction> functions = new ArrayList<>();
-
-
 
     public CodeGen() {
         initialiseReg();

@@ -1,16 +1,12 @@
 package front_end.AST.StatementAST;
 
 import back_end.Utility;
-import back_end.data_type.Operand;
-import back_end.data_type.Register;
 import back_end.instruction.Branch;
-import back_end.instruction.data_manipulation.Mov;
+import back_end.instruction.data_manipulation.MOV;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.symbol_table.IDENTIFIER;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.util.Stack;
 
 public class ExitAST extends StatementAST{
     private ExpressionAST expression;
@@ -30,10 +26,11 @@ public class ExitAST extends StatementAST{
     }
 
     @Override
-    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
-        expression.translate(unusedRegs, paramRegs);
+    public void translate() {
+        expression.translate();
 
-        Utility.addMain(new Mov(Utility.popUnusedReg(), Utility.popParamReg()));
-        Utility.addMain(new Branch("exit"));
+        Utility.addMain(new MOV(Utility.popUnusedReg(), Utility.popParamReg()));
+        Utility.addMain(new Branch("L", "exit"));
+
     }
 }
