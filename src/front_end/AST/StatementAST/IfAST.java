@@ -1,6 +1,10 @@
 package front_end.AST.StatementAST;
 
+import back_end.data_type.ImmValue;
 import back_end.data_type.Register;
+import back_end.instruction.Branch;
+import back_end.instruction.LabelInstr;
+import back_end.instruction.condition.CMP;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import main.CodeGen;
 import main.Visitor;
@@ -37,8 +41,20 @@ public class IfAST extends StatementAST {
 
     @Override
     public void translate() {
-        Register result = CodeGen.notUsedRegisters.peek();
+        //Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
+        //jump to label if false
+        CodeGen.main.add(new CMP(CodeGen.notUsedRegisters.peek(), new ImmValue(0)));
+        String l0 = CodeGen.labelCount.toString();
+        CodeGen.main.add(new Branch("EQ", "L" + l0));
+        CodeGen.labelCount ++;
+        then.translate();
+        String l1 = CodeGen.labelCount.toString();
+        CodeGen.main.add(new Branch("", "L" + l1));
+        CodeGen.main.add(new LabelInstr("L" + l0));
+        elseSt.translate();
+        CodeGen.main.add(new LabelInstr("L" + l1));
 
+        //TODO: unsure what to do with result Register
     }
 }

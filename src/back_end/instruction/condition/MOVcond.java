@@ -12,7 +12,7 @@ public class MOVcond implements Instruction {
     private Register dst;
     private Operand rhs;
 
-    public MOVcond(String condition, Operand rhs, Register dst) {
+    public MOVcond(String condition, Register dst, Operand rhs) {
         this.condition = condition;
         this.rhs = rhs;
         this.dst = dst;

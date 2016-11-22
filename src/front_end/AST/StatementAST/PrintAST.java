@@ -48,7 +48,7 @@ public class PrintAST extends StatementAST {
             functionName = "putchar";
         }
 
-        addMain(new Branch(functionName));
+        addMain(new Branch("L", functionName));
 
         if(!placeholder.isEmpty()) {
             pushData(placeholder);
@@ -72,9 +72,9 @@ public class PrintAST extends StatementAST {
             addFunction(new Load(Register.R0, new LabelExpr(getLastMessage())));
             addFunction(new ADD(Register.R0, Register.R0, new ImmValue(exprSize)));
 
-            addFunction(new Branch("printf"));
+            addFunction(new Branch("L", "printf"));
             addFunction(new MOV(Register.R0, new ImmValue(0)));
-            addFunction(new Branch("fflush"));
+            addFunction(new Branch("L", "fflush"));
             addFunction(new POP(Register.PC));
         }
     }

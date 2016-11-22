@@ -32,6 +32,6 @@ public class WhileAST extends StatementAST {
 
     @Override
     public void translate() {
-
+        expression.translate();
     }
 }

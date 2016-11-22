@@ -41,7 +41,7 @@ public class IntLiterAST extends ExpressionAST {
             Register next = CodeGen.notUsedRegisters.pop();
             Utility.addMain(new RSBS(next, next));
 
-            Utility.addMain(new Branch("BLVS", "p_throw_overflow_error"));
+            Utility.addMain(new Branch("LVS", "p_throw_overflow_error"));
 
 
             //throw overflow error
@@ -49,15 +49,15 @@ public class IntLiterAST extends ExpressionAST {
             //the next message that is put inside data will be loaded in the next free param register
             //this message should be an overflow message
             //Utility.addFunction(new Load(Utility.getNextRegister(), new Expression("msg_" + CodeGen.data.size()%3)));
-            Utility.addFunction(new Branch("p_throw_runtime_error"));
+            Utility.addFunction(new Branch("L", "p_throw_runtime_error"));
 
 
             //throw runtime error
             Utility.addFunction(new LabelInstr("p_throw_runtime_error"));
             //function p_print_string will be defined after this
-            Utility.addFunction(new Branch("p_print_string"));
+            Utility.addFunction(new Branch("L", "p_print_string"));
             //Utility.addFunction(new MOV(Utility.getNextParamReg(), new Operand(intsign + value)));
-            Utility.addFunction(new Branch("exit"));
+            Utility.addFunction(new Branch("L", "exit"));
 
             //(new PrintAST(null, new StringLiterAST(null, OVERFLOW_ERROR_MESSAGE))).translate();
         }

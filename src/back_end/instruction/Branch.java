@@ -4,22 +4,17 @@ import back_end.data_type.Register;
 import main.CodeGen;
 
 public class Branch implements Instruction {
-    private String type;
+    private String condition;
     private String label;
 
-    public Branch(String label) {
-        this.type = "BL";
-        this.label = label;
-    }
-
-    public Branch(String type, String label) {
-        this.type = type;
+    public Branch(String condition, String label) {
+        this.condition = condition;
         this.label = label;
     }
 
     @Override
     public String toString() {
-        return "\t" + type + " " + label;
+        return "\tB" + condition + " " + label;
     }
 
     @Override
