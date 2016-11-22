@@ -2,11 +2,12 @@ package front_end.AST;
 
 import back_end.Utility;
 import back_end.data_type.*;
+import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
 import back_end.instruction.LabelInstr;
 import back_end.instruction.POP;
 import back_end.instruction.PUSH;
-import back_end.instruction.load_store.Load;
+import back_end.instruction.load_store.LOAD;
 import front_end.AST.FunctionDecl.FunctionDeclAST;
 import front_end.AST.StatementAST.StatementAST;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -41,7 +42,7 @@ public class ProgramAST extends Node {
 
         statement.translate();
 
-        Utility.addMain(new Load(Register.R0, new ImmValue(0)));
+        Utility.addMain(new LOAD(Register.R0, new ImmValue(0)));
         Utility.addMain(new POP(Register.PC));
 
         Utility.addMain(new Directive("ltorg"));

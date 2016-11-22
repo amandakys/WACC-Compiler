@@ -1,6 +1,7 @@
 package back_end.instruction.condition;
 
-import back_end.data_type.Register;
+import back_end.data_type.register.Register;
+
 import back_end.instruction.Instruction;
 
 /**
@@ -17,6 +18,8 @@ public class AND implements Instruction{
         this.lhs = lhs;
         this.rhs = rhs;
     }
+
+
 
     @Override
     public String toString() {

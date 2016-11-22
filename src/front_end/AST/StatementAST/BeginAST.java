@@ -19,6 +19,6 @@ public class BeginAST extends StatementAST {
 
     @Override
     public void translate() {
-
+        statement.translate();
     }
 }

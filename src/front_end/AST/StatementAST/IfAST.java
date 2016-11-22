@@ -1,15 +1,16 @@
 package front_end.AST.StatementAST;
 
+import front_end.symbol_table.IDENTIFIER;
+
 import back_end.data_type.ImmValue;
-import back_end.data_type.Register;
 import back_end.instruction.Branch;
 import back_end.instruction.LabelInstr;
 import back_end.instruction.condition.CMP;
+import back_end.data_type.register.Register;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
-import front_end.symbol_table.IDENTIFIER;
 
 /**
  * Created by andikoh on 10/11/2016.
@@ -41,7 +42,8 @@ public class IfAST extends StatementAST {
 
     @Override
     public void translate() {
-        //Register result = CodeGen.notUsedRegisters.peek();
+
+        Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
         //jump to label if false
         CodeGen.main.add(new CMP(CodeGen.notUsedRegisters.peek(), new ImmValue(0)));

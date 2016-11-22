@@ -1,6 +1,6 @@
 package back_end.instruction;
 
-import back_end.data_type.Register;
+import back_end.data_type.register.Register;
 
 public class PUSH implements Instruction{
     private Register reg;

@@ -22,7 +22,7 @@ public class WhileAST extends StatementAST {
         //check that expression is valid
         expression.checkNode();
 
-        if(expression.getType().equals(Visitor.ST.lookUpAll("bool"))) {
+        if (expression.getType().equals(Visitor.ST.lookUpAll("bool"))) {
             //check that statement is valid
             statement.checkNode();
         } else {

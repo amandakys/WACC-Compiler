@@ -1,12 +1,13 @@
 package back_end.instruction.condition;
 
-import back_end.data_type.Register;
 import back_end.instruction.Instruction;
+
+import back_end.data_type.register.Register;
 
 /**
  * Created by andikoh on 21/11/2016.
  */
-public class ORR implements Instruction{
+public class ORR implements Instruction {
     private Register dst;
     private Register lhs;
     private Register rhs;

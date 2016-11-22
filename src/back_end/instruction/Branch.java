@@ -1,8 +1,5 @@
 package back_end.instruction;
 
-import back_end.data_type.Register;
-import main.CodeGen;
-
 public class Branch implements Instruction {
     private String condition;
     private String label;

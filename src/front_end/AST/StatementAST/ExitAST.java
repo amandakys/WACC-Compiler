@@ -31,5 +31,6 @@ public class ExitAST extends StatementAST{
 
         Utility.addMain(new MOV(Utility.popUnusedReg(), Utility.popParamReg()));
         Utility.addMain(new Branch("L", "exit"));
+
     }
 }
