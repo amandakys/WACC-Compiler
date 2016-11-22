@@ -1,7 +1,17 @@
 package front_end.AST.FunctionDecl;
 
+import back_end.Utility;
+import back_end.data_type.ImmValue;
 import back_end.data_type.Register;
+import back_end.instruction.Branch;
+import back_end.instruction.Directive;
+import back_end.instruction.Pop;
+import back_end.instruction.Push;
+import back_end.instruction.data_manipulation.Add;
+import back_end.instruction.data_manipulation.Sub;
+import front_end.AST.Compare;
 import front_end.AST.Node;
+import front_end.AST.StatementAST.StatementAST;
 import front_end.AST.TypeAST.TypeAST;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -11,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import static back_end.Utility.addMain;
+
 /**
  * Created by tsd15 on 09/11/16.
  */
@@ -19,15 +31,18 @@ public class FunctionDeclAST extends Node {
     private String returntypename;
     private String funcname;
     private ParamlistAST parameters;
+    private StatementAST statement;
 
-    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname) {
+
+    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, StatementAST statement) {
         super(ctx);
         this.returntype = returntype;
         this.returntypename = returntype.getType().getTypeName();
         this.funcname = funcname;
         this.parameters = null;
+        this.statement = statement;
     }
-    public FunctionDeclAST(ParserRuleContext ctx,TypeAST returntype, String funcname, ParamlistAST paramList) {
+    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, ParamlistAST paramList, StatementAST statement) {
         super(ctx);
         //return type name will remove all non alphanumeric characters to
         // search for primitive types
@@ -35,6 +50,7 @@ public class FunctionDeclAST extends Node {
         this.returntypename = returntype.getType().getTypeName();
         this.funcname = funcname;
         this.parameters = paramList;
+        this.statement = statement;
     }
 
     public void CheckFunctionNameAndReturnType() {
@@ -90,6 +106,13 @@ public class FunctionDeclAST extends Node {
 
     @Override
     public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
+        Utility.pushData("\0");
+        addMain(new Branch(funcname));
 
+        addMain(new Push(Register.LR));
+        statement.translate(unusedRegs, paramRegs);
+
+        addMain(new Pop(Register.PC));
+        addMain(new Directive("ltorg"));
     }
 }

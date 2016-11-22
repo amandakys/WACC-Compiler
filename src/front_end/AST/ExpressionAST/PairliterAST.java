@@ -24,5 +24,6 @@ public class PairliterAST extends ExpressionAST {
 
     @Override
     public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
+
     }
 }

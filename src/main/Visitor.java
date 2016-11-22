@@ -133,13 +133,14 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     public FunctionDeclAST visitFunction(BasicParser.FunctionContext ctx) {
         Visitor.ST = new SymbolTable(Visitor.ST);
         FunctionDeclAST function;
+
         if (ctx.paramlist() == null) {
             //no params
-            function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText());
+            function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText(), (StatementAST) visit(ctx.statement()));
         } else {
             //has params
             function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText(),
-                    visitParamlist(ctx.paramlist()));
+                    visitParamlist(ctx.paramlist()), (StatementAST) visit(ctx.statement()));
         }
 
         function.check();
