@@ -6,12 +6,14 @@ import back_end.instruction.Instruction;
 import main.CodeGen;
 
 public class MOV implements Instruction {
+    private String condition;
     private Register dst;
     private Operand rhs;
 
     public MOV(Register dst, Operand rhs) {
         this.dst = dst;
         this.rhs = rhs;
+        this.condition = "";
 
         if(rhs instanceof Register && !dst.equals(rhs)) {
             CodeGen.notUsedRegisters.push((Register) rhs);
@@ -22,9 +24,15 @@ public class MOV implements Instruction {
 
     }
 
+    public MOV(String condition, Register dst, Operand rhs) {
+        this.condition = condition;
+        this.rhs = rhs;
+        this.dst = dst;
+    }
+
     @Override
     public String toString() {
-        return "\tMOV " + dst + ", " + rhs;
+        return "\tMOV" + condition + " " + dst + ", " + rhs;
     }
 
     @Override

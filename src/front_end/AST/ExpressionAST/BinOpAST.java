@@ -5,9 +5,9 @@ import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
 import back_end.instruction.condition.AND;
 import back_end.instruction.condition.CMP;
-import back_end.instruction.condition.MOVcond;
 import back_end.instruction.condition.ORR;
 import back_end.instruction.data_manipulation.ADD;
+import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.data_manipulation.SUB;
 
 import main.CodeGen;
@@ -72,30 +72,30 @@ public class BinOpAST extends ExpressionAST {
                 //TODO: make function in Utility to throw overflow error
             case ">":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                CodeGen.main.add(new MOVcond("GT", lhsResult, new ImmValue(1)));
-                CodeGen.main.add(new MOVcond("LE", lhsResult, new ImmValue(0)));
+                CodeGen.main.add(new MOV("GT", lhsResult, new ImmValue(1)));
+                CodeGen.main.add(new MOV("LE", lhsResult, new ImmValue(0)));
             case ">=":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                CodeGen.main.add(new MOVcond("GE", lhsResult, new ImmValue(1)));
-                CodeGen.main.add(new MOVcond("LT", lhsResult, new ImmValue(0)));
+                CodeGen.main.add(new MOV("GE", lhsResult, new ImmValue(1)));
+                CodeGen.main.add(new MOV("LT", lhsResult, new ImmValue(0)));
             case "<":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                CodeGen.main.add(new MOVcond("LT", lhsResult, new ImmValue(1)));
-                CodeGen.main.add(new MOVcond("GE", lhsResult, new ImmValue(0)));
+                CodeGen.main.add(new MOV("LT", lhsResult, new ImmValue(1)));
+                CodeGen.main.add(new MOV("GE", lhsResult, new ImmValue(0)));
                 break;
             case "<=":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                CodeGen.main.add(new MOVcond("LE", lhsResult, new ImmValue(1)));
-                CodeGen.main.add(new MOVcond("GT", lhsResult, new ImmValue(0)));
+                CodeGen.main.add(new MOV("LE", lhsResult, new ImmValue(1)));
+                CodeGen.main.add(new MOV("GT", lhsResult, new ImmValue(0)));
             case "==":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                CodeGen.main.add(new MOVcond("EQ", lhsResult, new ImmValue(1)));
-                CodeGen.main.add(new MOVcond("NE", lhsResult, new ImmValue(0)));
+                CodeGen.main.add(new MOV("EQ", lhsResult, new ImmValue(1)));
+                CodeGen.main.add(new MOV("NE", lhsResult, new ImmValue(0)));
                 break;
             case "!=":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                CodeGen.main.add(new MOVcond("NE", lhsResult, new ImmValue(1)));
-                CodeGen.main.add(new MOVcond("EQ", lhsResult, new ImmValue(0)));
+                CodeGen.main.add(new MOV("NE", lhsResult, new ImmValue(1)));
+                CodeGen.main.add(new MOV("EQ", lhsResult, new ImmValue(0)));
                 break;
             case "&&":
                 CodeGen.main.add(new AND(lhsResult, lhsResult, rhsResult));

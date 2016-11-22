@@ -1,5 +1,7 @@
 package front_end.symbol_table;
 
+import main.Visitor;
+
 /**
  * Created by andikoh on 10/11/2016.
  */
@@ -14,6 +16,7 @@ public class ARRAY extends TYPE{
         this.type = type;
         this.elem_size = size;
         this.SIZE *= type.getSize();
+
     }
 
 

@@ -34,9 +34,6 @@ public class CodeGen {
     //functions used in main
     public static List<Instruction> functions = new ArrayList<>();
 
-    // count for generic label names
-    public static Integer labelCount = 0;
-
     public CodeGen() {
         initialiseReg();
 

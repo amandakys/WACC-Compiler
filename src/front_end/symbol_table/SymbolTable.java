@@ -46,25 +46,11 @@ public class SymbolTable {
         return dict;
     }
 
-    public int findSizeVarDec() {
+    public int findSize() {
         int size = 0;
 
         for(IDENTIFIER ident : dict.values()) {
-            if(ident instanceof VARIABLE) {
-                size += ident.getSize();
-            }
-        }
-
-        return size;
-    }
-
-    public int findNumVarDec() {
-        int size = 0;
-
-        for(IDENTIFIER ident : dict.values()) {
-            if(ident instanceof VARIABLE) {
-                size++;
-            }
+            size += ident.getSize();
         }
 
         return size;
