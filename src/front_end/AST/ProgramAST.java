@@ -59,7 +59,7 @@ public class ProgramAST extends Node {
 
         statement.translate();
 
-        if(size != 0) {
+        if(size == 0) {
             //increment stack pointer
             Utility.addMain(new ADD(Register.SP, Register.SP, operSize));
         }
