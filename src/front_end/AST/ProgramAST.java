@@ -58,14 +58,16 @@ public class ProgramAST extends Node {
         Utility.addMain(new LabelInstr("main"));
         Utility.addMain(new PUSH(Register.LR));
 
+        boolean hasChanged = false;
         if(size != 0) {
             //decrement stack pointer
             Utility.addMain(new SUB(Register.SP, Register.SP, operSize));
+            hasChanged = true;
         }
 
         statement.translate();
 
-        if(size == 0) {
+        if(size == 0 && hasChanged) {
             //increment stack pointer
             Utility.addMain(new ADD(Register.SP, Register.SP, operSize));
         }

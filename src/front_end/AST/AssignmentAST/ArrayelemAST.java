@@ -1,4 +1,4 @@
-package front_end.AST.ExpressionAST;
+package front_end.AST.AssignmentAST;
 
 import antlr.BasicParser;
 import back_end.Utility;
@@ -12,6 +12,9 @@ import back_end.instruction.PUSH;
 import back_end.instruction.condition.CMP;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
+import front_end.AST.ExpressionAST.ExpressionAST;
+import front_end.AST.ExpressionAST.IntLiterAST;
+
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;

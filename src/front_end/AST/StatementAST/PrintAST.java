@@ -8,6 +8,8 @@ import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.*;
+import front_end.symbol_table.ARRAY;
+import front_end.symbol_table.TYPE;
 import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -37,7 +39,7 @@ public class PrintAST extends StatementAST {
         //TODO:find and push the placeholder when there are no more PrintAST node with an expression of the same type
         pushPlaceholder();
 
-        CodeGen.printedExpressions.add(expression);
+
 //        int exprSize = expression.getType().getSize();
 //        String type = expression.getType().getTypeName();
 
@@ -94,20 +96,38 @@ public class PrintAST extends StatementAST {
      */
     private void pushPlaceholder() {
         String placeholder = "";
-        String typeName = expression.getType().getTypeName();
+        String typeName;
+        TYPE type = expression.getType();
+        if (type instanceof ARRAY) {
+            typeName = "reference";
+        } else {
+            typeName = type.getTypeName();
+        }
         String functionName = "p_print_" + typeName;
 
-        if (expression instanceof BoolliterAST) {
-            placeholder = "\"" + ((BoolliterAST) expression).getBoolVal() + "\\0\"";
-        } else if (expression instanceof StringLiterAST) {
-            placeholder = "\"%.*s\\0\"";
-
-        } else if (expression instanceof IntLiterAST) {
-            placeholder = "\"%d\\0\"";
-
-        } else if (expression instanceof CharLitAST) {
-            functionName = "putchar";
-        }
+//        if (expression instanceof BoolliterAST) {
+//            CodeGen.placeholders.add("\"true\\0\"");
+//            CodeGen.placeholders.add("\"false\\0\"");
+////            placeholder = "\"" + ((BoolliterAST) expression).getBoolVal() + "\\0\"";
+//        } else if (expression instanceof StringLiterAST) {
+//            CodeGen.placeholders.add("\"%.*s\\0\"");
+//
+//        } else if (expression instanceof IntLiterAST) {
+//            CodeGen.placeholders.add("\"%d\\0\"");
+//
+//        } else if (expression instanceof CharLitAST) {
+//            functionName = "putchar";
+//        } else if (expression instanceof IdentAST) {
+//            String type = expression.getType().getTypeName();
+            switch(typeName) {
+                case "string": CodeGen.placeholders.add("\"%.*s\\0\""); break;
+                case "int": CodeGen.placeholders.add("\"%d\\0\""); break;
+                case "char": functionName = "putchar"; break;
+                case "bool":
+                    CodeGen.placeholders.add("\"true\\0\"");
+                    CodeGen.placeholders.add("\"false\\0\"");
+                    break;
+            }
 
         addMain(new Branch("L", functionName));
 

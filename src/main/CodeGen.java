@@ -33,7 +33,6 @@ public class CodeGen {
     public static int numStrings = 0;
     //for placeholders
     public static List<String> placeholders = new ArrayList<>();
-    public static List<ExpressionAST> printedExpressions = new ArrayList<>();
     public static List<Instruction> toPushData = new ArrayList<>();
     public static int numPlaceholders = 0;
     public static List<String> endFunctions = new ArrayList<>();
