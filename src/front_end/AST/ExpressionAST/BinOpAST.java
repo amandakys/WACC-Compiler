@@ -6,9 +6,6 @@ import back_end.data_type.register.Register;
 import back_end.instruction.condition.AND;
 import back_end.instruction.condition.CMP;
 import back_end.instruction.condition.ORR;
-import back_end.instruction.data_manipulation.ADD;
-import back_end.instruction.data_manipulation.MOV;
-import back_end.instruction.data_manipulation.SUB;
 
 import main.CodeGen;
 import main.Visitor;

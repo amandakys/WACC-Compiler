@@ -2,7 +2,6 @@ package front_end.AST.StatementAST;
 
 import back_end.Utility;
 import back_end.instruction.Branch;
-import back_end.instruction.data_manipulation.MOV;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.symbol_table.IDENTIFIER;
 import main.Visitor;

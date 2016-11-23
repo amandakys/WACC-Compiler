@@ -5,11 +5,6 @@ import back_end.data_type.*;
 import back_end.data_type.register.Register;
 import back_end.instruction.LabelInstr;
 import back_end.instruction.Branch;
-import back_end.instruction.POP;
-import back_end.instruction.PUSH;
-import back_end.instruction.data_manipulation.ADD;
-import back_end.instruction.data_manipulation.MOV;
-import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 

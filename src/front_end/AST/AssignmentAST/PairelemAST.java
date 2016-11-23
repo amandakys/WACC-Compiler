@@ -1,17 +1,7 @@
 package front_end.AST.AssignmentAST;
 
-import back_end.Utility;
-import back_end.data_type.ImmValue;
-import back_end.data_type.register.PreIndex;
-import back_end.data_type.register.Register;
-import back_end.instruction.Branch;
-import back_end.instruction.data_manipulation.MOV;
-import back_end.instruction.load_store.LOAD;
-import back_end.instruction.load_store.STORE;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.ExpressionAST.IdentAST;
-import front_end.AST.ProgramAST;
-import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;

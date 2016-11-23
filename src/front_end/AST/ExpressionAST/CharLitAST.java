@@ -2,7 +2,6 @@ package front_end.AST.ExpressionAST;
 
 import back_end.Utility;
 import back_end.data_type.ImmValue;
-import back_end.instruction.data_manipulation.MOV;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 

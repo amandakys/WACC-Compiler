@@ -1,20 +1,12 @@
 package front_end.AST.StatementAST;
 
-import antlr.BasicParser;
-import back_end.Utility;
 import back_end.data_type.*;
 import back_end.data_type.register.Register;
 import back_end.instruction.*;
 import back_end.instruction.condition.CMP;
-import back_end.instruction.data_manipulation.ADD;
-import back_end.instruction.data_manipulation.MOV;
-import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.*;
 import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTree;
-
-import java.util.List;
 
 import static back_end.Utility.*;
 
