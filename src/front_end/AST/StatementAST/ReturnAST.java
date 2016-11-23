@@ -1,9 +1,13 @@
 package front_end.AST.StatementAST;
 
+import back_end.data_type.Register;
 import back_end.instruction.Instruction;
+import back_end.instruction.data_manipulation.Mov;
+import com.sun.org.apache.regexp.internal.RE;
 import front_end.AST.Node;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import java.util.Deque;
 import java.util.List;
 
 /**
@@ -21,9 +25,17 @@ public class ReturnAST extends StatementAST {
         //check that return expression returns correct type
         expression.checkNode();
     }
-
+Deque<Register> unused;
     @Override
-    public void translate() {
+    public void translate(Deque<Register> unused/*r4-r13*/) {
+        expression.translate(/*r5-r13*/);
+
+        Register dst = unused.pop();
+        expression.translate(unused);
+        Register result = unused.pop();
+        new Mov(dst,result);
+        unused.addFirst(result);
 
     }
 }
+-
