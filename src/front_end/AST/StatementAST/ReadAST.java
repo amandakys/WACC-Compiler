@@ -11,7 +11,6 @@ import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.AssignmentAST.AssignlhsAST;
-import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.symbol_table.TYPE;
 import main.CodeGen;
 import main.Visitor;

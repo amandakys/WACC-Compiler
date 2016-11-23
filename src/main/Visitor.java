@@ -82,7 +82,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
         ReadAST readAST = new ReadAST(ctx, visitAssignlhs(ctx.assignlhs()));
         readAST.check();
-        return  readAST;
+        return readAST;
     }
 
     @Override
@@ -134,19 +134,21 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public FunctionDeclAST visitFunction(BasicParser.FunctionContext ctx) {
         Visitor.ST = new SymbolTable(Visitor.ST);
-        StatementAST statement = (StatementAST) visit(ctx.statement());
+
         FunctionDeclAST function;
 
         if (ctx.paramlist() == null) {
             //no params
-            function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText(), statement);
+            function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText());
         } else {
             //has params
             function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText(),
-                    visitParamlist(ctx.paramlist()), statement);
+                    visitParamlist(ctx.paramlist()));
         }
 
         function.check();
+        StatementAST statement = (StatementAST) visit(ctx.statement());
+        function.setStatement(statement);
         //visitChildren(ctx);
 
         //statement.checkNode();
@@ -221,8 +223,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             statementASTs.add((StatementAST) visit(s));
         }
 
-        SequenceAST sequence = new SequenceAST(ctx, statementASTs);
-        return sequence;
+        return new SequenceAST(ctx, statementASTs);
     }
 
     @Override
@@ -236,6 +237,21 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             lhs = new AssignlhsAST(ctx, visitPairelem(ctx.pairelem()));
         }
         return lhs;
+    }
+
+    public AssignrhsAST visitAssignrhs(BasicParser.AssignrhsContext ctx) {
+        if (ctx instanceof BasicParser.ExprContext) {
+            return visitExpr((BasicParser.ExprContext) ctx);
+        } else if (ctx instanceof BasicParser.ArraylitContext) {
+            return visitArraylit((BasicParser.ArraylitContext) ctx);
+        } else if (ctx instanceof BasicParser.NewpairContext) {
+            return visitNewpair((BasicParser.NewpairContext) ctx);
+        } else if (ctx instanceof BasicParser.PairelementContext) {
+            return visitPairelement((BasicParser.PairelementContext) ctx);
+        } else if(ctx instanceof BasicParser.FunctioncallContext) {
+            return visitFunctioncall((BasicParser.FunctioncallContext) ctx);
+        }
+        return null;
     }
 
     @Override
@@ -271,8 +287,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             expressionNodes.add(visitExpression(e));
         }
 
-        NewpairAST newpair = new NewpairAST(ctx, expressionNodes);
-        return  newpair;
+        return new NewpairAST(ctx, expressionNodes);
     }
 
     @Override
@@ -304,8 +319,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
                 expressionNodes.add(visitExpression(e));
             }
 
-            ArglistAST arglist = new ArglistAST(ctx, expressionNodes);
-            return arglist;
+            return new ArglistAST(ctx, expressionNodes);
         }
 
         return new ArglistAST(ctx, new ArrayList<ExpressionAST>());

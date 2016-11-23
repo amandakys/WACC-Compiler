@@ -66,17 +66,13 @@ public class ProgramAST extends Node {
 
         statement.translate();
 
-        if(size != 0) {
+        if(size == 0) {
             //increment stack pointer
             Utility.addMain(new ADD(Register.SP, Register.SP, operSize));
         }
 
         Utility.addMain(new LOAD(Register.R0, new ImmValue(0)));
-
-
-
         Utility.addMain(new POP(Register.PC));
-
         Utility.addMain(new Directive("ltorg"));
 
         for (String s : CodeGen.placeholders) {

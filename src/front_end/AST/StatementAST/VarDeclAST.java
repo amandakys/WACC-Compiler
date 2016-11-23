@@ -5,17 +5,15 @@ import back_end.data_type.*;
 
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
-import back_end.instruction.Branch;
-import back_end.instruction.data_manipulation.MOV;
+import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.ArraylitAST;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
-import front_end.AST.ExpressionAST.ExpressionAST;
+import front_end.AST.AssignmentAST.NewpairAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
-import front_end.AST.TypeAST.BasetypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
 import front_end.AST.TypeAST.TypeAST;
 import front_end.symbol_table.*;
@@ -23,13 +21,11 @@ import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.util.List;
-
 /**
  * Created by dtv15 on 09/11/16.
  */
 
-public class VarDeclAST extends StatementAST{
+public class VarDeclAST extends StatementAST {
     private String ident;
     private TypeAST type;
     private AssignrhsAST rhs;
@@ -53,22 +49,25 @@ public class VarDeclAST extends StatementAST{
             if (V != null) {
                 error(ident + " is already declared");
             } else {
-                Visitor.ST.add(ident, T);
+                identObj = new VARIABLE((TYPE) T);
+                Visitor.ST.add(ident, identObj);
             }
+
         } else if (type instanceof ArraytypeAST) {
             //assumes that this means rhs MUST be an arraylit
             if (rhs.getType() instanceof ARRAY) {
                 TYPE elementType = ((ArraytypeAST) type).getelementType();
                 // TODO:i need to fix this asap
-                //int arraysize = ((ArraylitAST) rhs).getTotalSize();
+                //int arraysize = ((ArraylitAST) rhs).getSize();
 
 
                 IDENTIFIER V = Visitor.ST.lookUp(ident);
                 if (V != null) {
                     error(ident + " is already declared");
                 } else {
-                    IDENTIFIER T = new ARRAY(elementType, (((ArraylitAST) rhs).getArraylits().size()));
-                    Visitor.ST.add(ident, T);
+                    IDENTIFIER T = new ARRAY(elementType, 0);
+                    identObj = new VARIABLE((TYPE) T);
+                    Visitor.ST.add(ident, identObj);
                 }
             } else {
                 error("declared type and given type do not match");
@@ -79,7 +78,7 @@ public class VarDeclAST extends StatementAST{
             IDENTIFIER T = Visitor.ST.lookUpAll(typeName);
             IDENTIFIER V = Visitor.ST.lookUp(ident);
 
-            if(T == null) {
+            if (T == null) {
                 error("unknown type " + typeName);
             } else if (!(T instanceof TYPE)) {
                 error(typeName + " is not a type");
@@ -94,7 +93,7 @@ public class VarDeclAST extends StatementAST{
                 //Checking rhs
                 rhs.checkNode();
 
-                if(!(rhs instanceof CallAST) ||
+                if (!(rhs instanceof CallAST) ||
                         (rhs instanceof CallAST && ((CallAST) rhs).isDeclared())) {
                     type.checkType(rhs);
                 }
@@ -105,23 +104,32 @@ public class VarDeclAST extends StatementAST{
 
     @Override
     public void translate() {
-        type.translate();
+        if(rhs instanceof ArraylitAST) {
+            int arrSize = ((ArraylitAST) rhs).getArraylits().size();
+            int array_size = (arrSize + 1) * identObj.getSize();
 
-        Register res = CodeGen.notUsedRegisters.peek();
-        rhs.translate();
-
-        if(type instanceof ArraytypeAST) {
-            Register value = Utility.popUnusedReg();
-            CodeGen.main.add(new LOAD(value, new ImmValue(rhs.getIdentObj().getSize())));
-            CodeGen.main.add(new STORE(value, new PreIndex(res)));
-            CodeGen.main.add(new STORE(res, new PreIndex(Register.SP)));
-        } else if(type instanceof BasetypeAST){
-            //decrement the nextAddress according to the object's size
-            ProgramAST.nextAddress -= identObj.getSize();
+            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(array_size)));
         }
 
-        ProgramAST.nextAddress = 0;
-        Utility.addMain(new STORE(res, new PreIndex(Register.SP,
-                new ImmValue(ProgramAST.nextAddress))));
+        Register res = CodeGen.notUsedRegisters.peek();
+        type.translate();
+
+        rhs.translate();
+
+        if (type instanceof ArraytypeAST) {
+            Register value = Utility.popUnusedReg();
+
+            CodeGen.main.add(new LOAD(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
+            CodeGen.main.add(new STORE(value, new PreIndex(res), identObj.getSize()));
+        }
+
+        ProgramAST.nextAddress += identObj.getSize();
+        ProgramAST.size -= identObj.getSize();
+
+        ShiftedReg address = new PreIndex(Register.SP,
+                new ImmValue(ProgramAST.size));
+        Visitor.ST.addToMemoryAddress(ident, address);
+
+        CodeGen.main.add(new STORE(res, address, identObj.getSize()));
     }
 }

@@ -11,20 +11,15 @@ import main.CodeGen;
 public class STORE implements Instruction {
     private Register dst;
     private Expression expression;
-    private String type;
-
-    public STORE(Register dst, Expression expression) {
-        this(dst, expression, 0);
-    }
+    private String type = "";
 
     public STORE(Register dst, Expression expression, int size) {
         this.dst = dst;
         this.expression = expression;
 
+        //all the size encapsulated inside an IDENTIFIER are byte_size
         if(size == 1) {
-            type = "B";
-        } else {
-            type = "";
+            this.type = "B";
         }
 
         if(dst != Register.R0) {

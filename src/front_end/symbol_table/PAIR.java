@@ -36,7 +36,6 @@ public class PAIR extends TYPE {
 
     @Override
     public int getSize() {
-        //TODO: Implement this
-        return first.getSize() >= second.getSize() ? first.getSize() : second.getSize();
+        return 4;
     }
 }

@@ -1,5 +1,6 @@
 package back_end;
 
+import back_end.data_type.Expression;
 import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
 import back_end.instruction.Instruction;
@@ -152,5 +153,26 @@ public class Utility {
     public static Register getBefore(Register r) {
         int index = Character.getNumericValue(r.toString().charAt(r.toString().length() - 1)) - 1;
         return Register.values()[index];
+    }
+
+    /*
+        Push back the registers that are not needed to store value back onto the stack
+     */
+    public static void pushBackRegisters() {
+        while (!CodeGen.toPushParamReg.isEmpty()) {
+            Register r = CodeGen.toPushParamReg.pop();
+
+            if (!CodeGen.paramRegister.contains(r)) {
+                CodeGen.paramRegister.push(r);
+            }
+        }
+
+        while (!CodeGen.toPushUnusedReg.isEmpty()) {
+            Register r = CodeGen.toPushUnusedReg.pop();
+
+            if (!CodeGen.notUsedRegisters.contains(r)) {
+                CodeGen.notUsedRegisters.push(r);
+            }
+        }
     }
 }

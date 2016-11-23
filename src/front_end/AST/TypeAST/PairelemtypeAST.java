@@ -1,5 +1,6 @@
 package front_end.AST.TypeAST;
 
+import front_end.AST.AssignmentAST.AssignlhsAST;
 import front_end.AST.Node;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -38,7 +39,7 @@ public class PairelemtypeAST extends Node {
             T = new PAIR(null, null);
             //TODO: do we need to add nested pair to symbol table
         } else if(type instanceof ArraytypeAST) {
-            T = new ARRAY(((ArraytypeAST) type).getelementType(), ((ArraytypeAST) type).arrayDepth);
+            T = new ARRAY(((ArraytypeAST) type).getelementType(), ((ArraytypeAST) type).getArrayDepth());
         } else {
             T = Visitor.ST.lookUpAll(type.getType().getTypeName());
         }

@@ -1,14 +1,10 @@
 package front_end.AST.StatementAST;
 
 import back_end.data_type.register.Register;
-
-
 import back_end.instruction.data_manipulation.MOV;
-
 import front_end.AST.Node;
 import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
-
 
 
 /**

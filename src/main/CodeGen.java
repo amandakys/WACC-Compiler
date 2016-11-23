@@ -1,5 +1,6 @@
 package main;
 
+import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.LabelInstr;
 import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
