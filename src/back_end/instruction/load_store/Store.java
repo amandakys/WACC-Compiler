@@ -13,6 +13,10 @@ public class STORE implements Instruction {
     private Expression expression;
     private String type;
 
+    public STORE(Register dst, Expression expression) {
+        this(dst, expression, 0);
+    }
+
     public STORE(Register dst, Expression expression, int size) {
         this.dst = dst;
         this.expression = expression;
@@ -23,7 +27,9 @@ public class STORE implements Instruction {
             type = "";
         }
 
-        CodeGen.notUsedRegisters.push(dst);
+        if(dst != Register.R0) {
+            CodeGen.notUsedRegisters.push(dst);
+        }
     }
 
     @Override

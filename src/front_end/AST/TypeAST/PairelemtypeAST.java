@@ -48,6 +48,6 @@ public class PairelemtypeAST extends Node {
 
     @Override
     public void translate() {
-
+        type.translate();
     }
 }

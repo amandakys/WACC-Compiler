@@ -2,22 +2,28 @@ package front_end.AST.StatementAST;
 
 import back_end.Utility;
 import back_end.data_type.*;
-import back_end.instruction.data_manipulation.ADD;
-import back_end.instruction.data_manipulation.SUB;
 
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
+import back_end.instruction.Branch;
+import back_end.instruction.data_manipulation.MOV;
+import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
+import front_end.AST.AssignmentAST.ArraylitAST;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
+import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
+import front_end.AST.TypeAST.BasetypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
 import front_end.AST.TypeAST.TypeAST;
 import front_end.symbol_table.*;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import java.util.List;
 
 /**
  * Created by dtv15 on 09/11/16.
@@ -54,14 +60,14 @@ public class VarDeclAST extends StatementAST{
             if (rhs.getType() instanceof ARRAY) {
                 TYPE elementType = ((ArraytypeAST) type).getelementType();
                 // TODO:i need to fix this asap
-                //int arraysize = ((ArraylitAST) rhs).getSize();
+                //int arraysize = ((ArraylitAST) rhs).getTotalSize();
 
 
                 IDENTIFIER V = Visitor.ST.lookUp(ident);
                 if (V != null) {
                     error(ident + " is already declared");
                 } else {
-                    IDENTIFIER T = new ARRAY(elementType, 0);
+                    IDENTIFIER T = new ARRAY(elementType, (((ArraylitAST) rhs).getArraylits().size()));
                     Visitor.ST.add(ident, T);
                 }
             } else {
@@ -99,15 +105,23 @@ public class VarDeclAST extends StatementAST{
 
     @Override
     public void translate() {
+        type.translate();
 
-        //nextReg specifies the register which stores the value of rhs.translate()
-        Register nextReg = CodeGen.notUsedRegisters.peek();
+        Register res = CodeGen.notUsedRegisters.peek();
         rhs.translate();
 
-        //decrement the nextAddress according to the object's size
-        ProgramAST.nextAddress -= identObj.getSize();
-        Utility.addMain(new STORE(nextReg, new PreIndex(Register.SP,
-                new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
-    }
+        if(type instanceof ArraytypeAST) {
+            Register value = Utility.popUnusedReg();
+            CodeGen.main.add(new LOAD(value, new ImmValue(rhs.getIdentObj().getSize())));
+            CodeGen.main.add(new STORE(value, new PreIndex(res)));
+            CodeGen.main.add(new STORE(res, new PreIndex(Register.SP)));
+        } else if(type instanceof BasetypeAST){
+            //decrement the nextAddress according to the object's size
+            ProgramAST.nextAddress -= identObj.getSize();
+        }
 
+        ProgramAST.nextAddress = 0;
+        Utility.addMain(new STORE(res, new PreIndex(Register.SP,
+                new ImmValue(ProgramAST.nextAddress))));
+    }
 }

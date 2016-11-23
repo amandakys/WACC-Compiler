@@ -1,5 +1,7 @@
 package front_end.AST.StatementAST;
 
+import antlr.BasicParser;
+import back_end.Utility;
 import back_end.data_type.*;
 import back_end.data_type.register.Register;
 import back_end.instruction.*;
@@ -8,11 +10,11 @@ import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.*;
-import front_end.AST.Node;
-import front_end.symbol_table.STRING;
 import main.CodeGen;
-import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTree;
+
+import java.util.List;
 
 import static back_end.Utility.*;
 
@@ -37,7 +39,7 @@ public class PrintAST extends StatementAST {
         expression.translate();
         addMain(new MOV(Register.R0, result));
 
-        //find and push the placeholder where appropriate
+        //TODO:find and push the placeholder when there are no more PrintAST node with an expression of the same type
         pushPlaceholder();
 
         int exprSize = expression.getType().getSize();
@@ -65,7 +67,8 @@ public class PrintAST extends StatementAST {
                     //functions that print string, bool, int have to be specified separately
                     if (expression instanceof StringLiterAST) {
                         addFunction(new LOAD(popParamReg(), new Address(Register.R0)));
-                        addFunction(new ADD(popParamReg(), Register.R0, new ImmValue(exprSize)));
+                        addFunction(new ADD(popParamReg(), Register.R0, new
+                                ImmValue(exprSize)));
                     } else if (expression instanceof IntLiterAST) {
                         addFunction(new MOV(popParamReg(), Register.R0));
                     }
@@ -112,42 +115,11 @@ public class PrintAST extends StatementAST {
         if (!hasPlaceholder(placeholder)) {
             //when expression is a boolLiter, push both true and false to CodeGen.data
             if (expression instanceof BoolliterAST) {
-                pushData("\"true\\0\"");
-                pushData("\"false\\0\"");
+                pushToPushDatat("\"true\\0\"");
+                pushToPushDatat("\"false\\0\"");
             } else {
-                pushData(placeholder);
+                pushToPushDatat(placeholder);
             }
         }
-
-    }
-
-    /*
-        This traverses through only the element in CodeGen.data that starts with ascii directive to see if
-        a placeholder has been pushed to CodeGen.data or not. E.g: hasPlaceholder("%d\\0") returns true if
-        there is .ascii element that is named "%d\\0"
-     */
-    private boolean hasPlaceholder(String placeholder) {
-        //4th element in CodeGen.data is 1st element starts with .ascii directive
-        //1: .data, 2: msg_ , 3: .word, 4: .ascii
-        for (int i = 3; i < CodeGen.data.size(); i += 3) {
-            if (CodeGen.data.get(i).getValue().equals(placeholder)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /*
-        This traverses through functions list, find if an instruction has already been defined by having
-        label. E.g hasFunction("hello") find out whether label "hello" has been put in CodeGen.function or not
-     */
-    private boolean hasFunction(String function) {
-        for (Instruction instr : CodeGen.functions) {
-            if ((instr instanceof LabelInstr) && instr.getValue().equals(function)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

@@ -23,27 +23,24 @@ public class Utility {
         CodeGen.functions.add(instr);
     }
 
-    /*
-        Return the number of the last message stored in data, numbered from 0.
-        CodeGen.data.size() - 1 eliminates .data directive in data
-     */
-    public static String getNumMess() {
-        return String.valueOf((CodeGen.data.size() - 1)/3 - 1);
-    }
-
-    public static String getLastMessage() {
-        return "msg_" + Utility.getNumMess();
-    }
-
-    public static boolean dataContains(Instruction instr) {
-        return CodeGen.data.contains(instr);
-    }
-
     public static void pushData(String value) {
         Utility.addData(new LabelInstr(getLastMessage()));
+        CodeGen.numMessage++;
         //discard the "" in a string when finding the string's size
         Utility.addData(new Directive("word", String.valueOf(value.replaceAll("[\\\\\"]", "").length())));
         Utility.addData(new Directive("ascii", value));
+    }
+
+    public static void pushToPushDatat(String value) {
+        CodeGen.toPushData.add(new LabelInstr(getLastMessage()));
+        CodeGen.numMessage++;
+        //discard the "" in a string when finding the string's size
+        CodeGen.toPushData.add(new Directive("word", String.valueOf(value.replaceAll("[\\\\\"]", "").length())));
+        CodeGen.toPushData.add(new Directive("ascii", value));
+    }
+
+    public static String getLastMessage() {
+        return "msg_" + CodeGen.numMessage;
     }
 
     public static Register popParamReg() {
@@ -56,5 +53,40 @@ public class Utility {
         Register r = CodeGen.notUsedRegisters.pop();
         CodeGen.toPushUnusedReg.push(r);
         return r;
+    }
+
+    /*
+        This traverses through only the element in CodeGen.data that starts with ascii directive to see if
+        a placeholder has been pushed to CodeGen.data or not. E.g: hasPlaceholder("%d\\0") returns true if
+        there is .ascii element that is named "%d\\0"
+     */
+    public static boolean hasPlaceholder(String placeholder) {
+        //4th element in CodeGen.data is 1st element starts with .ascii directive
+        //0: msg_ , 1: .word, 2: .ascii
+        for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
+            if (CodeGen.toPushData.get(i).getValue().equals(placeholder)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /*
+       This traverses through functions list, find if an instruction has already been defined by having
+       label. E.g hasFunction("hello") find out whether label "hello" has been put in CodeGen.function or not
+    */
+    public static boolean hasFunction(String function) {
+        for (Instruction instr : CodeGen.functions) {
+            if ((instr instanceof LabelInstr) && instr.getValue().equals(function)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Register getBefore(Register r) {
+        int index = Character.getNumericValue(r.toString().charAt(r.toString().length() - 1)) - 1;
+        return Register.values()[index];
     }
 }
