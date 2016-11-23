@@ -34,16 +34,11 @@ public class ARRAY extends TYPE{
         return type;
     }
 
-<<<<<<< HEAD:src/symbol_table/ARRAY.java
-    public int getSize() {
-        return size;
-=======
     public int getTotalSize() {
         return SIZE;
     }
 
     public int getSize() {
         return type.getSize();
->>>>>>> 6b337cab76019fe831f3d79afda5748ab6209f32:src/front_end/symbol_table/ARRAY.java
     }
 }

@@ -50,14 +50,9 @@ public class PairelemAST extends AssignrhsAST{
             }
 
         }
-<<<<<<< HEAD:src/AST/AssignmentAST/PairelemAST.java
-=======
-
     }
 
     @Override
     public void translate() {
-
->>>>>>> 6b337cab76019fe831f3d79afda5748ab6209f32:src/front_end/AST/AssignmentAST/PairelemAST.java
     }
 }

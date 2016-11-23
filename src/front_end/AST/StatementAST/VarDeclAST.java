@@ -1,15 +1,3 @@
-<<<<<<< HEAD:src/AST/StatementAST/VarDeclAST.java
-package AST.StatementAST;
-
-import AST.AssignmentAST.ArraylitAST;
-import AST.AssignmentAST.AssignrhsAST;
-import AST.AssignmentAST.CallAST;
-import AST.AssignmentAST.PairelemAST;
-import AST.TypeAST.ArraytypeAST;
-import AST.TypeAST.PairelemtypeAST;
-import AST.TypeAST.PairtypeAST;
-import AST.TypeAST.TypeAST;
-=======
 package front_end.AST.StatementAST;
 
 import back_end.Utility;
@@ -26,13 +14,13 @@ import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.ProgramAST;
+import front_end.AST.StatementAST.StatementAST;
 import front_end.AST.TypeAST.ArraytypeAST;
 import front_end.AST.TypeAST.BasetypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
 import front_end.AST.TypeAST.TypeAST;
 import front_end.symbol_table.*;
 import main.CodeGen;
->>>>>>> 6b337cab76019fe831f3d79afda5748ab6209f32:src/front_end/AST/StatementAST/VarDeclAST.java
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -42,7 +30,7 @@ import java.util.List;
  * Created by dtv15 on 09/11/16.
  */
 
-public class VarDeclAST extends StatementAST{
+public class VarDeclAST extends StatementAST {
     private String ident;
     private TypeAST type;
     private AssignrhsAST rhs;
@@ -72,23 +60,15 @@ public class VarDeclAST extends StatementAST{
             //assumes that this means rhs MUST be an arraylit
             if (rhs.getType() instanceof ARRAY) {
                 TYPE elementType = ((ArraytypeAST) type).getelementType();
-<<<<<<< HEAD:src/AST/StatementAST/VarDeclAST.java
-                int arraysize = ((ARRAY) rhs.getType()).getSize();
-=======
                 // TODO:i need to fix this asap
-                //int arraysize = ((ArraylitAST) rhs).getTotalSize();
+                //int arraysize = ((ArraylitAST) rhs).getSize();
 
->>>>>>> 6b337cab76019fe831f3d79afda5748ab6209f32:src/front_end/AST/StatementAST/VarDeclAST.java
 
                 IDENTIFIER V = Visitor.ST.lookUp(ident);
                 if (V != null) {
                     error(ident + " is already declared");
                 } else {
-<<<<<<< HEAD:src/AST/StatementAST/VarDeclAST.java
-                    IDENTIFIER T = new ARRAY(elementType, arraysize);
-=======
-                    IDENTIFIER T = new ARRAY(elementType, (((ArraylitAST) rhs).getArraylits().size()));
->>>>>>> 6b337cab76019fe831f3d79afda5748ab6209f32:src/front_end/AST/StatementAST/VarDeclAST.java
+                    IDENTIFIER T = new ARRAY(elementType, 0);
                     Visitor.ST.add(ident, T);
                 }
             } else {
@@ -121,10 +101,7 @@ public class VarDeclAST extends StatementAST{
                 }
             }
         }
-<<<<<<< HEAD:src/AST/StatementAST/VarDeclAST.java
-=======
         isChecked = true;
->>>>>>> 6b337cab76019fe831f3d79afda5748ab6209f32:src/front_end/AST/StatementAST/VarDeclAST.java
     }
 
     @Override

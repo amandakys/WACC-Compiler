@@ -13,11 +13,7 @@ import front_end.AST.TypeAST.*;
 import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
 import org.antlr.v4.runtime.ParserRuleContext;
-<<<<<<< HEAD
-import symbol_table.*;
-=======
 import front_end.symbol_table.*;
->>>>>>> 6b337cab76019fe831f3d79afda5748ab6209f32
 
 import java.util.ArrayList;
 import java.util.List;
@@ -239,7 +235,6 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return lhs;
     }
 
-<<<<<<< HEAD
     public AssignrhsAST visitAssignrhs(BasicParser.AssignrhsContext ctx) {
         if (ctx instanceof BasicParser.ExprContext) {
             return visitExpr((BasicParser.ExprContext) ctx);
@@ -255,8 +250,6 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return null;
     }
 
-=======
->>>>>>> 6b337cab76019fe831f3d79afda5748ab6209f32
     @Override
     public ExpressionAST visitExpr(BasicParser.ExprContext ctx) {
         return visitExpression(ctx.expression());
