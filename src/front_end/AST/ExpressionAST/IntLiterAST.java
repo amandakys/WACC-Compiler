@@ -1,8 +1,16 @@
 package front_end.AST.ExpressionAST;
 
+import back_end.RuntimeError;
 import back_end.Utility;
 import back_end.data_type.*;
+import back_end.data_type.register.PostIndex;
+import back_end.data_type.register.Register;
+import back_end.instruction.Branch;
+import back_end.instruction.LabelInstr;
+import back_end.instruction.condition.CMP;
 import back_end.instruction.load_store.LOAD;
+import front_end.AST.StatementAST.PrintAST;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -32,38 +40,36 @@ public class IntLiterAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        Utility.addMain(new LOAD(Utility.popUnusedReg(), new ImmValue(value)));
+        int val;
 
-        if(intsign.equals("-")){
-            //TODO: take care of when int is less than 0
-//            //negating the number stored in the next available register
-//            Register next = CodeGen.notUsedRegisters.pop();
-//            Utility.addMain(new RSBS(next, next));
-//
-//            Utility.addMain(new Branch("LVS", "p_throw_overflow_error"));
-//
-//
-//            //throw overflow error
-//            Utility.addFunction(new LabelInstr("p_throw_overflow_error"));
-//            //the next message that is put inside data will be loaded in the next free param register
-//            //this message should be an overflow message
-//            //Utility.addFunction(new Load(Utility.getNextRegister(), new Expression("msg_" + CodeGen.data.size()%3)));
-//            Utility.addFunction(new Branch("L", "p_throw_runtime_error"));
-//
-//
-//            //throw runtime error
-//            Utility.addFunction(new LabelInstr("p_throw_runtime_error"));
-//            //function p_print_string will be defined after this
-//            Utility.addFunction(new Branch("L", "p_print_string"));
-//            //Utility.addFunction(new Mov(Utility.getNextParamReg(), new Operand(intsign + value)));
-//            Utility.addFunction(new Branch("L", "exit"));
-
-            //(new PrintAST(null, new StringLiterAST(null, OVERFLOW_ERROR_MESSAGE))).translate();
+        try {
+            val = Integer.parseInt(value);
+            CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(val)));
+        } catch (NumberFormatException e) {
+            overflow_error();
         }
     }
 
     public int getValue() {
         // TODO: Negative
         return Integer.parseInt(value);
+    }
+
+    public void overflow_error() {
+        //Utility.pushData(OVERFLOW_ERROR_MESSAGE);
+
+        Register second = CodeGen.toPushUnusedReg.get(0);
+        Register first = CodeGen.toPushUnusedReg.get(1);
+
+        //CodeGen.main.add(new CMP(second, new PostIndex(first, ASR, new ImmValue(31))));
+        CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
+
+        CodeGen.functions.add(new LabelInstr("p_throw_overflow_error"));
+        CodeGen.functions.add(new LOAD(Register.R0, new LabelExpr("msg_0")));
+        CodeGen.functions.add(new Branch("L", "p_throw_runtime_error"));
+
+        (new PrintAST(null, this)).translate();
+        RuntimeError.throwRuntimeError();
+        (new PrintAST(null, new StringLiterAST(null, OVERFLOW_ERROR_MESSAGE))).translate();
     }
 }

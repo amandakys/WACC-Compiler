@@ -37,7 +37,7 @@ public class PrintAST extends StatementAST {
         //TODO:find and push the placeholder when there are no more PrintAST node with an expression of the same type
         pushPlaceholder();
 
-        CodeGen.printedExpressions.add(expression);
+
 //        int exprSize = expression.getType().getSize();
 //        String type = expression.getType().getTypeName();
 
@@ -123,8 +123,8 @@ public class PrintAST extends StatementAST {
             }
         }
 
-        if (!CodeGen.endFunctions.contains("print")) {
-            CodeGen.endFunctions.add("print");
+        if (!CodeGen.endFunctions.contains(functionName)) {
+            CodeGen.endFunctions.add(functionName);
         }
     }
 }

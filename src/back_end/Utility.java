@@ -44,20 +44,26 @@ public class Utility {
     public static String getNextString() {
         return "msg_" + CodeGen.numStrings;
     }
-    public static String getLastString() {
-        return "msg_" + (CodeGen.numStrings - 1 );
-    }
 
     public static String getNextPlaceholder() {
         int sum = CodeGen.numStrings + CodeGen.numPlaceholders;
         return "msg_" + sum;
     }
 
-    public static String getLastPlaceholder() {
-        int sum = CodeGen.numStrings + CodeGen.numPlaceholders - 1;
-        return "msg_" + sum;
+    public static String getStringPlaceholder() {
+        String msg = isPlaceholder("\"%.*s\\0\"");
+        return msg.substring(0, msg.length() - 2);
     }
 
+    public static String getIntPlaceholder() {
+        String msg = isPlaceholder("\"%d\\0\"");
+        return msg.substring(0, msg.length() - 2);
+    }
+
+    public static String getCharPlaceholder() {
+        String msg = isPlaceholder("\" %c\\0\"");
+        return msg.substring(0, msg.length() - 2);
+    }
     public static String getPlaceholder(ExpressionAST expression) {
         String msg = "";
         if (expression instanceof StringLiterAST) {

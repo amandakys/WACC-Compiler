@@ -38,7 +38,9 @@ public class PrintlnAST extends StatementAST {
         if(!Utility.hasPlaceholder("\"\\0\"")) {
             CodeGen.placeholders.add("\"\\0\"");
         }
-
+        if (!CodeGen.endFunctions.contains("p_print_ln")) {
+            CodeGen.endFunctions.add("p_print_ln");
+        }
 //       if(!Utility.hasFunction("p_print_ln")) {
 //           addMain(new Branch("L", "p_print_ln"));
 //
