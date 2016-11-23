@@ -38,8 +38,6 @@ public class CodeGen {
     //functions used in main
     public static List<Instruction> functions = new ArrayList<>();
 
-    public static Map<String, ShiftedReg> memoryAddress = new HashMap<>();
-
     public CodeGen() {
         initialiseReg();
 

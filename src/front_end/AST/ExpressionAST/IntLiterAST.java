@@ -61,4 +61,9 @@ public class IntLiterAST extends ExpressionAST {
             //(new PrintAST(null, new StringLiterAST(null, OVERFLOW_ERROR_MESSAGE))).translate();
         }
     }
+
+    public int getValue() {
+        // TODO: Negative
+        return Integer.parseInt(value);
+    }
 }

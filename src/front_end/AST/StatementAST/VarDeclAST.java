@@ -128,7 +128,7 @@ public class VarDeclAST extends StatementAST {
 
         ShiftedReg address = new PreIndex(Register.SP,
                 new ImmValue(ProgramAST.size));
-        CodeGen.memoryAddress.put(ident, address);
+        Visitor.ST.addToMemoryAddress(ident, address);
 
         CodeGen.main.add(new STORE(res, address, identObj.getSize()));
     }

@@ -12,6 +12,7 @@ import back_end.instruction.load_store.STORE;
 import front_end.AST.ProgramAST;
 import front_end.AST.StatementAST.StatementAST;
 import main.CodeGen;
+import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 /**
@@ -60,7 +61,7 @@ public class AssignmentAST extends StatementAST {
             CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
         }
 
-        ShiftedReg res = CodeGen.memoryAddress.get(lhs.getIdent());
+        ShiftedReg res = Visitor.ST.getAddress(lhs.getIdent());
 
         if(result == null) {
             result = CodeGen.notUsedRegisters.peek();

@@ -36,7 +36,7 @@ public class IdentAST extends ExpressionAST {
     @Override
     public void translate() {
         Register result = CodeGen.notUsedRegisters.pop();
-        CodeGen.main.add(new LOAD(result, CodeGen.memoryAddress.get(ident)));
+        CodeGen.main.add(new LOAD(result, Visitor.ST.getAddress(ident)));
     }
 
     public String getIdent() {

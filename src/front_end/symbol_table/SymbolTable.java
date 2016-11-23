@@ -1,5 +1,7 @@
 package front_end.symbol_table;
 
+import back_end.data_type.register.ShiftedReg;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +11,7 @@ import java.util.Map;
 public class SymbolTable {
     private SymbolTable encSymbolTable; //ref to enclosing symbol table
     private Map<String, IDENTIFIER> dict;
+    private Map<String, ShiftedReg> memoryAddress = new HashMap<>();
 
     public SymbolTable(SymbolTable st) {
         dict= new HashMap<>();
@@ -67,6 +70,14 @@ public class SymbolTable {
 
         return size;
     }
+
+   public void addToMemoryAddress(String name, ShiftedReg reg) {
+       memoryAddress.put(name, reg);
+   }
+
+   public ShiftedReg getAddress(String name) {
+       return memoryAddress.get(name);
+   }
 }
 
 
