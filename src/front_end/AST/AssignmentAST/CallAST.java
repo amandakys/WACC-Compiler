@@ -1,15 +1,24 @@
 package front_end.AST.AssignmentAST;
 
-import back_end.instruction.Instruction;
+import back_end.data_type.ImmValue;
+import back_end.data_type.register.PreIndex;
+import back_end.data_type.register.Register;
+import back_end.instruction.Branch;
+import back_end.instruction.data_manipulation.ADD;
+import back_end.instruction.data_manipulation.MOV;
+import back_end.instruction.load_store.LOAD;
+import back_end.instruction.load_store.STORE;
 import front_end.AST.Compare;
 import front_end.AST.FunctionDecl.ArglistAST;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.FUNCTION;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.TYPE;
 
-import java.util.List;
+import static back_end.Utility.addFunction;
+import static back_end.Utility.addMain;
 
 /**
  * Created by tsd15 on 09/11/16.
@@ -62,6 +71,12 @@ public class CallAST extends AssignrhsAST{
 
     @Override
     public void translate() {
+        ImmValue argSize = new ImmValue(arglist.size());
+        addMain(new Branch("L", "f_"+funcname));
+        if (arglist.size() != 0) {
+            addMain((new ADD(Register.SP, Register.SP, argSize)));
+        }
+        addMain(new MOV(CodeGen.notUsedRegisters.peek(),Register.R0));
 
     }
 

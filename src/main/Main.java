@@ -1,22 +1,17 @@
 package main;
 
-import back_end.instruction.Instruction;
-import front_end.AST.Node;
 import antlr.BasicLexer;
 import antlr.BasicParser;
+import front_end.AST.Node;
 import main.error_handler.SyntaxVisitor;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * Created by andikoh on 08/11/2016.

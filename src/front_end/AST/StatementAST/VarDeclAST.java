@@ -1,14 +1,27 @@
 package front_end.AST.StatementAST;
 
-import back_end.instruction.Instruction;
+import back_end.Utility;
+import back_end.data_type.*;
+
+import back_end.data_type.register.PreIndex;
+import back_end.data_type.register.Register;
+import back_end.instruction.Branch;
+import back_end.instruction.data_manipulation.MOV;
+import back_end.instruction.load_store.LOAD;
+import back_end.instruction.load_store.STORE;
+import front_end.AST.AssignmentAST.ArraylitAST;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
+import front_end.AST.ExpressionAST.ExpressionAST;
+import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
+import front_end.AST.TypeAST.BasetypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
 import front_end.AST.TypeAST.TypeAST;
+import front_end.symbol_table.*;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
-import front_end.symbol_table.*;
 
 import java.util.List;
 
@@ -46,15 +59,15 @@ public class VarDeclAST extends StatementAST{
             //assumes that this means rhs MUST be an arraylit
             if (rhs.getType() instanceof ARRAY) {
                 TYPE elementType = ((ArraytypeAST) type).getelementType();
-                //i need to fix this asap
-                //int arraysize = ((ArraylitAST) rhs).getSize();
+                // TODO:i need to fix this asap
+                //int arraysize = ((ArraylitAST) rhs).getTotalSize();
 
 
                 IDENTIFIER V = Visitor.ST.lookUp(ident);
                 if (V != null) {
                     error(ident + " is already declared");
                 } else {
-                    IDENTIFIER T = new ARRAY(elementType, 0);
+                    IDENTIFIER T = new ARRAY(elementType, (((ArraylitAST) rhs).getArraylits().size()));
                     Visitor.ST.add(ident, T);
                 }
             } else {
@@ -87,10 +100,28 @@ public class VarDeclAST extends StatementAST{
                 }
             }
         }
+        isChecked = true;
     }
 
     @Override
     public void translate() {
+        type.translate();
 
+        Register res = CodeGen.notUsedRegisters.peek();
+        rhs.translate();
+
+        if(type instanceof ArraytypeAST) {
+            Register value = Utility.popUnusedReg();
+            CodeGen.main.add(new LOAD(value, new ImmValue(rhs.getIdentObj().getSize())));
+            CodeGen.main.add(new STORE(value, new PreIndex(res)));
+            CodeGen.main.add(new STORE(res, new PreIndex(Register.SP)));
+        } else if(type instanceof BasetypeAST){
+            //decrement the nextAddress according to the object's size
+            ProgramAST.nextAddress -= identObj.getSize();
+        }
+
+        ProgramAST.nextAddress = 0;
+        Utility.addMain(new STORE(res, new PreIndex(Register.SP,
+                new ImmValue(ProgramAST.nextAddress))));
     }
 }

@@ -1,12 +1,9 @@
 package front_end.AST.AssignmentAST;
 
-import back_end.instruction.Instruction;
 import front_end.AST.Node;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
-
-import java.util.List;
 
 /**
  * Created by andikoh on 08/11/2016.

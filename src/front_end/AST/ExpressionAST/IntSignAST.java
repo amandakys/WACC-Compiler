@@ -1,10 +1,7 @@
 package front_end.AST.ExpressionAST;
 
-import back_end.instruction.Instruction;
 import front_end.AST.Node;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.util.List;
 
 /**
  * Created by andikoh on 08/11/2016.

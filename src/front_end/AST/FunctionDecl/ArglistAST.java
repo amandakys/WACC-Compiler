@@ -1,6 +1,5 @@
 package front_end.AST.FunctionDecl;
 
-import back_end.instruction.Instruction;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.Node;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -47,6 +46,8 @@ public class ArglistAST extends Node {
 
     @Override
     public void translate() {
-
+        for (ExpressionAST e: expressions) {
+            e.translate();
+        }
     }
 }

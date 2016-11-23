@@ -1,8 +1,14 @@
 package front_end.AST.AssignmentAST;
 
-import back_end.instruction.Instruction;
+import back_end.Utility;
+import back_end.data_type.ImmValue;
+import back_end.data_type.register.PreIndex;
+import back_end.data_type.register.Register;
+import back_end.instruction.load_store.STORE;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.Node;
+import front_end.AST.ProgramAST;
+import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.ARRAY;
 
@@ -15,14 +21,6 @@ public class ArraylitAST extends AssignrhsAST {
     public ArraylitAST(ParserRuleContext ctx, List<ExpressionAST> arraylits) {
         super(ctx);
         this.arraylits = arraylits;
-    }
-
-
-    @Override
-    public void check() {
-        for(ExpressionAST a : arraylits) {
-            a.checkNode();
-        }
 
         if(!arraylits.isEmpty()) {
             //check all expressions are of the same type
@@ -39,11 +37,36 @@ public class ArraylitAST extends AssignrhsAST {
         }
     }
 
+
+    @Override
+    public void check() {
+        for(ExpressionAST a : arraylits) {
+            a.checkNode();
+        }
+    }
+
     @Override
     public void translate() {
+        for (ExpressionAST a: arraylits) {
+            Register res = CodeGen.notUsedRegisters.peek();
+
+            a.translate();
+
+            ProgramAST.nextAddress = a.getIdentObj().getSize();
+            Utility.addMain(new STORE(Utility.popUnusedReg(), new PreIndex(res,
+                    new ImmValue(ProgramAST.nextAddress)), a.getIdentObj().getSize()));
+        }
     }
 
     public int getSize() {
-        return arraylits.size();
+        return ((ARRAY) identObj).getTotalSize();
+    }
+
+    public List<ExpressionAST> getArraylits() {
+        return arraylits;
+    }
+
+    public int getElemSize() {
+        return ((ARRAY) identObj).getSize();
     }
 }

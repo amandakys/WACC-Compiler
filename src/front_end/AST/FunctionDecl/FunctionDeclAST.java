@@ -1,14 +1,25 @@
 package front_end.AST.FunctionDecl;
 
-import back_end.instruction.Instruction;
+import back_end.data_type.register.Register;
+
+import back_end.instruction.Directive;
+import back_end.instruction.POP;
+import back_end.instruction.PUSH;
+
+import back_end.instruction.*;
+
 import front_end.AST.Node;
+import front_end.AST.StatementAST.StatementAST;
 import front_end.AST.TypeAST.TypeAST;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static back_end.Utility.addMain;
 
 /**
  * Created by tsd15 on 09/11/16.
@@ -18,15 +29,18 @@ public class FunctionDeclAST extends Node {
     private String returntypename;
     private String funcname;
     private ParamlistAST parameters;
+    private StatementAST statement;
 
-    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname) {
+
+    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, StatementAST statement) {
         super(ctx);
         this.returntype = returntype;
         this.returntypename = returntype.getType().getTypeName();
         this.funcname = funcname;
         this.parameters = null;
+        this.statement = statement;
     }
-    public FunctionDeclAST(ParserRuleContext ctx,TypeAST returntype, String funcname, ParamlistAST paramList) {
+    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, ParamlistAST paramList, StatementAST statement) {
         super(ctx);
         //return type name will remove all non alphanumeric characters to
         // search for primitive types
@@ -34,6 +48,7 @@ public class FunctionDeclAST extends Node {
         this.returntypename = returntype.getType().getTypeName();
         this.funcname = funcname;
         this.parameters = paramList;
+        this.statement = statement;
     }
 
     public void CheckFunctionNameAndReturnType() {
@@ -75,6 +90,7 @@ public class FunctionDeclAST extends Node {
     @Override
     public void check() {
         CheckFunctionNameAndReturnType();
+
         if (parameters != null) {
             List<ParamAST> paramASTs = parameters.getParams();
 
@@ -89,6 +105,12 @@ public class FunctionDeclAST extends Node {
 
     @Override
     public void translate() {
+        //Utility.pushData("\0");
+        CodeGen.main.add(new LabelInstr("f_"+funcname));
+        CodeGen.main.add(new PUSH(Register.LR));
 
+        statement.translate();
+        CodeGen.main.add(new POP(Register.PC));
+        CodeGen.main.add (new Directive("ltorg"));
     }
 }

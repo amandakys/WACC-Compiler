@@ -1,14 +1,11 @@
 package front_end.AST.TypeAST;
 
-import back_end.instruction.Instruction;
 import front_end.AST.Node;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.ARRAY;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.PAIR;
-
-import java.util.List;
 
 /**
  * Created by andikoh on 09/11/2016.
@@ -51,6 +48,6 @@ public class PairelemtypeAST extends Node {
 
     @Override
     public void translate() {
-
+        type.translate();
     }
 }

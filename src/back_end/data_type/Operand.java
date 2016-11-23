@@ -1,7 +1,7 @@
 package back_end.data_type;
 
-/**
- * Created by npd215 on 18/11/16.
+/*
+    Operand represents either an immediate value or a register
  */
-public abstract class Operand extends Expression{
+public interface Operand {
 }

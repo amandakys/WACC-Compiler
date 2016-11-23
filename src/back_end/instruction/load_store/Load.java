@@ -1,25 +1,47 @@
 package back_end.instruction.load_store;
 
 import back_end.data_type.Expression;
-import back_end.data_type.Operand;
-import back_end.data_type.Register;
+import back_end.data_type.ImmValue;
+import back_end.data_type.register.Register;
+import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.Instruction;
 
-/**
- * Created by npd215 on 18/11/16.
- */
-public class Load implements Instruction {
+public class LOAD implements Instruction {
+    private String condition = "";
     private Register dst;
-    //TODO: chage it to expression that includes shifted register & address & label
     private Expression expression;
 
-    public Load(Register dst, Expression expression) {
+    public LOAD(Register dst, Expression expression) {
+        this.dst = dst;
+        this.expression = expression;
+
+        //signed byte
+//        if(expression instanceof ShiftedReg) {
+//            this.condition = "SB";
+//        } else {
+//            this.condition = "";
+//        }
+    }
+
+    public LOAD(String condition, Register dst, Expression expression) {
+        this.condition = condition;
         this.dst = dst;
         this.expression = expression;
     }
 
     @Override
     public String toString() {
-        return "\tLDR " + dst + ", " + expression ;
+        String expr = expression.toString();
+
+        if(expression instanceof ImmValue) {
+            expr = "=" + expr.substring(1);
+        }
+
+        return "\tLDR" + condition + " " + dst + ", " + expr;
+    }
+
+    @Override
+    public String getValue() {
+        return expression.toString();
     }
 }

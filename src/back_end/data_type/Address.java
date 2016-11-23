@@ -1,17 +1,22 @@
 package back_end.data_type;
 
-/**
- * Created by npd215 on 18/11/16.
- */
-public class Address extends Expression {
-    private int add;
+import back_end.data_type.register.Register;
 
-    public Address(int add) {
-        this.add = add;
+public class Address extends Expression {
+    private Register r;
+    private Offset offset;
+
+    public Address(Register r) {
+        this.r = r;
+    }
+
+    public Address(Register r, Offset offset) {
+        this.r = r;
+        this.offset = offset;
     }
 
     @Override
     public String toString() {
-        return "=" + add;
+        return "[" + r.toString() + "]";
     }
 }

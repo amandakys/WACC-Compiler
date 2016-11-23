@@ -1,11 +1,8 @@
 package front_end.AST.StatementAST;
 
-import back_end.instruction.Instruction;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.PAIR;
-
-import java.util.List;
 
 /**
  * Created by tsd15 on 09/11/16.

@@ -1,19 +1,21 @@
 package back_end.instruction;
 
-import back_end.data_type.Register;
+import back_end.data_type.register.Register;
 
-/**
- * Created by npd215 on 18/11/16.
- */
-public class Push implements Instruction{
+public class PUSH implements Instruction{
     private Register reg;
 
-    public Push(Register reg) {
+    public PUSH(Register reg) {
         this.reg = reg;
     }
 
     @Override
     public String toString() {
         return "\tPUSH {" + reg + "}";
+    }
+
+    @Override
+    public String getValue() {
+        return reg.toString();
     }
 }

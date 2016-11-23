@@ -1,10 +1,8 @@
 package front_end.AST.AssignmentAST;
 
-import back_end.instruction.Instruction;
+import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.StatementAST.StatementAST;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.util.List;
 
 /**
  * Created by andikoh on 08/11/2016.

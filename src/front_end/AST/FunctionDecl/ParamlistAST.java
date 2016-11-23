@@ -1,6 +1,5 @@
 package front_end.AST.FunctionDecl;
 
-import back_end.instruction.Instruction;
 import front_end.AST.Node;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.TYPE;
@@ -53,6 +52,8 @@ public class ParamlistAST extends Node {
 
     @Override
     public void translate() {
-
+        for (ParamAST p: parameters) {
+            p.translate();
+        }
     }
 }

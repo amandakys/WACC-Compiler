@@ -1,30 +1,38 @@
 package front_end.AST.ExpressionAST;
 
-import back_end.instruction.Instruction;
+import back_end.Utility;
+import back_end.data_type.*;
+import back_end.instruction.load_store.LOAD;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import java.util.List;
-
-/**
- * Created by donamphuong on 10/11/2016.
- */
 public class StringLiterAST extends ExpressionAST{
+    private static final int NUM_DOUBLE_QUOTE = 2;
+
+    public static int occurences;
     private String value;
 
     public StringLiterAST(ParserRuleContext ctx, String value) {
         super(ctx);
         this.value = value;
+        identObj = Visitor.ST.lookUpAll("string");
     }
 
     @Override
     public void check() {
         checkIfInScope(value);
-        identObj = Visitor.ST.lookUpAll("string");
     }
 
     @Override
     public void translate() {
+        String label = "msg_" + (CodeGen.data.size() - 1)/3;
 
+        Utility.pushData(value);
+        Utility.addMain(new LOAD(Utility.popUnusedReg(), new LabelExpr(label)));
+    }
+
+    public String getValue() {
+        return value;
     }
 }

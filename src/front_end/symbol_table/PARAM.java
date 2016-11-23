@@ -1,5 +1,7 @@
 package front_end.symbol_table;
 
+import main.Visitor;
+
 /**
  * Created by tsd15 on 09/11/16.
  */
@@ -14,5 +16,10 @@ public class PARAM extends IDENTIFIER {
     @Override
     public TYPE getType() {
         return type;
+    }
+
+    @Override
+    public int getSize() {
+        return 0;
     }
 }
