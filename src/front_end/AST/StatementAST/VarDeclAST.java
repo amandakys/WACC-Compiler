@@ -1,0 +1,151 @@
+<<<<<<< HEAD:src/AST/StatementAST/VarDeclAST.java
+package AST.StatementAST;
+
+import AST.AssignmentAST.ArraylitAST;
+import AST.AssignmentAST.AssignrhsAST;
+import AST.AssignmentAST.CallAST;
+import AST.AssignmentAST.PairelemAST;
+import AST.TypeAST.ArraytypeAST;
+import AST.TypeAST.PairelemtypeAST;
+import AST.TypeAST.PairtypeAST;
+import AST.TypeAST.TypeAST;
+=======
+package front_end.AST.StatementAST;
+
+import back_end.Utility;
+import back_end.data_type.*;
+
+import back_end.data_type.register.PreIndex;
+import back_end.data_type.register.Register;
+import back_end.instruction.Branch;
+import back_end.instruction.data_manipulation.MOV;
+import back_end.instruction.load_store.LOAD;
+import back_end.instruction.load_store.STORE;
+import front_end.AST.AssignmentAST.ArraylitAST;
+import front_end.AST.AssignmentAST.AssignrhsAST;
+import front_end.AST.AssignmentAST.CallAST;
+import front_end.AST.ExpressionAST.ExpressionAST;
+import front_end.AST.ProgramAST;
+import front_end.AST.TypeAST.ArraytypeAST;
+import front_end.AST.TypeAST.BasetypeAST;
+import front_end.AST.TypeAST.PairtypeAST;
+import front_end.AST.TypeAST.TypeAST;
+import front_end.symbol_table.*;
+import main.CodeGen;
+>>>>>>> 6b337cab76019fe831f3d79afda5748ab6209f32:src/front_end/AST/StatementAST/VarDeclAST.java
+import main.Visitor;
+import org.antlr.v4.runtime.ParserRuleContext;
+
+import java.util.List;
+
+/**
+ * Created by dtv15 on 09/11/16.
+ */
+
+public class VarDeclAST extends StatementAST{
+    private String ident;
+    private TypeAST type;
+    private AssignrhsAST rhs;
+
+    public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
+        super(ctx);
+        this.ident = ident;
+        this.type = type;
+        this.rhs = rhs;
+    }
+
+    @Override
+    public void check() {
+        type.checkNode();
+
+        if (type instanceof PairtypeAST) {
+            TYPE f = ((PairtypeAST) type).typeFirst();
+            TYPE s = ((PairtypeAST) type).typeSecond();
+            IDENTIFIER T = new PAIR(f, s);
+            IDENTIFIER V = Visitor.ST.lookUp(ident);
+            if (V != null) {
+                error(ident + " is already declared");
+            } else {
+                Visitor.ST.add(ident, T);
+            }
+        } else if (type instanceof ArraytypeAST) {
+            //assumes that this means rhs MUST be an arraylit
+            if (rhs.getType() instanceof ARRAY) {
+                TYPE elementType = ((ArraytypeAST) type).getelementType();
+<<<<<<< HEAD:src/AST/StatementAST/VarDeclAST.java
+                int arraysize = ((ARRAY) rhs.getType()).getSize();
+=======
+                // TODO:i need to fix this asap
+                //int arraysize = ((ArraylitAST) rhs).getTotalSize();
+
+>>>>>>> 6b337cab76019fe831f3d79afda5748ab6209f32:src/front_end/AST/StatementAST/VarDeclAST.java
+
+                IDENTIFIER V = Visitor.ST.lookUp(ident);
+                if (V != null) {
+                    error(ident + " is already declared");
+                } else {
+<<<<<<< HEAD:src/AST/StatementAST/VarDeclAST.java
+                    IDENTIFIER T = new ARRAY(elementType, arraysize);
+=======
+                    IDENTIFIER T = new ARRAY(elementType, (((ArraylitAST) rhs).getArraylits().size()));
+>>>>>>> 6b337cab76019fe831f3d79afda5748ab6209f32:src/front_end/AST/StatementAST/VarDeclAST.java
+                    Visitor.ST.add(ident, T);
+                }
+            } else {
+                error("declared type and given type do not match");
+            }
+
+        } else {
+            String typeName = type.getType().getTypeName();
+            IDENTIFIER T = Visitor.ST.lookUpAll(typeName);
+            IDENTIFIER V = Visitor.ST.lookUp(ident);
+
+            if(T == null) {
+                error("unknown type " + typeName);
+            } else if (!(T instanceof TYPE)) {
+                error(typeName + " is not a type");
+            } else if (!(T.isDeclarable())) {
+                error("cannot declare " + typeName + " objects");
+            } else if (V != null && !(V instanceof FUNCTION)) {
+                error(ident + " is already declared");
+            } else {
+                identObj = new VARIABLE((TYPE) T);
+                Visitor.ST.add(ident, identObj);
+
+                //Checking rhs
+                rhs.checkNode();
+
+                if(!(rhs instanceof CallAST) ||
+                        (rhs instanceof CallAST && ((CallAST) rhs).isDeclared())) {
+                    type.checkType(rhs);
+                }
+            }
+        }
+<<<<<<< HEAD:src/AST/StatementAST/VarDeclAST.java
+=======
+        isChecked = true;
+>>>>>>> 6b337cab76019fe831f3d79afda5748ab6209f32:src/front_end/AST/StatementAST/VarDeclAST.java
+    }
+
+    @Override
+    public void translate() {
+        type.translate();
+
+        Register res = CodeGen.notUsedRegisters.peek();
+        rhs.translate();
+
+        if(type instanceof ArraytypeAST) {
+            Register value = Utility.popUnusedReg();
+            CodeGen.main.add(new LOAD(value, new ImmValue(rhs.getIdentObj().getSize())));
+            CodeGen.main.add(new STORE(value, new PreIndex(res)));
+            CodeGen.main.add(new STORE(res, new PreIndex(Register.SP)));
+        } else if(type instanceof BasetypeAST){
+            //decrement the nextAddress according to the object's size
+            ProgramAST.nextAddress -= identObj.getSize();
+        }
+
+        ProgramAST.nextAddress = 0;
+        Utility.addMain(new STORE(res, new PreIndex(Register.SP,
+                new ImmValue(ProgramAST.nextAddress))));
+    }
+}
