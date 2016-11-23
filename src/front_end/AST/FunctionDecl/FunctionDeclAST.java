@@ -31,14 +31,12 @@ public class FunctionDeclAST extends Node {
     private ParamlistAST parameters;
     private StatementAST statement;
 
-
     public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname) {
         super(ctx);
         this.returntype = returntype;
         this.returntypename = returntype.getType().getTypeName();
         this.funcname = funcname;
         this.parameters = null;
-        this.statement = statement;
     }
     public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, ParamlistAST paramList) {
         super(ctx);
@@ -109,6 +107,7 @@ public class FunctionDeclAST extends Node {
     @Override
     public void translate() {
         //Utility.pushData("\0");
+        Visitor.ST = ((FUNCTION) identObj).getSymtab();
         CodeGen.main.add(new LabelInstr("f_"+funcname));
         CodeGen.main.add(new PUSH(Register.LR));
 
@@ -116,5 +115,6 @@ public class FunctionDeclAST extends Node {
 
         CodeGen.main.add(new POP(Register.PC));
         CodeGen.main.add (new Directive("ltorg"));
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
     }
 }

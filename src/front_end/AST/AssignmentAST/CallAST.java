@@ -71,10 +71,18 @@ public class CallAST extends AssignrhsAST{
 
     @Override
     public void translate() {
-        ImmValue argSize = new ImmValue(arglist.size());
+
+
+        int argSize = 0;
+        for(int i=0; i<arglist.size(); i++) {
+            argSize += arglist.getExpression(i).getType().getSize();
+
+        }
+        ImmValue argSizeValue = new ImmValue(argSize);
+
         addMain(new Branch("L", "f_"+funcname));
         if (arglist.size() != 0) {
-            addMain((new ADD(Register.SP, Register.SP, argSize)));
+            addMain((new ADD(Register.SP, Register.SP, argSizeValue)));
         }
         addMain(new MOV(CodeGen.notUsedRegisters.peek(),Register.R0));
 
