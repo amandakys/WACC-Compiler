@@ -113,11 +113,12 @@ public class FunctionDeclAST extends Node {
         //Utility.pushData("\0");
         function = (FUNCTION) identObj;
         Visitor.ST = function.getSymtab();
-        for (ParamAST p : parameters.getParams()) {
-            int shift = Visitor.ST.findStackShift(p.getIdent());
-            ShiftedReg address = new PreIndex(Register.SP,
-                    new ImmValue(shift));
-            Visitor.ST.addToMemoryAddress(p.getIdent(), address);
+        if (parameters != null) {
+            for (ParamAST p : parameters.getParams()) {
+                int shift = Visitor.ST.findStackShift(p.getIdent());
+                ShiftedReg address = new PreIndex(Register.SP,
+                        new ImmValue(shift));
+                Visitor.ST.addToMemoryAddress(p.getIdent(), address);
 
 //                ProgramAST.nextAddress += identObj.getSize();
 //                ProgramAST.size -= identObj.getSize();
@@ -125,7 +126,9 @@ public class FunctionDeclAST extends Node {
 //                ShiftedReg address = new PreIndex(Register.SP,
 //                        new ImmValue(ProgramAST.size));
 //                Visitor.ST.addToMemoryAddress(ident, address);
+            }
         }
+
         CodeGen.main.add(new LabelInstr("f_"+funcname));
         CodeGen.main.add(new PUSH(Register.LR));
 
