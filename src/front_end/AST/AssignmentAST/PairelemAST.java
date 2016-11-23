@@ -1,9 +1,12 @@
 package front_end.AST.AssignmentAST;
 
 import back_end.Utility;
+import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 import back_end.instruction.data_manipulation.MOV;
+import back_end.instruction.load_store.LOAD;
+import com.sun.org.apache.bcel.internal.classfile.Code;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.ExpressionAST.IdentAST;
 import main.CodeGen;
@@ -32,15 +35,15 @@ public class PairelemAST extends AssignrhsAST{
         //expression is an ident - referencing a pair
         IDENTIFIER type = Visitor.ST.lookUpAll(((IdentAST) expression).getIdent());
 
-        if (!(type instanceof PAIR)) {
+        if (!(type.getType() instanceof PAIR)) {
             error("can only take pair types, actual: " + expression.getType().getTypeName());
         } else {
             //expression is a pair
 
             switch(token) {
-                case "fst": identObj = ((PAIR) type).getFirst();
+                case "fst": identObj = ((PAIR) type.getType()).getFirst();
                     break;
-                case "snd": identObj = ((PAIR) type).getSecond();
+                case "snd": identObj = ((PAIR) type.getType()).getSecond();
                     break;
             }
 
@@ -49,7 +52,10 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void translate() {
-        CodeGen.main.add(new Branch("L", "malloc"));
-        CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
+        Register before = CodeGen.toPushUnusedReg.peek();
+
+        CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
+        CodeGen.main.add(new LOAD(before, new PreIndex(before)));
+        CodeGen.main.add(new LOAD(before, new PreIndex(before)));
     }
 }

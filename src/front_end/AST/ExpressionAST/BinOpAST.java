@@ -1,10 +1,16 @@
 package front_end.AST.ExpressionAST;
 
-
+import antlr.BasicParser;
+import back_end.RuntimeError;
 import back_end.Utility;
 import back_end.data_type.ImmValue;
+import back_end.data_type.LabelExpr;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
+import back_end.instruction.LabelInstr;
+import back_end.instruction.POP;
+import back_end.instruction.PUSH;
+
 import back_end.instruction.condition.AND;
 import back_end.instruction.condition.CMP;
 import back_end.instruction.condition.ORR;
@@ -13,7 +19,12 @@ import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.data_manipulation.SMULL;
 import back_end.instruction.data_manipulation.SUB;
-import com.sun.org.apache.bcel.internal.classfile.Code;
+
+
+import back_end.instruction.load_store.LOAD;
+import front_end.AST.StatementAST.PrintAST;
+import front_end.AST.StatementAST.PrintlnAST;
+
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -31,6 +42,8 @@ public class BinOpAST extends ExpressionAST {
 
     private ExpressionAST rhs;
     private ExpressionAST lhs;
+
+    private final String DIVIDE_BY_ZERO = "\"DivideByZeroError: divide or modulo by zero\\n\\0\"";
 
     public BinOpAST(ParserRuleContext ctx, String op, ExpressionAST lhs, ExpressionAST rhs) {
         super(ctx);
@@ -71,11 +84,16 @@ public class BinOpAST extends ExpressionAST {
                 CodeGen.main.add(new Branch("BLNE", "p_throw_overflow_error"));
                 break;
             case "/":
-                CodeGen.main.add(new MOV(Register.R0, lhsResult)); // TODO: Find out why Mov into R0 but not R1, same for %
-                CodeGen.main.add(new MOV(Utility.popParamReg(), rhsResult));
-                CodeGen.main.add(new Branch("L", "p_check_divide_by_zero")); //TODO: wrtite check_divide.. function
+                CodeGen.main.add(new MOV(Register.R0, lhsResult));
+
+                Register res = Utility.popParamReg();
+                CodeGen.main.add(new MOV(res, rhsResult));
+                CodeGen.main.add(new Branch("L", "p_check_divide_by_zero"));
                 CodeGen.main.add(new Branch("L", "__aeabi_idiv"));
-                CodeGen.main.add(new MOV(lhsResult, Register.R0));
+                //CodeGen.main.add(new MOV(lhsResult, Register.R0));
+                check_divide_by_zero(res);
+                //TODO
+                RuntimeError.throwRuntimeError();
                 break;
             case "%":
                 CodeGen.main.add(new MOV(Register.R0, lhsResult));
@@ -89,26 +107,29 @@ public class BinOpAST extends ExpressionAST {
                 break;
             case "-":
                 CodeGen.main.add(new SUB(lhsResult, lhsResult, rhsResult));
-                //TODO: make function in Utility to throw overflow error
                 break;
+                //TODO: make function in Utility to throw overflow error
             case ">":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-
+                CodeGen.notUsedRegisters.push(rhsResult);
                 CodeGen.main.add(new MOV("GT", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("LE", lhsResult, new ImmValue(0)));
                 break;
             case ">=":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
+                CodeGen.notUsedRegisters.push(rhsResult);
                 CodeGen.main.add(new MOV("GE", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("LT", lhsResult, new ImmValue(0)));
                 break;
             case "<":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
+                CodeGen.notUsedRegisters.push(rhsResult);
                 CodeGen.main.add(new MOV("LT", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("GE", lhsResult, new ImmValue(0)));
                 break;
             case "<=":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
+                CodeGen.notUsedRegisters.push(rhsResult);
                 CodeGen.main.add(new MOV("LE", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("GT", lhsResult, new ImmValue(0)));
                 break;
@@ -126,12 +147,29 @@ public class BinOpAST extends ExpressionAST {
                 break;
             case "&&":
                 CodeGen.main.add(new AND(lhsResult, lhsResult, rhsResult));
+                CodeGen.notUsedRegisters.push(rhsResult);
                 break;
             case "||":
                 CodeGen.main.add(new ORR(lhsResult, lhsResult, rhsResult));
+                CodeGen.notUsedRegisters.push(rhsResult);
                 break;
         }
 
+    }
+
+    private void check_divide_by_zero(Register res) {
+        CodeGen.functions.add(new LabelInstr("p_check_divide_by_zero"));
+        CodeGen.functions.add(new PUSH(Register.LR));
+        CodeGen.functions.add(new CMP(res, new ImmValue(0)));
+        CodeGen.functions.add(new LOAD("EQ", res, new LabelExpr("msg_1")));
+        CodeGen.functions.add(new Branch("LEQ", "p_throw_runtime_error"));
+        CodeGen.functions.add(new POP(Register.PC));
+
+        if(ctx.getParent() instanceof BasicParser.PrintContext) {
+            (new PrintAST(null, new StringLiterAST(null, DIVIDE_BY_ZERO))).translate();
+        } else if(ctx.getParent() instanceof BasicParser.PrintlnContext) {
+            (new PrintlnAST(null, new StringLiterAST(null, DIVIDE_BY_ZERO))).translate();
+        }
     }
 
     private void initialise() {

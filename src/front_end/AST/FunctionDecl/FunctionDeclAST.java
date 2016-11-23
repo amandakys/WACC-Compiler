@@ -1,7 +1,11 @@
 package front_end.AST.FunctionDecl;
 
+import back_end.Utility;
+import back_end.data_type.ImmValue;
+import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 
+import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.Directive;
 import back_end.instruction.POP;
 import back_end.instruction.PUSH;
@@ -19,8 +23,6 @@ import front_end.symbol_table.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static back_end.Utility.addMain;
-
 /**
  * Created by tsd15 on 09/11/16.
  */
@@ -30,6 +32,7 @@ public class FunctionDeclAST extends Node {
     private String funcname;
     private ParamlistAST parameters;
     private StatementAST statement;
+    private FUNCTION function;
 
 
     public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname) {
@@ -38,7 +41,6 @@ public class FunctionDeclAST extends Node {
         this.returntypename = returntype.getType().getTypeName();
         this.funcname = funcname;
         this.parameters = null;
-        this.statement = statement;
     }
     public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, ParamlistAST paramList) {
         super(ctx);
@@ -109,6 +111,21 @@ public class FunctionDeclAST extends Node {
     @Override
     public void translate() {
         //Utility.pushData("\0");
+        function = (FUNCTION) identObj;
+        Visitor.ST = function.getSymtab();
+        for (ParamAST p : parameters.getParams()) {
+            int shift = Visitor.ST.findStackShift(p.getIdent());
+            ShiftedReg address = new PreIndex(Register.SP,
+                    new ImmValue(shift));
+            Visitor.ST.addToMemoryAddress(p.getIdent(), address);
+
+//                ProgramAST.nextAddress += identObj.getSize();
+//                ProgramAST.size -= identObj.getSize();
+//
+//                ShiftedReg address = new PreIndex(Register.SP,
+//                        new ImmValue(ProgramAST.size));
+//                Visitor.ST.addToMemoryAddress(ident, address);
+        }
         CodeGen.main.add(new LabelInstr("f_"+funcname));
         CodeGen.main.add(new PUSH(Register.LR));
 
@@ -116,5 +133,7 @@ public class FunctionDeclAST extends Node {
 
         CodeGen.main.add(new POP(Register.PC));
         CodeGen.main.add (new Directive("ltorg"));
+        Utility.pushBackRegisters();
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
     }
 }

@@ -8,10 +8,9 @@ import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
-import front_end.AST.AssignmentAST.ArraylitAST;
+import front_end.AST.ExpressionAST.ArraylitAST;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
-import front_end.AST.AssignmentAST.NewpairAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
@@ -104,9 +103,11 @@ public class VarDeclAST extends StatementAST {
 
     @Override
     public void translate() {
+        ProgramAST.nextAddress = identObj.getType().getSize() < 0 ? identObj.getSize() : 0;
+
         if(rhs instanceof ArraylitAST) {
             int arrSize = ((ArraylitAST) rhs).getArraylits().size();
-            int array_size = (arrSize + 1) * identObj.getSize();
+            int array_size = arrSize*identObj.getType().getSize() + identObj.getSize();
 
             CodeGen.main.add(new LOAD(Register.R0, new ImmValue(array_size)));
         }

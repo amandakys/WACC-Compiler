@@ -1,6 +1,10 @@
 package front_end.AST.ExpressionAST;
 
+import back_end.Utility;
+import back_end.data_type.ImmValue;
+import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
+import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.LOAD;
 import main.CodeGen;
 import main.Visitor;
