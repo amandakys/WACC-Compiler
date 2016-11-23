@@ -98,17 +98,25 @@ public class PrintAST extends StatementAST {
         String functionName = "p_print_" + typeName;
 
         if (expression instanceof BoolliterAST) {
-            placeholder = "\"" + ((BoolliterAST) expression).getBoolVal() + "\\0\"";
+            CodeGen.placeholders.add("\"true\\0\"");
+            CodeGen.placeholders.add("\"false\\0\"");
+//            placeholder = "\"" + ((BoolliterAST) expression).getBoolVal() + "\\0\"";
         } else if (expression instanceof StringLiterAST) {
-            placeholder = "\"%.*s\\0\"";
+            CodeGen.placeholders.add("\"%.*s\\0\"");
 
         } else if (expression instanceof IntLiterAST) {
-            placeholder = "\"%d\\0\"";
+            CodeGen.placeholders.add("\"%d\\0\"");
 
         } else if (expression instanceof CharLitAST) {
             functionName = "putchar";
+        } else if (expression instanceof IdentAST) {
+            String type = expression.getType().toString();
+            switch(type) {
+                case "string": CodeGen.placeholders.add("\"%.*s\\0\""); break;
+                case "int": CodeGen.placeholders.add("\"%d\\0\""); break;
+                case "char": functionName = "putchar";
+            }
         }
-
         addMain(new Branch("L", functionName));
 
         if (!hasPlaceholder(placeholder)) {
