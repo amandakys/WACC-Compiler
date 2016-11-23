@@ -17,7 +17,10 @@ public class MOV implements Instruction {
 
         if(rhs instanceof Register && !dst.equals(rhs) && rhs != Register.R0) {
             CodeGen.notUsedRegisters.push((Register) rhs);
+            CodeGen.notUsedRegisters.remove(dst);
         }
+
+
     }
 
     public MOV(String condition, Register dst, Operand rhs) {

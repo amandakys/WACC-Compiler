@@ -1,5 +1,11 @@
 package front_end.AST.ExpressionAST;
 
+import back_end.data_type.ImmValue;
+import back_end.data_type.register.PreIndex;
+import back_end.data_type.register.Register;
+import back_end.instruction.load_store.LOAD;
+import front_end.AST.ProgramAST;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
@@ -32,7 +38,8 @@ public class IdentAST extends ExpressionAST {
 
     @Override
     public void translate() {
-
+        Register result = CodeGen.notUsedRegisters.pop();
+        CodeGen.main.add(new LOAD(result, new PreIndex(Register.SP)));
     }
 
     public String getIdent() {

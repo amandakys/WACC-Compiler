@@ -7,7 +7,7 @@ import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.Instruction;
 
 public class LOAD implements Instruction {
-    private String condition;
+    private String condition = "";
     private Register dst;
     private Expression expression;
 
@@ -16,11 +16,11 @@ public class LOAD implements Instruction {
         this.expression = expression;
 
         //signed byte
-        if(expression instanceof ShiftedReg) {
-            this.condition = "SB";
-        } else {
-            this.condition = "";
-        }
+//        if(expression instanceof ShiftedReg) {
+//            this.condition = "SB";
+//        } else {
+//            this.condition = "";
+//        }
     }
 
     public LOAD(String condition, Register dst, Expression expression) {
