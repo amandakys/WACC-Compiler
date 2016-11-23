@@ -9,6 +9,7 @@ import back_end.instruction.load_store.Store;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
+import front_end.AST.StatementAST.VarDeclAST;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -49,16 +50,18 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void translate() {
+        ProgramAST.nextAddress = 0;
         for (ExpressionAST a: arraylits) {
+            ProgramAST.nextAddress += a.getIdentObj().getSize();
             Register res = CodeGen.notUsedRegisters.peek();
 
             a.translate();
 
-            ProgramAST.nextAddress += a.getIdentObj().getSize();
             Utility.addMain(new Store(res, new PreIndex(Utility.getBefore(res),
-                    new ImmValue(ProgramAST.nextAddress)), a.getIdentObj().getSize()));
+                    new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
         }
     }
+
 
     public List<ExpressionAST> getArraylits() {
         return arraylits;

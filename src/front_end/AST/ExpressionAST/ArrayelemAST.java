@@ -1,6 +1,11 @@
 package front_end.AST.ExpressionAST;
 
+import back_end.Utility;
+import back_end.data_type.register.Register;
+import back_end.instruction.Branch;
+import back_end.instruction.data_manipulation.Mov;
 import front_end.AST.Node;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.ARRAY;
@@ -42,6 +47,7 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void translate() {
-
+        CodeGen.main.add(new Branch("L", "malloc"));
+        CodeGen.main.add(new Mov(Utility.popUnusedReg(), Register.R0));
     }
 }

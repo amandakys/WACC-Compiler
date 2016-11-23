@@ -1,5 +1,6 @@
 package front_end.AST.TypeAST;
 
+import front_end.AST.AssignmentAST.AssignlhsAST;
 import front_end.AST.Node;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;

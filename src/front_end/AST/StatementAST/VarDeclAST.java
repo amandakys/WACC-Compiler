@@ -5,11 +5,18 @@ import back_end.data_type.*;
 
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
+import back_end.data_type.register.ShiftedReg;
+import back_end.instruction.Branch;
 import back_end.instruction.load_store.Load;
 import back_end.instruction.load_store.Store;
 import front_end.AST.AssignmentAST.ArraylitAST;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
+import front_end.AST.AssignmentAST.NewpairAST;
+import front_end.AST.ExpressionAST.BoolliterAST;
+import front_end.AST.ExpressionAST.CharLitAST;
+import front_end.AST.ExpressionAST.IntLiterAST;
+import front_end.AST.ExpressionAST.PairliterAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
 import front_end.AST.TypeAST.BasetypeAST;
@@ -29,8 +36,7 @@ public class VarDeclAST extends StatementAST {
     private TypeAST type;
     private AssignrhsAST rhs;
 
-    private static int numVar;
-    private static int index;
+    private static int byte_size = 0;
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
@@ -51,7 +57,8 @@ public class VarDeclAST extends StatementAST {
             if (V != null) {
                 error(ident + " is already declared");
             } else {
-                Visitor.ST.add(ident, new VARIABLE((TYPE) T));
+                identObj = new VARIABLE((TYPE) T);
+                Visitor.ST.add(ident, identObj);
             }
 
         } else if (type instanceof ArraytypeAST) {
@@ -67,7 +74,8 @@ public class VarDeclAST extends StatementAST {
                     error(ident + " is already declared");
                 } else {
                     IDENTIFIER T = new ARRAY(elementType, 0);
-                    Visitor.ST.add(ident, new VARIABLE((TYPE) T));
+                    identObj = new VARIABLE((TYPE) T);
+                    Visitor.ST.add(ident, identObj);
                 }
             } else {
                 error("declared type and given type do not match");
@@ -104,47 +112,37 @@ public class VarDeclAST extends StatementAST {
 
     @Override
     public void translate() {
-        if(numVar == 0) {
-            numVar = Visitor.ST.findSizeType(VARIABLE.class);
-        }
+        if(rhs instanceof ArraylitAST) {
+            int arrSize = ((ArraylitAST) rhs).getArraylits().size();
+            byte_size = (arrSize + 1) * identObj.getSize();
 
-        index++;
-
-        if(type instanceof ArraytypeAST) {
-            int size = ((ArraylitAST) rhs).getArraylits().size();
-            int ARRAY_SIZE = 4;
-            CodeGen.main.add(new Load(Register.R0, new ImmValue((size + 1) * ARRAY_SIZE)));
+            CodeGen.main.add(new Load(Register.R0, new ImmValue(byte_size)));
+        } else if(rhs instanceof NewpairAST) {
+            byte_size = ((PAIR) identObj).getFirst().getSize() +
+                    ((PAIR) identObj).getSecond().getSize();
+        } else {
+            byte_size = ProgramAST.size;
         }
 
         Register res = CodeGen.notUsedRegisters.peek();
         type.translate();
 
-        //only print these out when there is no vardeclaration of the same type
+        rhs.translate();
+
         if (type instanceof ArraytypeAST) {
-            rhs.translate();
             Register value = Utility.popUnusedReg();
 
             CodeGen.main.add(new Load(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
-            CodeGen.main.add(new Store(value, new PreIndex(res)));
-            //TODO: This is being called twice for some reasons
-            CodeGen.main.add(new Store(res, new PreIndex(Register.SP,
-                    new ImmValue(ProgramAST.nextAddress))));
-
-        } else if (type instanceof BasetypeAST) {
-            if(ProgramAST.nextAddress == 0) {
-                ProgramAST.nextAddress = ProgramAST.size;
-            }
-            //decrement the nextAddress according to the object's size
-
-            CodeGen.main.add(new Store(Utility.popUnusedReg(), new PreIndex(Register.SP,
-                    new ImmValue(ProgramAST.nextAddress))));
-            rhs.translate();
-            ProgramAST.nextAddress -= identObj.getSize();
+            CodeGen.main.add(new Store(value, new PreIndex(res), identObj.getSize()));
         }
 
-        if(index == numVar) {
-            Utility.addMain(new Store(res, new PreIndex(Register.SP,
-                    new ImmValue(ProgramAST.nextAddress))));
-        }
+        ProgramAST.nextAddress += identObj.getSize();
+
+        ShiftedReg address = new PreIndex(Register.SP,
+                new ImmValue(ProgramAST.nextAddress - byte_size));
+        CodeGen.memoryAddress.put(ident, address);
+
+        //decrement the nextAddress according to the object's byte_size
+        CodeGen.main.add(new Store(res, address, identObj.getSize()));
     }
 }
