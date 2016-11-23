@@ -39,8 +39,6 @@ public class IdentAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        int stackShift = Visitor.ST.findStackShift(ident);
-        ShiftedReg sR = new PreIndex(Register.SP, new ImmValue(stackShift));
         Register result = Utility.popUnusedReg();
 
         //CodeGen.main.add(new LOAD(result, CodeGen.memoryAddress.get(ident)));
