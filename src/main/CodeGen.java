@@ -5,6 +5,8 @@ import back_end.instruction.LabelInstr;
 import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
 import back_end.instruction.Instruction;
+import front_end.AST.ExpressionAST.ExpressionAST;
+import front_end.AST.Node;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -28,8 +30,14 @@ public class CodeGen {
 
     // for String
     public static List<Instruction> data = new ArrayList<>();
+    public static int numStrings = 0;
+    //for placeholders
+    public static List<String> placeholders = new ArrayList<>();
+    public static List<ExpressionAST> printedExpressions = new ArrayList<>();
     public static List<Instruction> toPushData = new ArrayList<>();
-    public static int numMessage = 0;
+    public static int numPlaceholders = 0;
+    public static List<String> endFunctions = new ArrayList<>();
+
 
     // variables & any non-primitive
     public static List<Instruction> text = new ArrayList<>();
@@ -37,8 +45,6 @@ public class CodeGen {
     public static List<Instruction> main = new ArrayList<>();
     //functions used in main
     public static List<Instruction> functions = new ArrayList<>();
-
-    public static Map<String, ShiftedReg> memoryAddress = new HashMap<>();
 
     public CodeGen() {
         initialiseReg();

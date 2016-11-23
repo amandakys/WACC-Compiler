@@ -41,8 +41,12 @@ public class IdentAST extends ExpressionAST {
         int stackShift = Visitor.ST.findStackShift(ident);
         ShiftedReg sR = new PreIndex(Register.SP, new ImmValue(stackShift));
         Register result = CodeGen.notUsedRegisters.pop();
+
         //CodeGen.main.add(new LOAD(result, CodeGen.memoryAddress.get(ident)));
-        CodeGen.main.add(new LOAD(result, sR));
+        //CodeGen.main.add(new LOAD(result, sR));
+
+        CodeGen.main.add(new LOAD(result, Visitor.ST.getAddress(ident)));
+
     }
 
     public String getIdent() {

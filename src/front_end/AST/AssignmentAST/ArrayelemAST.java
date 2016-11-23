@@ -41,14 +41,20 @@ public class ArrayelemAST extends ExpressionAST {
                     error("arrayelement only takes integers, actual: " + T.getTypeName());
                 }
             }
-
-            identObj = ((ARRAY) N.getType()).getElementType();
         }
+        identObj = N;
     }
 
     @Override
     public void translate() {
-        CodeGen.main.add(new Branch("L", "malloc"));
-        CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
+        int arraySize = ((ARRAY)identObj).getElem_size();
+        int total = 1;
+        for (Node n : expressions) {
+            total *= ((IntLiterAST) n).getValue();
+        }
+
+        if(total > arraySize) {
+
+        }
     }
 }

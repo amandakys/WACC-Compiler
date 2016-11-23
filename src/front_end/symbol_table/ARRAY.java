@@ -32,10 +32,6 @@ public class ARRAY extends TYPE{
         return type;
     }
 
-    public int getTotalSize() {
-        return SIZE;
-    }
-
     public int getSize() {
         return SIZE;
     }
