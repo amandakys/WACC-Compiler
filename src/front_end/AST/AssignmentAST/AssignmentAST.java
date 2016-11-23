@@ -22,8 +22,6 @@ public class AssignmentAST extends StatementAST {
     AssignlhsAST lhs;
     AssignrhsAST rhs;
 
-    private static int byte_size = 0;
-
     public AssignmentAST(ParserRuleContext ctx, AssignlhsAST lhs, AssignrhsAST rhs) {
         super(ctx);
         this.lhs = lhs;
@@ -43,17 +41,19 @@ public class AssignmentAST extends StatementAST {
 
     @Override
     public void translate() {
-        if(rhs instanceof ArraylitAST) {
-            int arrSize = ((ArraylitAST) rhs).getArraylits().size();
-            int ARRAY_SIZE = 4;
-            byte_size = (arrSize + 1) * ARRAY_SIZE;
+        if(rhs instanceof ArraylitAST || rhs instanceof PairelemAST) {
+            int byte_size = 0;
+            if(rhs instanceof ArraylitAST) {
+                int arrSize = ((ArraylitAST) rhs).getArraylits().size();
+                int ARRAY_SIZE = 4;
+                byte_size = (arrSize + 1) * ARRAY_SIZE;
+            } else {
+
+            }
 
             CodeGen.main.add(new LOAD(Register.R0, new ImmValue(byte_size)));
-            CodeGen.main.add(new Branch("L", "malloc"));
-            CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
-        } else {
-            byte_size = ProgramAST.size;
         }
+
         ShiftedReg res = CodeGen.memoryAddress.get(lhs.getIdent());
 
         Register rhsResult = CodeGen.notUsedRegisters.peek();
