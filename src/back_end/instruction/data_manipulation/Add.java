@@ -27,7 +27,7 @@ public class Add implements Instruction {
 
     @Override
     public String toString() {
-        return "\tAdd" + sFlag + " " + dest + ", " + lhs + ", " + rhs;
+        return "\tADD" + sFlag + " " + dest + ", " + lhs + ", " + rhs;
     }
 
     @Override

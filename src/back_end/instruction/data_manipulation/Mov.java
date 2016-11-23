@@ -31,7 +31,7 @@ public class Mov implements Instruction {
 
     @Override
     public String toString() {
-        return "\tMov" + condition + " " + dst + ", " + rhs;
+        return "\tMOV" + condition + " " + dst + ", " + rhs;
     }
 
     @Override

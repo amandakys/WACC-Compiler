@@ -11,7 +11,7 @@ public class Push implements Instruction{
 
     @Override
     public String toString() {
-        return "\tPush {" + reg + "}";
+        return "\tPUSH {" + reg + "}";
     }
 
     @Override

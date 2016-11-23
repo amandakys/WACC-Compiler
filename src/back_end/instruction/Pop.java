@@ -28,7 +28,7 @@ public class Pop implements Instruction{
 
     @Override
     public String toString() {
-        return "\tPop {" + reg + "}";
+        return "\tPOP {" + reg + "}";
     }
 
     @Override

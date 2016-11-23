@@ -24,7 +24,7 @@ public class Sub implements Instruction {
 
     @Override
     public String toString() {
-        return "\tSub" + sFlag + " " + dst + ", " + lhs + ", " + rhs;
+        return "\tSUB" + sFlag + " " + dst + ", " + lhs + ", " + rhs;
     }
 
     @Override
