@@ -4,6 +4,7 @@ import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
 import back_end.instruction.Instruction;
 import back_end.instruction.LabelInstr;
+import front_end.AST.ExpressionAST.*;
 import main.CodeGen;
 
 /**
@@ -24,23 +25,67 @@ public class Utility {
     }
 
     public static void pushData(String value) {
-        Utility.addData(new LabelInstr(getLastMessage()));
-        CodeGen.numMessage++;
+        Utility.addData(new LabelInstr(getNextString()));
+        CodeGen.numStrings++;
         //discard the "" in a string when finding the string's size
         Utility.addData(new Directive("word", String.valueOf(value.replaceAll("[\\\\\"]", "").length())));
         Utility.addData(new Directive("ascii", value));
     }
 
-    public static void pushToPushDatat(String value) {
-        CodeGen.toPushData.add(new LabelInstr(getLastMessage()));
-        CodeGen.numMessage++;
+    public static void pushToPushData(String value) {
+        CodeGen.toPushData.add(new LabelInstr(getNextPlaceholder()));
+        CodeGen.numPlaceholders++;
         //discard the "" in a string when finding the string's size
         CodeGen.toPushData.add(new Directive("word", String.valueOf(value.replaceAll("[\\\\\"]", "").length())));
         CodeGen.toPushData.add(new Directive("ascii", value));
     }
 
-    public static String getLastMessage() {
-        return "msg_" + CodeGen.numMessage;
+    public static String getNextString() {
+        return "msg_" + CodeGen.numStrings;
+    }
+    public static String getLastString() {
+        return "msg_" + (CodeGen.numStrings - 1 );
+    }
+
+    public static String getNextPlaceholder() {
+        int sum = CodeGen.numStrings + CodeGen.numPlaceholders;
+        return "msg_" + sum;
+    }
+
+    public static String getLastPlaceholder() {
+        int sum = CodeGen.numStrings + CodeGen.numPlaceholders - 1;
+        return "msg_" + sum;
+    }
+
+    public static String getPlaceholder(ExpressionAST expression) {
+        String msg = "";
+
+        if (expression instanceof StringLiterAST) {
+            msg = isPlaceholder("\"%.*s\\0\"");
+        } else if (expression instanceof IntLiterAST) {
+            msg = isPlaceholder("\"%d\\0\"");
+        }
+        //drop the semi colon
+        return msg.substring(0, msg.length() - 2);
+    }
+
+    public static String getTruePlaceholder() {
+        String msg = isPlaceholder("\"true\\0\"");
+        return msg.substring(0, msg.length() - 2);
+    }
+
+    public static String getFalsePlaceholder() {
+        String msg = isPlaceholder("\"false\\0\"");
+        return msg.substring(0, msg.length() - 2);
+    }
+
+    public static String getPrintlnPlaceholder() {
+        String msg = isPlaceholder("\"\\0\"");
+        if (msg == null) {
+            return null;
+        } else {
+            return msg.substring(0, msg.length() - 2);
+        }
     }
 
     public static Register popParamReg() {
@@ -63,13 +108,32 @@ public class Utility {
     public static boolean hasPlaceholder(String placeholder) {
         //4th element in CodeGen.data is 1st element starts with .ascii directive
         //0: msg_ , 1: .word, 2: .ascii
-        for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
-            if (CodeGen.toPushData.get(i).getValue().equals(placeholder)) {
+        for (int i = 0; i < CodeGen.placeholders.size(); i ++) {
+            if (CodeGen.placeholders.get(i).equals(placeholder)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public static boolean dataHasPlaceholder(String placeholder) {
+
+        for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
+            if (CodeGen.toPushData.get(i).getValue().equals(placeholder)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static String isPlaceholder(String placeholder) {
+        for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
+            if (CodeGen.toPushData.get(i).getValue().equals(placeholder)) {
+                return CodeGen.toPushData.get(i - 2).toString();
+            }
+        }
+        return null;
     }
 
     /*

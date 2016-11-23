@@ -53,16 +53,19 @@ public class ReadAST extends StatementAST {
 
         String placeholder = "";
         if (expression.getType().getTypeName().equals("char")) {
-            placeholder = "\" %c\\0\"";
-        } else if(expression.getType().getTypeName().equals("int")) {
+            placeholder = "\"%c\\0\"";
+        } else if (expression.getType().getTypeName().equals("int")) {
             placeholder = "\"%d\\0\"";
         }
-        pushData(placeholder);
+        CodeGen.placeholders.add(placeholder);
+        if (!CodeGen.endFunctions.contains("read")) {
+            CodeGen.endFunctions.add("read");
+        }
 
         addFunction(new LabelInstr(functionName));
         addFunction(new PUSH(Register.LR));
         addFunction(new MOV(popParamReg(), Register.R0));
-        addFunction(new LOAD(Register.R0, new LabelExpr(getLastMessage())));
+        addFunction(new LOAD(Register.R0, new LabelExpr(getLastString())));
         
         addFunction(new ADD(Register.R0, Register.R0, new ImmValue(4)));
         addFunction(new Branch("L", "scanf"));

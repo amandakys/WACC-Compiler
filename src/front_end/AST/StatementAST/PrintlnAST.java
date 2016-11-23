@@ -11,6 +11,7 @@ import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.*;
+import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import static back_end.Utility.*;
@@ -33,24 +34,24 @@ public class PrintlnAST extends StatementAST {
     @Override
     public void translate() {
         (new PrintAST(null, expression)).translate();
-
-        if(!Utility.hasPlaceholder("\\0")) {
-            Utility.pushToPushDatat("\\0");
+        addMain(new Branch("L", "p_print_ln"));
+        if(!Utility.hasPlaceholder("\"\\0\"")) {
+            CodeGen.placeholders.add("\"\\0\"");
         }
 
-       if(!Utility.hasFunction("p_print_ln")) {
-           addMain(new Branch("L", "p_print_ln"));
-
-           addFunction(new LabelInstr("p_print_ln"));
-           addFunction(new PUSH(LR));
-           addFunction(new LOAD(R0, new LabelExpr(getLastMessage())));
-           addFunction(new ADD(R0, R0, new ImmValue(4)));
-           addFunction(new Branch("L", "puts"));
-           addFunction(new MOV(Register.R0, new ImmValue(0)));
-           addFunction(new Branch("L", "fflush"));
-
-           addFunction(new POP(PC));
-       }
+//       if(!Utility.hasFunction("p_print_ln")) {
+//           addMain(new Branch("L", "p_print_ln"));
+//
+//           addFunction(new LabelInstr("p_print_ln"));
+//           addFunction(new PUSH(LR));
+//           addFunction(new LOAD(R0, new LabelExpr(getLastPlaceholder())));
+//           addFunction(new ADD(R0, R0, new ImmValue(4)));
+//           addFunction(new Branch("L", "puts"));
+//           addFunction(new MOV(Register.R0, new ImmValue(0)));
+//           addFunction(new Branch("L", "fflush"));
+//
+//           addFunction(new POP(PC));
+//       }
     }
 
     public ExpressionAST getExpression() {
