@@ -30,8 +30,6 @@ public class VarDeclAST extends StatementAST {
     private TypeAST type;
     private AssignrhsAST rhs;
 
-    private static int byte_size = 0;
-
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
         this.ident = ident;
@@ -108,14 +106,9 @@ public class VarDeclAST extends StatementAST {
     public void translate() {
         if(rhs instanceof ArraylitAST) {
             int arrSize = ((ArraylitAST) rhs).getArraylits().size();
-            byte_size = (arrSize + 1) * identObj.getSize();
+            int array_size = (arrSize + 1) * identObj.getSize();
 
-            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(byte_size)));
-        } else if(rhs instanceof NewpairAST) {
-            byte_size = ((PAIR) identObj).getFirst().getSize() +
-                    ((PAIR) identObj).getSecond().getSize();
-        } else {
-            byte_size = ProgramAST.size;
+            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(array_size)));
         }
 
         Register res = CodeGen.notUsedRegisters.peek();
@@ -131,12 +124,12 @@ public class VarDeclAST extends StatementAST {
         }
 
         ProgramAST.nextAddress += identObj.getSize();
+        ProgramAST.size -= identObj.getSize();
 
         ShiftedReg address = new PreIndex(Register.SP,
-                new ImmValue(ProgramAST.nextAddress - byte_size));
+                new ImmValue(ProgramAST.size));
         CodeGen.memoryAddress.put(ident, address);
 
-        //decrement the nextAddress according to the object's byte_size
         CodeGen.main.add(new STORE(res, address, identObj.getSize()));
     }
 }

@@ -38,15 +38,20 @@ public class NewpairAST extends AssignrhsAST {
 
     @Override
     public void translate() {
+        ProgramAST.nextAddress = 0;
+
         for (ExpressionAST elem: pairelems) {
             Register res = CodeGen.notUsedRegisters.peek();
             elem.translate();
 
-            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(identObj.getSize())));
+            int sizeElem = elem.getIdentObj().getSize();
+
+            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(sizeElem)));
             CodeGen.main.add(new Branch("L", "malloc"));
             CodeGen.main.add(new STORE(res, new PreIndex(Register.R0), identObj.getSize()));
             CodeGen.main.add(new STORE(Register.R0, new PreIndex(Utility.getBefore(res),
                     new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
+
             ProgramAST.nextAddress += identObj.getSize();
         }
     }

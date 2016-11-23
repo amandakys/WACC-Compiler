@@ -44,7 +44,9 @@ public class AssignlhsAST extends Node {
 
     @Override
     public void translate() {
-        child.translate();
+        if (child != null) {
+            child.translate();
+        }
     }
 
     public String getIdent() {
