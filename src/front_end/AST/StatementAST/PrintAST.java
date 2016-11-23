@@ -97,26 +97,30 @@ public class PrintAST extends StatementAST {
         String typeName = expression.getType().getTypeName();
         String functionName = "p_print_" + typeName;
 
-        if (expression instanceof BoolliterAST) {
-            CodeGen.placeholders.add("\"true\\0\"");
-            CodeGen.placeholders.add("\"false\\0\"");
-//            placeholder = "\"" + ((BoolliterAST) expression).getBoolVal() + "\\0\"";
-        } else if (expression instanceof StringLiterAST) {
-            CodeGen.placeholders.add("\"%.*s\\0\"");
-
-        } else if (expression instanceof IntLiterAST) {
-            CodeGen.placeholders.add("\"%d\\0\"");
-
-        } else if (expression instanceof CharLitAST) {
-            functionName = "putchar";
-        } else if (expression instanceof IdentAST) {
-            String type = expression.getType().toString();
-            switch(type) {
+//        if (expression instanceof BoolliterAST) {
+//            CodeGen.placeholders.add("\"true\\0\"");
+//            CodeGen.placeholders.add("\"false\\0\"");
+////            placeholder = "\"" + ((BoolliterAST) expression).getBoolVal() + "\\0\"";
+//        } else if (expression instanceof StringLiterAST) {
+//            CodeGen.placeholders.add("\"%.*s\\0\"");
+//
+//        } else if (expression instanceof IntLiterAST) {
+//            CodeGen.placeholders.add("\"%d\\0\"");
+//
+//        } else if (expression instanceof CharLitAST) {
+//            functionName = "putchar";
+//        } else if (expression instanceof IdentAST) {
+//            String type = expression.getType().getTypeName();
+            switch(typeName) {
                 case "string": CodeGen.placeholders.add("\"%.*s\\0\""); break;
                 case "int": CodeGen.placeholders.add("\"%d\\0\""); break;
-                case "char": functionName = "putchar";
+                case "char": functionName = "putchar"; break;
+                case "bool":
+                    CodeGen.placeholders.add("\"true\\0\"");
+                    CodeGen.placeholders.add("\"false\\0\"");
+                    break;
             }
-        }
+
         addMain(new Branch("L", functionName));
 
         if (!hasPlaceholder(placeholder)) {
