@@ -2,7 +2,6 @@ package front_end.AST.ExpressionAST;
 
 
 import antlr.BasicParser;
-import back_end.RuntimeError;
 import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.LabelExpr;
@@ -82,9 +81,18 @@ public class BinOpAST extends ExpressionAST {
                 CodeGen.main.add(new MOV(res, rhsResult));
                 CodeGen.main.add(new Branch("L", "p_check_divide_by_zero"));
                 CodeGen.main.add(new Branch("L", "__aeabi_idiv"));
-                check_divide_by_zero(res);
-                //TODO
-                RuntimeError.throwRuntimeError();
+
+                Register r = Utility.popUnusedReg();
+                CodeGen.main.add(new MOV(Register.R0, r));
+                CodeGen.main.add(new MOV(r, Register.R0));
+
+                CodeGen.endFunctions.add("p_divide_by_zero");
+                if(ctx.getParent() instanceof BasicParser.PrintlnContext) {
+                    CodeGen.placeholders.add("\"\\0\"");
+                    CodeGen.endFunctions.add("p_print_ln");
+                }
+                CodeGen.endFunctions.add("p_throw_runtime_error");
+
                 break;
             case "%":
             case "+":
@@ -140,21 +148,6 @@ public class BinOpAST extends ExpressionAST {
                 break;
         }
 
-    }
-
-    private void check_divide_by_zero(Register res) {
-        CodeGen.functions.add(new LabelInstr("p_check_divide_by_zero"));
-        CodeGen.functions.add(new PUSH(Register.LR));
-        CodeGen.functions.add(new CMP(res, new ImmValue(0)));
-        CodeGen.functions.add(new LOAD("EQ", res, new LabelExpr("msg_1")));
-        CodeGen.functions.add(new Branch("LEQ", "p_throw_runtime_error"));
-        CodeGen.functions.add(new POP(Register.PC));
-
-        if(ctx.getParent() instanceof BasicParser.PrintContext) {
-            (new PrintAST(null, new StringLiterAST(null, DIVIDE_BY_ZERO))).translate();
-        } else if(ctx.getParent() instanceof BasicParser.PrintlnContext) {
-            (new PrintlnAST(null, new StringLiterAST(null, DIVIDE_BY_ZERO))).translate();
-        }
     }
 
     private void initialise() {
