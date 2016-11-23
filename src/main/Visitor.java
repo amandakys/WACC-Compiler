@@ -134,19 +134,21 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public FunctionDeclAST visitFunction(BasicParser.FunctionContext ctx) {
         Visitor.ST = new SymbolTable(Visitor.ST);
-        StatementAST statement = (StatementAST) visit(ctx.statement());
+
         FunctionDeclAST function;
 
         if (ctx.paramlist() == null) {
             //no params
-            function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText(), statement);
+            function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText());
         } else {
             //has params
             function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText(),
-                    visitParamlist(ctx.paramlist()), statement);
+                    visitParamlist(ctx.paramlist()));
         }
 
         function.check();
+        StatementAST statement = (StatementAST) visit(ctx.statement());
+        function.setStatement(statement);
         //visitChildren(ctx);
 
         //statement.checkNode();

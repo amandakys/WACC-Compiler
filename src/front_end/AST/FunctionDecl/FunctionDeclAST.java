@@ -32,7 +32,7 @@ public class FunctionDeclAST extends Node {
     private StatementAST statement;
 
 
-    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, StatementAST statement) {
+    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname) {
         super(ctx);
         this.returntype = returntype;
         this.returntypename = returntype.getType().getTypeName();
@@ -40,7 +40,7 @@ public class FunctionDeclAST extends Node {
         this.parameters = null;
         this.statement = statement;
     }
-    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, ParamlistAST paramList, StatementAST statement) {
+    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, ParamlistAST paramList) {
         super(ctx);
         //return type name will remove all non alphanumeric characters to
         // search for primitive types
@@ -48,7 +48,6 @@ public class FunctionDeclAST extends Node {
         this.returntypename = returntype.getType().getTypeName();
         this.funcname = funcname;
         this.parameters = paramList;
-        this.statement = statement;
     }
 
     public void CheckFunctionNameAndReturnType() {
@@ -103,6 +102,10 @@ public class FunctionDeclAST extends Node {
 
     }
 
+    public void setStatement(StatementAST statement) {
+        this.statement = statement;
+    }
+
     @Override
     public void translate() {
         //Utility.pushData("\0");
@@ -110,6 +113,7 @@ public class FunctionDeclAST extends Node {
         CodeGen.main.add(new PUSH(Register.LR));
 
         statement.translate();
+
         CodeGen.main.add(new POP(Register.PC));
         CodeGen.main.add (new Directive("ltorg"));
     }
