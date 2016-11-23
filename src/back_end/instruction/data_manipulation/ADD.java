@@ -5,7 +5,7 @@ import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
 
 /*
-    The ADD instruction adds the values in Rn and Operand2.
+    The Add instruction adds the values in Rn and Operand2.
  */
 public class ADD implements Instruction {
     private Register dest;

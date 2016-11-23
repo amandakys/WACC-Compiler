@@ -1,5 +1,6 @@
 package main;
 
+import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.LabelInstr;
 import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
@@ -36,6 +37,8 @@ public class CodeGen {
     public static List<Instruction> main = new ArrayList<>();
     //functions used in main
     public static List<Instruction> functions = new ArrayList<>();
+
+    public static Map<String, ShiftedReg> memoryAddress = new HashMap<>();
 
     public CodeGen() {
         initialiseReg();

@@ -8,22 +8,6 @@ public class POP implements Instruction{
 
     public POP(Register reg) {
         this.reg = reg;
-
-        while (!CodeGen.toPushParamReg.isEmpty()) {
-            Register r = CodeGen.toPushParamReg.pop();
-
-            if(!CodeGen.paramRegister.contains(r)) {
-                CodeGen.paramRegister.push(r);
-            }
-        }
-
-        while (!CodeGen.toPushUnusedReg.isEmpty()) {
-            Register r = CodeGen.toPushUnusedReg.pop();
-
-            if(!CodeGen.notUsedRegisters.contains(r)) {
-                CodeGen.notUsedRegisters.push(r);
-            }
-        }
     }
 
     @Override

@@ -47,26 +47,20 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void translate() {
+        ProgramAST.nextAddress = 0;
         for (ExpressionAST a: arraylits) {
+            ProgramAST.nextAddress += a.getIdentObj().getSize();
             Register res = CodeGen.notUsedRegisters.peek();
 
             a.translate();
 
-            ProgramAST.nextAddress = a.getIdentObj().getSize();
-            Utility.addMain(new STORE(Utility.popUnusedReg(), new PreIndex(res,
-                    new ImmValue(ProgramAST.nextAddress)), a.getIdentObj().getSize()));
+            Utility.addMain(new STORE(res, new PreIndex(Utility.getBefore(res),
+                    new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
         }
     }
 
-    public int getSize() {
-        return ((ARRAY) identObj).getTotalSize();
-    }
 
     public List<ExpressionAST> getArraylits() {
         return arraylits;
-    }
-
-    public int getElemSize() {
-        return ((ARRAY) identObj).getSize();
     }
 }

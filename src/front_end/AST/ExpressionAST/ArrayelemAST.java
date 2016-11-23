@@ -1,8 +1,9 @@
 package front_end.AST.ExpressionAST;
 
-import back_end.data_type.ImmValue;
-import back_end.instruction.load_store.LOAD;
-import com.sun.org.apache.bcel.internal.classfile.Code;
+import back_end.Utility;
+import back_end.data_type.register.Register;
+import back_end.instruction.Branch;
+import back_end.instruction.data_manipulation.MOV;
 import front_end.AST.Node;
 import main.CodeGen;
 import main.Visitor;
@@ -14,9 +15,6 @@ import front_end.symbol_table.TYPE;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by andikoh on 08/11/2016.
- */
 public class ArrayelemAST extends ExpressionAST {
     String ident;
     List<Node> expressions = new ArrayList<>();
@@ -49,6 +47,7 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void translate() {
-
+        CodeGen.main.add(new Branch("L", "malloc"));
+        CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
     }
 }

@@ -5,7 +5,7 @@ import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
 
 /*
-    The SUB instruction subtracts the value of Operand2 from the value in Rn
+    The Sub instruction subtracts the value of Operand2 from the value in Rn
  */
 public class SUB implements Instruction {
     private Register dst;

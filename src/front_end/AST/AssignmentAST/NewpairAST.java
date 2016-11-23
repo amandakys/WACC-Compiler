@@ -44,9 +44,9 @@ public class NewpairAST extends AssignrhsAST {
 
             CodeGen.main.add(new LOAD(Register.R0, new ImmValue(identObj.getSize())));
             CodeGen.main.add(new Branch("L", "malloc"));
-            CodeGen.main.add(new STORE(res, new PreIndex(Register.R0)));
+            CodeGen.main.add(new STORE(res, new PreIndex(Register.R0), identObj.getSize()));
             CodeGen.main.add(new STORE(Register.R0, new PreIndex(Utility.getBefore(res),
-                    new ImmValue(ProgramAST.nextAddress))));
+                    new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
             ProgramAST.nextAddress += identObj.getSize();
         }
     }

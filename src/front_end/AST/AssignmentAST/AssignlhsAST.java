@@ -9,9 +9,8 @@ import front_end.symbol_table.IDENTIFIER;
  * Created by andikoh on 08/11/2016.
  */
 public class AssignlhsAST extends Node {
-
-    String ident;
-    Node child;
+    private String ident;
+    private Node child;
 
     public AssignlhsAST(ParserRuleContext ctx, String ident) {
         super(ctx);
@@ -24,7 +23,6 @@ public class AssignlhsAST extends Node {
         this.ident = null;
         this.child = child;
     }
-
 
     @Override
     public void check() {
@@ -46,5 +44,10 @@ public class AssignlhsAST extends Node {
 
     @Override
     public void translate() {
+        child.translate();
+    }
+
+    public String getIdent() {
+        return ident;
     }
 }
