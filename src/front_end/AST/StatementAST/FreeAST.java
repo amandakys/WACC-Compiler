@@ -1,11 +1,8 @@
 package front_end.AST.StatementAST;
 
-import back_end.data_type.Register;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.PAIR;
-
-import java.util.Stack;
 
 /**
  * Created by tsd15 on 09/11/16.
@@ -28,7 +25,7 @@ public class FreeAST extends StatementAST {
     }
 
     @Override
-    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
+    public void translate() {
 
     }
 }

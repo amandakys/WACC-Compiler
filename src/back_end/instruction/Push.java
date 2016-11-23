@@ -1,11 +1,11 @@
 package back_end.instruction;
 
-import back_end.data_type.Register;
+import back_end.data_type.register.Register;
 
-public class Push implements Instruction{
+public class PUSH implements Instruction{
     private Register reg;
 
-    public Push(Register reg) {
+    public PUSH(Register reg) {
         this.reg = reg;
     }
 

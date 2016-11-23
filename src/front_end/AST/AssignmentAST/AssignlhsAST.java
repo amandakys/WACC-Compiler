@@ -1,12 +1,9 @@
 package front_end.AST.AssignmentAST;
 
-import back_end.data_type.Register;
 import front_end.AST.Node;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
-
-import java.util.Stack;
 
 /**
  * Created by andikoh on 08/11/2016.
@@ -48,6 +45,6 @@ public class AssignlhsAST extends Node {
     }
 
     @Override
-    public void translate(Stack<Register> unusedRegs, Stack<Register> paramRegs) {
+    public void translate() {
     }
 }

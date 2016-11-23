@@ -1,19 +1,22 @@
 package front_end.symbol_table;
 
+import main.Visitor;
+
 /**
  * Created by andikoh on 10/11/2016.
  */
 public class ARRAY extends TYPE{
     private TYPE type;
     private int elem_size;
-    private int SIZE = 4;
+    private int SIZE;
 
 
     public ARRAY(TYPE type, int size) {
         super("array");
         this.type = type;
         this.elem_size = size;
-        this.SIZE *= type.getSize();
+        this.SIZE = type.getSize() * (elem_size + 1);
+
     }
 
 
@@ -31,11 +34,11 @@ public class ARRAY extends TYPE{
         return type;
     }
 
-    public int getSize() {
+    public int getTotalSize() {
         return SIZE;
     }
 
-    public int getElem_size() {
-        return elem_size;
+    public int getSize() {
+        return type.getSize();
     }
 }

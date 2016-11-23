@@ -1,26 +1,40 @@
 package back_end.instruction.load_store;
 
 import back_end.data_type.Expression;
-import back_end.data_type.Register;
+import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
+import main.CodeGen;
 
 /*
     STR instructions store a register value into memory
  */
-public class Store implements Instruction {
+public class STORE implements Instruction {
     private Register dst;
-    //TODO: chage it to expression that includes shifted register & address & label
     private Expression expression;
+    private String type;
 
-    public Store(Register dst, Expression expression) {
+    public STORE(Register dst, Expression expression) {
+        this(dst, expression, 0);
+    }
+
+    public STORE(Register dst, Expression expression, int size) {
         this.dst = dst;
         this.expression = expression;
+
+        if(size == 1) {
+            type = "B";
+        } else {
+            type = "";
+        }
+
+        if(dst != Register.R0) {
+            CodeGen.notUsedRegisters.push(dst);
+        }
     }
 
     @Override
     public String toString() {
-        //TODO: It's not STRB all the time
-        return "\tSTRB " + dst + ", " + expression ;
+        return "\tSTR" + type + " " + dst + ", " + expression ;
     }
 
     @Override
