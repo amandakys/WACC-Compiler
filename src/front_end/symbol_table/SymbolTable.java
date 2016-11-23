@@ -55,6 +55,18 @@ public class SymbolTable {
 
         return size;
     }
+
+    public int findSizeType(Class c) {
+        int size = 0;
+
+        for (IDENTIFIER iden : dict.values()) {
+            if(iden.getClass().equals(c)) {
+                size++;
+            }
+        }
+
+        return size;
+    }
 }
 
 

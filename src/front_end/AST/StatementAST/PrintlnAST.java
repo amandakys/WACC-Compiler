@@ -34,8 +34,9 @@ public class PrintlnAST extends StatementAST {
     public void translate() {
         (new PrintAST(null, expression)).translate();
 
-        if(!Utility.hasPlaceholder("\\0")) {
-            Utility.pushToPushDatat("\\0");
+        String placeholder = "\"\\0\"";
+        if(!Utility.hasPlaceholder(placeholder)) {
+            Utility.pushToPushDatat(placeholder);
         }
 
        if(!Utility.hasFunction("p_print_ln")) {

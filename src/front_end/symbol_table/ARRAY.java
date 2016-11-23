@@ -8,15 +8,13 @@ import main.Visitor;
 public class ARRAY extends TYPE{
     private TYPE type;
     private int elem_size;
-    private int SIZE;
+    private int SIZE = 4;
 
 
     public ARRAY(TYPE type, int size) {
         super("array");
         this.type = type;
         this.elem_size = size;
-        this.SIZE = type.getSize() * (elem_size + 1);
-
     }
 
 
@@ -39,6 +37,10 @@ public class ARRAY extends TYPE{
     }
 
     public int getSize() {
-        return type.getSize();
+        return SIZE;
+    }
+
+    public int getElem_size() {
+        return elem_size;
     }
 }

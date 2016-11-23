@@ -38,7 +38,7 @@ public class PairelemtypeAST extends Node {
             T = new PAIR(null, null);
             //TODO: do we need to add nested pair to symbol table
         } else if(type instanceof ArraytypeAST) {
-            T = new ARRAY(((ArraytypeAST) type).getelementType(), ((ArraytypeAST) type).arrayDepth);
+            T = new ARRAY(((ArraytypeAST) type).getelementType(), ((ArraytypeAST) type).getArrayDepth());
         } else {
             T = Visitor.ST.lookUpAll(type.getType().getTypeName());
         }

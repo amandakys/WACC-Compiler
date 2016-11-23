@@ -67,7 +67,6 @@ public class ProgramAST extends Node {
         Utility.addMain(new Load(Register.R0, new ImmValue(0)));
 
 
-
         Utility.addMain(new Pop(Register.PC));
 
         Utility.addMain(new Directive("ltorg"));
