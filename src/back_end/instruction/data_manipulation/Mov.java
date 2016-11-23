@@ -5,12 +5,12 @@ import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
 import main.CodeGen;
 
-public class MOV implements Instruction {
+public class Mov implements Instruction {
     private String condition;
     private Register dst;
     private Operand rhs;
 
-    public MOV(Register dst, Operand rhs) {
+    public Mov(Register dst, Operand rhs) {
         this.dst = dst;
         this.rhs = rhs;
         this.condition = "";
@@ -23,7 +23,7 @@ public class MOV implements Instruction {
 
     }
 
-    public MOV(String condition, Register dst, Operand rhs) {
+    public Mov(String condition, Register dst, Operand rhs) {
         this.condition = condition;
         this.rhs = rhs;
         this.dst = dst;
@@ -31,7 +31,7 @@ public class MOV implements Instruction {
 
     @Override
     public String toString() {
-        return "\tMOV" + condition + " " + dst + ", " + rhs;
+        return "\tMov" + condition + " " + dst + ", " + rhs;
     }
 
     @Override

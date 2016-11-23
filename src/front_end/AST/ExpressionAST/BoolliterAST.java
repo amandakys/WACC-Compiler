@@ -2,6 +2,7 @@ package front_end.AST.ExpressionAST;
 
 import back_end.Utility;
 import back_end.data_type.ImmValue;
+import back_end.instruction.data_manipulation.Mov;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -23,7 +24,7 @@ public class BoolliterAST extends ExpressionAST{
 
     @Override
     public void translate() {
-        Utility.addMain(new MOV(Utility.popUnusedReg(), new ImmValue(boolVal.equals("true") ? 1 : 0)));
+        Utility.addMain(new Mov(Utility.popUnusedReg(), new ImmValue(boolVal.equals("true") ? 1 : 0)));
     }
 
     public String getBoolVal() {

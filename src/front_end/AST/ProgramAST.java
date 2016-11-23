@@ -4,6 +4,9 @@ import back_end.Utility;
 import back_end.data_type.*;
 import back_end.data_type.register.Register;
 import back_end.instruction.*;
+import back_end.instruction.data_manipulation.Add;
+import back_end.instruction.data_manipulation.Sub;
+import back_end.instruction.load_store.Load;
 import front_end.AST.FunctionDecl.FunctionDeclAST;
 import front_end.AST.StatementAST.StatementAST;
 import main.Visitor;
@@ -47,25 +50,25 @@ public class ProgramAST extends Node {
         }
 
         Utility.addMain(new LabelInstr("main"));
-        Utility.addMain(new PUSH(Register.LR));
+        Utility.addMain(new Push(Register.LR));
 
         if(size != 0) {
             //decrement stack pointer
-            Utility.addMain(new SUB(Register.SP, Register.SP, operSize));
+            Utility.addMain(new Sub(Register.SP, Register.SP, operSize));
         }
 
         statement.translate();
 
         if(size != 0) {
             //increment stack pointer
-            Utility.addMain(new ADD(Register.SP, Register.SP, operSize));
+            Utility.addMain(new Add(Register.SP, Register.SP, operSize));
         }
 
-        Utility.addMain(new LOAD(Register.R0, new ImmValue(0)));
+        Utility.addMain(new Load(Register.R0, new ImmValue(0)));
 
 
 
-        Utility.addMain(new POP(Register.PC));
+        Utility.addMain(new Pop(Register.PC));
 
         Utility.addMain(new Directive("ltorg"));
     }

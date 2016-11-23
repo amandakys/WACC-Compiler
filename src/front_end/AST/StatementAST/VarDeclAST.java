@@ -5,6 +5,8 @@ import back_end.data_type.*;
 
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
+import back_end.instruction.load_store.Load;
+import back_end.instruction.load_store.Store;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
 import front_end.AST.ProgramAST;
@@ -104,16 +106,16 @@ public class VarDeclAST extends StatementAST {
 
         if(type instanceof ArraytypeAST) {
             Register value = Utility.popUnusedReg();
-            CodeGen.main.add(new LOAD(value, new ImmValue(rhs.getIdentObj().getSize())));
-            CodeGen.main.add(new STORE(value, new PreIndex(res)));
-            CodeGen.main.add(new STORE(res, new PreIndex(Register.SP)));
+            CodeGen.main.add(new Load(value, new ImmValue(rhs.getIdentObj().getSize())));
+            CodeGen.main.add(new Store(value, new PreIndex(res)));
+            CodeGen.main.add(new Store(res, new PreIndex(Register.SP)));
         } else if(type instanceof BasetypeAST){
             //decrement the nextAddress according to the object's size
             ProgramAST.nextAddress -= identObj.getSize();
         }
 
         ProgramAST.nextAddress = 0;
-        Utility.addMain(new STORE(res, new PreIndex(Register.SP,
+        Utility.addMain(new Store(res, new PreIndex(Register.SP,
                 new ImmValue(ProgramAST.nextAddress))));
     }
 }

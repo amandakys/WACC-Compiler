@@ -4,6 +4,9 @@ import back_end.data_type.*;
 import back_end.data_type.register.Register;
 import back_end.instruction.*;
 import back_end.instruction.condition.CMP;
+import back_end.instruction.data_manipulation.Add;
+import back_end.instruction.data_manipulation.Mov;
+import back_end.instruction.load_store.Load;
 import front_end.AST.ExpressionAST.*;
 import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -29,7 +32,7 @@ public class PrintAST extends StatementAST {
         // in R0 so peek at the register to move the value from CodeGen.notUsedRegisters.pop() to R0
         Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
-        addMain(new MOV(Register.R0, result));
+        addMain(new Mov(Register.R0, result));
 
         //TODO:find and push the placeholder when there are no more PrintAST node with an expression of the same type
         pushPlaceholder();
@@ -41,7 +44,7 @@ public class PrintAST extends StatementAST {
             //a char can be printed using "putchar" function
             if (!(expression instanceof CharLitAST)) {
                 addFunction(new LabelInstr("p_print_" + type));
-                addFunction(new PUSH(Register.LR));
+                addFunction(new Push(Register.LR));
 
                 if (expression instanceof BoolliterAST) {
                     addFunction(new CMP(Register.R0, new ImmValue(0)));
@@ -53,28 +56,28 @@ public class PrintAST extends StatementAST {
                     String beforeLast = last.substring(0, last.length() - 1) +
                             (Integer.parseInt(String.valueOf(last.charAt(last.length() - 1))) - 1);
 
-                    addFunction(new LOAD("NE", Register.R0, new LabelExpr(beforeLast)));
-                    addFunction(new LOAD("EQ", Register.R0, new LabelExpr(last)));
+                    addFunction(new Load("NE", Register.R0, new LabelExpr(beforeLast)));
+                    addFunction(new Load("EQ", Register.R0, new LabelExpr(last)));
                 } else {
                     //functions that print string, bool, int have to be specified separately
                     if (expression instanceof StringLiterAST) {
-                        addFunction(new LOAD(popParamReg(), new Address(Register.R0)));
-                        addFunction(new ADD(popParamReg(), Register.R0, new
+                        addFunction(new Load(popParamReg(), new Address(Register.R0)));
+                        addFunction(new Add(popParamReg(), Register.R0, new
                                 ImmValue(exprSize)));
                     } else if (expression instanceof IntLiterAST) {
-                        addFunction(new MOV(popParamReg(), Register.R0));
+                        addFunction(new Mov(popParamReg(), Register.R0));
                     }
-                    addFunction(new LOAD(Register.R0, new LabelExpr(getLastMessage())));
+                    addFunction(new Load(Register.R0, new LabelExpr(getLastMessage())));
                 }
 
                 //TODO: Why adding r0 to 4?
-                addFunction(new ADD(Register.R0, Register.R0, new ImmValue(4)));
+                addFunction(new Add(Register.R0, Register.R0, new ImmValue(4)));
 
                 addFunction(new Branch("L", "printf"));
-                addFunction(new MOV(Register.R0, new ImmValue(0)));
+                addFunction(new Mov(Register.R0, new ImmValue(0)));
                 addFunction(new Branch("L", "fflush"));
 
-                addFunction(new POP(Register.PC));
+                addFunction(new Pop(Register.PC));
             }
         }
 

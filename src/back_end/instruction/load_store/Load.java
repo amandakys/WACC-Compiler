@@ -6,12 +6,12 @@ import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.Instruction;
 
-public class LOAD implements Instruction {
+public class Load implements Instruction {
     private String condition = "";
     private Register dst;
     private Expression expression;
 
-    public LOAD(Register dst, Expression expression) {
+    public Load(Register dst, Expression expression) {
         this.dst = dst;
         this.expression = expression;
 
@@ -23,7 +23,7 @@ public class LOAD implements Instruction {
 //        }
     }
 
-    public LOAD(String condition, Register dst, Expression expression) {
+    public Load(String condition, Register dst, Expression expression) {
         this.condition = condition;
         this.dst = dst;
         this.expression = expression;

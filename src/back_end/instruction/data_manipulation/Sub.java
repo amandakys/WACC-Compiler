@@ -5,15 +5,15 @@ import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
 
 /*
-    The SUB instruction subtracts the value of Operand2 from the value in Rn
+    The Sub instruction subtracts the value of Operand2 from the value in Rn
  */
-public class SUB implements Instruction {
+public class Sub implements Instruction {
     private Register dst;
     private Register lhs;
     private Operand rhs;
     private String sFlag = "";
 
-    public SUB(Register dst, Register lhs, Operand rhs) {
+    public Sub(Register dst, Register lhs, Operand rhs) {
         this.dst = dst;
         this.lhs = lhs;
         this.rhs = rhs;
@@ -24,7 +24,7 @@ public class SUB implements Instruction {
 
     @Override
     public String toString() {
-        return "\tSUB" + sFlag + " " + dst + ", " + lhs + ", " + rhs;
+        return "\tSub" + sFlag + " " + dst + ", " + lhs + ", " + rhs;
     }
 
     @Override

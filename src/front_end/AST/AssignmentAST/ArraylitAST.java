@@ -4,6 +4,7 @@ import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
+import back_end.instruction.load_store.Store;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
@@ -52,7 +53,7 @@ public class ArraylitAST extends AssignrhsAST {
             a.translate();
 
             ProgramAST.nextAddress = a.getIdentObj().getSize();
-            Utility.addMain(new STORE(Utility.popUnusedReg(), new PreIndex(res,
+            Utility.addMain(new Store(Utility.popUnusedReg(), new PreIndex(res,
                     new ImmValue(ProgramAST.nextAddress)), a.getIdentObj().getSize()));
         }
     }

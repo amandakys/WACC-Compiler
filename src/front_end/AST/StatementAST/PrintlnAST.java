@@ -5,6 +5,11 @@ import back_end.data_type.*;
 import back_end.data_type.register.Register;
 import back_end.instruction.LabelInstr;
 import back_end.instruction.Branch;
+import back_end.instruction.Pop;
+import back_end.instruction.Push;
+import back_end.instruction.data_manipulation.Add;
+import back_end.instruction.data_manipulation.Mov;
+import back_end.instruction.load_store.Load;
 import front_end.AST.ExpressionAST.*;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -37,14 +42,14 @@ public class PrintlnAST extends StatementAST {
            addMain(new Branch("L", "p_print_ln"));
 
            addFunction(new LabelInstr("p_print_ln"));
-           addFunction(new PUSH(LR));
-           addFunction(new LOAD(R0, new LabelExpr(getLastMessage())));
-           addFunction(new ADD(R0, R0, new ImmValue(4)));
+           addFunction(new Push(LR));
+           addFunction(new Load(R0, new LabelExpr(getLastMessage())));
+           addFunction(new Add(R0, R0, new ImmValue(4)));
            addFunction(new Branch("L", "puts"));
-           addFunction(new MOV(Register.R0, new ImmValue(0)));
+           addFunction(new Mov(Register.R0, new ImmValue(0)));
            addFunction(new Branch("L", "fflush"));
 
-           addFunction(new POP(PC));
+           addFunction(new Pop(PC));
        }
     }
 

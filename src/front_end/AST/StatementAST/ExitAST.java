@@ -2,6 +2,7 @@ package front_end.AST.StatementAST;
 
 import back_end.Utility;
 import back_end.instruction.Branch;
+import back_end.instruction.data_manipulation.Mov;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.symbol_table.IDENTIFIER;
 import main.Visitor;
@@ -28,7 +29,7 @@ public class ExitAST extends StatementAST{
     public void translate() {
         expression.translate();
 
-        Utility.addMain(new MOV(Utility.popUnusedReg(), Utility.popParamReg()));
+        Utility.addMain(new Mov(Utility.popUnusedReg(), Utility.popParamReg()));
         Utility.addMain(new Branch("L", "exit"));
 
     }

@@ -1,6 +1,5 @@
 package front_end.AST.FunctionDecl;
 
-import back_end.Utility;
 import back_end.data_type.register.Register;
 import back_end.instruction.*;
 import front_end.AST.Node;
@@ -98,10 +97,10 @@ public class FunctionDeclAST extends Node {
     public void translate() {
         //Utility.pushData("\0");
         CodeGen.main.add(new LabelInstr(funcname));
-        CodeGen.main.add(new PUSH(Register.LR));
+        CodeGen.main.add(new Push(Register.LR));
 
         statement.translate();
-        CodeGen.main.add(new POP(Register.PC));
+        CodeGen.main.add(new Pop(Register.PC));
         CodeGen.main.add (new Directive("ltorg"));
     }
 }
