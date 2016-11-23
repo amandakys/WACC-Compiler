@@ -8,6 +8,8 @@ import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.*;
+import front_end.symbol_table.ARRAY;
+import front_end.symbol_table.TYPE;
 import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -94,7 +96,13 @@ public class PrintAST extends StatementAST {
      */
     private void pushPlaceholder() {
         String placeholder = "";
-        String typeName = expression.getType().getTypeName();
+        String typeName;
+        TYPE type = expression.getType();
+        if (type instanceof ARRAY) {
+            typeName = "reference";
+        } else {
+            typeName = type.getTypeName();
+        }
         String functionName = "p_print_" + typeName;
 
 //        if (expression instanceof BoolliterAST) {
