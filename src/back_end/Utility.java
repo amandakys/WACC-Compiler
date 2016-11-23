@@ -60,12 +60,11 @@ public class Utility {
 
     public static String getPlaceholder(ExpressionAST expression) {
         String msg = "";
-
         if (expression instanceof StringLiterAST) {
-            msg = isPlaceholder("\"%.*s\\0\"");
-        } else if (expression instanceof IntLiterAST) {
-            msg = isPlaceholder("\"%d\\0\"");
-        }
+                msg = isPlaceholder("\"%.*s\\0\"");
+            } else if (expression instanceof IntLiterAST) {
+                msg = isPlaceholder("\"%d\\0\"");
+            }
         //drop the semi colon
         return msg.substring(0, msg.length() - 2);
     }

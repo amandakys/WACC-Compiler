@@ -56,7 +56,10 @@ public class SymbolTable {
         int size = 0;
 
         for(IDENTIFIER ident : dict.values()) {
-            size += ident.getSize();
+            if (!(ident instanceof  FUNCTION)) {
+                size += ident.getSize();
+            }
+
         }
 
         return size;
@@ -78,11 +81,12 @@ public class SymbolTable {
         List<String> keys = new ArrayList<String>(dict.keySet());
         int indexOfx = keys.indexOf(x);
         int shift = 4;
-        for (int i = 0; i < indexOfx; i++) {
+        for (int i = 1; i < indexOfx; i++) {
             shift+=dict.get(keys.get(i)).getSize();
         }
         return shift;
     }
+
 
 
    public void addToMemoryAddress(String name, ShiftedReg reg) {

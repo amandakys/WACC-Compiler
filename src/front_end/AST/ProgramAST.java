@@ -81,13 +81,13 @@ public class ProgramAST extends Node {
             }
         }
 
-        for (ExpressionAST e: CodeGen.printedExpressions) {
-            printInstr(e);
-        }
-
-        if (getPrintlnPlaceholder() != null) {//println instructions exist
-            printlnInstr();
-        }
+//        for (ExpressionAST e: CodeGen.printedExpressions) {
+//            printInstr(e);
+//        }
+//
+//        if (getPrintlnPlaceholder() != null) {//println instructions exist
+//            printlnInstr();
+//        }
     }
 
     private void printInstr(ExpressionAST e) {

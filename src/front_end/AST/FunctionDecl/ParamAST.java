@@ -45,4 +45,8 @@ public class ParamAST extends Node {
     public String getIdent() {
         return this.ident;
     }
+
+    public IDENTIFIER getIdentObject() {
+        return  identObj;
+    }
 }

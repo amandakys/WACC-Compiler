@@ -5,6 +5,7 @@ import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 import back_end.instruction.data_manipulation.MOV;
 import front_end.AST.ExpressionAST.ExpressionAST;
+import front_end.AST.ExpressionAST.IntLiterAST;
 import front_end.AST.Node;
 import main.CodeGen;
 import main.Visitor;

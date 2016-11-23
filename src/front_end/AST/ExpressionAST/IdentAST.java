@@ -1,5 +1,6 @@
 package front_end.AST.ExpressionAST;
 
+import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
@@ -40,7 +41,7 @@ public class IdentAST extends ExpressionAST {
     public void translate() {
         int stackShift = Visitor.ST.findStackShift(ident);
         ShiftedReg sR = new PreIndex(Register.SP, new ImmValue(stackShift));
-        Register result = CodeGen.notUsedRegisters.pop();
+        Register result = Utility.popUnusedReg();
 
         //CodeGen.main.add(new LOAD(result, CodeGen.memoryAddress.get(ident)));
         //CodeGen.main.add(new LOAD(result, sR));
