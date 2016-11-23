@@ -58,6 +58,20 @@ public class Utility {
         return "msg_" + sum;
     }
 
+    public static String getStringPlaceholder() {
+        String msg = isPlaceholder("\"%.*s\\0\"");
+        return msg.substring(0, msg.length() - 2);
+    }
+
+    public static String getIntPlaceholder() {
+        String msg = isPlaceholder("\"%d\\0\"");
+        return msg.substring(0, msg.length() - 2);
+    }
+
+    public static String getCharPlaceholder() {
+        String msg = isPlaceholder("\" %c\\0\"");
+        return msg.substring(0, msg.length() - 2);
+    }
     public static String getPlaceholder(ExpressionAST expression) {
         String msg = "";
 

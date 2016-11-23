@@ -57,17 +57,17 @@ public class ReadAST extends StatementAST {
             placeholder = "\"%d\\0\"";
         }
         CodeGen.placeholders.add(placeholder);
-        if (!CodeGen.endFunctions.contains("read")) {
-            CodeGen.endFunctions.add("read");
+        if (!CodeGen.endFunctions.contains(functionName)){
+            CodeGen.endFunctions.add(functionName);
         }
 
-        addFunction(new LabelInstr(functionName));
-        addFunction(new PUSH(Register.LR));
-        addFunction(new MOV(popParamReg(), Register.R0));
-        addFunction(new LOAD(Register.R0, new LabelExpr(getLastString())));
-        
-        addFunction(new ADD(Register.R0, Register.R0, new ImmValue(4)));
-        addFunction(new Branch("L", "scanf"));
-        addFunction(new POP(Register.PC));
+//        addFunction(new LabelInstr(functionName));
+//        addFunction(new PUSH(Register.LR));
+//        addFunction(new MOV(popParamReg(), Register.R0));
+//        addFunction(new LOAD(Register.R0, new LabelExpr(getLastString())));
+//
+//        addFunction(new ADD(Register.R0, Register.R0, new ImmValue(4)));
+//        addFunction(new Branch("L", "scanf"));
+//        addFunction(new POP(Register.PC));
     }
 }

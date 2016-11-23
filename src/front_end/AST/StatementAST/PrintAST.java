@@ -123,8 +123,8 @@ public class PrintAST extends StatementAST {
             }
         }
 
-        if (!CodeGen.endFunctions.contains("print")) {
-            CodeGen.endFunctions.add("print");
+        if (!CodeGen.endFunctions.contains(functionName)) {
+            CodeGen.endFunctions.add(functionName);
         }
     }
 }
