@@ -10,9 +10,6 @@ import front_end.symbol_table.TYPE;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by andikoh on 08/11/2016.
- */
 public class ArrayelemAST extends ExpressionAST {
     String ident;
     List<Node> expressions = new ArrayList<>();
