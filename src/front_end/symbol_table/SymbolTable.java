@@ -1,7 +1,6 @@
 package front_end.symbol_table;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by andikoh on 08/11/2016.
@@ -11,7 +10,7 @@ public class SymbolTable {
     private Map<String, IDENTIFIER> dict;
 
     public SymbolTable(SymbolTable st) {
-        dict= new HashMap<>();
+        dict= new LinkedHashMap<>();
         encSymbolTable = st;
     }
 
@@ -67,6 +66,17 @@ public class SymbolTable {
 
         return size;
     }
+
+    public int findStackShift(String x) {
+        List<String> keys = new ArrayList<String>(dict.keySet());
+        int indexOfx = keys.indexOf(x);
+        int shift = 0;
+        for (int i = 0; i <= indexOfx; i++) {
+            shift+=dict.get(keys.get(i)).getSize();
+        }
+        return shift;
+    }
+
 }
 
 

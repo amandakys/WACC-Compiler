@@ -31,7 +31,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         SCALAR charSca = new SCALAR("char");
 
         //set byte size for each scalar type
-        boolSca.setSize(1);
+        boolSca.setSize(4);
         intSca.setSize(4);
         charSca.setSize(1);
 
