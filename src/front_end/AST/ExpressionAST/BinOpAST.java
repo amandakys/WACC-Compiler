@@ -19,6 +19,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static back_end.Error.overflow;
+
 /**
  * Created by donamphuong on 10/11/2016.
  */
@@ -72,22 +74,23 @@ public class BinOpAST extends ExpressionAST {
         switch(op) {
             case "+":
             case "-":
+            case "*":
                 if(op.equals("+")) {
                     CodeGen.main.add(new ADD(lhsResult, lhsResult, rhsResult));
+                    CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("-")){
                     CodeGen.main.add(new SUB(lhsResult, lhsResult, rhsResult));
+                    CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
+                } else if(op.equals("*")) {
+                    CodeGen.main.add(new SMULL(lhsResult, rhsResult, lhsResult, rhsResult));
+                    CodeGen.main.add(new CMP(rhsResult, lhsResult)); // TODO: add ASR #31 shifting HERE as a third param
+                    CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
                 }
                 Utility.pushRegister(rhsResult);
-                Utility.pushData(OVERFLOW_ERROR_MESSAGE);
+                Utility.pushData(overflow);
                 CodeGen.endFunctions.add("p_integer_overflow");
-                CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
+                Utility.throwRuntimeError();
                 break;
-            case "*":
-                CodeGen.main.add(new SMULL(lhsResult, rhsResult, lhsResult, rhsResult));
-                CodeGen.main.add(new CMP(rhsResult, lhsResult)); // TODO: add ASR #31 shifting HERE as a third param
-                Utility.pushData(OVERFLOW_ERROR_MESSAGE);
-                CodeGen.endFunctions.add("p_integer_overflow");
-                CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
 
 //                try {
 //                    int val =
@@ -101,7 +104,7 @@ public class BinOpAST extends ExpressionAST {
 //                    //CodeGen.main.add(new CMP(second, new PostIndex(first, ASR, new ImmValue(31))));
 //                    CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
 //                    CodeGen.endFunctions.add("p_print_string");
-                break;
+
             case "/":
             case "%":
                 if (!hasError) {
@@ -111,7 +114,11 @@ public class BinOpAST extends ExpressionAST {
                     Register res = Utility.popParamReg();
                     CodeGen.main.add(new MOV(res, rhsResult));
                     CodeGen.main.add(new Branch("L", "p_check_divide_by_zero"));
-                    CodeGen.main.add(new Branch("L", "__aeabi_idiv"));
+                    if(op.equals("/")) {
+                        CodeGen.main.add(new Branch("L", "__aeabi_idiv"));
+                    } else {
+                        CodeGen.main.add(new Branch("L", "__aeabi_idivmod"));
+                    }
 
                     res = op.equals("%") ? res : Register.R0;
                     CodeGen.main.add(new MOV(lhsResult, res));
@@ -121,7 +128,8 @@ public class BinOpAST extends ExpressionAST {
                         CodeGen.placeholders.add("\"\\0\"");
                         CodeGen.endFunctions.add("p_print_ln");
                     }
-                    Utility.throwRuntimeError();
+                    Utility.throwRuntimeError(); // CANNOT Be here due to wrong
+                    // order of functions
                     hasError = true;
                 }
                 break;
