@@ -82,10 +82,15 @@ public class SymbolTable {
 
        while (!S.getMemoryAddress().containsKey(name)) {
            S = S.getEncSymbolTable();
+
+           if(S == null) {
+               break;
+           }
+
            offset++;
        }
 
-       return S.getMemoryAddress().get(name).addToShiftVal(offset);
+       return S == null ? null : S.getMemoryAddress().get(name).addToShiftVal(offset);
    }
 
     public Map<String, ShiftedReg> getMemoryAddress() {

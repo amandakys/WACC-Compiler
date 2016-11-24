@@ -24,7 +24,7 @@ public class PreIndex extends ShiftedReg {
     public String toString() {
         String res = baseReg.toString();
 
-        if(Integer.parseInt(shiftVal.getValue()) != 0) {
+        if(shiftVal != null && Integer.parseInt(shiftVal.getValue()) != 0) {
             if (rm == null) {
                 res += ", " + shiftVal;
             } else if (shiftVal != null) {
@@ -38,7 +38,7 @@ public class PreIndex extends ShiftedReg {
     @Override
     public PreIndex addToShiftVal(int newVal) {
         PreIndex reg = new PreIndex(getBaseReg(), getRm(), getShift(), getShiftVal());
-        int val = Integer.parseInt(reg.getShiftVal().getValue());
+        int val = reg.getShiftVal() != null ? Integer.parseInt(reg.getShiftVal().getValue()) : 0;
         reg.setShiftVal(new ImmValue(String.valueOf(val + newVal)));
         return reg;
     }
