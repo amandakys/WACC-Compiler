@@ -180,14 +180,16 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         //components
         ExpressionAST expr = visitExpression(ctx.expression());
         Visitor.ST = new SymbolTable(Visitor.ST);
+        SymbolTable thenST = Visitor.ST;
         StatementAST then = (StatementAST) visit(ctx.statement(0));
         Visitor.ST = Visitor.ST.getEncSymbolTable();
 
         Visitor.ST = new SymbolTable(Visitor.ST);
+        SymbolTable elseST = Visitor.ST;
         StatementAST elseSt = (StatementAST) visit(ctx.statement(1));
         Visitor.ST = Visitor.ST.getEncSymbolTable();
 
-        IfAST ifAST = new IfAST(ctx, expr, then, elseSt);
+        IfAST ifAST = new IfAST(ctx, expr, then, elseSt, thenST, elseST);
         ifAST.check();
         return ifAST;
     }

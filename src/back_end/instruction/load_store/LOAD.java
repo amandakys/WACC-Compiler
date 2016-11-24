@@ -15,12 +15,12 @@ public class LOAD implements Instruction {
         this.dst = dst;
         this.expression = expression;
 
-//        signed byte
-        if(expression instanceof ShiftedReg) {
-            this.condition = "SB";
-        } else {
-            this.condition = "";
-        }
+////        signed byte
+//        if(expression instanceof ShiftedReg) {
+//            this.condition = "SB";
+//        } else {
+//            this.condition = "";
+//        }
 
     }
 
