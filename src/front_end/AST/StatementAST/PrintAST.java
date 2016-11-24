@@ -98,7 +98,7 @@ public class PrintAST extends StatementAST {
         String placeholder = "";
         String typeName;
         TYPE type = expression.getType();
-        if (type instanceof ARRAY) {
+        if (type.getTypeName() == "array") {
             typeName = "reference";
         } else {
             typeName = type.getTypeName();
