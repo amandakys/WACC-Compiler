@@ -49,6 +49,10 @@ public class AssignlhsAST extends Node {
         }
     }
 
+    public Node getChild() {
+        return child;
+    }
+
     public String getIdent() {
         return ident;
     }

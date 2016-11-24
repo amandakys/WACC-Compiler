@@ -180,4 +180,10 @@ public class Utility {
             }
         }
     }
+
+    public static void throwRuntimeError() {
+        CodeGen.endFunctions.add("p_throw_runtime_error");
+        CodeGen.placeholders.add("\"%.*s\\0\"");
+        CodeGen.endFunctions.add("p_print_string");
+    }
 }

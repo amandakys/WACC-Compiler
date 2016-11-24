@@ -83,6 +83,7 @@ public class BinOpAST extends ExpressionAST {
                 CodeGen.main.add(new Branch("BLNE", "p_throw_overflow_error"));
                 break;
             case "/":
+                Utility.pushData(DIVIDE_BY_ZERO);
                 CodeGen.main.add(new MOV(Register.R0, lhsResult));
 
                 Register res = Utility.popParamReg();
@@ -99,8 +100,6 @@ public class BinOpAST extends ExpressionAST {
                     CodeGen.placeholders.add("\"\\0\"");
                     CodeGen.endFunctions.add("p_print_ln");
                 }
-                CodeGen.endFunctions.add("p_throw_runtime_error");
-
                 break;
             case "%":
                 CodeGen.main.add(new MOV(Register.R0, lhsResult));
@@ -196,5 +195,9 @@ public class BinOpAST extends ExpressionAST {
                 returnType = "bool";
                 break;
         }
+    }
+
+    public String getOp() {
+        return op;
     }
 }

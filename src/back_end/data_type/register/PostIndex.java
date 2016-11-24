@@ -9,8 +9,10 @@ import back_end.data_type.ImmValue;
 public class PostIndex extends ShiftedReg {
     private Register baseReg;
     private Expression e;
+
     private Register rm;
-    private ImmValue shift;
+    private Shift shift;
+    private ImmValue shiftVal;
 
     public PostIndex(Register baseReg) {
         this.baseReg = baseReg;
@@ -23,9 +25,10 @@ public class PostIndex extends ShiftedReg {
         }
     }
 
-    public PostIndex(Register baseReg, Register rm, ImmValue shift) {
+    public PostIndex(Register baseReg, Register rm, Shift shift, ImmValue shiftVal) {
         this.baseReg = baseReg;
         this.shift = shift;
+        this.shiftVal = shiftVal;
         this.rm = rm;
     }
 
@@ -36,7 +39,7 @@ public class PostIndex extends ShiftedReg {
         if(e != null) {
             res += e.toString();
         } else if(rm != null) {
-            res += rm + ", " + shift;
+            res += ", " + rm + ", " + shift + " " + shiftVal;
         }
 
         return "[" + baseReg + "]" + ", " + res;

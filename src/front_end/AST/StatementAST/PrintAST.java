@@ -1,5 +1,6 @@
 package front_end.AST.StatementAST;
 
+import back_end.Utility;
 import back_end.data_type.*;
 import back_end.data_type.register.Register;
 import back_end.instruction.*;
@@ -7,6 +8,7 @@ import back_end.instruction.condition.CMP;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
+import front_end.AST.AssignmentAST.ArrayelemAST;
 import front_end.AST.ExpressionAST.*;
 import front_end.symbol_table.ARRAY;
 import front_end.symbol_table.TYPE;
@@ -32,6 +34,7 @@ public class PrintAST extends StatementAST {
     public void translate() {
         //Result of expression.translate() is stored CodeGen.notUsedRegisters.pop().Final result is stored
         // in R0 so peek at the register to move the value from CodeGen.notUsedRegisters.pop() to R0
+
         Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
         addMain(new MOV(Register.R0, result));
@@ -39,6 +42,9 @@ public class PrintAST extends StatementAST {
         //TODO:find and push the placeholder when there are no more PrintAST node with an expression of the same type
         pushPlaceholder();
 
+        if(expression instanceof BinOpAST && ((BinOpAST) expression).getOp().equals("/")) {
+            Utility.throwRuntimeError();
+        }
 
 //        int exprSize = expression.getType().getSize();
 //        String type = expression.getType().getTypeName();
@@ -98,7 +104,7 @@ public class PrintAST extends StatementAST {
         String placeholder = "";
         String typeName;
         TYPE type = expression.getType();
-        if (type.getTypeName() == "array") {
+        if (type.getTypeName().equals("array")) {
             typeName = "reference";
         } else {
             typeName = type.getTypeName();
@@ -137,7 +143,7 @@ public class PrintAST extends StatementAST {
                 CodeGen.placeholders.add("\"true\\0\"");
                 CodeGen.placeholders.add("\"false\\0\"");
             } else {
-                if (placeholder != "") {
+                if (placeholder.equals("")) {
                     CodeGen.placeholders.add(placeholder);
                 }
             }
@@ -145,6 +151,10 @@ public class PrintAST extends StatementAST {
 
         if (!CodeGen.endFunctions.contains(functionName)) {
             CodeGen.endFunctions.add(functionName);
+        }
+
+        if(expression instanceof ArrayelemAST) {
+           Utility.throwRuntimeError();
         }
     }
 }

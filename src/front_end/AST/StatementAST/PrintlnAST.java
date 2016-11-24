@@ -41,19 +41,6 @@ public class PrintlnAST extends StatementAST {
         if (!CodeGen.endFunctions.contains("p_print_ln")) {
             CodeGen.endFunctions.add("p_print_ln");
         }
-//       if(!Utility.hasFunction("p_print_ln")) {
-//           addMain(new Branch("L", "p_print_ln"));
-//
-//           addFunction(new LabelInstr("p_print_ln"));
-//           addFunction(new PUSH(LR));
-//           addFunction(new LOAD(R0, new LabelExpr(getLastPlaceholder())));
-//           addFunction(new ADD(R0, R0, new ImmValue(4)));
-//           addFunction(new Branch("L", "puts"));
-//           addFunction(new MOV(Register.R0, new ImmValue(0)));
-//           addFunction(new Branch("L", "fflush"));
-//
-//           addFunction(new POP(PC));
-//       }
     }
 
     public ExpressionAST getExpression() {

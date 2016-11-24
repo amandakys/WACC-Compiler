@@ -9,8 +9,10 @@ import back_end.data_type.ImmValue;
 public class PreIndex extends ShiftedReg {
     private Register baseReg;
     private Expression e;
+
     private Register rm;
-    private ImmValue shift;
+    private ImmValue shiftVal;
+    private Shift shift;
     private boolean jump;
 
     public PreIndex(Register baseReg) {
@@ -30,6 +32,14 @@ public class PreIndex extends ShiftedReg {
         this.jump = jump;
     }
 
+    public PreIndex(Register baseReg, Register rm, Shift shift, ImmValue shiftVal) {
+        this.baseReg = baseReg;
+        this.rm = rm;
+        this.shift = shift;
+        this.shiftVal = shiftVal;
+        this.jump = false;
+    }
+
     @Override
     public String toString() {
         String res = baseReg.toString();
@@ -37,7 +47,7 @@ public class PreIndex extends ShiftedReg {
         if(e != null) {
             res += ", " + e.toString();
         } else if(rm != null) {
-            res += ", " + rm + ", " + shift;
+            res += ", " + rm + ", " + shift + " " + shiftVal;
         }
 
         return "[" + res + "]" + (jump ? "!" : "");

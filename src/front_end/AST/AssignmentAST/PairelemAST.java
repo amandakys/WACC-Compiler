@@ -22,7 +22,6 @@ import front_end.symbol_table.PAIR;
 public class PairelemAST extends AssignrhsAST{
     private String token;
     private ExpressionAST expression;
-
     private final String NULL_REFERENCE_ERROR = "\"NullReferenceError: dereference a null reference\\n\\0\"";
 
     public PairelemAST(ParserRuleContext ctx, String token, ExpressionAST expression) {
@@ -49,7 +48,6 @@ public class PairelemAST extends AssignrhsAST{
                 case "snd": identObj = ((PAIR) type.getType()).getSecond();
                     break;
             }
-
         }
     }
 
@@ -63,9 +61,8 @@ public class PairelemAST extends AssignrhsAST{
 
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
         CodeGen.main.add(new LOAD(before, new PreIndex(before)));
-        CodeGen.main.add(new LOAD(before, new PreIndex(before)));
 
         CodeGen.endFunctions.add("p_check_null_pointer");
-        CodeGen.endFunctions.add("p_throw_runtime_error");
+
     }
 }

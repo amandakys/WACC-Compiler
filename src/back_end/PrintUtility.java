@@ -173,6 +173,7 @@ public class PrintUtility {
     }
 
     public static void p_check_array_bounds() {
+        CodeGen.functions.add(new LabelInstr("p_check_array_bounds"));
         CodeGen.functions.add(new PUSH(Register.LR));
 
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));

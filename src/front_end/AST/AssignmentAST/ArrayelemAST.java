@@ -5,6 +5,7 @@ import back_end.Utility;
 import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
 import back_end.data_type.LabelExpr;
+import back_end.data_type.register.PostIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 import back_end.instruction.POP;
@@ -83,19 +84,14 @@ public class ArrayelemAST extends ExpressionAST {
 
         ProgramAST.nextAddress += identObj.getSize();
 
-        CodeGen.functions.add(new ADD(first, first, new ImmValue(INT_SIZE)));
-        //TODO
+        //CodeGen.functions.add(new ADD(first, first, new ImmValue(INT_SIZE)));
+
         //CodeGen.functions.add(new ADD(first, first, new PostIndex()));
         CodeGen.functions.add(new LOAD(first, new Address(first)));
         CodeGen.functions.add(new MOV(Register.R0, first));
         CodeGen.functions.add(new Branch("L", "p_print_int"));
 
         CodeGen.endFunctions.add("p_check_array_bounds");
-        CodeGen.endFunctions.add("p_print_int");
-        if(ctx.getParent() instanceof BasicParser.PrintlnContext) {
-            CodeGen.endFunctions.add("p_print_ln");
-        }
-        CodeGen.endFunctions.add("p_throw_runtime_error");
     }
 
 }
