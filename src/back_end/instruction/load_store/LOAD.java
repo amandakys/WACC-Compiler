@@ -1,10 +1,12 @@
 package back_end.instruction.load_store;
 
+import back_end.Utility;
 import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.Instruction;
+import main.CodeGen;
 
 public class LOAD implements Instruction {
     private String condition = "";
@@ -21,6 +23,7 @@ public class LOAD implements Instruction {
 //        } else {
 //            this.condition = "";
 //        }
+
     }
 
     public LOAD(String condition, Register dst, Expression expression) {

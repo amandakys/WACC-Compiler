@@ -1,5 +1,6 @@
 package front_end.AST.StatementAST;
 
+import back_end.Utility;
 import front_end.symbol_table.IDENTIFIER;
 
 import back_end.data_type.ImmValue;
@@ -55,13 +56,15 @@ public class IfAST extends StatementAST {
         labelCount ++;
         result = CodeGen.notUsedRegisters.peek();
         then.translate();
-        CodeGen.notUsedRegisters.push(result);
+        Utility.pushBackRegisters();
+        //CodeGen.notUsedRegisters.push(result);
         String l1 = labelCount.toString();
         CodeGen.main.add(new Branch("", "L" + l1));
         CodeGen.main.add(new LabelInstr("L" + l0));
         result = CodeGen.notUsedRegisters.peek();
         elseSt.translate();
-        CodeGen.notUsedRegisters.push(result);
+        Utility.pushBackRegisters();
+        //CodeGen.notUsedRegisters.push(result);
         CodeGen.main.add(new LabelInstr("L" + l1));
 
     }
