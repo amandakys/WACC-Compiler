@@ -94,7 +94,7 @@ public class ProgramAST extends Node {
             int spSize = saved_Size;
 
             if(spSize > STACK_SIZE) {
-                Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(STACK_SIZE)));
+                Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(STACK_SIZE)));
                 while(spSize > STACK_SIZE) {
                     //increment stack pointer
                     spSize = (int) (spSize - STACK_SIZE);
