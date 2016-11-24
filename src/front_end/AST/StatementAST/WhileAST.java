@@ -8,6 +8,7 @@ import back_end.instruction.LabelInstr;
 import back_end.instruction.condition.CMP;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.ProgramAST;
+import front_end.symbol_table.SymbolTable;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -18,11 +19,14 @@ import org.antlr.v4.runtime.ParserRuleContext;
 public class WhileAST extends StatementAST {
     ExpressionAST expression;
     StatementAST statement;
+    SymbolTable ST;
 
     public WhileAST(ParserRuleContext ctx, ExpressionAST expression, StatementAST statement) {
         super(ctx);
         this.expression = expression;
         this.statement = statement;
+        this.ST = Visitor.ST;
+
     }
 
     @Override
@@ -47,8 +51,10 @@ public class WhileAST extends StatementAST {
         String whileBodyLabel = labelCount.toString();
         CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
         Register result = CodeGen.notUsedRegisters.peek();
+        Visitor.ST = ST;
         ProgramAST.newScope(statement);
         Utility.pushBackRegisters();
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
         Utility.pushRegister(result);
         CodeGen.main.add(new LabelInstr("L" + conditionLabel));
 

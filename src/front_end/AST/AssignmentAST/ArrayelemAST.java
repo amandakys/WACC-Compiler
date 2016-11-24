@@ -1,6 +1,7 @@
 package front_end.AST.AssignmentAST;
 
 import antlr.BasicParser;
+import back_end.Error;
 import back_end.Utility;
 import back_end.data_type.*;
 import back_end.data_type.register.PostIndex;
@@ -37,8 +38,6 @@ public class ArrayelemAST extends ExpressionAST {
     private String ident;
     private List<Node> expressions = new ArrayList<>();
 
-    private final String NEGATIVE_ARRAY_BOUND = "\"ArrayIndexOutOfBoundsError: negative index\\n\\0\"";
-    private final String TOO_LARGE_ARRAY_BOUND = "\"ArrayIndexOutOfBoundsError: index too large\\n\\0\"";
     private static boolean hasError;
     private final int INT_SIZE = 4;
 
@@ -70,18 +69,26 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        Register r = Utility.popUnusedReg();
-        addMain(new LOAD(r, new Address(r)));
-        if(!hasError) {
-            Register first = Utility.popUnusedReg();
-            Utility.pushData(NEGATIVE_ARRAY_BOUND);
-            Utility.pushData(TOO_LARGE_ARRAY_BOUND);
+        //addMain(new LOAD(r, new Address(r)));
+        int address = 0;
+        Register first = Utility.popUnusedReg();
 
-            CodeGen.main.add(new ADD(first, Register.SP, new ImmValue(ProgramAST.nextAddress)));
-            Register reg = CodeGen.notUsedRegisters.peek();
-            for(Node n : expressions) {
-                n.translate();
+        CodeGen.main.add(new ADD(first, Register.SP, new ImmValue(address)));
+        for(Node n : expressions) {
+            if(!hasError) {
+                Utility.pushData(Error.arrayOutOfBoundsNegative);
+                Utility.pushData(Error.arrayOutOfBoundsLarge);
+
+                CodeGen.endFunctions.add("p_check_array_bounds");
+                Utility.throwRuntimeError();
+                hasError = true;
             }
+
+
+            Register reg = CodeGen.notUsedRegisters.peek();
+
+            //load the first value of an array to a register
+            n.translate();
 
             CodeGen.main.add(new LOAD(first, new Address(first)));
             CodeGen.main.add(new MOV(Register.R0, reg));
@@ -89,19 +96,13 @@ public class ArrayelemAST extends ExpressionAST {
             CodeGen.main.add(new Branch("L", "p_check_array_bounds"));
 
             ProgramAST.nextAddress += identObj.getSize();
-            ShiftedReg size = new PostIndex(first, Utility.popParamReg(), Shift.LSL, new ImmValue(2));
+            ShiftedReg size = new PostIndex(first, reg, Shift.LSL, new ImmValue(2));
 
-            CodeGen.main.add(new ADD(first, first, new ImmValue(ProgramAST.nextAddress)));
-            CodeGen.main.add(new ADD(first, first, size));
+            CodeGen.main.add(new ADD(first, first, new ImmValue(identObj.getSize())));
+            CodeGen.main.add(new ADD(first, size));
             CodeGen.main.add(new LOAD(first, new Address(first)));
 
-            CodeGen.endFunctions.add("p_check_array_bounds");
-            Utility.throwRuntimeError();
-            hasError = true;
+            address += identObj.getSize();
         }
-    }
-
-    public static boolean isHasError() {
-        return hasError;
     }
 }
