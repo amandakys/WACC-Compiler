@@ -32,9 +32,11 @@ public class BinOpAST extends ExpressionAST {
 
     private ExpressionAST rhs;
     private ExpressionAST lhs;
+    private boolean longExpr; // This fields tells if the BinOp is in a longEpr
 
     private static boolean hasErrorDivByZero;
     private static boolean hasErrorOverflow;
+
 
     public BinOpAST(ParserRuleContext ctx, String op, ExpressionAST lhs, ExpressionAST rhs) {
         super(ctx);
@@ -42,6 +44,8 @@ public class BinOpAST extends ExpressionAST {
         this.rhs = rhs;
         this.lhs = lhs;
         hasErrorDivByZero = false;
+        hasErrorOverflow = false;
+        longExpr = false;
         initialise();
     }
 
@@ -66,9 +70,15 @@ public class BinOpAST extends ExpressionAST {
     @Override
     public void translate() {
         Register lhsResult = CodeGen.notUsedRegisters.peek();
-        lhs.translate(); //this will then add to main a LOAD instr which put value of lhs into lhsResult
+        lhs.translate();
         Register rhsResult = CodeGen.notUsedRegisters.peek();
-        rhs.translate(); //same as lhs
+        if(rhs instanceof BinOpAST) {
+            Utility.pushRegister(lhsResult);
+            ((BinOpAST) rhs).setLongExpr(); // because this is a long expr
+        }
+        if(!longExpr) {
+            rhs.translate(); //same as lhs
+        }
         switch(op) {
             case "+":
             case "-":
@@ -183,7 +193,10 @@ public class BinOpAST extends ExpressionAST {
                 Utility.pushRegister(rhsResult);
                 break;
         }
-
+        if(longExpr) {
+            Utility.pushRegister(lhsResult);
+            rhs.translate();
+        }
     }
 
     private void initialise() {
@@ -226,5 +239,9 @@ public class BinOpAST extends ExpressionAST {
 
     public static boolean isHasErrorDivByZero() {
         return hasErrorDivByZero;
+    }
+
+    private void setLongExpr() {
+        longExpr = true;
     }
 }

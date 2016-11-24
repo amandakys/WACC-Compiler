@@ -1,6 +1,7 @@
 package front_end.AST.AssignmentAST;
 
 import antlr.BasicParser;
+import back_end.Error;
 import back_end.Utility;
 import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
@@ -27,7 +28,6 @@ import static back_end.Utility.addMain;
 public class PairelemAST extends AssignrhsAST{
     private String token;
     private ExpressionAST expression;
-    private final String NULL_REFERENCE_ERROR = "\"NullReferenceError: dereference a null reference\\n\\0\"";
     private final int PAIR_SIZE = 4;
 
     private static boolean hasError;
@@ -66,29 +66,30 @@ public class PairelemAST extends AssignrhsAST{
         if(Visitor.ST.getAddress(token) != null) {
             addMain(new LOAD(r, new Address(r)));
         }
-        Utility.pushData(NULL_REFERENCE_ERROR);
 
-        //the value must be loaded differently depending on which side pairelem is
-        int addressLHS = 0;
-        int addressRHS = 0;
+//        if(ctx.getParent() instanceof BasicParser.AssignlhsContext) {
+//            //when the address is on the lhs (an assignment)
+//           addressLHS += token.equals("fst") ? 0 : PAIR_SIZE;
+//        } else if (ctx.getParent() instanceof BasicParser.AssignrhsContext) {
+//            //the address refers to the whole pair if it is on the rhs (of a vardec)
+//            addressRHS += PAIR_SIZE;
+//            addressLHS += addressLHS = token.equals("fst") ? 0 : PAIR_SIZE;
+//        } else {
+//            //when the address refers to an expression
+//            addressRHS += token.equals("fst") ? 0 : PAIR_SIZE;
+//        }
 
-        if(ctx.getParent() instanceof BasicParser.AssignlhsContext) {
-            //when the address is on the lhs (an assignment)
-           addressLHS = token.equals("fst") ? 0 : PAIR_SIZE;
-        } else if (ctx.getParent() instanceof BasicParser.AssignrhsContext) {
-            //the address refers to the whole pair if it is on the rhs (of a vardec)
-            addressRHS = PAIR_SIZE;
-            addressLHS = addressLHS = token.equals("fst") ? 0 : PAIR_SIZE;
-        } else {
-            //when the address refers to an expression
-            addressRHS = token.equals("fst") ? 0 : PAIR_SIZE;
+        String ident = "";
+
+        if(expression instanceof IdentAST) {
+            ident = ((IdentAST) expression).getIdent();
         }
-
-        CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP, new ImmValue(addressRHS))));
+        //TODO
+       // CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP, new ImmValue())));
         CodeGen.main.add(new MOV(Register.R0, r));
 
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
-        CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(addressLHS))));
+        CodeGen.main.add(new LOAD(r, new PreIndex(r)));
 
         if(ctx.getParent() instanceof BasicParser.AssignlhsContext ||
                 ctx.getParent() instanceof BasicParser.AssignrhsContext) {
@@ -96,6 +97,7 @@ public class PairelemAST extends AssignrhsAST{
         }
 
         if(!hasError) {
+            Utility.pushData(Error.nullReference);
             CodeGen.endFunctions.add("p_check_null_pointer");
             Utility.throwRuntimeError();
             hasError = true;

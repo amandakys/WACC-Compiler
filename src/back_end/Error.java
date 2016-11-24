@@ -11,9 +11,9 @@ public class Error {
 
     public static final String nullReference = "\"NullReferenceError: dereference a null reference\\n\\0\"";
 
-    public static final String arrayOutOfBoundsNegative = "ArrayIndexOutOfBoundsError: negative index\n\0";
+    public static final String arrayOutOfBoundsNegative = "\"ArrayIndexOutOfBoundsError: negative index\\n\\0\"";
 
-    public static final String arrayOutOfBoundsLarge = "ArrayIndexOutOfBoundsError: index too large\n\0";
+    public static final String arrayOutOfBoundsLarge = "\"ArrayIndexOutOfBoundsError: index too large\\n\\0\"";
 
 
 }

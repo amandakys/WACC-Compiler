@@ -5,9 +5,4 @@ package back_end.data_type.register;
  */
 public enum Shift {
     LSL, LSR, ASR, ROR;
-
-    @Override
-    public String toString() {
-        return name().toLowerCase();
-    }
 }
