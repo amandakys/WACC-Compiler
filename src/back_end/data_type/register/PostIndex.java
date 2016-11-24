@@ -2,6 +2,7 @@ package back_end.data_type.register;
 
 import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
+import javafx.geometry.Pos;
 
 public class PostIndex extends ShiftedReg {
     public PostIndex(Register baseReg) {
@@ -18,6 +19,13 @@ public class PostIndex extends ShiftedReg {
 
     public PostIndex(Register baseReg, Register rm, Shift shift, ImmValue shiftVal) {
         super(baseReg, rm, shift, shiftVal);
+    }
+
+    @Override
+    public PostIndex addToShiftVal(int newVal) {
+        PostIndex reg = new PostIndex(getBaseReg(), getRm(), getShift(), getShiftVal());
+        reg.setShiftVal(new ImmValue(reg.getShiftVal().getValue() + newVal));
+        return reg;
     }
 
     @Override

@@ -36,8 +36,29 @@ public abstract class ShiftedReg extends Expression {
         this.jump = false;
     }
 
-    public ShiftedReg addToShiftVal(int newVal) {
-        this.shiftVal = new ImmValue(newVal);
-        return this;
+    public abstract ShiftedReg addToShiftVal(int newVal);
+
+    public Register getBaseReg() {
+        return baseReg;
+    }
+
+    public Register getRm() {
+        return rm;
+    }
+
+    public ImmValue getShiftVal() {
+        return shiftVal;
+    }
+
+    public Shift getShift() {
+        return shift;
+    }
+
+    public boolean isJump() {
+        return jump;
+    }
+
+    public void setShiftVal(ImmValue shiftVal) {
+        this.shiftVal = shiftVal;
     }
 }

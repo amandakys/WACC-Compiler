@@ -34,4 +34,11 @@ public class PreIndex extends ShiftedReg {
 
         return "[" + res + "]" + (jump ? "!" : "");
     }
+
+    @Override
+    public PreIndex addToShiftVal(int newVal) {
+        PreIndex reg = new PreIndex(getBaseReg(), getRm(), getShift(), getShiftVal());
+        reg.setShiftVal(new ImmValue(reg.getShiftVal().getValue() + newVal));
+        return reg;
+    }
 }
