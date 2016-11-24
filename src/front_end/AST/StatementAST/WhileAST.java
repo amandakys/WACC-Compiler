@@ -7,6 +7,7 @@ import back_end.instruction.Branch;
 import back_end.instruction.LabelInstr;
 import back_end.instruction.condition.CMP;
 import front_end.AST.ExpressionAST.ExpressionAST;
+import front_end.AST.ProgramAST;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -46,7 +47,7 @@ public class WhileAST extends StatementAST {
         String whileBodyLabel = labelCount.toString();
         CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
         Register result = CodeGen.notUsedRegisters.peek();
-        statement.translate();
+        ProgramAST.newScope(statement);
         Utility.pushBackRegisters();
         Utility.pushRegister(result);
         CodeGen.main.add(new LabelInstr("L" + conditionLabel));
