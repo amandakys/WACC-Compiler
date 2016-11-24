@@ -5,7 +5,7 @@ package back_end;
  */
 public class Error {
     public static final String overflow = "\"OverflowError: the result is too small/large to store in a " +
-            "4-byte signed-integer.\n\"";
+            "4-byte signed-integer.\\n\"";
 
     public static final String divideByZero = "\"DivideByZeroError: divide or modulo by zero\\n\\0\"";
 

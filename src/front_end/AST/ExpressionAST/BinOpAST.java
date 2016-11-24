@@ -3,27 +3,15 @@ package front_end.AST.ExpressionAST;
 import antlr.BasicParser;
 import back_end.Utility;
 import back_end.data_type.ImmValue;
-import back_end.data_type.LabelExpr;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
-import back_end.instruction.LabelInstr;
-import back_end.instruction.POP;
-import back_end.instruction.PUSH;
-
 import back_end.instruction.condition.AND;
 import back_end.instruction.condition.CMP;
 import back_end.instruction.condition.ORR;
-
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.data_manipulation.SMULL;
 import back_end.instruction.data_manipulation.SUB;
-
-
-import back_end.instruction.load_store.LOAD;
-import front_end.AST.StatementAST.PrintAST;
-import front_end.AST.StatementAST.PrintlnAST;
-
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -43,6 +31,9 @@ public class BinOpAST extends ExpressionAST {
     private ExpressionAST lhs;
 
     private final String DIVIDE_BY_ZERO = "\"DivideByZeroError: divide or modulo by zero\\n\\0\"";
+    private final String OVERFLOW_ERROR_MESSAGE = "\"OverflowError: the result is too small/large to store in a " +
+            "4-byte signed-integer.\\n\"";
+
 
     public BinOpAST(ParserRuleContext ctx, String op, ExpressionAST lhs, ExpressionAST rhs) {
         super(ctx);
@@ -77,10 +68,36 @@ public class BinOpAST extends ExpressionAST {
         Register rhsResult = CodeGen.notUsedRegisters.peek();
         rhs.translate(); //same as lhs
         switch(op) {
+            case "+":
+            case "-":
+                if(op.equals("+")) {
+                    CodeGen.main.add(new ADD(lhsResult, lhsResult, rhsResult));
+                } else if(op.equals("-")){
+                    CodeGen.main.add(new SUB(lhsResult, lhsResult, rhsResult));
+                }
+                Utility.pushData(OVERFLOW_ERROR_MESSAGE);
+                CodeGen.endFunctions.add("p_integer_overflow");
+                CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
+                break;
             case "*":
                 CodeGen.main.add(new SMULL(lhsResult, rhsResult, lhsResult, rhsResult));
                 CodeGen.main.add(new CMP(rhsResult, lhsResult)); // TODO: add ASR #31 shifting HERE as a third param
-                CodeGen.main.add(new Branch("BLNE", "p_throw_overflow_error"));
+                Utility.pushData(OVERFLOW_ERROR_MESSAGE);
+                CodeGen.endFunctions.add("p_integer_overflow");
+                CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
+
+//                try {
+//                    int val =
+//                    CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(val)));
+//                } catch (NumberFormatException e) {
+//                    Utility.pushData(OVERFLOW_ERROR_MESSAGE);
+//
+//                    Register second = CodeGen.toPushUnusedReg.get(0);
+//                    Register first = CodeGen.toPushUnusedReg.get(1);
+//
+//                    //CodeGen.main.add(new CMP(second, new PostIndex(first, ASR, new ImmValue(31))));
+//                    CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
+//                    CodeGen.endFunctions.add("p_print_string");
                 break;
             case "/":
                 Utility.pushData(DIVIDE_BY_ZERO);
@@ -108,13 +125,7 @@ public class BinOpAST extends ExpressionAST {
                 CodeGen.main.add(new Branch("L", "__aeabi_idivmod"));
                 CodeGen.main.add(new MOV(lhsResult, Register.R1));
                 break;
-            case "+":
-                CodeGen.main.add(new ADD(lhsResult, lhsResult, rhsResult));
-                break;
-            case "-":
-                CodeGen.main.add(new SUB(lhsResult, lhsResult, rhsResult));
-                break;
-                //TODO: make function in Utility to throw overflow error
+
             case ">":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
                 CodeGen.notUsedRegisters.push(rhsResult);
