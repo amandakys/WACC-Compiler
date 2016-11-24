@@ -30,6 +30,7 @@ public class ProgramAST extends Node {
     //specifies how many VARIABLE there are in current symbol table
     public static int size;
     private boolean hasInitialised = false;
+    private static double STACK_SIZE = Math.pow(2, 10);
 
     public ProgramAST(ParserRuleContext ctx, List<FunctionDeclAST> functions, StatementAST statement) {
         super(ctx);
@@ -49,7 +50,6 @@ public class ProgramAST extends Node {
             size = Visitor.ST.findSize();
             hasInitialised = true;
         }
-        Operand operSize = new ImmValue(size);
 
         for(FunctionDeclAST func : functions) {
             func.translate();
@@ -58,19 +58,7 @@ public class ProgramAST extends Node {
         Utility.addMain(new LabelInstr("main"));
         Utility.addMain(new PUSH(Register.LR));
 
-        boolean hasChanged = false;
-        if(size != 0) {
-            //decrement stack pointer
-            Utility.addMain(new SUB(Register.SP, Register.SP, operSize));
-            hasChanged = true;
-        }
-
-        statement.translate();
-
-        if(size == 0 && hasChanged) {
-            //increment stack pointer
-            Utility.addMain(new ADD(Register.SP, Register.SP, operSize));
-        }
+        newScope(statement);
 
         Utility.addMain(new LOAD(Register.R0, new ImmValue(0)));
         Utility.addMain(new POP(Register.PC));
@@ -83,6 +71,33 @@ public class ProgramAST extends Node {
         }
 
         printUtility.ioFunctions();
+    }
+
+    public static void newScope(StatementAST statement) {
+        boolean hasChanged = false;
+        if(size != 0) {
+            int spSize = size;
+            Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
+
+            while(spSize > STACK_SIZE) {
+                //decrement stack pointer
+                spSize = (int) (spSize - STACK_SIZE);
+                Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
+            }
+            hasChanged = true;
+        }
+
+        statement.translate();
+
+        if(size == 0 && hasChanged) {
+            int spSize = Visitor.ST.findSize();
+            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
+            while(spSize > STACK_SIZE) {
+                //increment stack pointer
+                spSize = (int) (spSize - STACK_SIZE);
+                Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
+            }
+        }
     }
 }
 
