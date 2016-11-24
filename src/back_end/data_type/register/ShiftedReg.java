@@ -2,6 +2,7 @@ package back_end.data_type.register;
 
 import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
+import front_end.symbol_table.TYPE;
 
 /**
  * Created by donamphuong on 21/11/2016.
@@ -36,6 +37,14 @@ public abstract class ShiftedReg extends Expression {
         this.jump = false;
     }
 
+    public ShiftedReg(Register baseReg, Register rm, ImmValue shiftVal, Shift shift, boolean jump, TYPE type) {
+        this.baseReg = baseReg;
+        this.rm = rm;
+        this.shiftVal = shiftVal;
+        this.shift = shift;
+        this.jump = jump;
+    }
+
     public abstract ShiftedReg addToShiftVal(int newVal);
 
     public Register getBaseReg() {
@@ -61,4 +70,5 @@ public abstract class ShiftedReg extends Expression {
     public void setShiftVal(ImmValue shiftVal) {
         this.shiftVal = shiftVal;
     }
+
 }
