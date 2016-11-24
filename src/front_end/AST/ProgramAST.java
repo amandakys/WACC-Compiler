@@ -29,7 +29,6 @@ public class ProgramAST extends Node {
     public static int nextAddress = 0;
     //specifies how many VARIABLE there are in current symbol table
     public static int size;
-    private boolean hasInitialised = false;
     private static int STACK_SIZE = (int) Math.pow(2, 10);
 
     public ProgramAST(ParserRuleContext ctx, List<FunctionDeclAST> functions, StatementAST statement) {
@@ -45,12 +44,6 @@ public class ProgramAST extends Node {
 
     @Override
     public void translate() {
-        //initialise size if it has not been initialised
-        if(!hasInitialised) {
-            size = Visitor.ST.findSize();
-            hasInitialised = true;
-        }
-
         for(FunctionDeclAST func : functions) {
             func.translate();
         }
@@ -74,6 +67,7 @@ public class ProgramAST extends Node {
     }
 
     public static void newScope(StatementAST statement) {
+        size = Visitor.ST.findSize();
         boolean hasChanged = false;
         int saved_Size = size;
 

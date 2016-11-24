@@ -3,51 +3,33 @@ package back_end.data_type.register;
 import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
 
-/**
- * Created by donamphuong on 22/11/2016.
- */
 public class PreIndex extends ShiftedReg {
-    private Register baseReg;
-    private Expression e;
-
-    private Register rm;
-    private ImmValue shiftVal;
-    private Shift shift;
-    private boolean jump;
-
     public PreIndex(Register baseReg) {
-        this.baseReg = baseReg;
+        super(baseReg);
     }
 
-    public PreIndex(Register baseReg, Expression e) {
-        this(baseReg, e, false);
+    public PreIndex(Register baseReg, ImmValue shiftVal) {
+        super(baseReg, shiftVal);
     }
 
-    public PreIndex(Register baseReg, Expression e, boolean jump) {
-        this.baseReg = baseReg;
-
-        if(!(e instanceof ImmValue && e.toString().equals("#0"))) {
-            this.e = e;
-        }
-        this.jump = jump;
+    public PreIndex(Register baseReg, ImmValue shiftVal, boolean jump) {
+        super(baseReg, shiftVal, jump);
     }
 
     public PreIndex(Register baseReg, Register rm, Shift shift, ImmValue shiftVal) {
-        this.baseReg = baseReg;
-        this.rm = rm;
-        this.shift = shift;
-        this.shiftVal = shiftVal;
-        this.jump = false;
+        super(baseReg, rm, shift, shiftVal);
     }
 
     @Override
     public String toString() {
         String res = baseReg.toString();
 
-        if(e != null) {
-            res += ", " + e.toString();
-        } else if(rm != null) {
-            res += rm + ", " + shift + " " + shiftVal;
+        if(Integer.parseInt(shiftVal.getValue()) != 0) {
+            if (rm == null) {
+                res += ", " + shiftVal;
+            } else if (rm != null && shiftVal != null) {
+                res += rm + ", " + shift + " " + shiftVal;
+            }
         }
 
         return "[" + res + "]" + (jump ? "!" : "");
