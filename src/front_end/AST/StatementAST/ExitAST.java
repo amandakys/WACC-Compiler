@@ -3,7 +3,7 @@ package front_end.AST.StatementAST;
 import back_end.Utility;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
-import back_end.instruction.data_manipulation.Mov;
+import back_end.instruction.data_manipulation.MOV;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.symbol_table.IDENTIFIER;
 import main.CodeGen;
@@ -32,7 +32,7 @@ public class ExitAST extends StatementAST{
         Register res = CodeGen.notUsedRegisters.peek();
         expression.translate();
 
-        Utility.addMain(new Mov(Register.R0, res));
+        Utility.addMain(new MOV(Register.R0, res));
         Utility.addMain(new Branch("L", "exit"));
 
     }

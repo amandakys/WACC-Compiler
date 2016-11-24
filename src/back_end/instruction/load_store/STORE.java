@@ -8,12 +8,12 @@ import main.CodeGen;
 /*
     STR instructions store a register value into memory
  */
-public class Store implements Instruction {
+public class STORE implements Instruction {
     private Register dst;
     private Expression expression;
     private String type = "";
 
-    public Store(Register dst, Expression expression, int size) {
+    public STORE(Register dst, Expression expression, int size) {
         this.dst = dst;
         this.expression = expression;
 

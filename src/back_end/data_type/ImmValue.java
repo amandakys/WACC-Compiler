@@ -17,6 +17,10 @@ public class ImmValue extends Expression {
         isLetter = Character.isLetter(value.charAt(0));
     }
 
+    public String getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return isLetter ? "#\'" + value + "\'" : "#" + value;

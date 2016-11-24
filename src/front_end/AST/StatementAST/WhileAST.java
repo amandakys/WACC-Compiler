@@ -2,6 +2,7 @@ package front_end.AST.StatementAST;
 
 import back_end.Utility;
 import back_end.data_type.ImmValue;
+import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 import back_end.instruction.LabelInstr;
 import back_end.instruction.condition.CMP;
@@ -44,10 +45,16 @@ public class WhileAST extends StatementAST {
         labelCount++;
         String whileBodyLabel = labelCount.toString();
         CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
+        Register result = CodeGen.notUsedRegisters.peek();
         statement.translate();
+        Utility.pushBackRegisters();
+        //CodeGen.notUsedRegisters.push(result);
         CodeGen.main.add(new LabelInstr("L" + conditionLabel));
 
+        result = CodeGen.notUsedRegisters.peek();
         expression.translate();
+        Utility.pushBackRegisters();
+        //CodeGen.notUsedRegisters.push(result);
         CodeGen.main.add(new CMP(CodeGen.notUsedRegisters.peek(), new ImmValue(1)));
         CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
     }

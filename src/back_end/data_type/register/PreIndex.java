@@ -11,16 +11,23 @@ public class PreIndex extends ShiftedReg {
     private Expression e;
     private Register rm;
     private ImmValue shift;
+    private boolean jump;
 
     public PreIndex(Register baseReg) {
         this.baseReg = baseReg;
     }
 
     public PreIndex(Register baseReg, Expression e) {
+        this(baseReg, e, false);
+    }
+
+    public PreIndex(Register baseReg, Expression e, boolean jump) {
         this.baseReg = baseReg;
+
         if(!(e instanceof ImmValue && e.toString().equals("#0"))) {
             this.e = e;
         }
+        this.jump = jump;
     }
 
     @Override
@@ -33,6 +40,6 @@ public class PreIndex extends ShiftedReg {
             res += ", " + rm + ", " + shift;
         }
 
-        return "[" + res + "]";
+        return "[" + res + "]" + (jump ? "!" : "");
     }
 }

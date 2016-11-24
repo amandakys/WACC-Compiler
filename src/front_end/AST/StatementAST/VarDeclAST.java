@@ -6,20 +6,13 @@ import back_end.data_type.*;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
-import back_end.instruction.Branch;
-import back_end.instruction.load_store.Load;
-import back_end.instruction.load_store.Store;
-import front_end.AST.AssignmentAST.ArraylitAST;
+import back_end.instruction.load_store.LOAD;
+import back_end.instruction.load_store.STORE;
+import front_end.AST.ExpressionAST.ArraylitAST;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
-import front_end.AST.AssignmentAST.NewpairAST;
-import front_end.AST.ExpressionAST.BoolliterAST;
-import front_end.AST.ExpressionAST.CharLitAST;
-import front_end.AST.ExpressionAST.IntLiterAST;
-import front_end.AST.ExpressionAST.PairliterAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
-import front_end.AST.TypeAST.BasetypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
 import front_end.AST.TypeAST.TypeAST;
 import front_end.symbol_table.*;
@@ -35,8 +28,6 @@ public class VarDeclAST extends StatementAST {
     private String ident;
     private TypeAST type;
     private AssignrhsAST rhs;
-
-    private static int byte_size = 0;
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
@@ -112,16 +103,13 @@ public class VarDeclAST extends StatementAST {
 
     @Override
     public void translate() {
+        ProgramAST.nextAddress = identObj.getType().getSize() < 0 ? identObj.getSize() : 0;
+
         if(rhs instanceof ArraylitAST) {
             int arrSize = ((ArraylitAST) rhs).getArraylits().size();
-            byte_size = (arrSize + 1) * identObj.getSize();
+            int array_size = arrSize*identObj.getType().getSize() + identObj.getSize();
 
-            CodeGen.main.add(new Load(Register.R0, new ImmValue(byte_size)));
-        } else if(rhs instanceof NewpairAST) {
-            byte_size = ((PAIR) identObj).getFirst().getSize() +
-                    ((PAIR) identObj).getSecond().getSize();
-        } else {
-            byte_size = ProgramAST.size;
+            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(array_size)));
         }
 
         Register res = CodeGen.notUsedRegisters.peek();
@@ -132,17 +120,17 @@ public class VarDeclAST extends StatementAST {
         if (type instanceof ArraytypeAST) {
             Register value = Utility.popUnusedReg();
 
-            CodeGen.main.add(new Load(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
-            CodeGen.main.add(new Store(value, new PreIndex(res), identObj.getSize()));
+            CodeGen.main.add(new LOAD(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
+            CodeGen.main.add(new STORE(value, new PreIndex(res), identObj.getSize()));
         }
 
         ProgramAST.nextAddress += identObj.getSize();
+        ProgramAST.size -= identObj.getSize();
 
         ShiftedReg address = new PreIndex(Register.SP,
-                new ImmValue(ProgramAST.nextAddress - byte_size));
-        CodeGen.memoryAddress.put(ident, address);
+                new ImmValue(ProgramAST.size));
+        Visitor.ST.addToMemoryAddress(ident, address);
 
-        //decrement the nextAddress according to the object's byte_size
-        CodeGen.main.add(new Store(res, address, identObj.getSize()));
+        CodeGen.main.add(new STORE(res, address, identObj.getSize()));
     }
 }

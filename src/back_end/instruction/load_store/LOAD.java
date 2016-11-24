@@ -1,17 +1,19 @@
 package back_end.instruction.load_store;
 
+import back_end.Utility;
 import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.Instruction;
+import main.CodeGen;
 
-public class Load implements Instruction {
+public class LOAD implements Instruction {
     private String condition = "";
     private Register dst;
     private Expression expression;
 
-    public Load(Register dst, Expression expression) {
+    public LOAD(Register dst, Expression expression) {
         this.dst = dst;
         this.expression = expression;
 
@@ -21,9 +23,10 @@ public class Load implements Instruction {
 //        } else {
 //            this.condition = "";
 //        }
+
     }
 
-    public Load(String condition, Register dst, Expression expression) {
+    public LOAD(String condition, Register dst, Expression expression) {
         this.condition = condition;
         this.dst = dst;
         this.expression = expression;

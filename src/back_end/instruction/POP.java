@@ -3,10 +3,10 @@ package back_end.instruction;
 import back_end.data_type.register.Register;
 import main.CodeGen;
 
-public class Pop implements Instruction{
+public class POP implements Instruction{
     private Register reg;
 
-    public Pop(Register reg) {
+    public POP(Register reg) {
         this.reg = reg;
     }
 

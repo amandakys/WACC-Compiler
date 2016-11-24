@@ -5,8 +5,8 @@ import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
-import back_end.instruction.load_store.Load;
-import back_end.instruction.load_store.Store;
+import back_end.instruction.load_store.LOAD;
+import back_end.instruction.load_store.STORE;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
@@ -38,15 +38,20 @@ public class NewpairAST extends AssignrhsAST {
 
     @Override
     public void translate() {
+        ProgramAST.nextAddress = 0;
+
         for (ExpressionAST elem: pairelems) {
             Register res = CodeGen.notUsedRegisters.peek();
             elem.translate();
 
-            CodeGen.main.add(new Load(Register.R0, new ImmValue(identObj.getSize())));
+            int sizeElem = elem.getIdentObj().getSize();
+
+            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(sizeElem)));
             CodeGen.main.add(new Branch("L", "malloc"));
-            CodeGen.main.add(new Store(res, new PreIndex(Register.R0), identObj.getSize()));
-            CodeGen.main.add(new Store(Register.R0, new PreIndex(Utility.getBefore(res),
+            CodeGen.main.add(new STORE(res, new PreIndex(Register.R0), identObj.getSize()));
+            CodeGen.main.add(new STORE(Register.R0, new PreIndex(Utility.getBefore(res),
                     new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
+
             ProgramAST.nextAddress += identObj.getSize();
         }
     }

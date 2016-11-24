@@ -1,13 +1,10 @@
 package front_end.AST.TypeAST;
 
 import back_end.Utility;
-import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
-import back_end.instruction.data_manipulation.Mov;
-import back_end.instruction.load_store.Load;
+import back_end.instruction.data_manipulation.MOV;
 import main.CodeGen;
-import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.ARRAY;
 import front_end.symbol_table.TYPE;
@@ -33,7 +30,7 @@ public class ArraytypeAST extends TypeAST {
     @Override
     public void translate() {
         CodeGen.main.add(new Branch("L", "malloc"));
-        CodeGen.main.add(new Mov(Utility.popUnusedReg(), Register.R0));
+        CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
     }
 
     public TYPE getelementType() {

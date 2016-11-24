@@ -1,7 +1,17 @@
 package front_end.AST.FunctionDecl;
 
+import back_end.Utility;
+import back_end.data_type.ImmValue;
+import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
+
+import back_end.data_type.register.ShiftedReg;
+import back_end.instruction.Directive;
+import back_end.instruction.POP;
+import back_end.instruction.PUSH;
+
 import back_end.instruction.*;
+
 import front_end.AST.Node;
 import front_end.AST.StatementAST.StatementAST;
 import front_end.AST.TypeAST.TypeAST;
@@ -22,16 +32,17 @@ public class FunctionDeclAST extends Node {
     private String funcname;
     private ParamlistAST parameters;
     private StatementAST statement;
+    private FUNCTION function;
 
-    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, StatementAST statement) {
+
+    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname) {
         super(ctx);
         this.returntype = returntype;
         this.returntypename = returntype.getType().getTypeName();
         this.funcname = funcname;
         this.parameters = null;
-        this.statement = statement;
     }
-    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, ParamlistAST paramList, StatementAST statement) {
+    public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname, ParamlistAST paramList) {
         super(ctx);
         //return type name will remove all non alphanumeric characters to
         // search for primitive types
@@ -39,7 +50,6 @@ public class FunctionDeclAST extends Node {
         this.returntypename = returntype.getType().getTypeName();
         this.funcname = funcname;
         this.parameters = paramList;
-        this.statement = statement;
     }
 
     public void CheckFunctionNameAndReturnType() {
@@ -81,6 +91,7 @@ public class FunctionDeclAST extends Node {
     @Override
     public void check() {
         CheckFunctionNameAndReturnType();
+
         if (parameters != null) {
             List<ParamAST> paramASTs = parameters.getParams();
 
@@ -93,14 +104,39 @@ public class FunctionDeclAST extends Node {
 
     }
 
+    public void setStatement(StatementAST statement) {
+        this.statement = statement;
+    }
+
     @Override
     public void translate() {
         //Utility.pushData("\0");
-        CodeGen.main.add(new LabelInstr(funcname));
-        CodeGen.main.add(new Push(Register.LR));
+        function = (FUNCTION) identObj;
+        Visitor.ST = function.getSymtab();
+        if (parameters != null) {
+            for (ParamAST p : parameters.getParams()) {
+                int shift = Visitor.ST.findStackShift(p.getIdent());
+                ShiftedReg address = new PreIndex(Register.SP,
+                        new ImmValue(shift));
+                Visitor.ST.addToMemoryAddress(p.getIdent(), address);
+
+//                ProgramAST.nextAddress += identObj.getSize();
+//                ProgramAST.size -= identObj.getSize();
+//
+//                ShiftedReg address = new PreIndex(Register.SP,
+//                        new ImmValue(ProgramAST.size));
+//                Visitor.ST.addToMemoryAddress(ident, address);
+            }
+        }
+
+        CodeGen.main.add(new LabelInstr("f_"+funcname));
+        CodeGen.main.add(new PUSH(Register.LR));
 
         statement.translate();
-        CodeGen.main.add(new Pop(Register.PC));
+
+        CodeGen.main.add(new POP(Register.PC));
         CodeGen.main.add (new Directive("ltorg"));
+        Utility.pushBackRegisters();
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
     }
 }

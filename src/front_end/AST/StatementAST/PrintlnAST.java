@@ -5,12 +5,13 @@ import back_end.data_type.*;
 import back_end.data_type.register.Register;
 import back_end.instruction.LabelInstr;
 import back_end.instruction.Branch;
-import back_end.instruction.Pop;
-import back_end.instruction.Push;
-import back_end.instruction.data_manipulation.Add;
-import back_end.instruction.data_manipulation.Mov;
-import back_end.instruction.load_store.Load;
+import back_end.instruction.POP;
+import back_end.instruction.PUSH;
+import back_end.instruction.data_manipulation.ADD;
+import back_end.instruction.data_manipulation.MOV;
+import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.*;
+import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import static back_end.Utility.*;
@@ -33,25 +34,26 @@ public class PrintlnAST extends StatementAST {
     @Override
     public void translate() {
         (new PrintAST(null, expression)).translate();
-
-        String placeholder = "\"\\0\"";
-        if(!Utility.hasPlaceholder(placeholder)) {
-            Utility.pushToPushDatat(placeholder);
+        addMain(new Branch("L", "p_print_ln"));
+        if(!Utility.hasPlaceholder("\"\\0\"")) {
+            CodeGen.placeholders.add("\"\\0\"");
         }
-
-       if(!Utility.hasFunction("p_print_ln")) {
-           addMain(new Branch("L", "p_print_ln"));
-
-           addFunction(new LabelInstr("p_print_ln"));
-           addFunction(new Push(LR));
-           addFunction(new Load(R0, new LabelExpr(getLastMessage())));
-           addFunction(new Add(R0, R0, new ImmValue(4)));
-           addFunction(new Branch("L", "puts"));
-           addFunction(new Mov(Register.R0, new ImmValue(0)));
-           addFunction(new Branch("L", "fflush"));
-
-           addFunction(new Pop(PC));
-       }
+        if (!CodeGen.endFunctions.contains("p_print_ln")) {
+            CodeGen.endFunctions.add("p_print_ln");
+        }
+//       if(!Utility.hasFunction("p_print_ln")) {
+//           addMain(new Branch("L", "p_print_ln"));
+//
+//           addFunction(new LabelInstr("p_print_ln"));
+//           addFunction(new PUSH(LR));
+//           addFunction(new LOAD(R0, new LabelExpr(getLastPlaceholder())));
+//           addFunction(new ADD(R0, R0, new ImmValue(4)));
+//           addFunction(new Branch("L", "puts"));
+//           addFunction(new MOV(Register.R0, new ImmValue(0)));
+//           addFunction(new Branch("L", "fflush"));
+//
+//           addFunction(new POP(PC));
+//       }
     }
 
     public ExpressionAST getExpression() {

@@ -1,17 +1,15 @@
-package front_end.AST.AssignmentAST;
+package front_end.AST.ExpressionAST;
 
 import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
-import back_end.instruction.load_store.Load;
-import back_end.instruction.load_store.Store;
+import back_end.instruction.load_store.STORE;
+import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
-import front_end.AST.StatementAST.VarDeclAST;
 import main.CodeGen;
-import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.ARRAY;
 
@@ -50,14 +48,13 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void translate() {
-        ProgramAST.nextAddress = 0;
         for (ExpressionAST a: arraylits) {
-            ProgramAST.nextAddress += a.getIdentObj().getSize();
+            ProgramAST.nextAddress += a.getIdentObj().getType().getSize();
             Register res = CodeGen.notUsedRegisters.peek();
 
             a.translate();
 
-            Utility.addMain(new Store(res, new PreIndex(Utility.getBefore(res),
+            Utility.addMain(new STORE(res, new PreIndex(Utility.getBefore(res),
                     new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
         }
     }
