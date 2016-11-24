@@ -75,6 +75,7 @@ public class ProgramAST extends Node {
 
     public static void newScope(StatementAST statement) {
         boolean hasChanged = false;
+        int saved_Size = size;
 
         if(size != 0) {
             int spSize = size;
@@ -95,8 +96,8 @@ public class ProgramAST extends Node {
 
         statement.translate();
 
-        if(size == 0 && hasChanged) {
-            int spSize = Visitor.ST.findSize();
+        if(hasChanged) {
+            int spSize = saved_Size;
 
             if(spSize > STACK_SIZE) {
                 Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(STACK_SIZE)));
