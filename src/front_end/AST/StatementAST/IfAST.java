@@ -9,6 +9,7 @@ import back_end.instruction.LabelInstr;
 import back_end.instruction.condition.CMP;
 import back_end.data_type.register.Register;
 import front_end.AST.ExpressionAST.ExpressionAST;
+import front_end.symbol_table.SymbolTable;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -19,15 +20,18 @@ import org.antlr.v4.runtime.ParserRuleContext;
 public class IfAST extends StatementAST {
     // count for generic label names
     //public static Integer labelCount = 0;
-    ExpressionAST expression;
-    StatementAST then;
-    StatementAST elseSt;
+    private ExpressionAST expression;
+    private StatementAST then;
+    private StatementAST elseSt;
+
+    private SymbolTable ST;
 
     public IfAST(ParserRuleContext ctx, ExpressionAST expr, StatementAST then, StatementAST elseSt) {
         super(ctx);
         this.expression = expr;
         this.then = then;
         this.elseSt = elseSt;
+        this.ST = Visitor.ST;
     }
 
     @Override
@@ -45,7 +49,6 @@ public class IfAST extends StatementAST {
 
     @Override
     public void translate() {
-
         Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
         //jump to label if false

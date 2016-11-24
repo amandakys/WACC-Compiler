@@ -9,6 +9,7 @@ import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.AssignmentAST.ArrayelemAST;
+import front_end.AST.AssignmentAST.PairelemAST;
 import front_end.AST.ExpressionAST.*;
 import front_end.symbol_table.ARRAY;
 import front_end.symbol_table.TYPE;
@@ -42,9 +43,15 @@ public class PrintAST extends StatementAST {
         //TODO:find and push the placeholder when there are no more PrintAST node with an expression of the same type
         pushPlaceholder();
 
-        if (expression instanceof BinOpAST && ((BinOpAST) expression).getOp().equals("/")) {
-            Utility.throwRuntimeError();
-        }
+//        if (expression instanceof BinOpAST) {
+//            BinOpAST binOpAST = (BinOpAST) expression;
+//
+//           if(binOpAST.getOp().equals("/") || binOpAST.getOp().equals("%")) {
+//               Utility.throwRuntimeError();
+//           }
+//        } else if (expression instanceof ArrayelemAST) {
+//            Utility.throwRuntimeError();
+//        }
 
     }
 
@@ -88,7 +95,7 @@ public class PrintAST extends StatementAST {
                 CodeGen.placeholders.add("\"true\\0\"");
                 CodeGen.placeholders.add("\"false\\0\"");
             } else {
-                if (placeholder.equals("")) {
+                if (!placeholder.equals("")) {
                     CodeGen.placeholders.add(placeholder);
                 }
             }
@@ -96,10 +103,6 @@ public class PrintAST extends StatementAST {
 
         if (!CodeGen.endFunctions.contains(functionName)) {
             CodeGen.endFunctions.add(functionName);
-        }
-
-        if (expression instanceof ArrayelemAST) {
-            Utility.throwRuntimeError();
         }
     }
 }

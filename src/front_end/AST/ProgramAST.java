@@ -30,7 +30,7 @@ public class ProgramAST extends Node {
     //specifies how many VARIABLE there are in current symbol table
     public static int size;
     private boolean hasInitialised = false;
-    private static double STACK_SIZE = Math.pow(2, 10);
+    private static int STACK_SIZE = (int) Math.pow(2, 10);
 
     public ProgramAST(ParserRuleContext ctx, List<FunctionDeclAST> functions, StatementAST statement) {
         super(ctx);
@@ -75,15 +75,21 @@ public class ProgramAST extends Node {
 
     public static void newScope(StatementAST statement) {
         boolean hasChanged = false;
+
         if(size != 0) {
             int spSize = size;
-            Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
 
-            while(spSize > STACK_SIZE) {
-                //decrement stack pointer
-                spSize = (int) (spSize - STACK_SIZE);
+            if(spSize > STACK_SIZE) {
+                Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(STACK_SIZE)));
+                while(spSize > STACK_SIZE) {
+                    //decrement stack pointer
+                    spSize = (int) (spSize - STACK_SIZE);
+                    Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
+                }
+            } else {
                 Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
             }
+
             hasChanged = true;
         }
 
@@ -91,10 +97,15 @@ public class ProgramAST extends Node {
 
         if(size == 0 && hasChanged) {
             int spSize = Visitor.ST.findSize();
-            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
-            while(spSize > STACK_SIZE) {
-                //increment stack pointer
-                spSize = (int) (spSize - STACK_SIZE);
+
+            if(spSize > STACK_SIZE) {
+                Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(STACK_SIZE)));
+                while(spSize > STACK_SIZE) {
+                    //increment stack pointer
+                    spSize = (int) (spSize - STACK_SIZE);
+                    Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
+                }
+            } else {
                 Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
             }
         }
