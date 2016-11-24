@@ -1,6 +1,7 @@
 package front_end.AST.AssignmentAST;
 
 import antlr.BasicParser;
+import back_end.Error;
 import back_end.Utility;
 import back_end.data_type.*;
 import back_end.data_type.register.PostIndex;
@@ -37,8 +38,6 @@ public class ArrayelemAST extends ExpressionAST {
     private String ident;
     private List<Node> expressions = new ArrayList<>();
 
-    private final String NEGATIVE_ARRAY_BOUND = "\"ArrayIndexOutOfBoundsError: negative index\\n\\0\"";
-    private final String TOO_LARGE_ARRAY_BOUND = "\"ArrayIndexOutOfBoundsError: index too large\\n\\0\"";
     private static boolean hasError;
     private final int INT_SIZE = 4;
 
@@ -72,8 +71,8 @@ public class ArrayelemAST extends ExpressionAST {
     public void translate() {
         //addMain(new LOAD(r, new Address(r)));
         if(!hasError) {
-            Utility.pushData(NEGATIVE_ARRAY_BOUND);
-            Utility.pushData(TOO_LARGE_ARRAY_BOUND);
+            Utility.pushData(Error.arrayOutOfBoundsNegative);
+            Utility.pushData(Error.arrayOutOfBoundsLarge);
 
             CodeGen.endFunctions.add("p_check_array_bounds");
             Utility.throwRuntimeError();

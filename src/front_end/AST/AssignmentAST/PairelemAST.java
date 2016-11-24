@@ -1,6 +1,7 @@
 package front_end.AST.AssignmentAST;
 
 import antlr.BasicParser;
+import back_end.Error;
 import back_end.Utility;
 import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
@@ -27,7 +28,6 @@ import static back_end.Utility.addMain;
 public class PairelemAST extends AssignrhsAST{
     private String token;
     private ExpressionAST expression;
-    private final String NULL_REFERENCE_ERROR = "\"NullReferenceError: dereference a null reference\\n\\0\"";
     private final int PAIR_SIZE = 4;
 
     private static boolean hasError;
@@ -97,7 +97,7 @@ public class PairelemAST extends AssignrhsAST{
         }
 
         if(!hasError) {
-            Utility.pushData(NULL_REFERENCE_ERROR);
+            Utility.pushData(Error.nullReference);
             CodeGen.endFunctions.add("p_check_null_pointer");
             Utility.throwRuntimeError();
             hasError = true;
