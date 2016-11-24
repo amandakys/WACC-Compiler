@@ -22,6 +22,7 @@ public class LOAD implements Instruction {
 //            this.condition = "";
 //        }
 
+
     }
 
     public LOAD(String condition, Register dst, Expression expression) {

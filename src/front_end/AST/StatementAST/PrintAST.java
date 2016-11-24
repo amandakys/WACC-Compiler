@@ -52,7 +52,11 @@ public class PrintAST extends StatementAST {
         String typeName;
         TYPE type = expression.getType();
         if (type.getTypeName().equals("array")) {
-            typeName = "reference";
+            if(((ARRAY) type).getElementType().getTypeName().equals("char")) {
+                typeName = "string";
+            } else {
+                typeName = "reference";
+            }
         } else {
             typeName = type.getTypeName();
         }
