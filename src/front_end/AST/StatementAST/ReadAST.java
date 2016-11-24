@@ -44,9 +44,10 @@ public class ReadAST extends StatementAST {
     public void translate() {
         Register r = CodeGen.notUsedRegisters.peek();
         addMain(new ADD(r, Register.SP, new ImmValue(0))); // why 0 ??
+        //TODO: need to change 0 to that is takes into account size of things being read to and number of reads?
+        //there is an example that has sp, #4 - see rmStyleAddIO.wacc
 
         addMain(new MOV(Register.R0, r));
-
         String functionName = "p_read_" + expression.getType().getTypeName();
         addMain(new Branch("L", functionName));
 
