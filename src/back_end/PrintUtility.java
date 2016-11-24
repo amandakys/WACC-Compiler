@@ -114,44 +114,6 @@ public class PrintUtility {
         Utility.addFunction(new POP(Register.PC));
     }
 
-    public void printInstr(ExpressionAST e) {
-        int exprSize = e.getType().getSize();
-        String type = e.getType().getTypeName();
-        if (!Utility.hasFunction("p_print_" + type)) {
-            //a char can be printed using "putchar" function
-            if (!(e instanceof CharLitAST)) {
-
-                Utility.addFunction(new LabelInstr("p_print_" + type));
-                Utility.addFunction(new PUSH(Register.LR));
-
-                if (e instanceof BoolliterAST) {
-                    Utility.addFunction(new CMP(Register.R0, new ImmValue(0)));
-                    Utility.addFunction(new LOAD("NE", Register.R0, new LabelExpr(Utility.getTruePlaceholder())));
-                    Utility.addFunction(new LOAD("EQ", Register.R0, new LabelExpr(Utility.getFalsePlaceholder())));
-                } else if (e instanceof StringLiterAST) {
-                    //functions that print string, bool, int have to be specified separately
-                    Utility.addFunction(new LOAD(Utility.popParamReg(), new Address(Register.R0)));
-                    Utility.addFunction(new ADD(Utility.popParamReg(), Register.R0, new ImmValue(exprSize)));
-                    Utility.addFunction(new LOAD(Register.R0, new LabelExpr(Utility.getPlaceholder(e))));
-                } else if (e instanceof IntLiterAST) {
-                    Utility.addFunction(new MOV(Utility.popParamReg(), Register.R0));
-                    Utility.addFunction(new LOAD(Register.R0, new LabelExpr(Utility.getPlaceholder(e))));
-                }
-                //addFunction(new LOAD(Register.R0, new LabelExpr(getPlaceholder(e))));
-
-
-                //TODO: Why adding r0 to 4?
-                Utility.addFunction(new ADD(Register.R0, Register.R0, new ImmValue(4)));
-
-                Utility.addFunction(new Branch("L", "printf"));
-                Utility.addFunction(new MOV(Register.R0, new ImmValue(0)));
-                Utility.addFunction(new Branch("L", "fflush"));
-
-                Utility.addFunction(new POP(Register.PC));
-            }
-        }
-    }
-
     public void printlnInstr() {
         Utility.addFunction(new LabelInstr("p_print_ln"));
         Utility.addFunction(new PUSH(Register.LR));
@@ -167,7 +129,7 @@ public class PrintUtility {
         CodeGen.functions.add(new LabelInstr("p_check_null_pointer"));
         CodeGen.functions.add(new PUSH(Register.LR));
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
-        CodeGen.functions.add(new LOAD("EQ", Register.R0, new LabelExpr("msg_0")));
+        CodeGen.functions.add(new LOAD("EQ", Register.R0, new LabelExpr(getErrorMessage(Error.nullReference))));
         CodeGen.functions.add(new Branch("LEQ", "p_throw_runtime_error"));
         CodeGen.functions.add(new POP(Register.PC));
     }
@@ -184,12 +146,12 @@ public class PrintUtility {
         CodeGen.functions.add(new PUSH(Register.LR));
 
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
-        CodeGen.functions.add(new LOAD("LT", Register.R0, new LabelExpr("msg_0")));
+        CodeGen.functions.add(new LOAD("LT", Register.R0, new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsNegative))));
         CodeGen.functions.add(new Branch("LT", "p_throw_runtime_error"));
         CodeGen.functions.add(new LOAD(Register.R1, new Address(Register.R1)));
 
         CodeGen.functions.add(new CMP(Register.R0, Register.R1));
-        CodeGen.functions.add(new LOAD("CS", Register.R0, new LabelExpr("msg_1")));
+        CodeGen.functions.add(new LOAD("CS", Register.R0, new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsLarge))));
         CodeGen.functions.add(new Branch("CS", "p_throw_runtime_error"));
 
         CodeGen.functions.add(new POP(Register.PC));
@@ -201,7 +163,7 @@ public class PrintUtility {
         CodeGen.functions.add(new LabelInstr("p_check_divide_by_zero"));
         CodeGen.functions.add(new PUSH(Register.LR));
         CodeGen.functions.add(new CMP(res, new ImmValue(0)));
-        CodeGen.functions.add(new LOAD("EQ", res, new LabelExpr("msg_1")));
+        CodeGen.functions.add(new LOAD("EQ", res, new LabelExpr(getErrorMessage(Error.divideByZero))));
         CodeGen.functions.add(new Branch("LEQ", "p_throw_runtime_error"));
         CodeGen.functions.add(new POP(Register.PC));
     }
@@ -209,7 +171,7 @@ public class PrintUtility {
     public static void p_integer_overflow() {
         CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
         CodeGen.functions.add(new LabelInstr("p_throw_overflow_error"));
-        CodeGen.functions.add(new LOAD(Register.R0, new LabelExpr("msg_0")));
+        CodeGen.functions.add(new LOAD(Register.R0, new LabelExpr(getErrorMessage(Error.overflow))));
         CodeGen.functions.add(new Branch("L", "p_throw_runtime_error"));
     }
 
@@ -217,7 +179,7 @@ public class PrintUtility {
         CodeGen.functions.add(new LabelInstr("p_free_array"));
         CodeGen.functions.add(new PUSH(Register.LR));
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
-        CodeGen.functions.add(new LOAD("EQ", Register.R0, new LabelExpr("msg_0")));
+        CodeGen.functions.add(new LOAD("EQ", Register.R0, new LabelExpr(getErrorMessage(Error.nullReference))));
         CodeGen.functions.add(new Branch("EQ", "p_throw_runtime_error"));
     }
 
@@ -243,7 +205,8 @@ public class PrintUtility {
     private static String getErrorMessage(String error) {
         for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
             if (CodeGen.toPushData.get(i).getValue().equals(error)) {
-                return CodeGen.toPushData.get(i - 2).toString();
+                String msg =  CodeGen.toPushData.get(i - 2).toString();
+                return msg.substring(0, msg.length() - 2);
             }
         }
         return null;
