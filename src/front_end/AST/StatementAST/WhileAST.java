@@ -45,17 +45,17 @@ public class WhileAST extends StatementAST {
         labelCount++;
         String whileBodyLabel = labelCount.toString();
         CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
-        Register result = CodeGen.notUsedRegisters.peek();
         statement.translate();
         Utility.pushBackRegisters();
         //CodeGen.notUsedRegisters.push(result);
         CodeGen.main.add(new LabelInstr("L" + conditionLabel));
 
-        result = CodeGen.notUsedRegisters.peek();
+        Register res = CodeGen.notUsedRegisters.peek();
         expression.translate();
         Utility.pushBackRegisters();
-        //CodeGen.notUsedRegisters.push(result);
-        CodeGen.main.add(new CMP(CodeGen.notUsedRegisters.peek(), new ImmValue(1)));
+
+        CodeGen.main.add(new CMP(res, new ImmValue(1)));
+        CodeGen.notUsedRegisters.push(res);
         CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
     }
 }
