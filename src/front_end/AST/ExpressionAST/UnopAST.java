@@ -51,6 +51,7 @@ public class UnopAST extends ExpressionAST {
                 CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error")); // TODO: Add overflow error function
                 break;
             case "len":
+                //TODO: you can't put a register into load without popping it off the unusedRegs list
                 CodeGen.main.add(new LOAD(op, new Address(op)));
                 break;
             case "ord":

@@ -3,6 +3,7 @@ package back_end;
 import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
 import back_end.data_type.LabelExpr;
+import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 import back_end.instruction.LabelInstr;
@@ -57,12 +58,18 @@ public class PrintUtility {
                 case "p_throw_runtime_error":
                     p_throw_runtime_error();
                     break;
+                case "p_free_pair":
+                    p_free_pair();
+                    break;
+                case "p_free_array":
+                    p_free_array();
+                    break;
             }
             Utility.pushBackRegisters();
         }
     }
 
-    public void printDefaults() {
+    private void printDefaults() {
         Utility.addFunction(new ADD(Register.R0, Register.R0, new ImmValue(4)));
         Utility.addFunction(new Branch("L", "printf"));
         Utility.addFunction(new MOV(Register.R0, new ImmValue(0)));
@@ -204,5 +211,41 @@ public class PrintUtility {
         CodeGen.functions.add(new LabelInstr("p_throw_overflow_error"));
         CodeGen.functions.add(new LOAD(Register.R0, new LabelExpr("msg_0")));
         CodeGen.functions.add(new Branch("L", "p_throw_runtime_error"));
+    }
+
+    private static void p_free() {
+        CodeGen.functions.add(new LabelInstr("p_free_array"));
+        CodeGen.functions.add(new PUSH(Register.LR));
+        CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
+        CodeGen.functions.add(new LOAD("EQ", Register.R0, new LabelExpr("msg_0")));
+        CodeGen.functions.add(new Branch("EQ", "p_throw_runtime_error"));
+    }
+
+    public static void p_free_pair() {
+        p_free();
+        CodeGen.functions.add(new PUSH(Register.R0));
+        CodeGen.functions.add(new LOAD(Register.R0, new Address(Register.R0)));
+        CodeGen.functions.add(new Branch("L", "free"));
+        CodeGen.functions.add(new LOAD(Register.R0, new Address(Register.SP)));
+        CodeGen.functions.add(new LOAD(Register.R0, new PreIndex(Register.R0, new ImmValue(4))));
+        CodeGen.functions.add(new Branch("L", "free"));
+        CodeGen.functions.add(new POP(Register.R0));
+        CodeGen.functions.add(new Branch("L", "free"));
+        CodeGen.functions.add(new POP(Register.PC));
+    }
+
+    public static void p_free_array() {
+        p_free();
+        CodeGen.functions.add(new Branch("L", "free"));
+        CodeGen.functions.add(new POP(Register.PC));
+    }
+
+    private static String getErrorMessage(String error) {
+        for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
+            if (CodeGen.toPushData.get(i).getValue().equals(error)) {
+                return CodeGen.toPushData.get(i - 2).toString();
+            }
+        }
+        return null;
     }
 }
