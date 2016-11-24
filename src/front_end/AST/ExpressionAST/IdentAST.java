@@ -39,7 +39,8 @@ public class IdentAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        Register result = CodeGen.notUsedRegisters.pop();
+
+        Register result = Utility.popUnusedReg();
         if(identObj.getType().getTypeName().equals("bool")) {
             CodeGen.main.add(new LOAD("SB", result, Visitor.ST.getAddress(ident)));
         } else {

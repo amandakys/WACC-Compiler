@@ -39,9 +39,9 @@ public class PostIndex extends ShiftedReg {
         if(e != null) {
             res += e.toString();
         } else if(rm != null) {
-            res += ", " + rm + ", " + shift + " " + shiftVal;
+            res +=  rm + ", " + shift + " " + shiftVal;
         }
 
-        return "[" + baseReg + "]" + ", " + res;
+        return baseReg + ", " + ", " + res;
     }
 }

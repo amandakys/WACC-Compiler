@@ -83,8 +83,8 @@ public class ReadAST extends StatementAST {
             CodeGen.endFunctions.add(functionName);
         }
 
-        if(exprChild instanceof PairelemAST) {
-            Utility.throwRuntimeError();
-        }
+//        if(exprChild instanceof PairelemAST || exprChild instanceof ArrayelemAST) {
+//            Utility.throwRuntimeError();
+//        }
     }
 }

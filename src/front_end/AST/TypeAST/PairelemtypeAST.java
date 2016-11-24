@@ -12,8 +12,8 @@ import front_end.symbol_table.PAIR;
  * Created by andikoh on 09/11/2016.
  */
 public class PairelemtypeAST extends Node {
-    String pairtoken;
-    TypeAST type;
+    private String pairtoken;
+    private TypeAST type;
 
     public PairelemtypeAST(ParserRuleContext ctx, String pair) {
         super(ctx);

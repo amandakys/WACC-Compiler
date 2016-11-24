@@ -201,12 +201,20 @@ public class PrintUtility {
     }
 
     private static String getErrorMessage(String error) {
+        for(int i = 3; i < CodeGen.data.size(); i += 3) {
+            if (CodeGen.data.get(i).getValue().equals(error)) {
+                String msg =  CodeGen.data.get(i - 2).toString();
+                return msg.substring(0, msg.length() - 2);
+            }
+        }
+
         for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
             if (CodeGen.toPushData.get(i).getValue().equals(error)) {
                 String msg =  CodeGen.toPushData.get(i - 2).toString();
                 return msg.substring(0, msg.length() - 2);
             }
         }
+
         return null;
     }
 }

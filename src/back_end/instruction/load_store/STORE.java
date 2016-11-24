@@ -1,5 +1,6 @@
 package back_end.instruction.load_store;
 
+import back_end.Utility;
 import back_end.data_type.Expression;
 import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
@@ -23,7 +24,7 @@ public class STORE implements Instruction {
         }
 
         if(dst != Register.R0) {
-            CodeGen.notUsedRegisters.push(dst);
+            Utility.pushRegister(dst);
         }
     }
 

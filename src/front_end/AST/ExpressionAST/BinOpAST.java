@@ -34,12 +34,14 @@ public class BinOpAST extends ExpressionAST {
     private final String OVERFLOW_ERROR_MESSAGE = "\"OverflowError: the result is too small/large to store in a " +
             "4-byte signed-integer.\\n\"";
 
+    private static boolean hasError;
 
     public BinOpAST(ParserRuleContext ctx, String op, ExpressionAST lhs, ExpressionAST rhs) {
         super(ctx);
         this.op = op;
         this.rhs = rhs;
         this.lhs = lhs;
+        this.hasError = false;
         initialise();
     }
 
@@ -75,6 +77,7 @@ public class BinOpAST extends ExpressionAST {
                 } else if(op.equals("-")){
                     CodeGen.main.add(new SUB(lhsResult, lhsResult, rhsResult));
                 }
+                Utility.pushRegister(rhsResult);
                 Utility.pushData(OVERFLOW_ERROR_MESSAGE);
                 CodeGen.endFunctions.add("p_integer_overflow");
                 CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
@@ -100,75 +103,71 @@ public class BinOpAST extends ExpressionAST {
 //                    CodeGen.endFunctions.add("p_print_string");
                 break;
             case "/":
-                Utility.pushData(DIVIDE_BY_ZERO);
-                CodeGen.main.add(new MOV(Register.R0, lhsResult));
+            case "%":
+                if (!hasError) {
+                    Utility.pushData(DIVIDE_BY_ZERO);
+                    CodeGen.main.add(new MOV(Register.R0, lhsResult));
 
-                Register res = Utility.popParamReg();
-                CodeGen.main.add(new MOV(res, rhsResult));
-                CodeGen.main.add(new Branch("L", "p_check_divide_by_zero"));
-                CodeGen.main.add(new Branch("L", "__aeabi_idiv"));
+                    Register res = Utility.popParamReg();
+                    CodeGen.main.add(new MOV(res, rhsResult));
+                    CodeGen.main.add(new Branch("L", "p_check_divide_by_zero"));
+                    CodeGen.main.add(new Branch("L", "__aeabi_idiv"));
 
-                Register r = Utility.popUnusedReg();
-                CodeGen.main.add(new MOV(Register.R0, r));
-                CodeGen.main.add(new MOV(r, Register.R0));
+                    res = op.equals("%") ? res : Register.R0;
+                    CodeGen.main.add(new MOV(lhsResult, res));
 
-                CodeGen.endFunctions.add("p_divide_by_zero");
-                if(ctx.getParent() instanceof BasicParser.PrintlnContext) {
-                    CodeGen.placeholders.add("\"\\0\"");
-                    CodeGen.endFunctions.add("p_print_ln");
+                    CodeGen.endFunctions.add("p_divide_by_zero");
+                    if(ctx.getParent() instanceof BasicParser.PrintlnContext) {
+                        CodeGen.placeholders.add("\"\\0\"");
+                        CodeGen.endFunctions.add("p_print_ln");
+                    }
+                    Utility.throwRuntimeError();
+                    hasError = true;
                 }
                 break;
-            case "%":
-                CodeGen.main.add(new MOV(Register.R0, lhsResult));
-                CodeGen.main.add(new MOV(Utility.popParamReg(), rhsResult));
-                CodeGen.main.add(new Branch("L", "p_check_divide_by_zero"));
-                CodeGen.main.add(new Branch("L", "__aeabi_idivmod"));
-                CodeGen.main.add(new MOV(lhsResult, Register.R1));
-                break;
-
             case ">":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                CodeGen.notUsedRegisters.push(rhsResult);
+                Utility.pushRegister(rhsResult);
                 CodeGen.main.add(new MOV("GT", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("LE", lhsResult, new ImmValue(0)));
                 break;
             case ">=":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                CodeGen.notUsedRegisters.push(rhsResult);
+                Utility.pushRegister(rhsResult);
                 CodeGen.main.add(new MOV("GE", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("LT", lhsResult, new ImmValue(0)));
                 break;
             case "<":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                CodeGen.notUsedRegisters.push(rhsResult);
+                Utility.pushRegister(rhsResult);
                 CodeGen.main.add(new MOV("LT", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("GE", lhsResult, new ImmValue(0)));
                 break;
             case "<=":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                CodeGen.notUsedRegisters.push(rhsResult);
+                Utility.pushRegister(rhsResult);
                 CodeGen.main.add(new MOV("LE", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("GT", lhsResult, new ImmValue(0)));
                 break;
             case "==":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                CodeGen.notUsedRegisters.push(rhsResult);
+                Utility.pushRegister(rhsResult);
                 CodeGen.main.add(new MOV("EQ", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("NE", lhsResult, new ImmValue(0)));
                 break;
             case "!=":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                CodeGen.notUsedRegisters.push(rhsResult);
+                Utility.pushRegister(rhsResult);
                 CodeGen.main.add(new MOV("NE", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("EQ", lhsResult, new ImmValue(0)));
                 break;
             case "&&":
                 CodeGen.main.add(new AND(lhsResult, lhsResult, rhsResult));
-                CodeGen.notUsedRegisters.push(rhsResult);
+                Utility.pushRegister(rhsResult);
                 break;
             case "||":
                 CodeGen.main.add(new ORR(lhsResult, lhsResult, rhsResult));
-                CodeGen.notUsedRegisters.push(rhsResult);
+                Utility.pushRegister(rhsResult);
                 break;
         }
 
@@ -210,5 +209,9 @@ public class BinOpAST extends ExpressionAST {
 
     public String getOp() {
         return op;
+    }
+
+    public static boolean isHasError() {
+        return hasError;
     }
 }
