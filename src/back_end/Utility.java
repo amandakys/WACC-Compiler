@@ -8,6 +8,9 @@ import back_end.instruction.LabelInstr;
 import front_end.AST.ExpressionAST.*;
 import main.CodeGen;
 
+import java.util.List;
+import java.util.Stack;
+
 /**
  * Created by donamphuong on 20/11/2016.
  */
@@ -96,13 +99,15 @@ public class Utility {
 
     public static Register popParamReg() {
         Register r = CodeGen.paramRegister.pop();
-        CodeGen.toPushParamReg.push(r);
+        if(!CodeGen.toPushParamReg.contains(r)) {
+            CodeGen.toPushParamReg.push(r);
+        }
         return r;
     }
 
     public static Register popUnusedReg() {
         Register r = CodeGen.notUsedRegisters.pop();
-        CodeGen.toPushUnusedReg.push(r);
+        pushRegister(r);
         return r;
     }
 

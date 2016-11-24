@@ -39,6 +39,6 @@ public class PostIndex extends ShiftedReg {
             }
         }
 
-        return baseReg + ", " + ", " + res;
+        return baseReg + ", " + res;
     }
 }

@@ -70,35 +70,35 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        Register r = Utility.popUnusedReg();
-        addMain(new LOAD(r, new Address(r)));
+        //addMain(new LOAD(r, new Address(r)));
         if(!hasError) {
-            Register first = Utility.popUnusedReg();
             Utility.pushData(NEGATIVE_ARRAY_BOUND);
             Utility.pushData(TOO_LARGE_ARRAY_BOUND);
-
-            CodeGen.main.add(new ADD(first, Register.SP, new ImmValue(ProgramAST.nextAddress)));
-            Register reg = CodeGen.notUsedRegisters.peek();
-            for(Node n : expressions) {
-                n.translate();
-            }
-
-            CodeGen.main.add(new LOAD(first, new Address(first)));
-            CodeGen.main.add(new MOV(Register.R0, reg));
-            CodeGen.main.add(new MOV(Utility.popParamReg(), first));
-            CodeGen.main.add(new Branch("L", "p_check_array_bounds"));
-
-            ProgramAST.nextAddress += identObj.getSize();
-            ShiftedReg size = new PostIndex(first, Utility.popParamReg(), Shift.LSL, new ImmValue(2));
-
-            CodeGen.main.add(new ADD(first, first, new ImmValue(ProgramAST.nextAddress)));
-            CodeGen.main.add(new ADD(first, first, size));
-            CodeGen.main.add(new LOAD(first, new Address(first)));
 
             CodeGen.endFunctions.add("p_check_array_bounds");
             Utility.throwRuntimeError();
             hasError = true;
         }
+
+        Register first = Utility.popUnusedReg();
+
+        CodeGen.main.add(new ADD(first, Register.SP, new ImmValue(ProgramAST.nextAddress)));
+        Register reg = CodeGen.notUsedRegisters.peek();
+        for(Node n : expressions) {
+            n.translate();
+        }
+
+        CodeGen.main.add(new LOAD(first, new Address(first)));
+        CodeGen.main.add(new MOV(Register.R0, reg));
+        CodeGen.main.add(new MOV(Utility.popParamReg(), first));
+        CodeGen.main.add(new Branch("L", "p_check_array_bounds"));
+
+        ProgramAST.nextAddress += identObj.getSize();
+        ShiftedReg size = new PostIndex(Utility.popUnusedReg(), Utility.popUnusedReg(), Shift.LSL, new ImmValue(2));
+
+        CodeGen.main.add(new ADD(first, first, new ImmValue(identObj.getSize())));
+        CodeGen.main.add(new ADD(first, size));
+        CodeGen.main.add(new LOAD(first, new Address(first)));
     }
 
     public static boolean isHasError() {
