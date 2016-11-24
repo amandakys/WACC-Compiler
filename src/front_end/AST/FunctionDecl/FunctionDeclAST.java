@@ -13,6 +13,7 @@ import back_end.instruction.PUSH;
 import back_end.instruction.*;
 
 import front_end.AST.Node;
+import front_end.AST.ProgramAST;
 import front_end.AST.StatementAST.StatementAST;
 import front_end.AST.TypeAST.TypeAST;
 import main.CodeGen;
@@ -113,6 +114,7 @@ public class FunctionDeclAST extends Node {
         //Utility.pushData("\0");
         function = (FUNCTION) identObj;
         Visitor.ST = function.getSymtab();
+        int size = Visitor.ST.findSize();
         if (parameters != null) {
             for (ParamAST p : parameters.getParams()) {
                 int shift = Visitor.ST.findStackShift(p.getIdent());
@@ -132,7 +134,7 @@ public class FunctionDeclAST extends Node {
         CodeGen.main.add(new LabelInstr("f_"+funcname));
         CodeGen.main.add(new PUSH(Register.LR));
 
-        statement.translate();
+        ProgramAST.newScope(statement);
 
         CodeGen.main.add(new POP(Register.PC));
         CodeGen.main.add (new Directive("ltorg"));
