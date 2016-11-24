@@ -50,7 +50,7 @@ public class BinOpAST extends ExpressionAST {
         this.op = op;
         this.rhs = rhs;
         this.lhs = lhs;
-        this.hasError = false;
+        hasError = false;
         initialise();
     }
 
@@ -86,18 +86,18 @@ public class BinOpAST extends ExpressionAST {
                 break;
             case "/":
             case "%":
+                Utility.pushData(DIVIDE_BY_ZERO);
+                CodeGen.main.add(new MOV(Register.R0, lhsResult));
+
+                Register res = Utility.popParamReg();
+                CodeGen.main.add(new MOV(res, rhsResult));
+                CodeGen.main.add(new Branch("L", "p_check_divide_by_zero"));
+                CodeGen.main.add(new Branch("L", "__aeabi_idiv"));
+
+                res = op.equals("%") ? res : Register.R0;
+                CodeGen.main.add(new MOV(lhsResult, res));
+
                 if (!hasError) {
-                    Utility.pushData(DIVIDE_BY_ZERO);
-                    CodeGen.main.add(new MOV(Register.R0, lhsResult));
-
-                    Register res = Utility.popParamReg();
-                    CodeGen.main.add(new MOV(res, rhsResult));
-                    CodeGen.main.add(new Branch("L", "p_check_divide_by_zero"));
-                    CodeGen.main.add(new Branch("L", "__aeabi_idiv"));
-
-                    res = op.equals("%") ? res : Register.R0;
-                    CodeGen.main.add(new MOV(lhsResult, res));
-
                     CodeGen.endFunctions.add("p_divide_by_zero");
                     if(ctx.getParent() instanceof BasicParser.PrintlnContext) {
                         CodeGen.placeholders.add("\"\\0\"");
