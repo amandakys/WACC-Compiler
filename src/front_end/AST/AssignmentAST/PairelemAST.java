@@ -24,10 +24,13 @@ public class PairelemAST extends AssignrhsAST{
     private ExpressionAST expression;
     private final String NULL_REFERENCE_ERROR = "\"NullReferenceError: dereference a null reference\\n\\0\"";
 
+    private static boolean hasError;
+
     public PairelemAST(ParserRuleContext ctx, String token, ExpressionAST expression) {
         super(ctx);
         this.token = token;
         this.expression = expression;
+        this.hasError = false;
     }
 
     @Override
@@ -61,8 +64,17 @@ public class PairelemAST extends AssignrhsAST{
 
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
         CodeGen.main.add(new LOAD(before, new PreIndex(before)));
+        CodeGen.main.add(new LOAD(before, new PreIndex(before)));
 
-        CodeGen.endFunctions.add("p_check_null_pointer");
+        if(!hasError) {
+            CodeGen.endFunctions.add("p_check_null_pointer");
+            Utility.throwRuntimeError();
+            hasError = true;
+        }
 
+    }
+
+    public static boolean isHasError() {
+        return hasError;
     }
 }

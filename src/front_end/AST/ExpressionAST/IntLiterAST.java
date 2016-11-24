@@ -40,7 +40,7 @@ public class IntLiterAST extends ExpressionAST {
         int val;
 
         try {
-            val = Integer.parseInt(value);
+            val = Integer.parseInt(intsign + value);
             CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(val)));
         } catch (NumberFormatException e) {
             Utility.pushData(OVERFLOW_ERROR_MESSAGE);

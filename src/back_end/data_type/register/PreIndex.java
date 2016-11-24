@@ -47,7 +47,7 @@ public class PreIndex extends ShiftedReg {
         if(e != null) {
             res += ", " + e.toString();
         } else if(rm != null) {
-            res += ", " + rm + ", " + shift + " " + shiftVal;
+            res += rm + ", " + shift + " " + shiftVal;
         }
 
         return "[" + res + "]" + (jump ? "!" : "");
