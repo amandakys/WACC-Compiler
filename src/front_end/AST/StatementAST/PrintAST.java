@@ -42,56 +42,9 @@ public class PrintAST extends StatementAST {
         //TODO:find and push the placeholder when there are no more PrintAST node with an expression of the same type
         pushPlaceholder();
 
-        if(expression instanceof BinOpAST && ((BinOpAST) expression).getOp().equals("/")) {
+        if (expression instanceof BinOpAST && ((BinOpAST) expression).getOp().equals("/")) {
             Utility.throwRuntimeError();
         }
-
-//        int exprSize = expression.getType().getSize();
-//        String type = expression.getType().getTypeName();
-
-//        if (!hasFunction("p_print_" + type)) {
-//            //a char can be printed using "putchar" function
-//            if (!(expression instanceof CharLitAST)) {
-//
-//                addFunction(new LabelInstr("p_print_" + type));
-//                addFunction(new PUSH(Register.LR));
-//
-//                if (expression instanceof BoolliterAST) {
-//                    addFunction(new CMP(Register.R0, new ImmValue(0)));
-//
-//                    //last message should be false
-//                    String last = getLastPlaceholder();
-//                    //the message before last message should be true. If last message is msg_2 then
-//                    //beforeLast must be msg_1
-//                    int previous = CodeGen.numPlaceholders + CodeGen.numStrings - 1;
-//                    String beforeLast = "msg_" + previous;
-//                            //last.substring(0, last.length() - 1) +
-//                            //(Integer.parseInt(String.valueOf(last.charAt(last.length() - 1))) - 1);
-//
-//                    addFunction(new LOAD("NE", Register.R0, new LabelExpr(beforeLast)));
-//                    addFunction(new LOAD("EQ", Register.R0, new LabelExpr(last)));
-//                } else {
-//                    //functions that print string, bool, int have to be specified separately
-//                    if (expression instanceof StringLiterAST) {
-//                        addFunction(new LOAD(popParamReg(), new Address(Register.R0)));
-//                        addFunction(new ADD(popParamReg(), Register.R0, new
-//                                ImmValue(exprSize)));
-//                    } else if (expression instanceof IntLiterAST) {
-//                        addFunction(new MOV(popParamReg(), Register.R0));
-//                    }
-//                    addFunction(new LOAD(Register.R0, new LabelExpr(getLastPlaceholder())));
-//                }
-//
-//                //TODO: Why adding r0 to 4?
-//                addFunction(new ADD(Register.R0, Register.R0, new ImmValue(4)));
-//
-//                addFunction(new Branch("L", "printf"));
-//                addFunction(new MOV(Register.R0, new ImmValue(0)));
-//                addFunction(new Branch("L", "fflush"));
-//
-//                addFunction(new POP(Register.PC));
-//            }
-//        }
 
     }
 
@@ -111,29 +64,21 @@ public class PrintAST extends StatementAST {
         }
         String functionName = "p_print_" + typeName;
 
-//        if (expression instanceof BoolliterAST) {
-//            CodeGen.placeholders.add("\"true\\0\"");
-//            CodeGen.placeholders.add("\"false\\0\"");
-////            placeholder = "\"" + ((BoolliterAST) expression).getBoolVal() + "\\0\"";
-//        } else if (expression instanceof StringLiterAST) {
-//            CodeGen.placeholders.add("\"%.*s\\0\"");
-//
-//        } else if (expression instanceof IntLiterAST) {
-//            CodeGen.placeholders.add("\"%d\\0\"");
-//
-//        } else if (expression instanceof CharLitAST) {
-//            functionName = "putchar";
-//        } else if (expression instanceof IdentAST) {
-//            String type = expression.getType().getTypeName();
-            switch(typeName) {
-                case "string": CodeGen.placeholders.add("\"%.*s\\0\""); break;
-                case "int": CodeGen.placeholders.add("\"%d\\0\""); break;
-                case "char": functionName = "putchar"; break;
-                case "bool":
-                    CodeGen.placeholders.add("\"true\\0\"");
-                    CodeGen.placeholders.add("\"false\\0\"");
-                    break;
-            }
+        switch (typeName) {
+            case "string":
+                CodeGen.placeholders.add("\"%.*s\\0\"");
+                break;
+            case "int":
+                CodeGen.placeholders.add("\"%d\\0\"");
+                break;
+            case "char":
+                functionName = "putchar";
+                break;
+            case "bool":
+                CodeGen.placeholders.add("\"true\\0\"");
+                CodeGen.placeholders.add("\"false\\0\"");
+                break;
+        }
 
         addMain(new Branch("L", functionName));
 
@@ -153,8 +98,8 @@ public class PrintAST extends StatementAST {
             CodeGen.endFunctions.add(functionName);
         }
 
-        if(expression instanceof ArrayelemAST) {
-           Utility.throwRuntimeError();
+        if (expression instanceof ArrayelemAST) {
+            Utility.throwRuntimeError();
         }
     }
 }
