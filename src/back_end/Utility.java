@@ -99,15 +99,13 @@ public class Utility {
 
     public static Register popParamReg() {
         Register r = CodeGen.paramRegister.pop();
-        if(!CodeGen.toPushParamReg.contains(r)) {
-            CodeGen.toPushParamReg.push(r);
-        }
+        CodeGen.toPushParamReg.push(r);
         return r;
     }
 
     public static Register popUnusedReg() {
         Register r = CodeGen.notUsedRegisters.pop();
-        pushRegister(r);
+        CodeGen.toPushUnusedReg.push(r);
         return r;
     }
 
