@@ -120,7 +120,7 @@ public class VarDeclAST extends StatementAST {
             type.translate();
             rhs.translate();
         } else {
-            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(0)));
+            CodeGen.main.add(new LOAD(res, new ImmValue(0)));
         }
 
         if (type instanceof ArraytypeAST) {

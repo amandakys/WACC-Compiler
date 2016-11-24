@@ -58,10 +58,15 @@ public class ReadAST extends StatementAST {
 
         if(exprChild != null) {
             exprChild.translate();
+        }
+
+        ProgramAST.nextAddress -= identObj.getSize();
+
+        if(exprChild instanceof PairelemAST || exprChild instanceof ArrayelemAST) {
+            addMain(new LOAD(r, new Address(r)));
         } else {
             addMain(new ADD(r, Register.SP, new ImmValue(ProgramAST.nextAddress)));
         }
-        ProgramAST.nextAddress -= identObj.getSize();
 
         addMain(new MOV(Register.R0, r));
         String functionName = "p_read_" + expression.getType().getTypeName();
