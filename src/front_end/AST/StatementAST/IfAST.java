@@ -1,6 +1,7 @@
 package front_end.AST.StatementAST;
 
 import back_end.Utility;
+import front_end.AST.ProgramAST;
 import front_end.symbol_table.IDENTIFIER;
 
 import back_end.data_type.ImmValue;
@@ -24,14 +25,16 @@ public class IfAST extends StatementAST {
     private StatementAST then;
     private StatementAST elseSt;
 
-    private SymbolTable ST;
+    private SymbolTable thenST;
+    private SymbolTable elseST;
 
-    public IfAST(ParserRuleContext ctx, ExpressionAST expr, StatementAST then, StatementAST elseSt) {
+    public IfAST(ParserRuleContext ctx, ExpressionAST expr, StatementAST then, StatementAST elseSt, SymbolTable thenST, SymbolTable elseST) {
         super(ctx);
         this.expression = expr;
         this.then = then;
         this.elseSt = elseSt;
-        this.ST = Visitor.ST;
+        this.thenST = thenST;
+        this.elseST = elseST;
     }
 
     @Override
@@ -55,18 +58,27 @@ public class IfAST extends StatementAST {
         CodeGen.main.add(new CMP(result, new ImmValue(0)));
         Utility.pushRegister(result);
         String l0 = labelCount.toString();
+
         CodeGen.main.add(new Branch("EQ", "L" + l0));
         labelCount ++;
         result = CodeGen.notUsedRegisters.peek();
-        then.translate();
+        Visitor.ST = thenST;
+        ProgramAST.newScope(then);
+        //then.translate();
         Utility.pushBackRegisters();
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
         //CodeGen.notUsedRegisters.push(result);
+
         String l1 = labelCount.toString();
         CodeGen.main.add(new Branch("", "L" + l1));
+
         CodeGen.main.add(new LabelInstr("L" + l0));
         result = CodeGen.notUsedRegisters.peek();
-        elseSt.translate();
+        Visitor.ST = elseST;
+        ProgramAST.newScope(elseSt);
+        //elseSt.translate();
         Utility.pushBackRegisters();
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
         //CodeGen.notUsedRegisters.push(result);
         CodeGen.main.add(new LabelInstr("L" + l1));
 

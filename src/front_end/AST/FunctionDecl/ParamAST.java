@@ -42,6 +42,10 @@ public class ParamAST extends Node {
 
     }
 
+    public int getSize() {
+        return type.getType().getSize();
+    }
+
     public String getIdent() {
         return this.ident;
     }

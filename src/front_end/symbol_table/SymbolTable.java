@@ -66,7 +66,7 @@ public class SymbolTable {
     public int findStackShift(String x) {
         List<String> keys = new ArrayList<String>(dict.keySet());
         int indexOfx = keys.indexOf(x);
-        int shift = 4;
+        int shift = 4; //name of the function itself take size 4
         for (int i = 1; i < indexOfx; i++) {
             shift += dict.get(keys.get(i)).getSize();
         }

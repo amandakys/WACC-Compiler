@@ -36,7 +36,6 @@ public class IntLiterAST extends ExpressionAST {
     }
 
     public int getValue() {
-        // TODO: Negative
         return Integer.parseInt(intsign + value);
     }
 }

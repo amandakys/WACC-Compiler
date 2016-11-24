@@ -32,15 +32,16 @@ public class BinOpAST extends ExpressionAST {
 
     private ExpressionAST rhs;
     private ExpressionAST lhs;
-    
-    private static boolean hasError;
+
+    private static boolean hasErrorDivByZero;
+    private static boolean hasErrorOverflow;
 
     public BinOpAST(ParserRuleContext ctx, String op, ExpressionAST lhs, ExpressionAST rhs) {
         super(ctx);
         this.op = op;
         this.rhs = rhs;
         this.lhs = lhs;
-        hasError = false;
+        hasErrorDivByZero = false;
         initialise();
     }
 
@@ -80,13 +81,19 @@ public class BinOpAST extends ExpressionAST {
                     CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("*")) {
                     CodeGen.main.add(new SMULL(lhsResult, rhsResult, lhsResult, rhsResult));
-                    CodeGen.main.add(new CMP(rhsResult, lhsResult)); // TODO: add ASR #31 shifting HERE as a third param
+                    // TODO:add ASR #31 shifting HERE as a third param for multNoWhitespaceExpr.wacc
+                    CodeGen.main.add(new CMP(rhsResult, lhsResult));
                     CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
                 }
                 Utility.pushRegister(rhsResult);
-                Utility.pushData(overflow);
-                CodeGen.endFunctions.add("p_integer_overflow");
-                Utility.throwRuntimeError();
+                if (!hasErrorOverflow) {
+                    Utility.pushData(overflow);
+                    CodeGen.endFunctions.add("p_integer_overflow");
+                    if(!hasErrorDivByZero) {
+                        Utility.throwRuntimeError();
+                    }
+                    hasErrorOverflow = true;
+                }
                 break;
 
 //                try {
@@ -119,15 +126,16 @@ public class BinOpAST extends ExpressionAST {
                 res = op.equals("%") ? res : Register.R0;
                 CodeGen.main.add(new MOV(lhsResult, res));
 
-                if (!hasError) {
+                if (!hasErrorDivByZero) {
                     CodeGen.endFunctions.add("p_divide_by_zero");
                     if(ctx.getParent() instanceof BasicParser.PrintlnContext) {
                         CodeGen.placeholders.add("\"\\0\"");
                         CodeGen.endFunctions.add("p_print_ln");
                     }
-                    Utility.throwRuntimeError(); // CANNOT Be here due to wrong
-                    // order of functions
-                    hasError = true;
+                    if(!hasErrorOverflow) {
+                        Utility.throwRuntimeError();
+                    }
+                    hasErrorDivByZero = true;
                 }
                 break;
             case ">":
@@ -216,7 +224,7 @@ public class BinOpAST extends ExpressionAST {
         return op;
     }
 
-    public static boolean isHasError() {
-        return hasError;
+    public static boolean isHasErrorDivByZero() {
+        return hasErrorDivByZero;
     }
 }
