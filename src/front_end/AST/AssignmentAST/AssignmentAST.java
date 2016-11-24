@@ -1,6 +1,7 @@
 package front_end.AST.AssignmentAST;
 
 import back_end.Utility;
+import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
@@ -10,6 +11,7 @@ import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.ExpressionAST.ArraylitAST;
+import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import front_end.AST.StatementAST.StatementAST;
 import main.CodeGen;
@@ -43,40 +45,47 @@ public class AssignmentAST extends StatementAST {
 
     @Override
     public void translate() {
-        Register result = null;
-
-        if(rhs instanceof ArraylitAST || rhs instanceof NewpairAST) {
-            int byte_size = 0;
-            if(rhs instanceof ArraylitAST) {
-                int arrSize = ((ArraylitAST) rhs).getArraylits().size();
-                int ARRAY_SIZE = 4;
-                byte_size = (arrSize + 1) * ARRAY_SIZE;
-            } else {
-                byte_size = rhs.getType().getSize() * 2;
-            }
-
-            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(byte_size)));
-            CodeGen.main.add(new Branch("L", "malloc"));
-
-            result = CodeGen.notUsedRegisters.peek();
-            CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
-        }
-
-        ShiftedReg res = Visitor.ST.getAddress(lhs.getIdent());
-        if(result == null) {
-            result = CodeGen.notUsedRegisters.peek();
-        }
+        Register result = CodeGen.notUsedRegisters.peek();
+        Node lhsChild = lhs.getChild();
 
         rhs.translate();
 
-        if (rhs instanceof ArraylitAST) {
-            Register value = Utility.popUnusedReg();
 
-            CodeGen.main.add(new LOAD(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
-            CodeGen.main.add(new STORE(value, new PreIndex(result), rhs.getIdentObj().getSize()));
+        if(lhsChild != null) {
+            Register res = CodeGen.notUsedRegisters.peek();
+            lhsChild.translate();
+            CodeGen.main.add(new STORE(result, new Address(res), rhs.getIdentObj().getSize()));
+        } else {
+            ShiftedReg res = Visitor.ST.getAddress(lhs.getIdent());
+            CodeGen.main.add(new STORE(result, res, rhs.getIdentObj().getSize()));
         }
 
+//        if(rhs instanceof ArraylitAST || rhs instanceof NewpairAST) {
+//            int byte_size = 0;
+//            if(rhs instanceof ArraylitAST) {
+//                int arrSize = ((ArraylitAST) rhs).getArraylits().size();
+//                int ARRAY_SIZE = 4;
+//                byte_size = (arrSize + 1) * ARRAY_SIZE;
+//            } else {
+//                byte_size = rhs.getType().getSize() * 2;
+//            }
+//
+//            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(byte_size)));
+//            CodeGen.main.add(new Branch("L", "malloc"));
+//
+//            result = CodeGen.notUsedRegisters.peek();
+//            CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
+//        }
+
+//        ShiftedReg res = Visitor.ST.getAddress(lhs.getIdent());
+
+//        if (rhs instanceof ArraylitAST) {
+//            Register value = Utility.popUnusedReg();
+//
+//            CodeGen.main.add(new LOAD(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
+//            CodeGen.main.add(new STORE(value, new PreIndex(result), rhs.getIdentObj().getSize()));
+//        }
+
         ProgramAST.nextAddress += rhs.getIdentObj().getSize();
-        CodeGen.main.add(new STORE(result, res, rhs.getIdentObj().getSize()));
     }
 }
