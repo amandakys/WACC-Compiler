@@ -1,5 +1,14 @@
 package front_end.AST.ExpressionAST;
 
+import back_end.data_type.Address;
+import back_end.data_type.ImmValue;
+import back_end.data_type.register.Register;
+import back_end.instruction.Branch;
+import back_end.instruction.data_manipulation.EOR;
+import back_end.instruction.data_manipulation.RSBS;
+import back_end.instruction.load_store.LOAD;
+import com.sun.org.apache.bcel.internal.classfile.Code;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
@@ -29,6 +38,29 @@ public class UnopAST extends ExpressionAST {
 
     @Override
     public void translate() {
+        Register op = CodeGen.notUsedRegisters.peek();
+        expression.translate();
+
+        switch (unop) {
+            case "!":
+                //Using Exclusive Or with Immvalue 1
+                CodeGen.main.add(new EOR(op, op, new ImmValue(1)));
+                break;
+            case "-":
+                CodeGen.main.add(new RSBS(op, op));
+                CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error")); // TODO: Add overflow error function
+                break;
+            case "len":
+                CodeGen.main.add(new LOAD(op, new Address(op)));
+                break;
+            case "ord":
+
+                break;
+            case "chr":
+
+                break;
+        }
+
     }
 
     private void initialise() {

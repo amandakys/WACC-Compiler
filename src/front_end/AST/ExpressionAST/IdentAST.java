@@ -39,15 +39,12 @@ public class IdentAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        int stackShift = Visitor.ST.findStackShift(ident);
-        ShiftedReg sR = new PreIndex(Register.SP, new ImmValue(stackShift));
-        Register result = Utility.popUnusedReg();
-
-        //CodeGen.main.add(new LOAD(result, CodeGen.memoryAddress.get(ident)));
-        //CodeGen.main.add(new LOAD(result, sR));
-
-        CodeGen.main.add(new LOAD(result, Visitor.ST.getAddress(ident)));
-
+        Register result = CodeGen.notUsedRegisters.pop();
+        if(identObj.getType().getTypeName().equals("bool")) {
+            CodeGen.main.add(new LOAD("SB", result, Visitor.ST.getAddress(ident)));
+        } else {
+            CodeGen.main.add(new LOAD(result, Visitor.ST.getAddress(ident)));
+        }
     }
 
     public String getIdent() {
