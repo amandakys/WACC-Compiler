@@ -1,5 +1,6 @@
 package front_end.AST.AssignmentAST;
 
+import back_end.Utility;
 import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
@@ -87,7 +88,7 @@ public class CallAST extends AssignrhsAST{
 
             Register freeToUse = CodeGen.toPushUnusedReg.pop();
             addMain(new STORE(freeToUse, stackShift, argSize));
-            CodeGen.notUsedRegisters.push(freeToUse);
+            Utility.pushRegister(freeToUse);
         }
         ImmValue argsSizeValue = new ImmValue(argsSize);
 

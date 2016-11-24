@@ -1,5 +1,6 @@
 package back_end.instruction.data_manipulation;
 
+import back_end.Utility;
 import back_end.data_type.Operand;
 import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
@@ -16,9 +17,10 @@ public class MOV implements Instruction {
         this.condition = "";
 
         if(rhs instanceof Register && !dst.equals(rhs) && rhs != Register.R0) {
-            CodeGen.notUsedRegisters.push((Register) rhs);
-            CodeGen.notUsedRegisters.remove(dst);
+            Utility.pushRegister((Register) rhs);
+
         }
+        CodeGen.notUsedRegisters.remove(dst);
 
 
     }

@@ -53,7 +53,7 @@ public class IfAST extends StatementAST {
         expression.translate();
         //jump to label if false
         CodeGen.main.add(new CMP(result, new ImmValue(0)));
-        CodeGen.notUsedRegisters.push(result);
+        Utility.pushRegister(result);
         String l0 = labelCount.toString();
         CodeGen.main.add(new Branch("EQ", "L" + l0));
         labelCount ++;

@@ -181,6 +181,12 @@ public class Utility {
         }
     }
 
+    public static void pushRegister(Register r) {
+        if (!CodeGen.notUsedRegisters.contains(r)) {
+            CodeGen.notUsedRegisters.push(r);
+        }
+    }
+
     public static void throwRuntimeError() {
         CodeGen.endFunctions.add("p_throw_runtime_error");
         CodeGen.placeholders.add("\"%.*s\\0\"");
