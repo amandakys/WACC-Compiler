@@ -31,6 +31,8 @@ import front_end.symbol_table.TYPE;
 import java.util.ArrayList;
 import java.util.List;
 
+import static back_end.Utility.addMain;
+
 public class ArrayelemAST extends ExpressionAST {
     private String ident;
     private List<Node> expressions = new ArrayList<>();
@@ -68,6 +70,8 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void translate() {
+        Register r = Utility.popUnusedReg();
+        addMain(new LOAD(r, new Address(r)));
         if(!hasError) {
             Register first = Utility.popUnusedReg();
             Utility.pushData(NEGATIVE_ARRAY_BOUND);

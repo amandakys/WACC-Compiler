@@ -22,4 +22,8 @@ public class PairliterAST extends ExpressionAST {
     @Override
     public void translate() {
     }
+
+    public String getNullStr() {
+        return nullStr;
+    }
 }

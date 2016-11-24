@@ -56,14 +56,10 @@ public class ReadAST extends StatementAST {
         Register r = CodeGen.notUsedRegisters.peek();
         Node exprChild = expression.getChild();
 
-        if(exprChild instanceof PairelemAST || exprChild instanceof ArrayelemAST) {
-            addMain(new LOAD(r, new Address(r)));
-        } else {
-            addMain(new ADD(r, Register.SP, new ImmValue(ProgramAST.nextAddress)));
-        }
-
         if(exprChild != null) {
             exprChild.translate();
+        } else {
+            addMain(new ADD(r, Register.SP, new ImmValue(ProgramAST.nextAddress)));
         }
         ProgramAST.nextAddress -= identObj.getSize();
 
@@ -82,9 +78,5 @@ public class ReadAST extends StatementAST {
         if (!CodeGen.endFunctions.contains(functionName)){
             CodeGen.endFunctions.add(functionName);
         }
-
-//        if(exprChild instanceof PairelemAST || exprChild instanceof ArrayelemAST) {
-//            Utility.throwRuntimeError();
-//        }
     }
 }

@@ -14,11 +14,12 @@ import java.util.Map;
 public class SymbolTable {
     private SymbolTable encSymbolTable; //ref to enclosing symbol table
     private Map<String, IDENTIFIER> dict;
-    private Map<String, ShiftedReg> memoryAddress = new HashMap<>();
+    private Map<String, ShiftedReg> memoryAddress;
 
     public SymbolTable(SymbolTable st) {
         dict= new LinkedHashMap<>();
         encSymbolTable = st;
+        memoryAddress = new HashMap<>();
     }
 
     public SymbolTable getEncSymbolTable() {
@@ -48,10 +49,6 @@ public class SymbolTable {
         return null; 
     }
 
-    public Map<String, IDENTIFIER> getDict() {
-        return dict;
-    }
-
     public int findSize() {
         int size = 0;
 
@@ -60,18 +57,6 @@ public class SymbolTable {
                 size += ident.getSize();
             }
 
-        }
-
-        return size;
-    }
-
-    public int findSizeType(Class c) {
-        int size = 0;
-
-        for (IDENTIFIER iden : dict.values()) {
-            if(iden.getClass().equals(c)) {
-                size++;
-            }
         }
 
         return size;
@@ -87,16 +72,30 @@ public class SymbolTable {
         return shift;
     }
 
-
-
    public void addToMemoryAddress(String name, ShiftedReg reg) {
        memoryAddress.put(name, reg);
    }
 
    public ShiftedReg getAddress(String name) {
-       return memoryAddress.get(name);
+       SymbolTable S = this;
+       int offset = 0;
+
+       while (!S.getMemoryAddress().containsKey(name)) {
+           S = S.getEncSymbolTable();
+
+           if(S == null) {
+               break;
+           }
+
+           offset++;
+       }
+
+       return S == null ? null : S.getMemoryAddress().get(name).addToShiftVal(offset);
    }
 
+    public Map<String, ShiftedReg> getMemoryAddress() {
+        return memoryAddress;
+    }
 }
 
 

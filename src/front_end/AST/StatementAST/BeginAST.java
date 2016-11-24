@@ -19,13 +19,12 @@ public class BeginAST extends StatementAST {
     private StatementAST statement;
     private SymbolTable ST;
 
-    private double STACK_SIZE = Math.pow(2, 10);
-
     public BeginAST(ParserRuleContext ctx, StatementAST statement) {
         super(ctx);
         this.statement = statement;
         this.ST = Visitor.ST;
     }
+
     @Override
     public void check() {
         statement.checkNode();
@@ -33,10 +32,8 @@ public class BeginAST extends StatementAST {
 
     @Override
     public void translate() {
-        Visitor.ST = ST.getEncSymbolTable();
-
-        ProgramAST.size = ST.findSize();
+        Visitor.ST = ST;
         ProgramAST.newScope(statement);
-        ProgramAST.size = Visitor.ST.findSize();
+        ST = ST.getEncSymbolTable();
     }
 }

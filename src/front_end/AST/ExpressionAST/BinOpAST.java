@@ -19,6 +19,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static back_end.Error.divideByZero;
 import static back_end.Error.overflow;
 
 /**
@@ -31,11 +32,7 @@ public class BinOpAST extends ExpressionAST {
 
     private ExpressionAST rhs;
     private ExpressionAST lhs;
-
-    private final String DIVIDE_BY_ZERO = "\"DivideByZeroError: divide or modulo by zero\\n\\0\"";
-    private final String OVERFLOW_ERROR_MESSAGE = "\"OverflowError: the result is too small/large to store in a " +
-            "4-byte signed-integer.\\n\"";
-
+    
     private static boolean hasError;
 
     public BinOpAST(ParserRuleContext ctx, String op, ExpressionAST lhs, ExpressionAST rhs) {
@@ -43,7 +40,7 @@ public class BinOpAST extends ExpressionAST {
         this.op = op;
         this.rhs = rhs;
         this.lhs = lhs;
-        this.hasError = false;
+        hasError = false;
         initialise();
     }
 
@@ -107,9 +104,8 @@ public class BinOpAST extends ExpressionAST {
 
             case "/":
             case "%":
-                if (!hasError) {
-                    Utility.pushData(DIVIDE_BY_ZERO);
-                    CodeGen.main.add(new MOV(Register.R0, lhsResult));
+                Utility.pushData(divideByZero);
+                CodeGen.main.add(new MOV(Register.R0, lhsResult));
 
                     Register res = Utility.popParamReg();
                     CodeGen.main.add(new MOV(res, rhsResult));
@@ -120,9 +116,10 @@ public class BinOpAST extends ExpressionAST {
                         CodeGen.main.add(new Branch("L", "__aeabi_idivmod"));
                     }
 
-                    res = op.equals("%") ? res : Register.R0;
-                    CodeGen.main.add(new MOV(lhsResult, res));
+                res = op.equals("%") ? res : Register.R0;
+                CodeGen.main.add(new MOV(lhsResult, res));
 
+                if (!hasError) {
                     CodeGen.endFunctions.add("p_divide_by_zero");
                     if(ctx.getParent() instanceof BasicParser.PrintlnContext) {
                         CodeGen.placeholders.add("\"\\0\"");

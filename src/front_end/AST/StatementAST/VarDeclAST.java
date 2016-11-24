@@ -8,9 +8,11 @@ import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
+import front_end.AST.AssignmentAST.PairelemAST;
 import front_end.AST.ExpressionAST.ArraylitAST;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
+import front_end.AST.ExpressionAST.PairliterAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
@@ -113,9 +115,13 @@ public class VarDeclAST extends StatementAST {
         }
 
         Register res = CodeGen.notUsedRegisters.peek();
-        type.translate();
-
-        rhs.translate();
+        //do not malloc a space on the stack if the pair is null
+        if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
+            type.translate();
+            rhs.translate();
+        } else {
+            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(0)));
+        }
 
         if (type instanceof ArraytypeAST) {
             Register value = Utility.popUnusedReg();

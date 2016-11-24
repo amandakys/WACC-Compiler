@@ -35,10 +35,9 @@ public class PairtypeAST extends TypeAST {
 
     @Override
     public void translate() {
-        Register result = Utility.popUnusedReg();
         CodeGen.main.add(new LOAD(Register.R0, new ImmValue(identObj.getSize() * 2)));
         CodeGen.main.add(new Branch("L", "malloc"));
-        CodeGen.main.add(new MOV(result, Register.R0));
+        CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
 
         first.translate();
         second.translate();

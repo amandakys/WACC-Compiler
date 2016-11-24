@@ -1,6 +1,7 @@
 package front_end.AST.AssignmentAST;
 
 import back_end.Utility;
+import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
@@ -15,6 +16,8 @@ import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.PAIR;
+
+import static back_end.Utility.addMain;
 
 /**
  * Created by tsd15 on 09/11/16.
@@ -56,15 +59,20 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void translate() {
+        Register r = Utility.popUnusedReg();
+        if(Visitor.ST.getAddress(token) != null) {
+            addMain(new LOAD(r, new Address(r)));
+        }
         Utility.pushData(NULL_REFERENCE_ERROR);
 
-        Register before = Utility.popUnusedReg();
-        CodeGen.main.add(new LOAD(before, new PreIndex(Register.SP, new ImmValue(ProgramAST.size))));
-        CodeGen.main.add(new MOV(Register.R0, before));
+        CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP, new ImmValue(ProgramAST.size))));
+        CodeGen.main.add(new MOV(Register.R0, r));
 
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
-        CodeGen.main.add(new LOAD(before, new PreIndex(before)));
-        CodeGen.main.add(new LOAD(before, new PreIndex(before)));
+        CodeGen.main.add(new LOAD(r, new PreIndex(r)));
+//        if(Visitor.ST.getAddress(token) != null) {
+//            CodeGen.main.add(new LOAD(r, new PreIndex(r)));
+//        }
 
         if(!hasError) {
             CodeGen.endFunctions.add("p_check_null_pointer");
@@ -74,7 +82,7 @@ public class PairelemAST extends AssignrhsAST{
 
     }
 
-    public static boolean isHasError() {
-        return hasError;
+    public String getToken() {
+        return token;
     }
 }

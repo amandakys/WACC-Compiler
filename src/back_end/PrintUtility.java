@@ -157,12 +157,10 @@ public class PrintUtility {
     }
 
     public static void p_divide_by_zero() {
-        Register res = Utility.popUnusedReg();
-
         CodeGen.functions.add(new LabelInstr("p_check_divide_by_zero"));
         CodeGen.functions.add(new PUSH(Register.LR));
-        CodeGen.functions.add(new CMP(res, new ImmValue(0)));
-        CodeGen.functions.add(new LOAD("EQ", res, new LabelExpr(getErrorMessage(Error.divideByZero))));
+        CodeGen.functions.add(new CMP(Utility.popParamReg(), new ImmValue(0)));
+        CodeGen.functions.add(new LOAD("EQ", Register.R0, new LabelExpr(getErrorMessage(Error.divideByZero))));
         CodeGen.functions.add(new Branch("LEQ", "p_throw_runtime_error"));
         CodeGen.functions.add(new POP(Register.PC));
     }
