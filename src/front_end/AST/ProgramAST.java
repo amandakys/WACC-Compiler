@@ -8,7 +8,6 @@ import back_end.instruction.*;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.SUB;
 import back_end.instruction.load_store.LOAD;
-import front_end.AST.ExpressionAST.*;
 import front_end.AST.FunctionDecl.FunctionDeclAST;
 import front_end.AST.StatementAST.StatementAST;
 import main.CodeGen;
@@ -29,7 +28,6 @@ public class ProgramAST extends Node {
     public static int nextAddress = 0;
     //specifies how many VARIABLE there are in current symbol table
     public static int size;
-    private static int STACK_SIZE = (int) Math.pow(2, 10);
 
     public ProgramAST(ParserRuleContext ctx, List<FunctionDeclAST> functions, StatementAST statement) {
         super(ctx);
@@ -74,7 +72,7 @@ public class ProgramAST extends Node {
         if(size != 0) {
             int spSize = size;
 
-            if(spSize > STACK_SIZE) {
+            if(spSize > STACK_SIZE ) {
                 Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(STACK_SIZE)));
                 while(spSize > STACK_SIZE) {
                     //decrement stack pointer

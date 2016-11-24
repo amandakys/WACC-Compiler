@@ -1,6 +1,8 @@
 package front_end.AST.StatementAST;
 
 import back_end.Utility;
+import back_end.instruction.data_manipulation.ADD;
+import back_end.instruction.data_manipulation.SUB;
 import front_end.AST.ProgramAST;
 import front_end.symbol_table.IDENTIFIER;
 
@@ -61,26 +63,55 @@ public class IfAST extends StatementAST {
 
         CodeGen.main.add(new Branch("EQ", "L" + l0));
         labelCount ++;
-        result = CodeGen.notUsedRegisters.peek();
-        Visitor.ST = thenST;
-        ProgramAST.newScope(then);
-        //then.translate();
+        if (thenST.findSize() != 0) {
+            //new variables are declared
+            newScope(thenST, then);
+        } else {
+            then.translate();
+        }
         Utility.pushBackRegisters();
-        Visitor.ST = Visitor.ST.getEncSymbolTable();
-        //CodeGen.notUsedRegisters.push(result);
 
         String l1 = labelCount.toString();
         CodeGen.main.add(new Branch("", "L" + l1));
 
         CodeGen.main.add(new LabelInstr("L" + l0));
-        result = CodeGen.notUsedRegisters.peek();
-        Visitor.ST = elseST;
-        ProgramAST.newScope(elseSt);
-        //elseSt.translate();
+        if (elseST.findSize() != 0) {
+            //new variables are declared
+            newScope(elseST, elseSt);
+        } else {
+            elseSt.translate();
+        }
         Utility.pushBackRegisters();
-        Visitor.ST = Visitor.ST.getEncSymbolTable();
-        //CodeGen.notUsedRegisters.push(result);
+
         CodeGen.main.add(new LabelInstr("L" + l1));
 
+    }
+
+    private void newScope(SymbolTable ST, StatementAST statement) {
+        int spSize = ST.findSize();
+
+        if(spSize > Utility.STACK_SIZE ) {
+            Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(Utility.STACK_SIZE)));
+            while(spSize > Utility.STACK_SIZE) {
+                //decrement stack pointer
+                spSize = (spSize - Utility.STACK_SIZE);
+                Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
+            }
+        } else {
+            Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
+        }
+
+        statement.translate();
+
+        if(spSize > Utility.STACK_SIZE) {
+            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(Utility.STACK_SIZE)));
+            while(spSize > Utility.STACK_SIZE) {
+                //increment stack pointer
+                spSize = (int) (spSize - Utility.STACK_SIZE);
+                Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
+            }
+        } else {
+            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
+        }
     }
 }
