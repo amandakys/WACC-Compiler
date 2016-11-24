@@ -48,16 +48,16 @@ public class WhileAST extends StatementAST {
         Register result = CodeGen.notUsedRegisters.peek();
         statement.translate();
         Utility.pushBackRegisters();
-        CodeGen.notUsedRegisters.push(result);
+        Utility.pushRegister(result);
         CodeGen.main.add(new LabelInstr("L" + conditionLabel));
 
         result = CodeGen.notUsedRegisters.peek();
         expression.translate();
-
+        Utility.pushBackRegisters();
 
         CodeGen.main.add(new CMP(result, new ImmValue(1)));
-        Utility.pushBackRegisters();
-        //CodeGen.notUsedRegisters.push(result);
+
+        Utility.pushRegister(result);
         CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
     }
 }
