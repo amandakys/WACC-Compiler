@@ -13,7 +13,6 @@ import back_end.instruction.condition.CMP;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
-import front_end.AST.ExpressionAST.*;
 import main.CodeGen;
 
 public class PrintUtility {
@@ -167,7 +166,6 @@ public class PrintUtility {
     }
 
     public static void p_integer_overflow() {
-        CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
         CodeGen.functions.add(new LabelInstr("p_throw_overflow_error"));
         CodeGen.functions.add(new LOAD(Register.R0, new LabelExpr(getErrorMessage(Error.overflow))));
         CodeGen.functions.add(new Branch("L", "p_throw_runtime_error"));
