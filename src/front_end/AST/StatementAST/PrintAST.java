@@ -35,24 +35,11 @@ public class PrintAST extends StatementAST {
     public void translate() {
         //Result of expression.translate() is stored CodeGen.notUsedRegisters.pop().Final result is stored
         // in R0 so peek at the register to move the value from CodeGen.notUsedRegisters.pop() to R0
-
         Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
         addMain(new MOV(Register.R0, result));
 
-        //TODO:find and push the placeholder when there are no more PrintAST node with an expression of the same type
         pushPlaceholder();
-
-//        if (expression instanceof BinOpAST) {
-//            BinOpAST binOpAST = (BinOpAST) expression;
-//
-//           if(binOpAST.getOp().equals("/") || binOpAST.getOp().equals("%")) {
-//               Utility.throwRuntimeError();
-//           }
-//        } else if (expression instanceof ArrayelemAST) {
-//            Utility.throwRuntimeError();
-//        }
-
     }
 
     /*

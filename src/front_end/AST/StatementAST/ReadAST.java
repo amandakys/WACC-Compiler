@@ -68,9 +68,6 @@ public class ReadAST extends StatementAST {
             addMain(new ADD(r, Register.SP, new ImmValue(ProgramAST.nextAddress)));
         }
 
-
-
-
         addMain(new MOV(Register.R0, r));
         String functionName = "p_read_" + expression.getType().getTypeName();
         addMain(new Branch("L", functionName));
@@ -86,9 +83,5 @@ public class ReadAST extends StatementAST {
         if (!CodeGen.endFunctions.contains(functionName)){
             CodeGen.endFunctions.add(functionName);
         }
-
-//        if(exprChild instanceof PairelemAST || exprChild instanceof ArrayelemAST) {
-//            Utility.throwRuntimeError();
-//        }
     }
 }

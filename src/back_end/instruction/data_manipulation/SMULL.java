@@ -13,10 +13,10 @@ public class SMULL implements Instruction{
     private String sflag;
 
     public SMULL(Register rdLo, Register rdHi, Register rm, Register rs) {
-        rdLo = rdLo;
-        rdHi = rdHi;
-        rm = rm;
-        rs = rs;
+        this.rdLo = rdLo;
+        this.rdHi = rdHi;
+        this.rm = rm;
+        this.rs = rs;
         sflag = "";
         cond = "";
     }

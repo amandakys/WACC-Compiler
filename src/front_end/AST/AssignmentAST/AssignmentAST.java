@@ -63,7 +63,6 @@ public class AssignmentAST extends StatementAST {
         }
 
         ShiftedReg res = Visitor.ST.getAddress(lhs.getIdent());
-
         if(result == null) {
             result = CodeGen.notUsedRegisters.peek();
         }

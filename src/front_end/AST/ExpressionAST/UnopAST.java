@@ -1,5 +1,6 @@
 package front_end.AST.ExpressionAST;
 
+import back_end.Utility;
 import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
@@ -7,10 +8,11 @@ import back_end.instruction.Branch;
 import back_end.instruction.data_manipulation.EOR;
 import back_end.instruction.data_manipulation.RSBS;
 import back_end.instruction.load_store.LOAD;
-import com.sun.org.apache.bcel.internal.classfile.Code;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import static back_end.Error.overflow;
 
 /**
  * Created by andikoh on 10/11/2016.
@@ -48,17 +50,20 @@ public class UnopAST extends ExpressionAST {
                 break;
             case "-":
                 CodeGen.main.add(new RSBS(op, op));
-                CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error")); // TODO: Add overflow error function
+                CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
+                Utility.pushData(overflow);
+                CodeGen.endFunctions.add("p_integer_overflow");
+                Utility.throwRuntimeError();
                 break;
             case "len":
                 //TODO: you can't put a register into load without popping it off the unusedRegs list
                 CodeGen.main.add(new LOAD(op, new Address(op)));
                 break;
             case "ord":
-
+                //Do nothing
                 break;
             case "chr":
-
+                //Do nothing
                 break;
         }
 
