@@ -24,7 +24,6 @@ public class SUB implements Instruction {
             Utility.pushRegister((Register) rhs);
         }
         //CodeGen.notUsedRegisters.remove(dst);
-
     }
 
     @Override

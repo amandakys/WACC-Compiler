@@ -17,7 +17,7 @@ import java.util.Stack;
  */
 public class Utility {
     private static Stack<Integer> jumpSP = new Stack<>();
-
+    private static int NUM_QUOTATION = 2;
 
     public static int STACK_SIZE = (int) Math.pow(2, 10);
 
@@ -37,7 +37,7 @@ public class Utility {
         Utility.addData(new LabelInstr(getNextString()));
         CodeGen.numStrings++;
         //discard the "" in a string when finding the string's size
-        Utility.addData(new Directive("word", String.valueOf(value.replaceAll("[\\\\\"]", "").length())));
+        Utility.addData(new Directive("word", String.valueOf(value.replaceAll("[\"]", "").length())));
         Utility.addData(new Directive("ascii", value));
     }
 
