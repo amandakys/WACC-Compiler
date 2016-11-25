@@ -12,6 +12,7 @@ import back_end.instruction.load_store.STORE;
 import com.sun.org.apache.bcel.internal.classfile.Code;
 import front_end.AST.ProgramAST;
 import main.CodeGen;
+import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.PAIR;
 import front_end.symbol_table.TYPE;
@@ -39,9 +40,11 @@ public class PairtypeAST extends TypeAST {
 
     @Override
     public void translate() {
-        CodeGen.main.add(new LOAD(Register.R0, new ImmValue(identObj.getSize() * 2)));
-        CodeGen.main.add(new Branch("L", "malloc"));
-        CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
+        if(Visitor.ST.hasPairType(identObj)) {
+            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(identObj.getSize() * 2)));
+            CodeGen.main.add(new Branch("L", "malloc"));
+            CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
+        }
     }
 
     public TYPE typeFirst() {

@@ -4,6 +4,7 @@ import java.util.*;
 
 import back_end.Utility;
 import back_end.data_type.register.ShiftedReg;
+import front_end.AST.Compare;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -101,20 +102,16 @@ public class SymbolTable {
         return memoryAddress;
     }
 
-
-
-    public int pairStackSize(String name) {
-        int result = 0;
-
-        for (Map.Entry<String, IDENTIFIER> entry : dict.entrySet()) {
-            if(!entry.getKey().equals(name)) {
-                result += entry.getValue().getSize();
-            } else {
-                result += entry.getValue().getSize();
-                return result + 1;
+    public boolean hasPairType(IDENTIFIER identifier) {
+        if (identifier instanceof PAIR) {
+            for (Map.Entry<String, IDENTIFIER> entry : dict.entrySet()) {
+                if((entry.getValue() instanceof PAIR) &&
+                        Compare.pairs((PAIR) entry.getValue(), (PAIR) identifier)) {
+                    return true;
+                }
             }
         }
-        return result;
+        return false;
     }
 }
 
