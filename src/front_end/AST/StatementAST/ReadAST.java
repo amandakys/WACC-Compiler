@@ -1,5 +1,6 @@
 package front_end.AST.StatementAST;
 
+import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
@@ -79,9 +80,7 @@ public class ReadAST extends StatementAST {
             placeholder = "\"%d\\0\"";
         }
 
-        CodeGen.placeholders.add(placeholder);
-        if (!CodeGen.endFunctions.contains(functionName)){
-            CodeGen.endFunctions.add(functionName);
-        }
+        PrintUtility.addToPlaceholders(placeholder);
+        PrintUtility.addToEndFunctions(functionName);
     }
 }

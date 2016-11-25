@@ -1,5 +1,6 @@
 package front_end.AST.StatementAST;
 
+import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
@@ -42,10 +43,10 @@ public class FreeAST extends StatementAST {
         CodeGen.main.add(new MOV(Register.R0, value));
         if (expression.getType() instanceof PAIR) {
             CodeGen.main.add(new Branch("L", "p_free_pair"));
-            CodeGen.endFunctions.add(("p_free_pair"));
+            PrintUtility.addToEndFunctions(("p_free_pair"));
         } else if (expression.getType() instanceof ARRAY) {
             CodeGen.main.add(new Branch("L", "p_free_array"));
-            CodeGen.endFunctions.add(("p_free_array"));
+            PrintUtility.addToEndFunctions(("p_free_array"));
         }
     }
 }

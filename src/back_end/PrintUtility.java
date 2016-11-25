@@ -21,6 +21,24 @@ public class PrintUtility {
     public PrintUtility() {
     }
 
+    public static void addToEndFunctions(String s) {
+        if (!CodeGen.endFunctions.contains(s)) {
+            CodeGen.endFunctions.add(s);
+        }
+    }
+
+    public static void addToPlaceholders(String s) {
+        if (!CodeGen.placeholders.contains(s)) {
+            CodeGen.placeholders.add(s);
+        }
+    }
+
+    public static void throwRuntimeError() {
+        addToEndFunctions("p_throw_runtime_error");
+        addToPlaceholders("\"%.*s\\0\"");
+        addToEndFunctions("p_print_string");
+    }
+
     public void ioFunctions() {
         for (String s : CodeGen.endFunctions) {
             switch (s) {

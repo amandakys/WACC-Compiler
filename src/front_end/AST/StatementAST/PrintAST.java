@@ -1,5 +1,6 @@
 package front_end.AST.StatementAST;
 
+import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.*;
 import back_end.data_type.register.Register;
@@ -64,17 +65,17 @@ public class PrintAST extends StatementAST {
 
         switch (typeName) {
             case "string":
-                CodeGen.placeholders.add("\"%.*s\\0\"");
+                PrintUtility.addToPlaceholders("\"%.*s\\0\"");
                 break;
             case "int":
-                CodeGen.placeholders.add("\"%d\\0\"");
+                PrintUtility.addToPlaceholders("\"%d\\0\"");
                 break;
             case "char":
                 functionName = "putchar";
                 break;
             case "bool":
-                CodeGen.placeholders.add("\"true\\0\"");
-                CodeGen.placeholders.add("\"false\\0\"");
+                PrintUtility.addToPlaceholders("\"true\\0\"");
+                PrintUtility.addToPlaceholders("\"false\\0\"");
                 break;
         }
 
@@ -83,17 +84,15 @@ public class PrintAST extends StatementAST {
         if (!hasPlaceholder(placeholder)) {
             //when expression is a boolLiter, push both true and false to CodeGen.data
             if (expression instanceof BoolliterAST) {
-                CodeGen.placeholders.add("\"true\\0\"");
-                CodeGen.placeholders.add("\"false\\0\"");
+                PrintUtility.addToPlaceholders("\"true\\0\"");
+                PrintUtility.addToPlaceholders("\"false\\0\"");
             } else {
                 if (!placeholder.equals("")) {
-                    CodeGen.placeholders.add(placeholder);
+                    PrintUtility.addToPlaceholders(placeholder);
                 }
             }
         }
 
-        if (!CodeGen.endFunctions.contains(functionName)) {
-            CodeGen.endFunctions.add(functionName);
-        }
+            PrintUtility.addToEndFunctions(functionName);
     }
 }

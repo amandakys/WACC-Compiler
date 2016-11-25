@@ -1,7 +1,7 @@
 package front_end.AST.AssignmentAST;
 
-import antlr.BasicParser;
 import back_end.Error;
+import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.*;
 import back_end.data_type.register.PostIndex;
@@ -9,19 +9,13 @@ import back_end.data_type.register.Register;
 import back_end.data_type.register.Shift;
 import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.Branch;
-import back_end.instruction.POP;
-import back_end.instruction.PUSH;
-import back_end.instruction.condition.CMP;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import front_end.AST.ExpressionAST.ExpressionAST;
-import front_end.AST.ExpressionAST.IntLiterAST;
 
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
-import front_end.AST.StatementAST.PrintAST;
-import front_end.AST.StatementAST.PrintlnAST;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -31,8 +25,6 @@ import front_end.symbol_table.TYPE;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static back_end.Utility.addMain;
 
 public class ArrayelemAST extends ExpressionAST {
     private String ident;
@@ -79,8 +71,8 @@ public class ArrayelemAST extends ExpressionAST {
                 Utility.pushData(Error.arrayOutOfBoundsNegative);
                 Utility.pushData(Error.arrayOutOfBoundsLarge);
 
-                CodeGen.endFunctions.add("p_check_array_bounds");
-                Utility.throwRuntimeError();
+                PrintUtility.addToEndFunctions("p_check_array_bounds");
+                PrintUtility.throwRuntimeError();
                 hasError = true;
             }
 

@@ -1,6 +1,7 @@
 package front_end.AST.ExpressionAST;
 
 import antlr.BasicParser;
+import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
@@ -98,9 +99,9 @@ public class BinOpAST extends ExpressionAST {
                 Utility.pushRegister(rhsResult);
                 if (!hasErrorOverflow) {
                     Utility.pushData(overflow);
-                    CodeGen.endFunctions.add("p_integer_overflow");
+                    PrintUtility.addToEndFunctions("p_integer_overflow");
                     if(!hasErrorDivByZero) {
-                        Utility.throwRuntimeError();
+                        PrintUtility.throwRuntimeError();
                     }
                     hasErrorOverflow = true;
                 }
@@ -117,7 +118,7 @@ public class BinOpAST extends ExpressionAST {
 //
 //                    //CodeGen.main.add(new CMP(second, new PostIndex(first, ASR, new ImmValue(31))));
 //                    CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
-//                    CodeGen.endFunctions.add("p_print_string");
+//                    PrintUtility.addToEndFunctions();("p_print_string");
 
             case "/":
             case "%":
@@ -137,13 +138,13 @@ public class BinOpAST extends ExpressionAST {
                 CodeGen.main.add(new MOV(lhsResult, res));
 
                 if (!hasErrorDivByZero) {
-                    CodeGen.endFunctions.add("p_divide_by_zero");
+                    PrintUtility.addToEndFunctions("p_divide_by_zero");
                     if(ctx.getParent() instanceof BasicParser.PrintlnContext) {
-                        CodeGen.placeholders.add("\"\\0\"");
-                        CodeGen.endFunctions.add("p_print_ln");
+                        PrintUtility.addToPlaceholders("\"\\0\"");
+                        PrintUtility.addToEndFunctions("p_print_ln");
                     }
                     if(!hasErrorOverflow) {
-                        Utility.throwRuntimeError();
+                        PrintUtility.throwRuntimeError();
                     }
                     hasErrorDivByZero = true;
                 }
