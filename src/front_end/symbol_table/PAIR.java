@@ -1,13 +1,9 @@
 package front_end.symbol_table;
 
-import main.Visitor;
-
-/**
- * Created by andikoh on 10/11/2016.
- */
 public class PAIR extends TYPE {
     private TYPE first;
     private TYPE second;
+    private int typeSize = 4; // size of a pair itself without fst and snd is 4
 
     public PAIR(TYPE first, TYPE second) {
         super("pair");
@@ -34,8 +30,10 @@ public class PAIR extends TYPE {
         return "pair(" + first.getTypeName()+ ", " + second.getTypeName() + ")";
     }
 
+
+
     @Override
     public int getSize() {
-        return 4;
+        return typeSize ;
     }
 }

@@ -35,6 +35,8 @@ public class PreIndex extends ShiftedReg {
         return "[" + res + "]" + (jump ? "!" : "");
     }
 
+
+    //return the address of the register with the shifted value newVal
     @Override
     public PreIndex addToShiftVal(int newVal) {
         PreIndex reg = new PreIndex(getBaseReg(), getRm(), getShift(), getShiftVal());

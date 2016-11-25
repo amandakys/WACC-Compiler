@@ -63,8 +63,13 @@ public class ArrayelemAST extends ExpressionAST {
     public void translate() {
         //addMain(new LOAD(r, new Address(r)));
         int address = 0;
+        // take the first unused register in the stack
         Register first = Utility.popUnusedReg();
+
+        //take the first param register in the stack
         Register paramReg = Utility.popParamReg();
+
+
         CodeGen.main.add(new ADD(first, Register.SP, Visitor.ST.getAddress(ident).getShiftVal()));
         //CodeGen.main.add(new ADD(first, Register.SP, new ImmValue(address)));
         for(Node n : expressions) {
