@@ -72,6 +72,7 @@ public class IfAST extends StatementAST {
         Utility.pushBackRegisters();
 
         String l1 = labelCount.toString();
+        labelCount++;
         CodeGen.main.add(new Branch("", "L" + l1));
 
         CodeGen.main.add(new LabelInstr("L" + l0));
