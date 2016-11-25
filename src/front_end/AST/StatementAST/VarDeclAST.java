@@ -108,10 +108,9 @@ public class VarDeclAST extends StatementAST {
         ProgramAST.nextAddress = identObj.getType().getSize() < 0 ? identObj.getSize() : 0;
 
         if(rhs instanceof ArraylitAST) {
-            int arrSize = ((ArraylitAST) rhs).getArraylits().size();
-            int array_size = arrSize*((ARRAY) identObj.getType()).getElementType().getSize()
-                    + identObj.getSize();
-
+            ARRAY varType = (ARRAY) identObj.getType();
+            int arrSize = ((ArraylitAST) rhs).getArraylits().size(); //varType.getElem_size
+            int array_size = arrSize*varType.getElementType().getSize() + identObj.getSize();
             CodeGen.main.add(new LOAD(Register.R0, new ImmValue(array_size)));
         }
 
