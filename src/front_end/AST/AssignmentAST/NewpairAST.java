@@ -5,6 +5,7 @@ import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
+import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.ExpressionAST.ExpressionAST;
@@ -40,6 +41,10 @@ public class NewpairAST extends AssignrhsAST {
     @Override
     public void translate() {
         ProgramAST.nextAddress = 0;
+
+        CodeGen.main.add(new LOAD(Register.R0, new ImmValue(identObj.getSize() * 2)));
+        CodeGen.main.add(new Branch("L", "malloc"));
+        CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
 
         for (ExpressionAST elem: pairelems) {
             Register res = CodeGen.notUsedRegisters.peek();
