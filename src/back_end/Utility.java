@@ -99,6 +99,11 @@ public class Utility {
         }
     }
 
+    public static String getReferencePlaceholder() {
+        String msg = isPlaceholder("%p\\0");
+        return msg.substring(0, msg.length() - 2);
+    }
+
     public static Register popParamReg() {
         Register r = CodeGen.paramRegister.pop();
         CodeGen.toPushParamReg.push(r);
@@ -196,9 +201,4 @@ public class Utility {
         }
     }
 
-    public static void throwRuntimeError() {
-        CodeGen.endFunctions.add("p_throw_runtime_error");
-        CodeGen.placeholders.add("\"%.*s\\0\"");
-        CodeGen.endFunctions.add("p_print_string");
-    }
 }

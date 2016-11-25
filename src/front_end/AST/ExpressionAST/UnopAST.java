@@ -1,5 +1,6 @@
 package front_end.AST.ExpressionAST;
 
+import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
@@ -52,8 +53,8 @@ public class UnopAST extends ExpressionAST {
                 CodeGen.main.add(new RSBS(op, op));
                 CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 Utility.pushData(overflow);
-                CodeGen.endFunctions.add("p_integer_overflow");
-                Utility.throwRuntimeError();
+                PrintUtility.addToEndFunctions("p_integer_overflow");
+                PrintUtility.throwRuntimeError();
                 break;
             case "len":
                 //TODO: you can't put a register into load without popping it off the unusedRegs list

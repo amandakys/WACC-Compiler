@@ -1,5 +1,6 @@
 package front_end.AST.StatementAST;
 
+import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
@@ -16,6 +17,7 @@ import back_end.instruction.load_store.LOAD;
 import front_end.AST.AssignmentAST.ArrayelemAST;
 import front_end.AST.AssignmentAST.AssignlhsAST;
 import front_end.AST.AssignmentAST.PairelemAST;
+import front_end.AST.ExpressionAST.IdentAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import front_end.symbol_table.PAIR;
@@ -65,7 +67,7 @@ public class ReadAST extends StatementAST {
         if(exprChild instanceof PairelemAST || exprChild instanceof ArrayelemAST) {
             addMain(new LOAD(r, new Address(r)));
         } else {
-            addMain(new ADD(r, Register.SP, new ImmValue(ProgramAST.nextAddress)));
+            addMain(new ADD(r, Register.SP, Visitor.ST.getAddress(expression.getIdent()).getShiftVal()));
         }
 
         addMain(new MOV(Register.R0, r));
@@ -79,9 +81,7 @@ public class ReadAST extends StatementAST {
             placeholder = "\"%d\\0\"";
         }
 
-        CodeGen.placeholders.add(placeholder);
-        if (!CodeGen.endFunctions.contains(functionName)){
-            CodeGen.endFunctions.add(functionName);
-        }
+        PrintUtility.addToPlaceholders(placeholder);
+        PrintUtility.addToEndFunctions(functionName);
     }
 }

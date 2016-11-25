@@ -2,9 +2,9 @@ package front_end.AST.AssignmentAST;
 
 import antlr.BasicParser;
 import back_end.Error;
+import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.Address;
-import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
@@ -12,8 +12,6 @@ import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.ExpressionAST.IdentAST;
-import front_end.AST.ProgramAST;
-import front_end.AST.TypeAST.BasetypeAST;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -86,8 +84,8 @@ public class PairelemAST extends AssignrhsAST{
 
         if(!hasError) {
             Utility.pushData(Error.nullReference);
-            CodeGen.endFunctions.add("p_check_null_pointer");
-            Utility.throwRuntimeError();
+            PrintUtility.addToEndFunctions("p_check_null_pointer");
+            PrintUtility.throwRuntimeError();
             hasError = true;
         }
 

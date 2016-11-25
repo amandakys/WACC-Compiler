@@ -1,5 +1,6 @@
 package front_end.AST.StatementAST;
 
+import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.*;
 import back_end.data_type.register.Register;
@@ -35,12 +36,8 @@ public class PrintlnAST extends StatementAST {
     public void translate() {
         (new PrintAST(null, expression)).translate();
         addMain(new Branch("L", "p_print_ln"));
-        if(!Utility.hasPlaceholder("\"\\0\"")) {
-            CodeGen.placeholders.add("\"\\0\"");
-        }
-        if (!CodeGen.endFunctions.contains("p_print_ln")) {
-            CodeGen.endFunctions.add("p_print_ln");
-        }
+            PrintUtility.addToPlaceholders("\"\\0\"");
+            PrintUtility.addToEndFunctions("p_print_ln");
     }
 
     public ExpressionAST getExpression() {
