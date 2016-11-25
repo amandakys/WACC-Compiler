@@ -34,6 +34,7 @@ public class UnopAST extends ExpressionAST {
     @Override
     public void check() {
         identObj = Visitor.ST.lookUpAll(returnType);
+        //throwing unexpected type
         if (!expectedElemType.equals(expression.getType().getTypeName())) {
             error(unop +" received an unexpected type\nexpects: " + expectedElemType + "\nactual: "+ expression.getType().getTypeName());
         }
@@ -41,6 +42,7 @@ public class UnopAST extends ExpressionAST {
 
     @Override
     public void translate() {
+        //Get reference to the Register holding value of expression translated
         Register op = CodeGen.notUsedRegisters.peek();
         expression.translate();
 
@@ -52,6 +54,9 @@ public class UnopAST extends ExpressionAST {
             case "-":
                 CodeGen.main.add(new RSBS(op, op));
                 CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
+                 /*
+                Error messages & functions will only be added if they are not yet declared
+                 */
                 if(!BinOpAST.hasErrorOverflow) {
                     Utility.pushData(overflow);
                     PrintUtility.addToEndFunctions("p_integer_overflow");
@@ -61,7 +66,7 @@ public class UnopAST extends ExpressionAST {
                     BinOpAST.hasErrorOverflow = true;
                 }
 
-                PrintUtility.throwRuntimeError();
+//                PrintUtility.throwRuntimeError();
                 break;
             case "len":
                 //TODO: you can't put a register into load without popping it off the unusedRegs list

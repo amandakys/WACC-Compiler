@@ -17,9 +17,6 @@ import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-/**
- * Created by andikoh on 10/11/2016.
- */
 public class IfAST extends StatementAST {
     // count for generic label names
     //public static Integer labelCount = 0;

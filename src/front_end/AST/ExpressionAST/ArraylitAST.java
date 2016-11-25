@@ -40,7 +40,6 @@ public class ArraylitAST extends AssignrhsAST {
         }
     }
 
-
     @Override
     public void check() {
         for(ExpressionAST a : arraylits) {
@@ -52,8 +51,9 @@ public class ArraylitAST extends AssignrhsAST {
     public void translate() {
         CodeGen.main.add(new Branch("L", "malloc"));
         CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
-
+        //identObj.getSize() returns size of array
         ProgramAST.nextAddress += identObj.getSize();
+        //Transverse through the list to translate each expr
         for (ExpressionAST a: arraylits) {
             Register res = CodeGen.notUsedRegisters.peek();
 
@@ -64,7 +64,6 @@ public class ArraylitAST extends AssignrhsAST {
             ProgramAST.nextAddress += a.getIdentObj().getType().getSize();
         }
     }
-
 
     public List<ExpressionAST> getArraylits() {
         return arraylits;

@@ -27,16 +27,10 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by dtv15 on 09/11/16.
- */
-
 public class VarDeclAST extends StatementAST {
-    private String ident;
+    private String ident; //var name
     private TypeAST type;
     private AssignrhsAST rhs;
-
-    public static List<PAIR> existedTypes = new ArrayList<>();
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
@@ -65,7 +59,7 @@ public class VarDeclAST extends StatementAST {
             //assumes that this means rhs MUST be an arraylit
             if (rhs.getType() instanceof ARRAY) {
                 TYPE elementType = ((ArraytypeAST) type).getelementType();
-                // TODO:i need to fix this asap
+                // i need to fix this asap
                 //int arraysize = ((ArraylitAST) rhs).getSize();
 
 
