@@ -101,18 +101,6 @@ public class SymbolTable {
     public Map<String, ShiftedReg> getMemoryAddress() {
         return memoryAddress;
     }
-
-    public boolean hasPairType(IDENTIFIER identifier) {
-        if (identifier instanceof PAIR) {
-            for (Map.Entry<String, IDENTIFIER> entry : dict.entrySet()) {
-                if((entry.getValue() instanceof PAIR) &&
-                        Compare.pairs((PAIR) entry.getValue(), (PAIR) identifier)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }
 
 

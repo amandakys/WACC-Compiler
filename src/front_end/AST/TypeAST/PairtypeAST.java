@@ -40,11 +40,9 @@ public class PairtypeAST extends TypeAST {
 
     @Override
     public void translate() {
-        if(Visitor.ST.hasPairType(identObj)) {
             CodeGen.main.add(new LOAD(Register.R0, new ImmValue(identObj.getSize() * 2)));
             CodeGen.main.add(new Branch("L", "malloc"));
             CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
-        }
     }
 
     public TYPE typeFirst() {
