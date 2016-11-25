@@ -5,7 +5,6 @@ import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
 import front_end.symbol_table.IDENTIFIER;
-import main.CodeGen;
 import main.Visitor;
 
 public class LOAD implements Instruction {
@@ -16,7 +15,6 @@ public class LOAD implements Instruction {
     public LOAD(Register dst, Expression expression) {
         this.dst = dst;
         this.expression = expression;
-        CodeGen.toPushUnusedReg.add(dst);
     }
 
     public LOAD(Register dst, Expression expression, IDENTIFIER identifier) {
@@ -27,7 +25,6 @@ public class LOAD implements Instruction {
                 || Visitor.ST.lookUpAll("char").equals(identifier)) {
             condition = "SB";
         }
-        CodeGen.toPushUnusedReg.add(dst);
     }
 
     public LOAD(String condition, Register dst, Expression expression) {
