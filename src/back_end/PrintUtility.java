@@ -51,6 +51,9 @@ public class PrintUtility {
                 case "p_print_int":
                     printInt();
                     break;
+                case "p_print_reference":
+                    printReference();
+                    break;
                 case "p_print_ln":
                     printlnInstr();
                     break;
@@ -140,6 +143,14 @@ public class PrintUtility {
         Utility.addFunction(new MOV(Register.R0, new ImmValue(0)));
         Utility.addFunction(new Branch("L", "fflush"));
         Utility.addFunction(new POP(Register.PC));
+    }
+
+    public void printReference() {
+        Utility.addFunction(new LabelInstr("p_print_reference"));
+        Utility.addFunction(new PUSH(Register.LR));
+        Utility.addFunction(new MOV(Utility.popParamReg(), Register.R0));
+        CodeGen.functions.add(new LOAD(Register.R0, new LabelExpr(Utility.getReferencePlaceholder())));
+        printDefaults();
     }
 
     public void p_check_null_pointer() {
