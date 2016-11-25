@@ -103,15 +103,18 @@ public class SymbolTable {
 
 
 
-    public int nextAvailableAdd(int index) {
+    public int pairStackSize(String name) {
         int result = 0;
-        Iterator<Map.Entry<String, IDENTIFIER>> dictIter = dict.entrySet().iterator();
 
-        for(int i = 0; i < index; i++) {
-            result += dictIter.next().getValue().getSize();
+        for (Map.Entry<String, IDENTIFIER> entry : dict.entrySet()) {
+            if(!entry.getKey().equals(name)) {
+                result += entry.getValue().getSize();
+            } else {
+                result += entry.getValue().getSize();
+                return result + 1;
+            }
         }
-
-        return result + 1;
+        return result;
     }
 }
 
