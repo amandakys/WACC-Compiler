@@ -29,6 +29,12 @@ public class MOV implements Instruction {
         this.condition = condition;
         this.rhs = rhs;
         this.dst = dst;
+
+        if(rhs instanceof Register && !dst.equals(rhs) && rhs != Register.R0) {
+            Utility.pushRegister((Register) rhs);
+
+        }
+        CodeGen.notUsedRegisters.remove(dst);
     }
 
     @Override

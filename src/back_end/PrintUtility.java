@@ -235,12 +235,12 @@ public class PrintUtility {
             }
         }
 
-        for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
-            if (CodeGen.toPushData.get(i).getValue().equals(error)) {
-                String msg =  CodeGen.toPushData.get(i - 2).toString();
-                return msg.substring(0, msg.length() - 2);
-            }
-        }
+//        for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
+//            if (CodeGen.toPushData.get(i).getValue().equals(error)) {
+//                String msg =  CodeGen.toPushData.get(i - 2).toString();
+//                return msg.substring(0, msg.length() - 2);
+//            }
+//        }
 
         return null;
     }
