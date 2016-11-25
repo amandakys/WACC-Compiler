@@ -54,10 +54,10 @@ public class AssignmentAST extends StatementAST {
         if(lhsChild != null) {
             Register res = CodeGen.notUsedRegisters.peek();
             lhsChild.translate();
-            CodeGen.main.add(new STORE(result, new Address(res), rhs.getIdentObj()));
+            CodeGen.main.add(new STORE(result, new Address(res), rhs.getIdentObj().getSize()));
         } else {
             ShiftedReg res = Visitor.ST.getAddress(lhs.getIdent());
-            CodeGen.main.add(new STORE(result, res, rhs.getIdentObj()));
+            CodeGen.main.add(new STORE(result, res, rhs.getIdentObj().getSize()));
         }
 
 //        if(rhs instanceof ArraylitAST || rhs instanceof NewpairAST) {

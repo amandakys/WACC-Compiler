@@ -19,25 +19,6 @@ public class STORE implements Instruction {
     private Expression expression;
     private String type = "";
 
-    public STORE(Register dst, Expression expression, IDENTIFIER identifier) {
-        this.dst = dst;
-        this.expression = expression;
-        //if it is a char or boolean
-        if(Visitor.ST.lookUpAll("bool").equals(identifier)
-                || Visitor.ST.lookUpAll("char").equals(identifier)) {
-            type = "SB";
-        } else if (identifier instanceof FUNCTION) {
-            TYPE returnType = ((FUNCTION) identifier).getReturntype();
-            if(Visitor.ST.lookUpAll("bool").equals(returnType)
-                    || Visitor.ST.lookUpAll("char").equals(returnType)) {
-                type = "SB";
-            }
-        }
-
-        if(dst != Register.R0) {
-            Utility.pushRegister(dst);
-        }
-    }
 
     public STORE(Register dst, Expression expression, int size) {
         this.dst = dst;
