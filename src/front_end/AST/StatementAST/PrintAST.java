@@ -77,6 +77,8 @@ public class PrintAST extends StatementAST {
                 PrintUtility.addToPlaceholders("\"true\\0\"");
                 PrintUtility.addToPlaceholders("\"false\\0\"");
                 break;
+            case "reference":
+                PrintUtility.addToPlaceholders("%p\\0");
         }
 
         addMain(new Branch("L", functionName));
