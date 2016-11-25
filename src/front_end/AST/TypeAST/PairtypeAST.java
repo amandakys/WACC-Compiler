@@ -1,5 +1,6 @@
 package front_end.AST.TypeAST;
 
+import antlr.BasicParser;
 import back_end.Utility;
 import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
@@ -24,8 +25,7 @@ import front_end.symbol_table.TYPE;
 public class PairtypeAST extends TypeAST {
     private PairelemtypeAST first;
     private PairelemtypeAST second;
-
-    private static boolean mallocPair = false;
+    private boolean isAssignment = false;
 
     public PairtypeAST(ParserRuleContext ctx, PairelemtypeAST first, PairelemtypeAST second) {
         super(ctx);
@@ -43,11 +43,10 @@ public class PairtypeAST extends TypeAST {
 
     @Override
     public void translate() {
-        if(!mallocPair) {
+        if(!isAssignment) {
             CodeGen.main.add(new LOAD(Register.R0, new ImmValue(identObj.getSize() * 2)));
             CodeGen.main.add(new Branch("L", "malloc"));
             CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
-            mallocPair = true;
         }
     }
 
@@ -59,4 +58,7 @@ public class PairtypeAST extends TypeAST {
         return second.getType();
     }
 
+    public void setAssignment(boolean assignment) {
+        isAssignment = assignment;
+    }
 }
