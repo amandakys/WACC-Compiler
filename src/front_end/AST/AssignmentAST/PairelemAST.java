@@ -2,6 +2,7 @@ package front_end.AST.AssignmentAST;
 
 import antlr.BasicParser;
 import back_end.Error;
+import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
@@ -12,8 +13,6 @@ import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.ExpressionAST.IdentAST;
-import front_end.AST.ProgramAST;
-import front_end.AST.TypeAST.BasetypeAST;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -67,25 +66,13 @@ public class PairelemAST extends AssignrhsAST{
             addMain(new LOAD(r, new Address(r)));
         }
 
-//        if(ctx.getParent() instanceof BasicParser.AssignlhsContext) {
-//            //when the address is on the lhs (an assignment)
-//           addressLHS += token.equals("fst") ? 0 : PAIR_SIZE;
-//        } else if (ctx.getParent() instanceof BasicParser.AssignrhsContext) {
-//            //the address refers to the whole pair if it is on the rhs (of a vardec)
-//            addressRHS += PAIR_SIZE;
-//            addressLHS += addressLHS = token.equals("fst") ? 0 : PAIR_SIZE;
-//        } else {
-//            //when the address refers to an expression
-//            addressRHS += token.equals("fst") ? 0 : PAIR_SIZE;
-//        }
-
         String ident = "";
 
         if(expression instanceof IdentAST) {
             ident = ((IdentAST) expression).getIdent();
         }
-        //TODO
-       // CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP, new ImmValue())));
+
+        CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP, new ImmValue(identObj.getSize()))));
         CodeGen.main.add(new MOV(Register.R0, r));
 
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
@@ -98,8 +85,8 @@ public class PairelemAST extends AssignrhsAST{
 
         if(!hasError) {
             Utility.pushData(Error.nullReference);
-            CodeGen.endFunctions.add("p_check_null_pointer");
-            Utility.throwRuntimeError();
+            PrintUtility.addToEndFunctions("p_check_null_pointer");
+            PrintUtility.throwRuntimeError();
             hasError = true;
         }
 

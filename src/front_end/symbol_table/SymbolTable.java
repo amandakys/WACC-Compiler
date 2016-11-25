@@ -2,6 +2,7 @@ package front_end.symbol_table;
 
 import java.util.*;
 
+import back_end.Utility;
 import back_end.data_type.register.ShiftedReg;
 
 import java.util.HashMap;
@@ -88,25 +89,32 @@ public class SymbolTable {
                 break;
             }
 
-            offset++;
-        }
 
-        return S == null ? null : S.getMemoryAddress().get(name).addToShiftVal(offset);
-    }
+           offset++;
+       }
+       //jumpSP take care of cases where the sp really jump to different position
+       //using LDR sp, [sp, #4]! JumpSp is = 0 by default and is set back to 0 after use.
+       return S == null ? null : S.getMemoryAddress().get(name).addToShiftVal(offset+ Utility.getJumpSP());
+   }
 
     public Map<String, ShiftedReg> getMemoryAddress() {
         return memoryAddress;
     }
 
-    public int nextAvailableAdd(int index) {
+
+
+    public int pairStackSize(String name) {
         int result = 0;
-        Iterator<Map.Entry<String, IDENTIFIER>> dictIter = dict.entrySet().iterator();
 
-        for(int i = 0; i < index; i++) {
-            result += dictIter.next().getValue().getSize();
+        for (Map.Entry<String, IDENTIFIER> entry : dict.entrySet()) {
+            if(!entry.getKey().equals(name)) {
+                result += entry.getValue().getSize();
+            } else {
+                result += entry.getValue().getSize();
+                return result + 1;
+            }
         }
-
-        return result + 1;
+        return result;
     }
 }
 

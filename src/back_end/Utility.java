@@ -15,6 +15,7 @@ import java.util.Stack;
  * Created by donamphuong on 20/11/2016.
  */
 public class Utility {
+    private static int jumpSP = 0;
 
     public static int STACK_SIZE = (int) Math.pow(2, 10);
 
@@ -99,6 +100,11 @@ public class Utility {
         }
     }
 
+    public static String getReferencePlaceholder() {
+        String msg = isPlaceholder("\"%p\\0\"");
+        return msg.substring(0, msg.length() - 2);
+    }
+
     public static Register popParamReg() {
         Register r = CodeGen.paramRegister.pop();
         CodeGen.toPushParamReg.push(r);
@@ -169,13 +175,7 @@ public class Utility {
         Push back the registers that are not needed to store value back onto the stack
      */
     public static void pushBackRegisters() {
-        while (!CodeGen.toPushParamReg.isEmpty()) {
-            Register r = CodeGen.toPushParamReg.pop();
-
-            if (!CodeGen.paramRegister.contains(r)) {
-                CodeGen.paramRegister.push(r);
-            }
-        }
+        pushBackParam();
 
         while (!CodeGen.toPushUnusedReg.isEmpty()) {
             Register r = CodeGen.toPushUnusedReg.pop();
@@ -186,15 +186,32 @@ public class Utility {
         }
     }
 
+    public static void pushBackParam() {
+        while (!CodeGen.toPushParamReg.isEmpty()) {
+            Register r = CodeGen.toPushParamReg.pop();
+
+            if (!CodeGen.paramRegister.contains(r)) {
+                CodeGen.paramRegister.push(r);
+            }
+        }
+    }
+
     public static void pushRegister(Register r) {
         if (!CodeGen.notUsedRegisters.contains(r)) {
             CodeGen.notUsedRegisters.push(r);
         }
     }
 
-    public static void throwRuntimeError() {
-        CodeGen.endFunctions.add("p_throw_runtime_error");
-        CodeGen.placeholders.add("\"%.*s\\0\"");
-        CodeGen.endFunctions.add("p_print_string");
+    public static int getJumpSP() {
+        return jumpSP;
     }
+
+    public static void addJumpSP(int jumpSize) {
+        jumpSP += jumpSize;
+    }
+
+    public static void resetJumpSP() {
+        jumpSP = 0;
+    }
+
 }
