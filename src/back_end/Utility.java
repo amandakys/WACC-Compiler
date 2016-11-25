@@ -107,7 +107,7 @@ public class Utility {
     }
 
     public static Register popParamReg() {
-        Register r = CodeGen.paramRegister.pop();
+        Register r = Utility.popParamReg();
         CodeGen.toPushParamReg.push(r);
         return r;
     }
@@ -128,6 +128,12 @@ public class Utility {
 
 
         return r;
+    }
+
+
+    public static Register getBefore(Register r) {
+        int index = Character.getNumericValue(r.toString().charAt(r.toString().length() - 1)) - 1;
+        return Register.values()[index];
     }
 
     /*
@@ -179,11 +185,6 @@ public class Utility {
         return false;
     }
 
-    public static Register getBefore(Register r) {
-        int index = Character.getNumericValue(r.toString().charAt(r.toString().length() - 1)) - 1;
-        return Register.values()[index];
-    }
-
     /*
         Push back the registers that are not needed to store value back onto the stack
      */
@@ -210,9 +211,9 @@ public class Utility {
     }
 
     public static void pushRegister(Register r) {
-        if (r.equals(Register.SP)) {
-            return;
-        }
+//        if (r.equals(Register.SP)) {
+//            return;
+//        }
         if (!CodeGen.notUsedRegisters.contains(r)) {
             CodeGen.notUsedRegisters.push(r);
             CodeGen.toPushUnusedReg.remove(r);
