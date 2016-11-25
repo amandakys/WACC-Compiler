@@ -230,7 +230,9 @@ public class Utility {
 
 
     public static void resetJumpSP() {
-        jumpSP.pop();
+        if(!jumpSP.isEmpty()) {
+            jumpSP.pop();
+        }
     }
 
 }

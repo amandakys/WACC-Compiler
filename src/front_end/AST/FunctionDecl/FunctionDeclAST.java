@@ -142,9 +142,11 @@ public class FunctionDeclAST extends Node {
         if (sizeOfNewVars != 0) {
             Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(sizeOfNewVars)));
         }
+        Utility.addJumpSP(sizeOfNewVars);
 
         statement.translate();
 
+        Utility.resetJumpSP();
         if (sizeOfNewVars != 0) {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(sizeOfNewVars)));
         }
