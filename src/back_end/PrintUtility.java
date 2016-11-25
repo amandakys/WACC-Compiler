@@ -201,14 +201,15 @@ public class PrintUtility {
     }
 
     private static void p_free() {
-        CodeGen.functions.add(new LabelInstr("p_free_array"));
         CodeGen.functions.add(new PUSH(Register.LR));
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
         CodeGen.functions.add(new LOAD("EQ", Register.R0, new LabelExpr(getErrorMessage(Error.nullReference))));
         CodeGen.functions.add(new Branch("EQ", "p_throw_runtime_error"));
     }
 
+
     public static void p_free_pair() {
+        CodeGen.functions.add(new LabelInstr("p_free_pair"));
         p_free();
         CodeGen.functions.add(new PUSH(Register.R0));
         CodeGen.functions.add(new LOAD(Register.R0, new Address(Register.R0)));
@@ -222,6 +223,7 @@ public class PrintUtility {
     }
 
     public static void p_free_array() {
+        CodeGen.functions.add(new LabelInstr("p_free_array"));
         p_free();
         CodeGen.functions.add(new Branch("L", "free"));
         CodeGen.functions.add(new POP(Register.PC));
@@ -235,12 +237,12 @@ public class PrintUtility {
             }
         }
 
-        for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
-            if (CodeGen.toPushData.get(i).getValue().equals(error)) {
-                String msg =  CodeGen.toPushData.get(i - 2).toString();
-                return msg.substring(0, msg.length() - 2);
-            }
-        }
+//        for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
+//            if (CodeGen.toPushData.get(i).getValue().equals(error)) {
+//                String msg =  CodeGen.toPushData.get(i - 2).toString();
+//                return msg.substring(0, msg.length() - 2);
+//            }
+//        }
 
         return null;
     }

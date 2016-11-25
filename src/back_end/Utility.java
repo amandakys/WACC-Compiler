@@ -5,6 +5,7 @@ import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
 import back_end.instruction.Instruction;
 import back_end.instruction.LabelInstr;
+import com.sun.org.apache.bcel.internal.classfile.Code;
 import front_end.AST.ExpressionAST.*;
 import main.CodeGen;
 
@@ -110,10 +111,22 @@ public class Utility {
         CodeGen.toPushParamReg.push(r);
         return r;
     }
-
+    //Check the top of the toPushUnusedReg so that order is maintained
+    //For example when push R5 in, have to make sure R4 is still on top
     public static Register popUnusedReg() {
         Register r = CodeGen.notUsedRegisters.pop();
-        CodeGen.toPushUnusedReg.push(r);
+        if (!CodeGen.toPushUnusedReg.isEmpty()) {
+            Register topToPush = CodeGen.toPushUnusedReg.peek();
+            if(topToPush.ordinal() < r.ordinal()) {
+                topToPush = CodeGen.toPushUnusedReg.pop();
+                CodeGen.toPushUnusedReg.push(r);
+                CodeGen.toPushUnusedReg.push(topToPush);
+            }
+        } else {
+            CodeGen.toPushUnusedReg.push(r);
+        }
+
+
         return r;
     }
 
@@ -199,6 +212,7 @@ public class Utility {
     public static void pushRegister(Register r) {
         if (!CodeGen.notUsedRegisters.contains(r)) {
             CodeGen.notUsedRegisters.push(r);
+
         }
     }
 

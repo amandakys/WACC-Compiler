@@ -88,6 +88,8 @@ public class WhileAST extends StatementAST {
             Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
         }
 
+        Utility.addJumpSP(spSize);
+
         statement.translate();
 
         if(spSize > Utility.STACK_SIZE) {
@@ -100,5 +102,7 @@ public class WhileAST extends StatementAST {
         } else {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
         }
+
+        Utility.resetJumpSP();
     }
 }
