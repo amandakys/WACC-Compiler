@@ -6,8 +6,11 @@ import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 import back_end.instruction.LabelInstr;
 import back_end.instruction.condition.CMP;
+import back_end.instruction.data_manipulation.ADD;
+import back_end.instruction.data_manipulation.SUB;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.ProgramAST;
+import front_end.symbol_table.SymbolTable;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -18,11 +21,14 @@ import org.antlr.v4.runtime.ParserRuleContext;
 public class WhileAST extends StatementAST {
     ExpressionAST expression;
     StatementAST statement;
+    SymbolTable ST;
 
-    public WhileAST(ParserRuleContext ctx, ExpressionAST expression, StatementAST statement) {
+    public WhileAST(ParserRuleContext ctx, ExpressionAST expression, StatementAST statement, SymbolTable ST) {
         super(ctx);
         this.expression = expression;
         this.statement = statement;
+        this.ST = ST;
+
     }
 
     @Override
@@ -47,8 +53,14 @@ public class WhileAST extends StatementAST {
         String whileBodyLabel = labelCount.toString();
         CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
         Register result = CodeGen.notUsedRegisters.peek();
-        ProgramAST.newScope(statement);
+        //Visitor.ST = ST;
+        if (ST.findSize() != 0) {
+            newScope(statement);
+        } else {
+            statement.translate();
+        }
         Utility.pushBackRegisters();
+        //Visitor.ST = Visitor.ST.getEncSymbolTable();
         Utility.pushRegister(result);
         CodeGen.main.add(new LabelInstr("L" + conditionLabel));
 
@@ -60,5 +72,33 @@ public class WhileAST extends StatementAST {
 
         Utility.pushRegister(result);
         CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
+    }
+
+    private void newScope(StatementAST statement) {
+        int spSize = ST.findSize();
+
+        if(spSize > Utility.STACK_SIZE ) {
+            Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(Utility.STACK_SIZE)));
+            while(spSize > Utility.STACK_SIZE) {
+                //decrement stack pointer
+                spSize = (spSize - Utility.STACK_SIZE);
+                Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
+            }
+        } else {
+            Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
+        }
+
+        statement.translate();
+
+        if(spSize > Utility.STACK_SIZE) {
+            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(Utility.STACK_SIZE)));
+            while(spSize > Utility.STACK_SIZE) {
+                //increment stack pointer
+                spSize = (int) (spSize - Utility.STACK_SIZE);
+                Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
+            }
+        } else {
+            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
+        }
     }
 }

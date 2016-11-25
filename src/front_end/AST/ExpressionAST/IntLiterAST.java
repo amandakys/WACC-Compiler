@@ -31,12 +31,11 @@ public class IntLiterAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        int val = Integer.parseInt(value);
+        int val = Integer.parseInt(intsign + value);
         CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(val)));
     }
 
     public int getValue() {
-        // TODO: Negative
-        return Integer.parseInt(value);
+        return Integer.parseInt(intsign + value);
     }
 }

@@ -30,9 +30,22 @@ public class ADD implements Instruction {
 
     }
 
+    public ADD(Register dest, Operand rhs) {
+        this.dest = dest;
+        this.rhs = rhs;
+    }
+
     @Override
     public String toString() {
-        return "\tADD" + sFlag + " " + dest + ", " + lhs + ", " + rhs;
+        String res = "";
+
+        if(lhs == null) {
+            res = rhs.toString();
+        } else {
+            res = lhs + ", " + rhs;
+        }
+
+        return "\tADD" + sFlag + " " + dest + ", " + res;
     }
 
     @Override

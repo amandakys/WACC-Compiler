@@ -18,7 +18,7 @@ public class SymbolTable {
     private int jumpSP = 0;
 
     public SymbolTable(SymbolTable st) {
-        dict= new LinkedHashMap<>();
+        dict = new LinkedHashMap<>();
         encSymbolTable = st;
         memoryAddress = new HashMap<>();
     }
@@ -27,13 +27,14 @@ public class SymbolTable {
         return this.encSymbolTable;
     }
 
-    public void add (String name, IDENTIFIER object) {
+    public void add(String name, IDENTIFIER object) {
         dict.put(name, object);
     }
 
     public boolean containsValue(IDENTIFIER ident) {
         return dict.containsValue(ident);
     }
+
     public IDENTIFIER lookUp(String name) {
         return dict.get(name);
     }
@@ -47,14 +48,14 @@ public class SymbolTable {
             }
             S = S.getEncSymbolTable();
         }
-        return null; 
+        return null;
     }
 
     public int findSize() {
         int size = 0;
 
-        for(IDENTIFIER ident : dict.values()) {
-            if (!(ident instanceof  FUNCTION)) {
+        for (IDENTIFIER ident : dict.values()) {
+            if (!(ident instanceof FUNCTION)) {
                 size += ident.getSize();
             }
 
@@ -68,25 +69,26 @@ public class SymbolTable {
         int indexOfx = keys.indexOf(x);
         int shift = 4; //name of the function itself take size 4
         for (int i = 1; i < indexOfx; i++) {
-            shift+=dict.get(keys.get(i)).getSize();
+            shift += dict.get(keys.get(i)).getSize();
         }
         return shift;
     }
 
-   public void addToMemoryAddress(String name, ShiftedReg reg) {
-       memoryAddress.put(name, reg);
-   }
+    public void addToMemoryAddress(String name, ShiftedReg reg) {
+        memoryAddress.put(name, reg);
+    }
 
-   public ShiftedReg getAddress(String name) {
-       SymbolTable S = this;
-       int offset = 0;
+    public ShiftedReg getAddress(String name) {
+        SymbolTable S = this;
+        int offset = 0;
 
-       while (!S.getMemoryAddress().containsKey(name)) {
-           S = S.getEncSymbolTable();
+        while (!S.getMemoryAddress().containsKey(name)) {
+            S = S.getEncSymbolTable();
 
-           if(S == null) {
-               break;
-           }
+            if (S == null) {
+                break;
+            }
+
 
            offset++;
        }
@@ -111,6 +113,16 @@ public class SymbolTable {
         jumpSP = 0;
     }
 
+    public int nextAvailableAdd(int index) {
+        int result = 0;
+        Iterator<Map.Entry<String, IDENTIFIER>> dictIter = dict.entrySet().iterator();
+
+        for(int i = 0; i < index; i++) {
+            result += dictIter.next().getValue().getSize();
+        }
+
+        return result + 1;
+    }
 }
 
 
