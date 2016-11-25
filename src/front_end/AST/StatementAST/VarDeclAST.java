@@ -9,18 +9,23 @@ import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.PairelemAST;
+import front_end.AST.Compare;
 import front_end.AST.ExpressionAST.ArraylitAST;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
 import front_end.AST.ExpressionAST.PairliterAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
+import front_end.AST.TypeAST.PairelemtypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
 import front_end.AST.TypeAST.TypeAST;
 import front_end.symbol_table.*;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by dtv15 on 09/11/16.
@@ -30,6 +35,8 @@ public class VarDeclAST extends StatementAST {
     private String ident;
     private TypeAST type;
     private AssignrhsAST rhs;
+
+    public static List<PAIR> existedTypes = new ArrayList<>();
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
@@ -117,8 +124,13 @@ public class VarDeclAST extends StatementAST {
         Register res = CodeGen.notUsedRegisters.peek();
 
         //do not malloc a space on the stack if the pair is null
-        type.translate();
-        rhs.translate();
+        if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
+            //if type does not exist before
+            type.translate();
+            rhs.translate();
+        } else {
+            CodeGen.main.add(new LOAD(res, new ImmValue(0)));
+        }
 
 
         if (rhs instanceof ArraylitAST) {

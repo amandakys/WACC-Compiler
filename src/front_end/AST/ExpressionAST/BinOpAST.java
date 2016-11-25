@@ -76,26 +76,28 @@ public class BinOpAST extends ExpressionAST {
     @Override
     public void translate() {
         Register lhsResult = CodeGen.notUsedRegisters.peek();
-
         lhs.translate();
         Register rhsResult = CodeGen.notUsedRegisters.peek();
-        if (op == "+" || op == "-" || op == "*" || op == "/" || op == "%") {
-
-            if(rhs instanceof BinOpAST) { //rhs is further BinOp
-                BinOpAST next = (BinOpAST) rhs;
-                next.longExpr = true; // because this is in a long expr
-                if(previousReg == null) { //previousReg has not been set
-                    next.previousReg = lhsResult;
-                } else { //keep the previousReg & pass it on
-                    next.previousReg = previousReg;
+        if ("+-*/%".contains(op)) {
+            if (!(lhs instanceof BinOpAST)) {
+                if (rhs instanceof BinOpAST) { //rhs is further BinOp
+                    BinOpAST next = (BinOpAST) rhs;
+                    next.longExpr = true; // because this is in a long expr
+                    if (previousReg == null) { //previousReg has not been set
+                        next.previousReg = lhsResult;
+                    } else { //keep the previousReg & pass it on
+                        next.previousReg = previousReg;
+                    }
                 }
-            }
-            if(!longExpr) { // if not a longExpr do as normal
-                rhs.translate();
+                if (!longExpr || !(rhs instanceof BinOpAST)) { // if not a longExpr do as normal
+                    rhs.translate();
+                } else {
+    //            Utility.pushRegister(lhsResult);
+                        rhsResult = lhsResult;
+                        lhsResult = previousReg;
+                }
             } else {
-//            Utility.pushRegister(lhsResult);
-                rhsResult = lhsResult;
-                lhsResult = previousReg;
+                rhs.translate();
             }
         } else {
             //op is a logical expression
@@ -225,7 +227,9 @@ public class BinOpAST extends ExpressionAST {
         }
         if(longExpr) {
             Utility.pushRegister(rhsResult);
+            if(rhs instanceof BinOpAST) {
             rhs.translate();
+            }
         }
     }
 

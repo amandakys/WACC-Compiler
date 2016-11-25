@@ -22,6 +22,10 @@ public class CharLitAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        Utility.addMain(new MOV(Utility.popUnusedReg(), new ImmValue(charac)));
+        if (!charac.equals("'\\0'")) {
+            Utility.addMain(new MOV(Utility.popUnusedReg(), new ImmValue(charac)));
+        } else {
+            Utility.addMain(new MOV(Utility.popUnusedReg(), new ImmValue(0)));
+        }
     }
 }
