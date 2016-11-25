@@ -38,9 +38,9 @@ public class BinOpAST extends ExpressionAST {
     private ExpressionAST lhs;
     private boolean longExpr; // This fields tells if the BinOp is in a longEpr
     private Register previousReg;
-
-    private static boolean hasErrorDivByZero;
-    private static boolean hasErrorOverflow;
+    //2 following fields are allowed to access by UnOpAST
+    protected static boolean hasErrorDivByZero;
+    protected static boolean hasErrorOverflow;
 
     private final int SHIFT_VALUE = 31;
 

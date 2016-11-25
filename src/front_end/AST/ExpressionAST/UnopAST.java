@@ -52,8 +52,15 @@ public class UnopAST extends ExpressionAST {
             case "-":
                 CodeGen.main.add(new RSBS(op, op));
                 CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
-                Utility.pushData(overflow);
-                PrintUtility.addToEndFunctions("p_integer_overflow");
+                if(!BinOpAST.hasErrorOverflow) {
+                    Utility.pushData(overflow);
+                    PrintUtility.addToEndFunctions("p_integer_overflow");
+                    if(!BinOpAST.hasErrorDivByZero) {
+                        PrintUtility.throwRuntimeError();
+                    }
+                    BinOpAST.hasErrorOverflow = true;
+                }
+
                 PrintUtility.throwRuntimeError();
                 break;
             case "len":
