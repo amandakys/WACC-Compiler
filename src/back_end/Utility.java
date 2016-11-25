@@ -37,7 +37,8 @@ public class Utility {
         Utility.addData(new LabelInstr(getNextString()));
         CodeGen.numStrings++;
         //discard the "" in a string when finding the string's size
-        Utility.addData(new Directive("word", String.valueOf(value.replaceAll("[\"]", "").length())));
+        Utility.addData(new Directive("word", String.valueOf(value.replace
+                ("\\", "").replace("\"", "").length())));
         Utility.addData(new Directive("ascii", value));
     }
 
