@@ -20,8 +20,6 @@ public class MOV implements Instruction {
             Utility.pushRegister((Register) rhs);
 
         }
-        //CodeGen.notUsedRegisters.remove(dst);
-
 
     }
 
@@ -35,6 +33,7 @@ public class MOV implements Instruction {
 
         }
         //CodeGen.notUsedRegisters.remove(dst);
+        CodeGen.toPushUnusedReg.add(dst);
     }
 
     @Override
