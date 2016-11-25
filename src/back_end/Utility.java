@@ -100,7 +100,7 @@ public class Utility {
     }
 
     public static String getReferencePlaceholder() {
-        String msg = isPlaceholder("%p\\0");
+        String msg = isPlaceholder("\"%p\\0\"");
         return msg.substring(0, msg.length() - 2);
     }
 
