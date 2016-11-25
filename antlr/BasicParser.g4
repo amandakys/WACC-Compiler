@@ -91,13 +91,13 @@ p6: p5 OR p6
 | p5
 ;
 
+intsign: PLUS | MINUS ;
+
 unop: NOT | MINUS | LEN | ORD | CHR ;
 
 arrayelem: IDENT (LBRACKET expression RBRACKET)+ ;
 
 intliter: intsign? DIGIT+ ;
-
-intsign: PLUS | MINUS ;
 
 boolliter: TRUE | FALSE;
 
