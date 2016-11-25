@@ -25,7 +25,7 @@ public class PairtypeAST extends TypeAST {
     private PairelemtypeAST first;
     private PairelemtypeAST second;
 
-    private static boolean mallocPair = false;
+//    private static boolean mallocPair = false;
 
     public PairtypeAST(ParserRuleContext ctx, PairelemtypeAST first, PairelemtypeAST second) {
         super(ctx);
@@ -43,12 +43,12 @@ public class PairtypeAST extends TypeAST {
 
     @Override
     public void translate() {
-        if(!mallocPair) {
+//        if(!mallocPair) {
             CodeGen.main.add(new LOAD(Register.R0, new ImmValue(identObj.getSize() * 2)));
             CodeGen.main.add(new Branch("L", "malloc"));
             CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
-            mallocPair = true;
-        }
+//            mallocPair = true;
+//        }
     }
 
     public TYPE typeFirst() {

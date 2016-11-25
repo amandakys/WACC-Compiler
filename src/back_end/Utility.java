@@ -1,15 +1,14 @@
 package back_end;
 
-import back_end.data_type.Expression;
 import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
 import back_end.instruction.Instruction;
 import back_end.instruction.LabelInstr;
-import com.sun.org.apache.bcel.internal.classfile.Code;
-import front_end.AST.ExpressionAST.*;
+import front_end.AST.ExpressionAST.ExpressionAST;
+import front_end.AST.ExpressionAST.IntLiterAST;
+import front_end.AST.ExpressionAST.StringLiterAST;
 import main.CodeGen;
 
-import java.util.List;
 import java.util.Stack;
 
 /**
@@ -37,7 +36,7 @@ public class Utility {
         Utility.addData(new LabelInstr(getNextString()));
         CodeGen.numStrings++;
         //discard the "" in a string when finding the string's size
-        Utility.addData(new Directive("word", String.valueOf(value.replaceAll("[\"]", "").length())));
+        Utility.addData(new Directive("word", String.valueOf(value.replace("\\","").replace("\"","").length())));
         Utility.addData(new Directive("ascii", value));
     }
 
@@ -108,7 +107,7 @@ public class Utility {
     }
 
     public static Register popParamReg() {
-        Register r = CodeGen.paramRegister.pop();
+        Register r = Utility.popParamReg();
         CodeGen.toPushParamReg.push(r);
         return r;
     }
@@ -129,6 +128,12 @@ public class Utility {
 
 
         return r;
+    }
+
+
+    public static Register getBefore(Register r) {
+        int index = Character.getNumericValue(r.toString().charAt(r.toString().length() - 1)) - 1;
+        return Register.values()[index];
     }
 
     /*
@@ -180,11 +185,6 @@ public class Utility {
         return false;
     }
 
-    public static Register getBefore(Register r) {
-        int index = Character.getNumericValue(r.toString().charAt(r.toString().length() - 1)) - 1;
-        return Register.values()[index];
-    }
-
     /*
         Push back the registers that are not needed to store value back onto the stack
      */
@@ -211,9 +211,9 @@ public class Utility {
     }
 
     public static void pushRegister(Register r) {
-        if (r.equals(Register.SP)) {
-            return;
-        }
+//        if (r.equals(Register.SP)) {
+//            return;
+//        }
         if (!CodeGen.notUsedRegisters.contains(r)) {
             CodeGen.notUsedRegisters.push(r);
             CodeGen.toPushUnusedReg.remove(r);
