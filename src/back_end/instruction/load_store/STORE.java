@@ -5,7 +5,11 @@ import back_end.data_type.Expression;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
+import front_end.symbol_table.FUNCTION;
+import front_end.symbol_table.IDENTIFIER;
+import front_end.symbol_table.TYPE;
 import main.CodeGen;
+import main.Visitor;
 
 /*
     STR instructions store a register value into memory
@@ -15,13 +19,13 @@ public class STORE implements Instruction {
     private Expression expression;
     private String type = "";
 
+
     public STORE(Register dst, Expression expression, int size) {
         this.dst = dst;
         this.expression = expression;
 
-        //all the size encapsulated inside an IDENTIFIER are byte_size
-        if(size == 1) {
-            this.type = "B";
+        if (size == 1) {
+            type = "SB";
         }
 
         if(dst != Register.R0) {
