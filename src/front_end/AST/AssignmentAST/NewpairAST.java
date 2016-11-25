@@ -46,10 +46,6 @@ public class NewpairAST extends AssignrhsAST {
 
             elem.translate();
 
-            if(elem instanceof PairliterAST && ((PairliterAST) elem).getNullStr().equals("null")) {
-                CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(0)));
-            }
-
             int sizeElem = elem.getIdentObj().getSize();
 
             CodeGen.main.add(new LOAD(Register.R0, new ImmValue(sizeElem)));
