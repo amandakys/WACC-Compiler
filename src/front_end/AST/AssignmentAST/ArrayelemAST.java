@@ -4,10 +4,7 @@ import antlr.BasicParser;
 import back_end.Error;
 import back_end.Utility;
 import back_end.data_type.*;
-import back_end.data_type.register.PostIndex;
-import back_end.data_type.register.Register;
-import back_end.data_type.register.Shift;
-import back_end.data_type.register.ShiftedReg;
+import back_end.data_type.register.*;
 import back_end.instruction.Branch;
 import back_end.instruction.POP;
 import back_end.instruction.PUSH;
@@ -101,6 +98,11 @@ public class ArrayelemAST extends ExpressionAST {
             CodeGen.main.add(new ADD(first, size));
 
             address += identObj.getSize();
+
+            //when array elem is on the rhs of print, read,...
+            if(ctx.getParent() instanceof BasicParser.ExprNoBinOpContext) {
+                CodeGen.main.add(new LOAD(first, new PreIndex(first)));
+            }
         }
     }
 }
