@@ -87,12 +87,12 @@ public class CallAST extends AssignrhsAST{
 
             PreIndex stackShift = new PreIndex(Register.SP, new ImmValue
                     (-argSize), true);
-            Visitor.ST.addJumpSP(argSize);
+            Utility.addJumpSP(argSize);
             Register freeToUse = CodeGen.toPushUnusedReg.pop();
             addMain(new STORE(freeToUse, stackShift, argSize));
             Utility.pushRegister(freeToUse);
         }
-        Visitor.ST.resetJumpSP();
+        Utility.resetJumpSP();
         ImmValue argsSizeValue = new ImmValue(argsSize);
 
         addMain(new Branch("L", "f_"+funcname));

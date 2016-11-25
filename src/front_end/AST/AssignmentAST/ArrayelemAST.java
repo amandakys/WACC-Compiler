@@ -24,6 +24,8 @@ import front_end.symbol_table.TYPE;
 import java.util.ArrayList;
 import java.util.List;
 
+import static back_end.Utility.addMain;
+
 public class ArrayelemAST extends ExpressionAST {
     private String ident;
     private List<Node> expressions = new ArrayList<>();
@@ -63,8 +65,8 @@ public class ArrayelemAST extends ExpressionAST {
         int address = 0;
         Register first = Utility.popUnusedReg();
         Register paramReg = Utility.popParamReg();
-
-        CodeGen.main.add(new ADD(first, Register.SP, new ImmValue(address)));
+        CodeGen.main.add(new ADD(first, Register.SP, Visitor.ST.getAddress(ident).getShiftVal()));
+        //CodeGen.main.add(new ADD(first, Register.SP, new ImmValue(address)));
         for(Node n : expressions) {
             Register reg = CodeGen.notUsedRegisters.peek();
 

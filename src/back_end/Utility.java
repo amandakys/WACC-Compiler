@@ -5,6 +5,7 @@ import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
 import back_end.instruction.Instruction;
 import back_end.instruction.LabelInstr;
+import com.sun.org.apache.bcel.internal.classfile.Code;
 import front_end.AST.ExpressionAST.*;
 import main.CodeGen;
 
@@ -15,6 +16,7 @@ import java.util.Stack;
  * Created by donamphuong on 20/11/2016.
  */
 public class Utility {
+    private static int jumpSP = 0;
 
     public static int STACK_SIZE = (int) Math.pow(2, 10);
 
@@ -100,7 +102,7 @@ public class Utility {
     }
 
     public static String getReferencePlaceholder() {
-        String msg = isPlaceholder("%p\\0");
+        String msg = isPlaceholder("\"%p\\0\"");
         return msg.substring(0, msg.length() - 2);
     }
 
@@ -109,10 +111,22 @@ public class Utility {
         CodeGen.toPushParamReg.push(r);
         return r;
     }
-
+    //Check the top of the toPushUnusedReg so that order is maintained
+    //For example when push R5 in, have to make sure R4 is still on top
     public static Register popUnusedReg() {
         Register r = CodeGen.notUsedRegisters.pop();
-        CodeGen.toPushUnusedReg.push(r);
+        if (!CodeGen.toPushUnusedReg.isEmpty()) {
+            Register topToPush = CodeGen.toPushUnusedReg.peek();
+            if(topToPush.ordinal() < r.ordinal()) {
+                topToPush = CodeGen.toPushUnusedReg.pop();
+                CodeGen.toPushUnusedReg.push(r);
+                CodeGen.toPushUnusedReg.push(topToPush);
+            }
+        } else {
+            CodeGen.toPushUnusedReg.push(r);
+        }
+
+
         return r;
     }
 
@@ -198,7 +212,20 @@ public class Utility {
     public static void pushRegister(Register r) {
         if (!CodeGen.notUsedRegisters.contains(r)) {
             CodeGen.notUsedRegisters.push(r);
+
         }
+    }
+
+    public static int getJumpSP() {
+        return jumpSP;
+    }
+
+    public static void addJumpSP(int jumpSize) {
+        jumpSP += jumpSize;
+    }
+
+    public static void resetJumpSP() {
+        jumpSP = 0;
     }
 
 }

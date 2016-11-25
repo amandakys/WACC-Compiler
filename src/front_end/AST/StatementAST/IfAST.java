@@ -72,6 +72,7 @@ public class IfAST extends StatementAST {
         Utility.pushBackRegisters();
 
         String l1 = labelCount.toString();
+        labelCount++;
         CodeGen.main.add(new Branch("", "L" + l1));
 
         CodeGen.main.add(new LabelInstr("L" + l0));
@@ -96,10 +97,13 @@ public class IfAST extends StatementAST {
                 //decrement stack pointer
                 spSize = (spSize - Utility.STACK_SIZE);
                 Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
+
             }
         } else {
             Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
         }
+
+        Utility.addJumpSP(spSize);
 
         statement.translate();
 
@@ -113,5 +117,7 @@ public class IfAST extends StatementAST {
         } else {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
         }
+
+        Utility.resetJumpSP();
     }
 }

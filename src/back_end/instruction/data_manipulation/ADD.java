@@ -33,6 +33,13 @@ public class ADD implements Instruction {
     public ADD(Register dest, Operand rhs) {
         this.dest = dest;
         this.rhs = rhs;
+
+        if (rhs instanceof Register) {
+            sFlag = "S";
+            Utility.pushRegister((Register) rhs); //to pass incFunction
+        }
+        //CodeGen.notUsedRegisters.push(lhs);
+        CodeGen.notUsedRegisters.remove(dest); //to pass incFunction
     }
 
     @Override

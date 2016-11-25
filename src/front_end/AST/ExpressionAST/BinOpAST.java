@@ -4,7 +4,10 @@ import antlr.BasicParser;
 import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.ImmValue;
+import back_end.data_type.register.PostIndex;
+import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
+import back_end.data_type.register.Shift;
 import back_end.instruction.Branch;
 import back_end.instruction.condition.AND;
 import back_end.instruction.condition.CMP;
@@ -34,10 +37,12 @@ public class BinOpAST extends ExpressionAST {
     private ExpressionAST rhs;
     private ExpressionAST lhs;
     private boolean longExpr; // This fields tells if the BinOp is in a longEpr
+    private Register previousReg;
+    //2 following fields are allowed to access by UnOpAST
+    protected static boolean hasErrorDivByZero;
+    protected static boolean hasErrorOverflow;
 
-    private static boolean hasErrorDivByZero;
-    private static boolean hasErrorOverflow;
-
+    private final int SHIFT_VALUE = 31;
 
     public BinOpAST(ParserRuleContext ctx, String op, ExpressionAST lhs, ExpressionAST rhs) {
         super(ctx);
@@ -73,12 +78,21 @@ public class BinOpAST extends ExpressionAST {
         Register lhsResult = CodeGen.notUsedRegisters.peek();
         lhs.translate();
         Register rhsResult = CodeGen.notUsedRegisters.peek();
-        if(rhs instanceof BinOpAST) {
-            Utility.pushRegister(lhsResult);
-            ((BinOpAST) rhs).setLongExpr(); // because this is a long expr
+        if(rhs instanceof BinOpAST) { //rhs is further BinOp
+            BinOpAST next = (BinOpAST) rhs;
+            next.longExpr = true; // because this is in a long expr
+            if(previousReg == null) { //previousReg has not been set
+                next.previousReg = lhsResult;
+            } else { //keep the previousReg & pass it on
+                next.previousReg = previousReg;
+            }
         }
-        if(!longExpr) {
-            rhs.translate(); //same as lhs
+        if(!longExpr) { // if not a longExpr do as normal
+            rhs.translate();
+        } else {
+//            Utility.pushRegister(lhsResult);
+            rhsResult = lhsResult;
+            lhsResult = previousReg;
         }
         switch(op) {
             case "+":
@@ -93,7 +107,8 @@ public class BinOpAST extends ExpressionAST {
                 } else if(op.equals("*")) {
                     CodeGen.main.add(new SMULL(lhsResult, rhsResult, lhsResult, rhsResult));
                     // TODO:add ASR #31 shifting HERE as a third param for multNoWhitespaceExpr.wacc
-                    CodeGen.main.add(new CMP(rhsResult, lhsResult));
+                    CodeGen.main.add(new CMP(rhsResult, new PostIndex
+                            (lhsResult, Shift.ASR, new ImmValue(SHIFT_VALUE))));
                     CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
                 }
                 Utility.pushRegister(rhsResult);
@@ -122,7 +137,6 @@ public class BinOpAST extends ExpressionAST {
 
             case "/":
             case "%":
-                Utility.pushData(divideByZero);
                 CodeGen.main.add(new MOV(Register.R0, lhsResult));
 
                     Register res = Utility.popParamReg();
@@ -138,7 +152,10 @@ public class BinOpAST extends ExpressionAST {
                 CodeGen.main.add(new MOV(lhsResult, res));
 
                 if (!hasErrorDivByZero) {
+
+                    Utility.pushData(divideByZero);
                     PrintUtility.addToEndFunctions("p_divide_by_zero");
+
                     if(ctx.getParent() instanceof BasicParser.PrintlnContext) {
                         PrintUtility.addToPlaceholders("\"\\0\"");
                         PrintUtility.addToEndFunctions("p_print_ln");
@@ -195,7 +212,7 @@ public class BinOpAST extends ExpressionAST {
                 break;
         }
         if(longExpr) {
-            Utility.pushRegister(lhsResult);
+            Utility.pushRegister(rhsResult);
             rhs.translate();
         }
     }
@@ -240,9 +257,5 @@ public class BinOpAST extends ExpressionAST {
 
     public static boolean isHasErrorDivByZero() {
         return hasErrorDivByZero;
-    }
-
-    private void setLongExpr() {
-        longExpr = true;
     }
 }
