@@ -1,6 +1,9 @@
 package front_end.AST.StatementAST;
 
+import back_end.Utility;
+import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
+import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import front_end.AST.Node;
 import main.CodeGen;
@@ -28,7 +31,12 @@ public class ReturnAST extends StatementAST {
     public void translate() {
         Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
-
+        int addSize = Utility.getJumpSP();
         CodeGen.main.add(new MOV(Register.R0, result));
+        if (addSize!= 0) {
+            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(addSize)));
+        }
+
+
     }
 }

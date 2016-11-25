@@ -229,10 +229,13 @@ public class Utility {
     }
 
 
-    public static void resetJumpSP() {
+    public static int resetJumpSP() {
         if(!jumpSP.isEmpty()) {
-            jumpSP.pop();
+            return jumpSP.pop();
+        } else {
+            return 0;
         }
     }
+
 
 }
