@@ -14,6 +14,7 @@ import front_end.AST.ExpressionAST.ArraylitAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import front_end.AST.StatementAST.StatementAST;
+import front_end.symbol_table.FUNCTION;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -58,7 +59,13 @@ public class AssignmentAST extends StatementAST {
             CodeGen.main.add(new STORE(result, new Address(res), rhs.getIdentObj().getSize()));
         } else {
             ShiftedReg res = Visitor.ST.getAddress(lhs.getIdent());
-            CodeGen.main.add(new STORE(result, res, rhs.getIdentObj().getSize()));
+            int typeSize;
+            if (rhs.getIdentObj() instanceof FUNCTION) {
+                typeSize = ((FUNCTION) rhs.getIdentObj()).getReturntype().getSize();
+            } else {
+                typeSize = rhs.getIdentObj().getSize();
+            }
+            CodeGen.main.add(new STORE(result, res, typeSize));
         }
 
         ProgramAST.nextAddress += rhs.getIdentObj().getSize();

@@ -125,10 +125,6 @@ public class VarDeclAST extends StatementAST {
 
         //do not malloc a space on the stack if the pair is null
         if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
-            if(rhs instanceof PairelemAST) {
-                ((PairtypeAST) type).setAssignment(true);
-            }
-
             type.translate();
             rhs.translate();
         } else {
