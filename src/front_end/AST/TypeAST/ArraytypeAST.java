@@ -29,8 +29,7 @@ public class ArraytypeAST extends TypeAST {
 
     @Override
     public void translate() {
-        CodeGen.main.add(new Branch("L", "malloc"));
-        CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
+
     }
 
     public TYPE getelementType() {
