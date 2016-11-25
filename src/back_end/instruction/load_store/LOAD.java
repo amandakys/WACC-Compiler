@@ -15,6 +15,15 @@ public class LOAD implements Instruction {
         this.expression = expression;
     }
 
+    public LOAD(Register dst, Expression expression, int size) {
+        this.dst = dst;
+        this.expression = expression;
+        //if it is a char or boolean
+        if(size == 4) {
+            condition = "SB";
+        }
+    }
+
     public LOAD(String condition, Register dst, Expression expression) {
         this.condition = condition;
         this.dst = dst;
