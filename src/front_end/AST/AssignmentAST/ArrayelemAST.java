@@ -29,7 +29,7 @@ public class ArrayelemAST extends ExpressionAST {
     private List<Node> expressions = new ArrayList<>();
 
     private static boolean hasError;
-    private final int INT_SIZE = 4;
+    private final int ARRAY_SIZE = 4;
 
     public ArrayelemAST(ParserRuleContext ctx, String ident, List<Node> expressionNodes) {
         super(ctx);
@@ -62,6 +62,7 @@ public class ArrayelemAST extends ExpressionAST {
         //addMain(new LOAD(r, new Address(r)));
         int address = 0;
         Register first = Utility.popUnusedReg();
+        Register paramReg = Utility.popParamReg();
 
         CodeGen.main.add(new ADD(first, Register.SP, new ImmValue(address)));
         for(Node n : expressions) {
@@ -81,21 +82,21 @@ public class ArrayelemAST extends ExpressionAST {
 
             CodeGen.main.add(new LOAD(first, new Address(first)));
             CodeGen.main.add(new MOV(Register.R0, reg));
-            CodeGen.main.add(new MOV(Utility.popParamReg(), first));
+            CodeGen.main.add(new MOV(paramReg, first));
             CodeGen.main.add(new Branch("L", "p_check_array_bounds"));
 
             ProgramAST.nextAddress += identObj.getSize();
             ShiftedReg size = new PostIndex(first, reg, Shift.LSL, new ImmValue(2));
 
-            CodeGen.main.add(new ADD(first, first, new ImmValue(identObj.getSize())));
+            CodeGen.main.add(new ADD(first, first, new ImmValue(ARRAY_SIZE)));
             CodeGen.main.add(new ADD(first, size));
 
             address += identObj.getSize();
+        }
 
-            //when array elem is on the rhs of print, read,...
-            if(ctx.getParent() instanceof BasicParser.ExprNoBinOpContext) {
-                CodeGen.main.add(new LOAD(first, new PreIndex(first)));
-            }
+        //when array elem is on the rhs of print, read,...
+        if(ctx.getParent() instanceof BasicParser.ExprNoBinOpContext) {
+            CodeGen.main.add(new LOAD(first, new PreIndex(first)));
         }
     }
 }

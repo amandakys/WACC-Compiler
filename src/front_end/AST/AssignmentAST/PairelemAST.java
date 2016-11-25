@@ -72,7 +72,7 @@ public class PairelemAST extends AssignrhsAST{
             ident = ((IdentAST) expression).getIdent();
         }
 
-        CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP, new ImmValue(Visitor.ST.pairStackSize(ident)))));
+        CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP, new ImmValue(identObj.getSize()))));
         CodeGen.main.add(new MOV(Register.R0, r));
 
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
