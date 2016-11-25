@@ -4,7 +4,10 @@ import antlr.BasicParser;
 import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.ImmValue;
+import back_end.data_type.register.PostIndex;
+import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
+import back_end.data_type.register.Shift;
 import back_end.instruction.Branch;
 import back_end.instruction.condition.AND;
 import back_end.instruction.condition.CMP;
@@ -35,10 +38,11 @@ public class BinOpAST extends ExpressionAST {
     private ExpressionAST lhs;
     private boolean longExpr; // This fields tells if the BinOp is in a longEpr
     private Register previousReg;
+    //2 following fields are allowed to access by UnOpAST
+    protected static boolean hasErrorDivByZero;
+    protected static boolean hasErrorOverflow;
 
-    private static boolean hasErrorDivByZero;
-    private static boolean hasErrorOverflow;
-
+    private final int SHIFT_VALUE = 31;
 
     public BinOpAST(ParserRuleContext ctx, String op, ExpressionAST lhs, ExpressionAST rhs) {
         super(ctx);
@@ -103,7 +107,8 @@ public class BinOpAST extends ExpressionAST {
                 } else if(op.equals("*")) {
                     CodeGen.main.add(new SMULL(lhsResult, rhsResult, lhsResult, rhsResult));
                     // TODO:add ASR #31 shifting HERE as a third param for multNoWhitespaceExpr.wacc
-                    CodeGen.main.add(new CMP(rhsResult, lhsResult));
+                    CodeGen.main.add(new CMP(rhsResult, new PostIndex
+                            (lhsResult, Shift.ASR, new ImmValue(SHIFT_VALUE))));
                     CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
                 }
                 Utility.pushRegister(rhsResult);

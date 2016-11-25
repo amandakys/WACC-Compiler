@@ -15,6 +15,10 @@ public class PostIndex extends ShiftedReg {
         super(baseReg, shiftVal, jump);
     }
 
+    public PostIndex(Register baseReg, Shift shift, ImmValue shiftVal) {
+        super(baseReg, shift, shiftVal);
+    }
+
     public PostIndex(Register baseReg, Register rm, Shift shift, ImmValue shiftVal) {
         super(baseReg, rm, shift, shiftVal);
     }
@@ -32,8 +36,10 @@ public class PostIndex extends ShiftedReg {
         String res = "";
 
         if(shiftVal != null && Integer.parseInt(shiftVal.getValue()) != 0) {
-            if (rm == null && shiftVal != null) {
+            if (rm == null && shift == null && shiftVal != null) {
                 res += shiftVal;
+            } else if (rm == null && shift != null && shiftVal != null) {
+                res += shift + " " + shiftVal;
             } else if (rm != null && shiftVal != null) {
                 res += rm + ", " + shift + " " + shiftVal;
             }

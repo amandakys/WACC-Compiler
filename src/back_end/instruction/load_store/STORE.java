@@ -2,6 +2,7 @@ package back_end.instruction.load_store;
 
 import back_end.Utility;
 import back_end.data_type.Expression;
+import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
 import main.CodeGen;

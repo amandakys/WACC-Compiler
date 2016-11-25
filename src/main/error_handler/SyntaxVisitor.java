@@ -35,7 +35,7 @@ public class SyntaxVisitor extends BasicParserBaseVisitor<Void> {
     }
 
     @Override
-    public Void visitUnop(BasicParser.UnopContext ctx) {
+    public Void visitIntsign(BasicParser.IntsignContext ctx) {
         if(ctx.MINUS() != null) {
             sign = ctx.getText();
         }
