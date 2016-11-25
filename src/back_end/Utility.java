@@ -1,15 +1,14 @@
 package back_end;
 
-import back_end.data_type.Expression;
 import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
 import back_end.instruction.Instruction;
 import back_end.instruction.LabelInstr;
-import com.sun.org.apache.bcel.internal.classfile.Code;
-import front_end.AST.ExpressionAST.*;
+import front_end.AST.ExpressionAST.ExpressionAST;
+import front_end.AST.ExpressionAST.IntLiterAST;
+import front_end.AST.ExpressionAST.StringLiterAST;
 import main.CodeGen;
 
-import java.util.List;
 import java.util.Stack;
 
 /**
@@ -37,7 +36,7 @@ public class Utility {
         Utility.addData(new LabelInstr(getNextString()));
         CodeGen.numStrings++;
         //discard the "" in a string when finding the string's size
-        Utility.addData(new Directive("word", String.valueOf(value.replaceAll("[\"]", "").length())));
+        Utility.addData(new Directive("word", String.valueOf(value.replace("\\","").replace("\"","").length())));
         Utility.addData(new Directive("ascii", value));
     }
 
