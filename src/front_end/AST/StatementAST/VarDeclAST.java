@@ -36,7 +36,7 @@ public class VarDeclAST extends StatementAST {
     private TypeAST type;
     private AssignrhsAST rhs;
 
-    public static List<TYPE> existedTypes = new ArrayList<>();
+    public static List<PAIR> existedTypes = new ArrayList<>();
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
@@ -129,7 +129,7 @@ public class VarDeclAST extends StatementAST {
             if(exist(identObj.getType()
             )) {
                 type.translate();
-                existedTypes.add(identObj.getType());
+                existedTypes.add((PAIR) identObj.getType());
             }
             rhs.translate();
         } else {
@@ -158,15 +158,11 @@ public class VarDeclAST extends StatementAST {
     }
 
     private boolean exist(TYPE ident) {
-        for(TYPE elem : existedTypes) {
-            if((elem instanceof PAIR) && (ident instanceof PAIR)
-                    && Compare.pairs((PAIR) elem, (PAIR) ident)) {
-                return true;
-            } else if((elem instanceof ARRAY) && (ident instanceof ARRAY)
-                    && Compare.arrays((ARRAY) elem, (ARRAY) ident)) {
-                return true;
-            } else if(Compare.types(ident, elem)) {
-                return true;
+        if(ident instanceof PAIR) {
+            for(TYPE elem : existedTypes) {
+                if((elem instanceof PAIR) && Compare.pairs((PAIR) elem, (PAIR) ident)) {
+                    return true;
+                }
             }
         }
         return false;
