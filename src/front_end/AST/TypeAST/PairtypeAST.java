@@ -46,9 +46,6 @@ public class PairtypeAST extends TypeAST {
             CodeGen.main.add(new Branch("L", "malloc"));
             CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
             Visitor.ST.addToMemoryAddress(identObj.toString(), new PreIndex(Register.SP, new ImmValue(identObj.getSize() * 2)));
-        } else {
-            ShiftedReg reg = Visitor.ST.getAddress(identObj.toString());
-            CodeGen.main.add(new LOAD(Utility.popUnusedReg(), reg));
         }
     }
 
