@@ -123,7 +123,7 @@ public class VarDeclAST extends StatementAST {
             CodeGen.main.add(new LOAD(res, new ImmValue(0)));
         }
 
-        if (type instanceof ArraytypeAST) {
+        if (rhs instanceof ArraylitAST) {
             Register value = Utility.popUnusedReg();
 
             CodeGen.main.add(new LOAD(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
