@@ -119,10 +119,16 @@ public class VarDeclAST extends StatementAST {
         //do not malloc a space on the stack if the pair is null
         type.translate();
         rhs.translate();
-
-
+        Register value = Utility.popUnusedReg();
+//        if (rhs instanceof PairelemAST) {
+//            if ((rhs.getType().getTypeName().equals("bool")) || (rhs.getType().getTypeName().equals("char"))) {
+//                CodeGen.main.add(new LOAD("SB", value, new PreIndex(res)));
+//            } else {
+//                CodeGen.main.add(new LOAD(value, new PreIndex(res)));
+//            }
+//        }
         if (rhs instanceof ArraylitAST) {
-            Register value = Utility.popUnusedReg();
+
 
             CodeGen.main.add(new LOAD(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
             CodeGen.main.add(new STORE(value, new PreIndex(res), identObj.getSize()));
