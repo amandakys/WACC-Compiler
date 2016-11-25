@@ -4,6 +4,8 @@ import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
+import front_end.symbol_table.IDENTIFIER;
+import main.Visitor;
 
 public class LOAD implements Instruction {
     private String condition = "";
@@ -15,11 +17,12 @@ public class LOAD implements Instruction {
         this.expression = expression;
     }
 
-    public LOAD(Register dst, Expression expression, int size) {
+    public LOAD(Register dst, Expression expression, IDENTIFIER identifier) {
         this.dst = dst;
         this.expression = expression;
         //if it is a char or boolean
-        if(size == 1) {
+        if(Visitor.ST.lookUpAll("bool").equals(identifier)
+                || Visitor.ST.lookUpAll("char").equals(identifier)) {
             condition = "SB";
         }
     }

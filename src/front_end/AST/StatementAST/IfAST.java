@@ -103,7 +103,8 @@ public class IfAST extends StatementAST {
             Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
         }
 
-        Utility.addJumpSP(spSize);
+
+        Utility.addJumpSP(spSize+Utility.getJumpSP());
 
         statement.translate();
 

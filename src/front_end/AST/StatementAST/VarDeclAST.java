@@ -136,11 +136,7 @@ public class VarDeclAST extends StatementAST {
 //        }
         if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
             //if type does not exist before
-            if(exist(identObj.getType()
-            )) {
-                type.translate();
-                existedTypes.add((PAIR) identObj.getType());
-            }
+            type.translate();
             rhs.translate();
         } else {
             CodeGen.main.add(new LOAD(res, new ImmValue(0)));
@@ -165,16 +161,5 @@ public class VarDeclAST extends StatementAST {
         ShiftedReg addressWithJump = new PreIndex(Register.SP,
                 new ImmValue(ProgramAST.size+Utility.getJumpSP()));
         CodeGen.main.add(new STORE(res, addressWithJump, identObj.getSize()));
-    }
-
-    private boolean exist(TYPE ident) {
-        if(ident instanceof PAIR) {
-            for(TYPE elem : existedTypes) {
-                if((elem instanceof PAIR) && Compare.pairs((PAIR) elem, (PAIR) ident)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 }

@@ -70,8 +70,8 @@ public class PairelemAST extends AssignrhsAST{
         }
 
         //load the result to a register when necessary (i.e if pairelem is on the rhs, or on lhs)
-        if(ctx.getParent() instanceof BasicParser.AssignlhsContext
-                || ctx.getParent().getParent() instanceof BasicParser.Var_declContext) {
+        if(ctx instanceof BasicParser.PairelemContext
+                || ctx.getParent() instanceof BasicParser.PairelemContext) {
             String value = "";
 
             if(expression instanceof IdentAST) {
@@ -98,17 +98,10 @@ public class PairelemAST extends AssignrhsAST{
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
         CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(val))));
 
-        if(ctx.getParent().getParent() instanceof BasicParser.Var_declContext
-                && (ctx.getParent() instanceof BasicParser.AssignlhsContext &&
-                    !(ctx.getParent() instanceof BasicParser.AssignrhsContext))) {
-            if (identObj.getType().getTypeName().equals("bool") || identObj.getType().getTypeName().equals("char")) {
-                CodeGen.main.add(new LOAD("SB", r, new PreIndex(r, new ImmValue(val))));
-            } else {
-                CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(val))));
-            }
-//                || (ctx.getParent() instanceof BasicParser.AssignlhsContext &&
-//                    !(ctx.getParent() instanceof BasicParser.AssignlhsContext))) {
-//            CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(val))));
+
+        if(ctx instanceof BasicParser.PairelementContext
+                || ctx.getParent() instanceof BasicParser.PairelementContext) {
+            CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(0))));
         }
 
         if(!hasError) {
