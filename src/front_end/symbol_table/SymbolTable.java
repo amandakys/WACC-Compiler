@@ -55,7 +55,7 @@ public class SymbolTable {
         int size = 0;
 
         for (IDENTIFIER ident : dict.values()) {
-            if (!(ident instanceof FUNCTION)) {
+            if (!(ident instanceof FUNCTION) && !(ident == null)) {
                 size += ident.getSize();
             }
 
