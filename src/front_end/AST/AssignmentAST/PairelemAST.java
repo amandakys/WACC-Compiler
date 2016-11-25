@@ -75,7 +75,7 @@ public class PairelemAST extends AssignrhsAST{
                 value = ((IdentAST) expression).getIdent();
             }
             CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP,
-                    Visitor.ST.getAddress(value).getShiftVal()), identObj.getSize()));
+                    Visitor.ST.getAddress(value).getShiftVal())));
         }
 
         CodeGen.main.add(new MOV(Register.R0, r));
@@ -88,7 +88,7 @@ public class PairelemAST extends AssignrhsAST{
         if(ctx.getParent().getParent() instanceof BasicParser.Var_declContext
                 || (ctx.getParent() instanceof BasicParser.AssignlhsContext &&
                     !(ctx.getParent() instanceof BasicParser.AssignlhsContext))) {
-            CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(val)), identObj.getSize()));
+            CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(val))));
         }
 
         if(!hasError) {

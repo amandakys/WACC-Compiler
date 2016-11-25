@@ -19,7 +19,7 @@ public class LOAD implements Instruction {
         this.dst = dst;
         this.expression = expression;
         //if it is a char or boolean
-        if(size == 4) {
+        if(size == 1) {
             condition = "SB";
         }
     }
