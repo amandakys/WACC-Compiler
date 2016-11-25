@@ -26,7 +26,7 @@ public class ADD implements Instruction {
             Utility.pushRegister((Register) rhs); //to pass incFunction
         }
         //CodeGen.notUsedRegisters.push(lhs);
-        CodeGen.notUsedRegisters.remove(dest); //to pass incFunction
+        //CodeGen.notUsedRegisters.remove(dest); //to pass incFunction
 
     }
 

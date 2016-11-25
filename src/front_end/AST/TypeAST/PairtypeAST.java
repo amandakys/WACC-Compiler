@@ -25,7 +25,7 @@ public class PairtypeAST extends TypeAST {
     private PairelemtypeAST first;
     private PairelemtypeAST second;
 
-    private boolean mallocPair = false;
+    private static boolean mallocPair = false;
 
     public PairtypeAST(ParserRuleContext ctx, PairelemtypeAST first, PairelemtypeAST second) {
         super(ctx);
