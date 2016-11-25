@@ -1,16 +1,22 @@
 package front_end.AST.TypeAST;
 
+import back_end.Utility;
+import back_end.data_type.Address;
+import back_end.data_type.ImmValue;
+import back_end.data_type.register.PreIndex;
+import back_end.data_type.register.Register;
+import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.AssignlhsAST;
 import front_end.AST.Node;
+import front_end.AST.ProgramAST;
+import front_end.symbol_table.TYPE;
+import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.ARRAY;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.PAIR;
 
-/**
- * Created by andikoh on 09/11/2016.
- */
 public class PairelemtypeAST extends Node {
     private String pairtoken;
     private TypeAST type;
@@ -49,6 +55,13 @@ public class PairelemtypeAST extends Node {
 
     @Override
     public void translate() {
-        type.translate();
+        Register r = CodeGen.notUsedRegisters.peek();
+        if(type == null) {
+            CodeGen.main.add(new STORE(Utility.popUnusedReg(), new Address(Register.R0), identObj.getSize()));
+            CodeGen.main.add(new STORE(Register.R0, new PreIndex(r, new ImmValue(identObj.getSize())),
+                    ProgramAST.nextAddress));
+        } else {
+            type.translate();
+        }
     }
 }
