@@ -16,7 +16,8 @@ import java.util.Stack;
  * Created by donamphuong on 20/11/2016.
  */
 public class Utility {
-    private static int jumpSP = 0;
+    private static Stack<Integer> jumpSP = new Stack<>();
+
 
     public static int STACK_SIZE = (int) Math.pow(2, 10);
 
@@ -217,15 +218,19 @@ public class Utility {
     }
 
     public static int getJumpSP() {
-        return jumpSP;
+        if (jumpSP.isEmpty()) {
+            jumpSP.push(0);
+        }
+        return jumpSP.peek();
     }
 
     public static void addJumpSP(int jumpSize) {
-        jumpSP += jumpSize;
+        jumpSP.push(jumpSize);
     }
 
+
     public static void resetJumpSP() {
-        jumpSP = 0;
+        jumpSP.pop();
     }
 
 }
