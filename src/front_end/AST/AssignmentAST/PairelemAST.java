@@ -13,6 +13,7 @@ import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.ExpressionAST.IdentAST;
+import front_end.symbol_table.TYPE;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -27,6 +28,7 @@ import static back_end.Utility.addMain;
 public class PairelemAST extends AssignrhsAST{
     private String token;
     private ExpressionAST expression;
+    private TYPE type;
 
     private static boolean hasError;
     private final int PAIR_SIZE = 4;
@@ -36,6 +38,7 @@ public class PairelemAST extends AssignrhsAST{
         this.token = token;
         this.expression = expression;
         this.hasError = false;
+
     }
 
     @Override
@@ -74,8 +77,18 @@ public class PairelemAST extends AssignrhsAST{
             if(expression instanceof IdentAST) {
                 value = ((IdentAST) expression).getIdent();
             }
+
+            if (identObj.getType().getTypeName().equals("bool") || identObj.getType().getTypeName().equals("char")) {
+
+                CodeGen.main.add(new LOAD("SB", r, new PreIndex(Register.SP,
+                        Visitor.ST.getAddress(value).getShiftVal())));
+            } else {
+                CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP,
+                        Visitor.ST.getAddress(value).getShiftVal())));
+            }
             CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP,
                     Visitor.ST.getAddress(value).getShiftVal())));
+
         }
 
         CodeGen.main.add(new MOV(Register.R0, r));
@@ -84,6 +97,7 @@ public class PairelemAST extends AssignrhsAST{
 
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
         CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(val))));
+
 
         if(ctx instanceof BasicParser.PairelementContext
                 || ctx.getParent() instanceof BasicParser.PairelementContext) {
