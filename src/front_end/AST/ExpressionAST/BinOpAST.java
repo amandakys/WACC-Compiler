@@ -41,6 +41,13 @@ public class BinOpAST extends ExpressionAST {
 
     private final int SHIFT_VALUE = 31;
 
+    /*
+    TODO: the last test yet to pass is longSplitExpr.wacc. NOT POSSIBLE with current Parser
+    The problem lies in the expression parsing. eg. (-1 + 2) would be read as -(1 + 2).
+    Hence, passing this test is not achievable with current Parser, regardless of how BinOpAST ,UnOpAST and other
+    back_end codes are implemented.
+    */
+
     public BinOpAST(ParserRuleContext ctx, String op, ExpressionAST lhs, ExpressionAST rhs) {
         super(ctx);
         this.op = op;
