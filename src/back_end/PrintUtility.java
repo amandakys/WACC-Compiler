@@ -53,6 +53,7 @@ public class PrintUtility {
                     break;
                 case "p_print_reference":
                     printReference();
+                    break;
                 case "p_print_ln":
                     printlnInstr();
                     break;
