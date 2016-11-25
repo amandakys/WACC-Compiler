@@ -39,7 +39,7 @@ public class ReturnAST extends StatementAST {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(addSize)));
         }
         CodeGen.main.add(new POP(Register.PC));
-        CodeGen.main.add (new Directive("ltorg"));
+//        CodeGen.main.add (new Directive("ltorg"));
 
 
     }

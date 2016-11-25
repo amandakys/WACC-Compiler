@@ -23,7 +23,8 @@ public class SUB implements Instruction {
             sFlag = "S";
             Utility.pushRegister((Register) rhs);
         }
-        CodeGen.notUsedRegisters.remove(dst);
+        //CodeGen.notUsedRegisters.remove(dst);
+
     }
 
     @Override

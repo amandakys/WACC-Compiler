@@ -213,6 +213,9 @@ public class Utility {
     public static void pushRegister(Register r) {
         if (!CodeGen.notUsedRegisters.contains(r)) {
             CodeGen.notUsedRegisters.push(r);
+        }
+        if(!CodeGen.toPushUnusedReg.empty()) {
+            CodeGen.toPushUnusedReg.pop();
 
         }
     }
