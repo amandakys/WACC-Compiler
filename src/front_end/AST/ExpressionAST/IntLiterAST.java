@@ -9,10 +9,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class IntLiterAST extends ExpressionAST {
 
-    private String intsign; //intsign
+    private String intsign; //intsign, can be null(for positive), "+" or "-"
     private String value;
-
-    public static int occurences = 0;
 
     public IntLiterAST(ParserRuleContext ctx, String intsign, String value) {
         super(ctx);
@@ -21,7 +19,6 @@ public class IntLiterAST extends ExpressionAST {
         this.value = value.replaceAll("\\D+","");;
         this.intsign = intsign;
         identObj = Visitor.ST.lookUpAll("int");
-        occurences++;
     }
 
     @Override

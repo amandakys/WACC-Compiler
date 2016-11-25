@@ -11,16 +11,13 @@ import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
 
-/**
- * Created by tsd15 on 10/11/16.
- */
 public class IdentAST extends ExpressionAST {
-    String ident;
+    String ident; //name
 
     public IdentAST(ParserRuleContext ctx, String ident) {
         super(ctx);
         this.ident = ident;
-        IDENTIFIER identType = Visitor.ST.lookUpAll(ident);
+        IDENTIFIER identType = Visitor.ST.lookUpAll(ident); //Type
 
         if (identType == null) {
             error("is an undefined expression");
@@ -41,9 +38,13 @@ public class IdentAST extends ExpressionAST {
     public void translate() {
 
         Register result = Utility.popUnusedReg();
-        if(identObj.getType().getTypeName().equals("bool") || identObj.getType().getTypeName().equals("char")) {
+        String typeName = identObj.getType().getTypeName();
+
+        if(typeName.equals("bool") || typeName.equals("char")) {
+            //LDRSB only for signed byte ie bool & char
             CodeGen.main.add(new LOAD("SB", result, Visitor.ST.getAddress(ident)));
         } else {
+            //normal LDR
             CodeGen.main.add(new LOAD(result, Visitor.ST.getAddress(ident)));
         }
     }

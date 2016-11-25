@@ -8,9 +8,6 @@ import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class StringLiterAST extends ExpressionAST{
-    private static final int NUM_DOUBLE_QUOTE = 2;
-
-    public static int occurences;
     private String value;
 
     public StringLiterAST(ParserRuleContext ctx, String value) {

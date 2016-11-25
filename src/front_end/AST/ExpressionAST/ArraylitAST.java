@@ -4,6 +4,8 @@ import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
+import back_end.instruction.Branch;
+import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.ExpressionAST.ExpressionAST;
@@ -38,7 +40,6 @@ public class ArraylitAST extends AssignrhsAST {
         }
     }
 
-
     @Override
     public void check() {
         for(ExpressionAST a : arraylits) {
@@ -48,7 +49,11 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void translate() {
+        CodeGen.main.add(new Branch("L", "malloc"));
+        CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
+        //identObj.getSize() returns size of array
         ProgramAST.nextAddress += identObj.getSize();
+        //Transverse through the list to translate each expr
         for (ExpressionAST a: arraylits) {
             Register res = CodeGen.notUsedRegisters.peek();
 
@@ -59,7 +64,6 @@ public class ArraylitAST extends AssignrhsAST {
             ProgramAST.nextAddress += a.getIdentObj().getType().getSize();
         }
     }
-
 
     public List<ExpressionAST> getArraylits() {
         return arraylits;
