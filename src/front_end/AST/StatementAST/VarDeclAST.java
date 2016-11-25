@@ -15,6 +15,7 @@ import front_end.AST.AssignmentAST.CallAST;
 import front_end.AST.ExpressionAST.PairliterAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
+import front_end.AST.TypeAST.PairelemtypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
 import front_end.AST.TypeAST.TypeAST;
 import front_end.symbol_table.*;
@@ -117,8 +118,12 @@ public class VarDeclAST extends StatementAST {
         Register res = CodeGen.notUsedRegisters.peek();
 
         //do not malloc a space on the stack if the pair is null
-        type.translate();
-        rhs.translate();
+        if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
+            type.translate();
+            rhs.translate();
+        } else {
+            CodeGen.main.add(new LOAD(res, new ImmValue(0)));
+        }
 
 
         if (rhs instanceof ArraylitAST) {
