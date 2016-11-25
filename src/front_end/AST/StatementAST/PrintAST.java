@@ -58,9 +58,12 @@ public class PrintAST extends StatementAST {
             } else {
                 typeName = "reference";
             }
+        } else if(type.getTypeName().equals("pair")) {
+            typeName = "reference";
         } else {
             typeName = type.getTypeName();
         }
+
         String functionName = "p_print_" + typeName;
 
         switch (typeName) {

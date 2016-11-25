@@ -115,13 +115,11 @@ public class VarDeclAST extends StatementAST {
         }
 
         Register res = CodeGen.notUsedRegisters.peek();
+
         //do not malloc a space on the stack if the pair is null
-        if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
-            type.translate();
-            rhs.translate();
-        } else {
-            CodeGen.main.add(new LOAD(res, new ImmValue(0)));
-        }
+        type.translate();
+        rhs.translate();
+
 
         if (rhs instanceof ArraylitAST) {
             Register value = Utility.popUnusedReg();
