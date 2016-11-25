@@ -147,9 +147,9 @@ public class FunctionDeclAST extends Node {
         statement.translate();
 
         Utility.resetJumpSP();
-        if (sizeOfNewVars != 0) {
-            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(sizeOfNewVars)));
-        }
+//        if (sizeOfNewVars != 0) {
+//            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(sizeOfNewVars)));
+//        }
 
         CodeGen.main.add(new POP(Register.PC));
         CodeGen.main.add (new Directive("ltorg"));

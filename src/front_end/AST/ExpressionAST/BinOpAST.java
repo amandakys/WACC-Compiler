@@ -76,37 +76,49 @@ public class BinOpAST extends ExpressionAST {
     @Override
     public void translate() {
         Register lhsResult = CodeGen.notUsedRegisters.peek();
+
         lhs.translate();
         Register rhsResult = CodeGen.notUsedRegisters.peek();
-        if(rhs instanceof BinOpAST) { //rhs is further BinOp
-            BinOpAST next = (BinOpAST) rhs;
-            next.longExpr = true; // because this is in a long expr
-            if(previousReg == null) { //previousReg has not been set
-                next.previousReg = lhsResult;
-            } else { //keep the previousReg & pass it on
-                next.previousReg = previousReg;
+        if (op == "+" || op == "-" || op == "*" || op == "/" || op == "%") {
+
+            if(rhs instanceof BinOpAST) { //rhs is further BinOp
+                BinOpAST next = (BinOpAST) rhs;
+                next.longExpr = true; // because this is in a long expr
+                if(previousReg == null) { //previousReg has not been set
+                    next.previousReg = lhsResult;
+                } else { //keep the previousReg & pass it on
+                    next.previousReg = previousReg;
+                }
             }
-        }
-        if(!longExpr) { // if not a longExpr do as normal
-            rhs.translate();
-        } else {
+            if(!longExpr) { // if not a longExpr do as normal
+                rhs.translate();
+            } else {
 //            Utility.pushRegister(lhsResult);
-            rhsResult = lhsResult;
-            lhsResult = previousReg;
+                rhsResult = lhsResult;
+                lhsResult = previousReg;
+            }
+        } else {
+            //op is a logical expression
+            rhs.translate();
         }
+        //Utility.pushBackRegisters();
+
         switch(op) {
             case "+":
             case "-":
             case "*":
                 if(op.equals("+")) {
                     CodeGen.main.add(new ADD(lhsResult, lhsResult, rhsResult));
+                    Utility.pushRegister(rhsResult);
                     CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("-")){
                     CodeGen.main.add(new SUB(lhsResult, lhsResult, rhsResult));
+                    Utility.pushRegister(rhsResult);
                     CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("*")) {
                     CodeGen.main.add(new SMULL(lhsResult, rhsResult, lhsResult, rhsResult));
                     // TODO:add ASR #31 shifting HERE as a third param for multNoWhitespaceExpr.wacc
+                    Utility.pushRegister(rhsResult);
                     CodeGen.main.add(new CMP(rhsResult, new PostIndex
                             (lhsResult, Shift.ASR, new ImmValue(SHIFT_VALUE))));
                     CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
