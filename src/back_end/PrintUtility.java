@@ -201,14 +201,15 @@ public class PrintUtility {
     }
 
     private static void p_free() {
-        CodeGen.functions.add(new LabelInstr("p_free_array"));
         CodeGen.functions.add(new PUSH(Register.LR));
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
         CodeGen.functions.add(new LOAD("EQ", Register.R0, new LabelExpr(getErrorMessage(Error.nullReference))));
         CodeGen.functions.add(new Branch("EQ", "p_throw_runtime_error"));
     }
 
+
     public static void p_free_pair() {
+        CodeGen.functions.add(new LabelInstr("p_free_pair"));
         p_free();
         CodeGen.functions.add(new PUSH(Register.R0));
         CodeGen.functions.add(new LOAD(Register.R0, new Address(Register.R0)));
@@ -222,6 +223,7 @@ public class PrintUtility {
     }
 
     public static void p_free_array() {
+        CodeGen.functions.add(new LabelInstr("p_free_array"));
         p_free();
         CodeGen.functions.add(new Branch("L", "free"));
         CodeGen.functions.add(new POP(Register.PC));
