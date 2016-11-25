@@ -74,7 +74,7 @@ public class BinOpAST extends ExpressionAST {
         lhs.translate();
         Register rhsResult = CodeGen.notUsedRegisters.peek();
         if(rhs instanceof BinOpAST) {
-            Utility.pushRegister(lhsResult);
+            //Utility.pushRegister(lhsResult);
             ((BinOpAST) rhs).setLongExpr(); // because this is a long expr
         }
         if(!longExpr) {
