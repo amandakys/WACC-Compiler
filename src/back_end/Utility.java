@@ -169,19 +169,23 @@ public class Utility {
         Push back the registers that are not needed to store value back onto the stack
      */
     public static void pushBackRegisters() {
-        while (!CodeGen.toPushParamReg.isEmpty()) {
-            Register r = CodeGen.toPushParamReg.pop();
-
-            if (!CodeGen.paramRegister.contains(r)) {
-                CodeGen.paramRegister.push(r);
-            }
-        }
+        pushBackParam();
 
         while (!CodeGen.toPushUnusedReg.isEmpty()) {
             Register r = CodeGen.toPushUnusedReg.pop();
 
             if (!CodeGen.notUsedRegisters.contains(r)) {
                 CodeGen.notUsedRegisters.push(r);
+            }
+        }
+    }
+
+    public static void pushBackParam() {
+        while (!CodeGen.toPushParamReg.isEmpty()) {
+            Register r = CodeGen.toPushParamReg.pop();
+
+            if (!CodeGen.paramRegister.contains(r)) {
+                CodeGen.paramRegister.push(r);
             }
         }
     }

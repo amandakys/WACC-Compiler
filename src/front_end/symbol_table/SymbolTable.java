@@ -15,6 +15,7 @@ public class SymbolTable {
     private SymbolTable encSymbolTable; //ref to enclosing symbol table
     private Map<String, IDENTIFIER> dict;
     private Map<String, ShiftedReg> memoryAddress;
+    private int jumpSP = 0;
 
     public SymbolTable(SymbolTable st) {
         dict = new LinkedHashMap<>();
@@ -88,14 +89,28 @@ public class SymbolTable {
                 break;
             }
 
-            offset++;
-        }
 
-        return S == null ? null : S.getMemoryAddress().get(name).addToShiftVal(offset);
-    }
+           offset++;
+       }
+       //jumpSP take care of cases where the sp really jump to different position
+       //using LDR sp, [sp, #4]! JumpSp is = 0 by default and is set back to 0 after use.
+       return S == null ? null : S.getMemoryAddress().get(name).addToShiftVal(offset+jumpSP);
+   }
 
     public Map<String, ShiftedReg> getMemoryAddress() {
         return memoryAddress;
+    }
+
+    public int getJumpSP() {
+        return jumpSP;
+    }
+
+    public void addJumpSP(int jumpSize) {
+        jumpSP += jumpSize;
+    }
+
+    public void resetJumpSP() {
+        jumpSP = 0;
     }
 
     public int nextAvailableAdd(int index) {

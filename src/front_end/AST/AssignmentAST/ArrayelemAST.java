@@ -67,6 +67,11 @@ public class ArrayelemAST extends ExpressionAST {
 
         CodeGen.main.add(new ADD(first, Register.SP, new ImmValue(address)));
         for(Node n : expressions) {
+            Register reg = CodeGen.notUsedRegisters.peek();
+
+            //load the first value of an array to a register
+            n.translate();
+
             if(!hasError) {
                 Utility.pushData(Error.arrayOutOfBoundsNegative);
                 Utility.pushData(Error.arrayOutOfBoundsLarge);
@@ -75,12 +80,6 @@ public class ArrayelemAST extends ExpressionAST {
                 PrintUtility.throwRuntimeError();
                 hasError = true;
             }
-
-
-            Register reg = CodeGen.notUsedRegisters.peek();
-
-            //load the first value of an array to a register
-            n.translate();
 
             CodeGen.main.add(new LOAD(first, new Address(first)));
             CodeGen.main.add(new MOV(Register.R0, reg));
@@ -92,7 +91,6 @@ public class ArrayelemAST extends ExpressionAST {
 
             CodeGen.main.add(new ADD(first, first, new ImmValue(identObj.getSize())));
             CodeGen.main.add(new ADD(first, size));
-            CodeGen.main.add(new LOAD(first, new Address(first)));
 
             address += identObj.getSize();
         }
