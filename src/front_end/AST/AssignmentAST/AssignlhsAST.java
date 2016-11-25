@@ -5,19 +5,18 @@ import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
 
-/**
- * Created by andikoh on 08/11/2016.
- */
 public class AssignlhsAST extends Node {
     private String ident;
     private Node child;
 
+    //case of an Ident
     public AssignlhsAST(ParserRuleContext ctx, String ident) {
         super(ctx);
         this.ident = ident;
         this.child = null;
     }
 
+    //case of a Node
     public AssignlhsAST(ParserRuleContext ctx, Node child) {
         super(ctx);
         this.ident = null;
@@ -36,7 +35,7 @@ public class AssignlhsAST extends Node {
             } else {
                 this.identObj = N;
             }
-        } else {
+        } else { //ident is null so must be a Node
             child.checkNode();
             this.identObj = child.getType();
         }

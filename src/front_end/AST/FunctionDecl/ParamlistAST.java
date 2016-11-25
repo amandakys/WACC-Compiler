@@ -22,13 +22,6 @@ public class ParamlistAST extends Node {
         return parameters;
     }
 
-    /*public void check(ParamlistAST params) {
-        for (int i = 0; i < params.parameters.size(); i++) {
-            if(parameters.get(i).getType() != params.parameters.get(i).getType()) {
-                System.err.println("type of func param "+i+" incompatible with declaration");
-            }
-        }
-    }*/
 
     public List<TYPE> getParamTypes() {
         List<TYPE> paramTypes = new ArrayList<>();

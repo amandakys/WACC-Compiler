@@ -1,16 +1,12 @@
 package front_end.symbol_table;
 
-import main.Visitor;
 
 import java.util.List;
 
-/**
- * Created by tsd15 on 09/11/16.
- */
 public class FUNCTION extends IDENTIFIER {
     private TYPE returntype;
     private List<TYPE> formals;
-    private SymbolTable symtab;
+    private SymbolTable symtab; //the Symbol table which contains all the parameters and variable of the function
     public int nextAdress;
     public int size;
 

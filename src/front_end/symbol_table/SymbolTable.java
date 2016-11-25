@@ -4,15 +4,9 @@ import java.util.*;
 
 import back_end.Utility;
 import back_end.data_type.register.ShiftedReg;
-import front_end.AST.Compare;
-
 import java.util.HashMap;
 import java.util.Map;
 
-
-/**
- * Created by andikoh on 08/11/2016.
- */
 public class SymbolTable {
     private SymbolTable encSymbolTable; //ref to enclosing symbol table
     private Map<String, IDENTIFIER> dict;
@@ -36,10 +30,14 @@ public class SymbolTable {
         return dict.containsValue(ident);
     }
 
+
+    //find the identifier by the name in the symbol table
     public IDENTIFIER lookUp(String name) {
         return dict.get(name);
     }
 
+
+    //find the identifier by the name in the whole program scope
     public IDENTIFIER lookUpAll(String name) {
         SymbolTable S = this;
         while (S != null) {
@@ -65,6 +63,8 @@ public class SymbolTable {
         return size;
     }
 
+
+    // Calculate the shift of Stack Pointer due to parameters of function
     public int findStackShift(String x) {
         List<String> keys = new ArrayList<String>(dict.keySet());
         int indexOfx = keys.indexOf(x);
