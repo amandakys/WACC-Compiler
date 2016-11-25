@@ -96,10 +96,13 @@ public class IfAST extends StatementAST {
                 //decrement stack pointer
                 spSize = (spSize - Utility.STACK_SIZE);
                 Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
+
             }
         } else {
             Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
         }
+
+        Utility.addJumpSP(spSize);
 
         statement.translate();
 
@@ -113,5 +116,7 @@ public class IfAST extends StatementAST {
         } else {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
         }
+
+        Utility.resetJumpSP();
     }
 }

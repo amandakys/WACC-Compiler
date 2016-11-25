@@ -15,6 +15,7 @@ import java.util.Stack;
  * Created by donamphuong on 20/11/2016.
  */
 public class Utility {
+    private static int jumpSP = 0;
 
     public static int STACK_SIZE = (int) Math.pow(2, 10);
 
@@ -100,7 +101,7 @@ public class Utility {
     }
 
     public static String getReferencePlaceholder() {
-        String msg = isPlaceholder("%p\\0");
+        String msg = isPlaceholder("\"%p\\0\"");
         return msg.substring(0, msg.length() - 2);
     }
 
@@ -199,6 +200,18 @@ public class Utility {
         if (!CodeGen.notUsedRegisters.contains(r)) {
             CodeGen.notUsedRegisters.push(r);
         }
+    }
+
+    public static int getJumpSP() {
+        return jumpSP;
+    }
+
+    public static void addJumpSP(int jumpSize) {
+        jumpSP += jumpSize;
+    }
+
+    public static void resetJumpSP() {
+        jumpSP = 0;
     }
 
 }

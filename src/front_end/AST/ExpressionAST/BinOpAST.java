@@ -34,6 +34,7 @@ public class BinOpAST extends ExpressionAST {
     private ExpressionAST rhs;
     private ExpressionAST lhs;
     private boolean longExpr; // This fields tells if the BinOp is in a longEpr
+    private Register previousReg;
 
     private static boolean hasErrorDivByZero;
     private static boolean hasErrorOverflow;
@@ -73,12 +74,21 @@ public class BinOpAST extends ExpressionAST {
         Register lhsResult = CodeGen.notUsedRegisters.peek();
         lhs.translate();
         Register rhsResult = CodeGen.notUsedRegisters.peek();
-        if(rhs instanceof BinOpAST) {
-            //Utility.pushRegister(lhsResult);
-            ((BinOpAST) rhs).setLongExpr(); // because this is a long expr
+        if(rhs instanceof BinOpAST) { //rhs is further BinOp
+            BinOpAST next = (BinOpAST) rhs;
+            next.longExpr = true; // because this is in a long expr
+            if(previousReg == null) { //previousReg has not been set
+                next.previousReg = lhsResult;
+            } else { //keep the previousReg & pass it on
+                next.previousReg = previousReg;
+            }
         }
-        if(!longExpr) {
-            rhs.translate(); //same as lhs
+        if(!longExpr) { // if not a longExpr do as normal
+            rhs.translate();
+        } else {
+//            Utility.pushRegister(lhsResult);
+            rhsResult = lhsResult;
+            lhsResult = previousReg;
         }
         switch(op) {
             case "+":
@@ -122,7 +132,6 @@ public class BinOpAST extends ExpressionAST {
 
             case "/":
             case "%":
-                Utility.pushData(divideByZero);
                 CodeGen.main.add(new MOV(Register.R0, lhsResult));
 
                     Register res = Utility.popParamReg();
@@ -138,7 +147,10 @@ public class BinOpAST extends ExpressionAST {
                 CodeGen.main.add(new MOV(lhsResult, res));
 
                 if (!hasErrorDivByZero) {
+
+                    Utility.pushData(divideByZero);
                     PrintUtility.addToEndFunctions("p_divide_by_zero");
+
                     if(ctx.getParent() instanceof BasicParser.PrintlnContext) {
                         PrintUtility.addToPlaceholders("\"\\0\"");
                         PrintUtility.addToEndFunctions("p_print_ln");
@@ -195,7 +207,7 @@ public class BinOpAST extends ExpressionAST {
                 break;
         }
         if(longExpr) {
-            Utility.pushRegister(lhsResult);
+            Utility.pushRegister(rhsResult);
             rhs.translate();
         }
     }
@@ -240,9 +252,5 @@ public class BinOpAST extends ExpressionAST {
 
     public static boolean isHasErrorDivByZero() {
         return hasErrorDivByZero;
-    }
-
-    private void setLongExpr() {
-        longExpr = true;
     }
 }
