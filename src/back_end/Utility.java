@@ -38,7 +38,7 @@ public class Utility {
         CodeGen.numStrings++;
         //discard the "" in a string when finding the string's size
         Utility.addData(new Directive("word", String.valueOf(value.replace
-                ("\\", "").replace("\"", "").length())));
+                ("\\", "").length() - NUM_QUOTATION)));
         Utility.addData(new Directive("ascii", value));
     }
 
