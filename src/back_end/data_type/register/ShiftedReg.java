@@ -29,6 +29,12 @@ public abstract class ShiftedReg extends Expression {
         this.jump = jump;
     }
 
+    public ShiftedReg(Register baseReg, Shift shift, ImmValue shiftVal) {
+        this.baseReg = baseReg;
+        this.shift = shift;
+        this.shiftVal = shiftVal;
+    }
+
     public ShiftedReg(Register baseReg, Register rm, Shift shift, ImmValue shiftVal) {
         this.baseReg = baseReg;
         this.rm = rm;
