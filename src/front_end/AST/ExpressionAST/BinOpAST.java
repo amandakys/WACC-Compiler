@@ -38,6 +38,7 @@ public class BinOpAST extends ExpressionAST {
     private ExpressionAST lhs;
     private boolean longExpr; // This fields tells if the BinOp is in a longEpr
     private Register previousReg;
+    private String previousOp;
     //2 following fields are allowed to access by UnOpAST
     protected static boolean hasErrorDivByZero;
     protected static boolean hasErrorOverflow;
@@ -83,13 +84,16 @@ public class BinOpAST extends ExpressionAST {
                 if (rhs instanceof BinOpAST) { //rhs is further BinOp
                     BinOpAST next = (BinOpAST) rhs;
                     next.longExpr = true; // because this is in a long expr
+                    next.previousOp = op;
                     if (previousReg == null) { //previousReg has not been set
                         next.previousReg = lhsResult;
                     } else { //keep the previousReg & pass it on
                         next.previousReg = previousReg;
                     }
                 }
-                if (!longExpr || !(rhs instanceof BinOpAST)) { // if not a longExpr do as normal
+                if (!longExpr ||
+                        (!(rhs instanceof BinOpAST) && !(previousOp.equals(op)))) { // if
+                    // not a longExpr do as normal
                     rhs.translate();
                 } else {
     //            Utility.pushRegister(lhsResult);
@@ -227,7 +231,7 @@ public class BinOpAST extends ExpressionAST {
         }
         if(longExpr) {
             Utility.pushRegister(rhsResult);
-            if(rhs instanceof BinOpAST) {
+            if(rhs instanceof BinOpAST || previousOp.equals(op)) {
             rhs.translate();
             }
         }
