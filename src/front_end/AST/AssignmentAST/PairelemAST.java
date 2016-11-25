@@ -78,14 +78,17 @@ public class PairelemAST extends AssignrhsAST{
                 value = ((IdentAST) expression).getIdent();
             }
 
-//            if (identObj.getType().getTypeName().equals("bool") || identObj.getType().getTypeName().equals("char")) {
-//
-//                CodeGen.main.add(new LOAD("SB", r, new PreIndex(Register.SP,
-//                        Visitor.ST.getAddress(value).getShiftVal())));
-//            } else {
+            if (identObj.getType().getTypeName().equals("bool") || identObj.getType().getTypeName().equals("char")) {
+
+                CodeGen.main.add(new LOAD("SB", r, new PreIndex(Register.SP,
+                        Visitor.ST.getAddress(value).getShiftVal())));
+            } else {
                 CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP,
                         Visitor.ST.getAddress(value).getShiftVal())));
-//            }
+            }
+            CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP,
+                    Visitor.ST.getAddress(value).getShiftVal())));
+
         }
 
         CodeGen.main.add(new MOV(Register.R0, r));
@@ -103,6 +106,9 @@ public class PairelemAST extends AssignrhsAST{
             } else {
                 CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(val))));
             }
+//                || (ctx.getParent() instanceof BasicParser.AssignlhsContext &&
+//                    !(ctx.getParent() instanceof BasicParser.AssignlhsContext))) {
+//            CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(val))));
         }
 
         if(!hasError) {
