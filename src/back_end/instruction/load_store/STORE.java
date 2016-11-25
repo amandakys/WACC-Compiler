@@ -25,7 +25,7 @@ public class STORE implements Instruction {
         this.expression = expression;
 
         if (size == 1) {
-            type = "SB";
+            this.type = "SB";
         }
 
         if(dst != Register.R0) {
