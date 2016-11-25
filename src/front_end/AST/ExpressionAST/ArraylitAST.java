@@ -54,7 +54,7 @@ public class ArraylitAST extends AssignrhsAST {
 
             a.translate();
 
-            Utility.addMain(new STORE(res, new PreIndex(Utility.getBefore(res),
+            Utility.addMain(new STORE(res, new PreIndex(CodeGen.toPushUnusedReg.peek(),
                     new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
             ProgramAST.nextAddress += a.getIdentObj().getType().getSize();
         }

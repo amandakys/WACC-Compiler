@@ -180,11 +180,6 @@ public class Utility {
         return false;
     }
 
-    public static Register getBefore(Register r) {
-        int index = Character.getNumericValue(r.toString().charAt(r.toString().length() - 1)) - 1;
-        return Register.values()[index];
-    }
-
     /*
         Push back the registers that are not needed to store value back onto the stack
      */
