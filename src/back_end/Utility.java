@@ -228,6 +228,15 @@ public class Utility {
         jumpSP.push(jumpSize);
     }
 
+    public static void plusJumpSP(int jumpSize) {
+        int top =0;
+        if(!jumpSP.isEmpty()) {
+            top = jumpSP.pop();
+        }
+        top += jumpSize;
+        jumpSP.push(top);
+    }
+
 
     public static int resetJumpSP() {
         if(!jumpSP.isEmpty()) {
