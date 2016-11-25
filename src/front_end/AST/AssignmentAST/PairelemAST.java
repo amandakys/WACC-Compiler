@@ -27,7 +27,6 @@ import static back_end.Utility.addMain;
 public class PairelemAST extends AssignrhsAST{
     private String token;
     private ExpressionAST expression;
-    private final int PAIR_SIZE = 4;
 
     private static boolean hasError;
 
@@ -66,21 +65,27 @@ public class PairelemAST extends AssignrhsAST{
             addMain(new LOAD(r, new Address(r)));
         }
 
-        String ident = "";
+        //add load when pair elem is an assignlhs
+        if(ctx.getParent() instanceof BasicParser.AssignlhsContext
+                || ctx.getParent().getParent() instanceof BasicParser.Var_declContext
+                || ctx.getParent().getParent() instanceof BasicParser.AssignmentContext) {
+            String value = "";
 
-        if(expression instanceof IdentAST) {
-            ident = ((IdentAST) expression).getIdent();
+            if(expression instanceof IdentAST) {
+                value = ((IdentAST) expression).getIdent();
+            }
+            CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP,
+                    Visitor.ST.getAddress(value).getShiftVal())));
         }
 
-        CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP, new ImmValue(identObj.getSize()))));
         CodeGen.main.add(new MOV(Register.R0, r));
 
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
         CodeGen.main.add(new LOAD(r, new PreIndex(r)));
 
-        if(ctx.getParent() instanceof BasicParser.AssignlhsContext ||
-                ctx.getParent() instanceof BasicParser.AssignrhsContext) {
-            CodeGen.main.add(new LOAD(r, new PreIndex(r)));
+        if(ctx.getParent().getParent() instanceof BasicParser.Var_declContext
+                || ctx.getParent() instanceof BasicParser.AssignlhsContext) {
+            CodeGen.main.add(new LOAD(r, new Address(r)));
         }
 
         if(!hasError) {
@@ -89,6 +94,5 @@ public class PairelemAST extends AssignrhsAST{
             PrintUtility.throwRuntimeError();
             hasError = true;
         }
-
     }
 }

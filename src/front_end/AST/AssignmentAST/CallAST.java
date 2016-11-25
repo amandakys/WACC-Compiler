@@ -23,6 +23,7 @@ import front_end.symbol_table.TYPE;
 
 import static back_end.Utility.addFunction;
 import static back_end.Utility.addMain;
+import static back_end.Utility.getJumpSP;
 
 /**
  * Created by tsd15 on 09/11/16.
@@ -81,8 +82,6 @@ public class CallAST extends AssignrhsAST{
             int argSize = arg.getType().getSize();
             argsSize += argSize;
 
-
-
             arg.translate();
 
             PreIndex stackShift = new PreIndex(Register.SP, new ImmValue
@@ -91,6 +90,10 @@ public class CallAST extends AssignrhsAST{
             Register freeToUse = CodeGen.toPushUnusedReg.pop();
             addMain(new STORE(freeToUse, stackShift, argSize));
             Utility.pushRegister(freeToUse);
+        }
+
+        for(int i=0; i<arglist.size() ; i++) {
+            Utility.resetJumpSP();
         }
         Utility.resetJumpSP();
         ImmValue argsSizeValue = new ImmValue(argsSize);

@@ -115,15 +115,13 @@ public class VarDeclAST extends StatementAST {
         }
 
         Register res = CodeGen.notUsedRegisters.peek();
-        //do not malloc a space on the stack if the pair is null
-        if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
-            type.translate();
-            rhs.translate();
-        } else {
-            CodeGen.main.add(new LOAD(res, new ImmValue(0)));
-        }
 
-        if (type instanceof ArraytypeAST) {
+        //do not malloc a space on the stack if the pair is null
+        type.translate();
+        rhs.translate();
+
+
+        if (rhs instanceof ArraylitAST) {
             Register value = Utility.popUnusedReg();
 
             CodeGen.main.add(new LOAD(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
@@ -133,11 +131,13 @@ public class VarDeclAST extends StatementAST {
         ProgramAST.nextAddress += identObj.getSize();
         ProgramAST.size -= identObj.getSize();
 
-        //jumpSP take care of the change in position of Stack pointer whenever it is add or sub
         ShiftedReg address = new PreIndex(Register.SP,
-                new ImmValue(ProgramAST.size+Utility.getJumpSP()));
+                new ImmValue(ProgramAST.size));
         Visitor.ST.addToMemoryAddress(ident, address);
 
-        CodeGen.main.add(new STORE(res, address, identObj.getSize()));
+        //jumpSP take care of the change in position of Stack pointer whenever it is add or sub
+        ShiftedReg addressWithJump = new PreIndex(Register.SP,
+                new ImmValue(ProgramAST.size+Utility.getJumpSP()));
+        CodeGen.main.add(new STORE(res, addressWithJump, identObj.getSize()));
     }
 }

@@ -3,7 +3,6 @@ package back_end.instruction.load_store;
 import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
-import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.Instruction;
 
 public class LOAD implements Instruction {
@@ -14,15 +13,6 @@ public class LOAD implements Instruction {
     public LOAD(Register dst, Expression expression) {
         this.dst = dst;
         this.expression = expression;
-
-////        signed byte
-//        if(expression instanceof ShiftedReg) {
-//            this.condition = "SB";
-//        } else {
-//            this.condition = "";
-//        }
-
-
     }
 
     public LOAD(String condition, Register dst, Expression expression) {

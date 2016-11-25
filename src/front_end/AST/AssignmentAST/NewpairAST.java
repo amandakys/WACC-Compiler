@@ -8,6 +8,7 @@ import back_end.instruction.Branch;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.ExpressionAST.ExpressionAST;
+import front_end.AST.ExpressionAST.PairliterAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import main.CodeGen;
@@ -42,13 +43,18 @@ public class NewpairAST extends AssignrhsAST {
 
         for (ExpressionAST elem: pairelems) {
             Register res = CodeGen.notUsedRegisters.peek();
+
             elem.translate();
+
+//            if(elem instanceof PairliterAST && ((PairliterAST) elem).getNullStr().equals("null")) {
+//                CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(0)));
+//            }
 
             int sizeElem = elem.getIdentObj().getSize();
 
             CodeGen.main.add(new LOAD(Register.R0, new ImmValue(sizeElem)));
             CodeGen.main.add(new Branch("L", "malloc"));
-            CodeGen.main.add(new STORE(res, new PreIndex(Register.R0), identObj.getSize()));
+            CodeGen.main.add(new STORE(res, new PreIndex(Register.R0), elem.getIdentObj().getSize()));
             CodeGen.main.add(new STORE(Register.R0, new PreIndex(Utility.getBefore(res),
                     new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
 
