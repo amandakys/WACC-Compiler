@@ -21,7 +21,7 @@ import java.util.List;
  * Created by tsd15 on 09/11/16.
  */
 public class NewpairAST extends AssignrhsAST {
-    List<ExpressionAST> pairelems;
+    private List<ExpressionAST> pairelems;
 
     public NewpairAST(ParserRuleContext ctx, List<ExpressionAST> pairelems) {
         super(ctx);
@@ -45,10 +45,6 @@ public class NewpairAST extends AssignrhsAST {
             Register res = CodeGen.notUsedRegisters.peek();
 
             elem.translate();
-
-            if(elem instanceof PairliterAST && ((PairliterAST) elem).getNullStr().equals("null")) {
-                CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(0)));
-            }
 
             int sizeElem = elem.getIdentObj().getSize();
 

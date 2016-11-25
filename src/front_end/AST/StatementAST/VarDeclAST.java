@@ -9,6 +9,7 @@ import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.PairelemAST;
+import front_end.AST.Compare;
 import front_end.AST.ExpressionAST.ArraylitAST;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
@@ -23,6 +24,9 @@ import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by dtv15 on 09/11/16.
  */
@@ -31,6 +35,8 @@ public class VarDeclAST extends StatementAST {
     private String ident;
     private TypeAST type;
     private AssignrhsAST rhs;
+
+    public static List<PAIR> existedTypes = new ArrayList<>();
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
@@ -119,6 +125,7 @@ public class VarDeclAST extends StatementAST {
 
         //do not malloc a space on the stack if the pair is null
         if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
+            //if type does not exist before
             type.translate();
             rhs.translate();
         } else {

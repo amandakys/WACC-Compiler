@@ -151,7 +151,7 @@ public class FunctionDeclAST extends Node {
 //            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(sizeOfNewVars)));
 //        }
 
-        CodeGen.main.add(new POP(Register.PC));
+        //CodeGen.main.add(new POP(Register.PC));
         CodeGen.main.add (new Directive("ltorg"));
         Utility.pushBackRegisters();
         Visitor.ST = Visitor.ST.getEncSymbolTable();
