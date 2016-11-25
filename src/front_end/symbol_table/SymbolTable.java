@@ -101,10 +101,6 @@ public class SymbolTable {
     public Map<String, ShiftedReg> getMemoryAddress() {
         return memoryAddress;
     }
-
-    public boolean isInMemoryAddress(String name) {
-        return memoryAddress.containsKey(name);
-    }
 }
 
 
