@@ -93,7 +93,7 @@ public class SymbolTable {
         }
         //jumpSP take care of cases where the sp really jump to different position
         //using LDR sp, [sp, #4]! JumpSp is = 0 by default and is set back to 0 after use.
-        return S == null ? null ? S.getMemoryAddress().get(name).addToShiftVal(offset + Utility.getJumpSP());
+        return S == null ? null : S.getMemoryAddress().get(name).addToShiftVal(offset + Utility.getJumpSP());
     }
 
     public Map<String, ShiftedReg> getMemoryAddress() {
