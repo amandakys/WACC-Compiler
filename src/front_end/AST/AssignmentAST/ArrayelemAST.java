@@ -61,8 +61,10 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        //pop the first available register and parameter register
+        // take the first unused register in the stack
         Register first = Utility.popUnusedReg();
+
+        //take the first param register in the stack
         Register paramReg = Utility.popParamReg();
 
         //find the the variable's address from its identifier from the current symbol table

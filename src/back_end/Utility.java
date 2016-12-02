@@ -1,20 +1,14 @@
 package back_end;
 
-import back_end.data_type.Expression;
 import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
 import back_end.instruction.Instruction;
 import back_end.instruction.LabelInstr;
-import com.sun.org.apache.bcel.internal.classfile.Code;
 import front_end.AST.ExpressionAST.*;
 import main.CodeGen;
 
-import java.util.List;
 import java.util.Stack;
 
-/**
- * Created by donamphuong on 20/11/2016.
- */
 public class Utility {
     private static Stack<Integer> jumpSP = new Stack<>();
     private static int NUM_QUOTATION = 2;
@@ -38,7 +32,7 @@ public class Utility {
         CodeGen.numStrings++;
         //discard the "" in a string when finding the string's size
         Utility.addData(new Directive("word", String.valueOf(value.replace
-                ("\\", "").replace("\"", "").length())));
+                ("\\", "").length() - NUM_QUOTATION)));
         Utility.addData(new Directive("ascii", value));
     }
 
@@ -188,6 +182,8 @@ public class Utility {
         }
     }
 
+    //Push back the parameter register that is not needed anymore back onto the stack
+
     public static void pushBackParam() {
         while (!CodeGen.toPushParamReg.isEmpty()) {
             Register r = CodeGen.toPushParamReg.pop();
@@ -197,6 +193,8 @@ public class Utility {
             }
         }
     }
+
+    //push register from the toPush stack onto the notUsed stack and remove it from toPush
 
     public static void pushRegister(Register r) {
         if (r.equals(Register.SP)) {
@@ -208,6 +206,8 @@ public class Utility {
         }
     }
 
+    //get the value of the shift of stack pointer
+
     public static int getJumpSP() {
         if (jumpSP.isEmpty()) {
             jumpSP.push(0);
@@ -215,10 +215,13 @@ public class Utility {
         return jumpSP.peek();
     }
 
+    // add new JumpSP into the JumpSp stack
     public static void addJumpSP(int jumpSize) {
         jumpSP.push(jumpSize);
     }
 
+
+    //increase the top JumpSP by an amount
     public static void plusJumpSP(int jumpSize) {
         int top =0;
         if(!jumpSP.isEmpty()) {
@@ -228,7 +231,7 @@ public class Utility {
         jumpSP.push(top);
     }
 
-
+    //restore the previous JumpSP value
     public static int resetJumpSP() {
         if(!jumpSP.isEmpty()) {
             return jumpSP.pop();

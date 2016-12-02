@@ -1,12 +1,9 @@
 package main;
 
-import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.LabelInstr;
 import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
 import back_end.instruction.Instruction;
-import front_end.AST.ExpressionAST.ExpressionAST;
-import front_end.AST.Node;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -76,10 +73,10 @@ public class CodeGen {
         }
         bw.newLine();
 
-        for(Instruction instr: main) {
+        for(Instruction instr : main) {
             bw.write(instr.toString() + "\n");
         }
-        for(Instruction instr: functions) {
+        for(Instruction instr : functions) {
             bw.write(instr.toString() + "\n");
         }
 

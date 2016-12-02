@@ -7,9 +7,7 @@ import front_end.symbol_table.TYPE;
 
 import java.util.List;
 
-/**
- * Created by tsd15 on 09/11/16.
- */
+
 public class ArglistAST extends Node {
     private List<ExpressionAST> expressions;
 

@@ -1,14 +1,9 @@
 package front_end.symbol_table;
 
-import main.Visitor;
-
-/**
- * Created by andikoh on 10/11/2016.
- */
 public class ARRAY extends TYPE{
     private TYPE type;
     private int elem_size;
-    private int SIZE = 4;
+    private int SIZE = 4; //size of the array TYPE is 4, not the whole array
 
 
     public ARRAY(TYPE type, int size) {
@@ -28,6 +23,7 @@ public class ARRAY extends TYPE{
         return type.toString() + "[]";
     }
 
+    //Return the type of the elements inside the array
     public TYPE getElementType() {
         return type;
     }

@@ -18,9 +18,6 @@ import front_end.symbol_table.PAIR;
 
 import java.util.List;
 
-/**
- * Created by tsd15 on 09/11/16.
- */
 public class NewpairAST extends AssignrhsAST {
     private List<ExpressionAST> pairelems;
 
