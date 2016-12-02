@@ -86,11 +86,9 @@ public class SymbolTable {
 
         while(!S.getMemoryAddress().containsKey(name)) {
             offset += S.findSize();
-
             if (S.getEncSymbolTable() == null) {
                 break;
             }
-
             S = S.getEncSymbolTable();
         }
 
