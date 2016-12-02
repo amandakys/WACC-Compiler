@@ -24,7 +24,7 @@ import static back_end.Utility.addMain;
 /**
  * Created by tsd15 on 09/11/16.
  */
-public class PairelemAST extends AssignrhsAST{
+public class PairelemAST extends AssignrhsAST {
     private String token;
     private ExpressionAST expression;
 
@@ -50,10 +50,12 @@ public class PairelemAST extends AssignrhsAST{
         } else {
             //expression is a pair
 
-            switch(token) {
-                case "fst": identObj = ((PAIR) type.getType()).getFirst();
+            switch (token) {
+                case "fst":
+                    identObj = ((PAIR) type.getType()).getFirst();
                     break;
-                case "snd": identObj = ((PAIR) type.getType()).getSecond();
+                case "snd":
+                    identObj = ((PAIR) type.getType()).getSecond();
                     break;
             }
         }
@@ -62,16 +64,16 @@ public class PairelemAST extends AssignrhsAST{
     @Override
     public void translate() {
         Register r = Utility.popUnusedReg();
-//        if(Visitor.ST.getAddress(token) != null) {
+        if (Visitor.ST.getAddress(token) != null) {
             addMain(new LOAD(r, new Address(r)));
-  //      }
+        }
 
         //load the result to a register when necessary (i.e if pairelem is on the rhs, or on lhs)
-        if(ctx instanceof BasicParser.PairelemContext
+        if (ctx instanceof BasicParser.PairelemContext
                 || ctx.getParent() instanceof BasicParser.PairelemContext) {
             String value = "";
 
-            if(expression instanceof IdentAST) {
+            if (expression instanceof IdentAST) {
                 value = ((IdentAST) expression).getIdent();
             }
             CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP,
@@ -85,12 +87,12 @@ public class PairelemAST extends AssignrhsAST{
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
         CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(val))));
 
-        if(ctx instanceof BasicParser.PairelementContext
+        if (ctx instanceof BasicParser.PairelementContext
                 || ctx.getParent() instanceof BasicParser.PairelementContext) {
             CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(0))));
         }
 
-        if(!hasError) {
+        if (!hasError) {
             Utility.pushData(Error.nullReference);
             PrintUtility.addToEndFunctions("p_check_null_pointer");
             PrintUtility.throwRuntimeError();
