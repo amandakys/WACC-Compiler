@@ -84,13 +84,11 @@ public class SymbolTable {
         SymbolTable S = this;
         int offset = 0;
 
-        while (!S.getMemoryAddress().containsKey(name)) {
+        while(!S.getMemoryAddress().containsKey(name)) {
             offset += S.findSize();
-            if (S.getEncSymbolTable() == null) {
-                break;
-            }
             S = S.getEncSymbolTable();
         }
+
         //jumpSP take care of cases where the sp really jump to different position
         //using LDR sp, [sp, #4]! JumpSp is = 0 by default and is set back to 0 after use.
         return S.getMemoryAddress().get(name).addToShiftVal(offset + Utility.getJumpSP());
