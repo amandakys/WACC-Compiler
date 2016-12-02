@@ -4,6 +4,7 @@ import java.util.*;
 
 import back_end.Utility;
 import back_end.data_type.register.ShiftedReg;
+import main.Visitor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -96,7 +97,7 @@ public class SymbolTable {
 
         //jumpSP take care of cases where the sp really jump to different position
         //using LDR sp, [sp, #4]! JumpSp is = 0 by default and is set back to 0 after use.
-        return S.getEncSymbolTable().getEncSymbolTable() == null ? null
+        return S.getEncSymbolTable() == null ? null
                 : S.getMemoryAddress().get(name).addToShiftVal(offset + Utility.getJumpSP());
     }
 
