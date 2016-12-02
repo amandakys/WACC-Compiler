@@ -10,7 +10,6 @@ import java.util.Map;
 
 public class SymbolTable {
     private SymbolTable encSymbolTable; //ref to enclosing symbol table
-    private int size;
     private Map<String, IDENTIFIER> dict;
     private Map<String, ShiftedReg> memoryAddress;
 
@@ -65,10 +64,6 @@ public class SymbolTable {
         return size;
     }
 
-    public void setSize() {
-        size = findSize();
-    }
-
 
     // Calculate the shift of Stack Pointer due to parameters of function
     public int findStackShift(String x) {
@@ -89,11 +84,8 @@ public class SymbolTable {
         SymbolTable S = this;
         int offset = 0;
 
-        while(!S.getMemoryAddress().containsKey(name)) {
-            offset += S.getSize();
-            if (S.getEncSymbolTable() == null) {
-                break;
-            }
+        while (!S.getMemoryAddress().containsKey(name)) {
+            offset += S.findSize();
             S = S.getEncSymbolTable();
         }
 
@@ -104,9 +96,5 @@ public class SymbolTable {
 
     public Map<String, ShiftedReg> getMemoryAddress() {
         return memoryAddress;
-    }
-
-    public int getSize() {
-        return size;
     }
 }

@@ -34,7 +34,6 @@ public class BeginAST extends StatementAST {
     public void translate() {
         Visitor.ST = ST;
         ProgramAST.newScope(statement);
-        ST.setSize();
         Visitor.ST = ST.getEncSymbolTable();
     }
 }
