@@ -82,16 +82,22 @@ public class SymbolTable {
 
     public ShiftedReg getAddress(String name) {
         SymbolTable S = this;
-        int offset = 0;
+        int offset = S.getMemoryAddress().containsKey(name) ? 0 : S.findSize();
 
         while (!S.getMemoryAddress().containsKey(name)) {
             S = S.getEncSymbolTable();
-            offset += S.findSize();
+
+            if(S.getEncSymbolTable().getEncSymbolTable() != null) {
+                offset += S.findSize();
+            } else {
+                break;
+            }
         }
 
         //jumpSP take care of cases where the sp really jump to different position
         //using LDR sp, [sp, #4]! JumpSp is = 0 by default and is set back to 0 after use.
-        return S.getMemoryAddress().get(name).addToShiftVal(offset + Utility.getJumpSP());
+        return S.getEncSymbolTable().getEncSymbolTable() == null ? null
+                : S.getMemoryAddress().get(name).addToShiftVal(offset + Utility.getJumpSP());
     }
 
     public Map<String, ShiftedReg> getMemoryAddress() {
