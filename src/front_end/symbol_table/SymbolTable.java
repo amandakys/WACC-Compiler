@@ -85,8 +85,8 @@ public class SymbolTable {
         int offset = 0;
 
         while (!S.getMemoryAddress().containsKey(name)) {
-            offset += S.findSize();
             S = S.getEncSymbolTable();
+            offset += S.findSize();
         }
 
         //jumpSP take care of cases where the sp really jump to different position
