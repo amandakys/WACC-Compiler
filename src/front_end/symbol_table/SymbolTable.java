@@ -4,6 +4,8 @@ import java.util.*;
 
 import back_end.Utility;
 import back_end.data_type.register.ShiftedReg;
+import sun.jvm.hotspot.debugger.cdbg.Sym;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,13 +86,14 @@ public class SymbolTable {
         int offset = 0;
 
         while (!S.getMemoryAddress().containsKey(name)) {
+            SymbolTable before = S;
             S = S.getEncSymbolTable();
 
             if (S == null) {
                 break;
             }
 
-            offset += S.findSize();
+            offset += before.findSize();
         }
         //jumpSP take care of cases where the sp really jump to different position
         //using LDR sp, [sp, #4]! JumpSp is = 0 by default and is set back to 0 after use.
