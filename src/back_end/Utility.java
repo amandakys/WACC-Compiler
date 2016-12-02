@@ -168,19 +168,6 @@ public class Utility {
         return null;
     }
 
-    /*
-       This traverses through functions list, find if an instruction has already been defined by having
-       label. E.g hasFunction("hello") find out whether label "hello" has been put in CodeGen.function or not
-    */
-    public static boolean hasFunction(String function) {
-        for (Instruction instr : CodeGen.functions) {
-            if ((instr instanceof LabelInstr) && instr.getValue().equals(function)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static Register getBefore(Register r) {
         int index = Character.getNumericValue(r.toString().charAt(r.toString().length() - 1)) - 1;
         return Register.values()[index];
