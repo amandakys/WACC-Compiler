@@ -52,6 +52,9 @@ public class CodeGen {
     }
 
     public void writeFile(String name) throws IOException {
+
+        Visitor.ST.setSize();
+
         File file = new File(name + ".s");
         FileWriter fw = new FileWriter(file.getAbsoluteFile());
         BufferedWriter bw = new BufferedWriter(fw);
