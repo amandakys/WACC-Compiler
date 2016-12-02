@@ -4,7 +4,6 @@ import java.util.*;
 
 import back_end.Utility;
 import back_end.data_type.register.ShiftedReg;
-import sun.jvm.hotspot.debugger.cdbg.Sym;
 
 import java.util.HashMap;
 import java.util.Map;
