@@ -504,13 +504,8 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public IntLiterAST visitIntliter(BasicParser.IntliterContext ctx) {
-        String sign = ctx.intsign() != null ? ctx.intsign().getText() : "";
+        String sign = ctx.MINUS() != null ? "-" : "+";
         return new IntLiterAST(ctx, sign, ctx.DIGIT().toString());
-    }
-
-    @Override
-    public IntSignAST visitIntsign(BasicParser.IntsignContext ctx) {
-        return new IntSignAST(ctx);
     }
 
     @Override

@@ -34,14 +34,6 @@ public class SyntaxVisitor extends BasicParserBaseVisitor<Void> {
         System.exit(100);
     }
 
-    @Override
-    public Void visitIntsign(BasicParser.IntsignContext ctx) {
-        if(ctx.MINUS() != null) {
-            sign = ctx.getText();
-        }
-        return null;
-    }
-
     private BasicParser.StatementContext getLast(BasicParser.StatementContext statement) {
         if (statement instanceof BasicParser.SequenceContext
                 || statement instanceof BasicParser.IfContext) {
