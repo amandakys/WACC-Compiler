@@ -4,6 +4,10 @@ options {
   tokenVocab=BasicLexer;
 }
 
+tokens {
+
+}
+
 program: BEGIN function* statement END EOF;
 
 function: type IDENT LPAREN paramlist? RPAREN IS statement END;
@@ -57,7 +61,7 @@ exprNoBinOp:intliter
 | PAIRLITERAL
 | IDENT
 | arrayelem
-| unop expression
+| unop LPAREN expression RPAREN
 | LPAREN expression RPAREN
 ;
 
