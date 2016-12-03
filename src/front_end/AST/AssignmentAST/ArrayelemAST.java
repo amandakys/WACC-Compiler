@@ -94,10 +94,14 @@ public class ArrayelemAST extends ExpressionAST {
             CodeGen.main.add(new Branch("L", "p_check_array_bounds"));
 
             ProgramAST.nextAddress += identObj.getSize();
-            ShiftedReg size = new PostIndex(first, reg, Shift.LSL, new ImmValue(2));
 
             CodeGen.main.add(new ADD(first, first, new ImmValue(ARRAY_SIZE)));
-            CodeGen.main.add(new ADD(first, size));
+            if(identObj.getType().getSize() == ARRAY_SIZE) {
+                ShiftedReg size = new PostIndex(first, reg, Shift.LSL, new ImmValue(2));
+                CodeGen.main.add(new ADD(first, size));
+            } else {
+                CodeGen.main.add(new ADD(first, first, reg));
+            }
         }
 
         //when array elem is on the rhs of print, read,...
