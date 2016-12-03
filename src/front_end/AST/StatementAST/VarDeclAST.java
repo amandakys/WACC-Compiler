@@ -106,7 +106,8 @@ public class VarDeclAST extends StatementAST {
 
     @Override
     public void translate() {
-        ProgramAST.nextAddress = identObj.getType().getSize() < 0 ? identObj.getSize() : 0;
+        ProgramAST.size = Visitor.ST.findSize();
+        ProgramAST.nextAddress = 0;
 
         if(rhs instanceof ArraylitAST) {
             ARRAY varType = (ARRAY) identObj.getType();

@@ -67,7 +67,7 @@ public class ProgramAST extends Node {
     public static void newScope(StatementAST statement) {
         size = Visitor.ST.findSize();
         boolean hasChanged = false;
-        int saved_Size = size;
+        int saved_Size = Visitor.ST.findSize();
 
         if(size != 0) {
             int spSize = size;

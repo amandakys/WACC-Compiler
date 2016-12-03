@@ -149,9 +149,6 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         function.check();
         StatementAST statement = (StatementAST) visit(ctx.statement());
         function.setStatement(statement);
-        //visitChildren(ctx);
-
-        //statement.checkNode();
 
         Visitor.ST = Visitor.ST.getEncSymbolTable();
         String funcName = ctx.IDENT().getText();
@@ -209,7 +206,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public BeginAST visitBegin(BasicParser.BeginContext ctx) {
-        ST = new SymbolTable(Visitor.ST);
+        ST = new SymbolTable(ST);
         BeginAST begin = new BeginAST(ctx, (StatementAST) visit(ctx.statement()));
         ST = ST.getEncSymbolTable();
 

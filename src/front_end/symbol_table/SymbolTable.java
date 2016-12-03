@@ -4,7 +4,6 @@ import java.util.*;
 
 import back_end.Utility;
 import back_end.data_type.register.ShiftedReg;
-import main.Visitor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,11 +12,13 @@ public class SymbolTable {
     private SymbolTable encSymbolTable; //ref to enclosing symbol table
     private Map<String, IDENTIFIER> dict;
     private Map<String, ShiftedReg> memoryAddress;
+    private int size;
 
     public SymbolTable(SymbolTable st) {
         dict = new LinkedHashMap<>();
         encSymbolTable = st;
         memoryAddress = new HashMap<>();
+        size = 0;
     }
 
     public SymbolTable getEncSymbolTable() {
@@ -28,9 +29,6 @@ public class SymbolTable {
         dict.put(name, object);
     }
 
-    public boolean containsValue(IDENTIFIER ident) {
-        return dict.containsValue(ident);
-    }
 
 
     //find the identifier by the name in the symbol table
@@ -83,22 +81,16 @@ public class SymbolTable {
 
     public ShiftedReg getAddress(String name) {
         SymbolTable S = this;
-        int offset = S.getMemoryAddress().containsKey(name) ? 0 : S.findSize();
+        int offset = 0;
 
         while (!S.getMemoryAddress().containsKey(name)) {
+            offset += S.findSize();
             S = S.getEncSymbolTable();
-
-            if(S.getEncSymbolTable().getEncSymbolTable() != null) {
-                offset += S.findSize();
-            } else {
-                break;
-            }
         }
 
         //jumpSP take care of cases where the sp really jump to different position
         //using LDR sp, [sp, #4]! JumpSp is = 0 by default and is set back to 0 after use.
-        return S.getEncSymbolTable() == null ? null
-                : S.getMemoryAddress().get(name).addToShiftVal(offset + Utility.getJumpSP());
+        return S.getMemoryAddress().get(name).addToShiftVal(offset + Utility.getJumpSP());
     }
 
     public Map<String, ShiftedReg> getMemoryAddress() {
