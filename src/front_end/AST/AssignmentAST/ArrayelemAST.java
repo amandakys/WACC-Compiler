@@ -96,7 +96,7 @@ public class ArrayelemAST extends ExpressionAST {
             ProgramAST.nextAddress += identObj.getSize();
 
             CodeGen.main.add(new ADD(first, first, new ImmValue(ARRAY_SIZE)));
-            if(identObj.getType().getSize() == ARRAY_SIZE) {
+            if(!identObj.getType().getTypeName().equals("char")) {
                 ShiftedReg size = new PostIndex(first, reg, Shift.LSL, new ImmValue(2));
                 CodeGen.main.add(new ADD(first, size));
             } else {
