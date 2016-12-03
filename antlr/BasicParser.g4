@@ -61,8 +61,8 @@ exprNoBinOp:intliter
 | PAIRLITERAL
 | IDENT
 | arrayelem
-| unop (boolliter | charliter | strliter | PAIRLITERAL | IDENT | arrayelem | LPAREN expression RPAREN)
 | LPAREN expression RPAREN
+| unop expression
 ;
 
 expression: exprNoBinOp
@@ -95,13 +95,11 @@ p6: p5 OR p6
 | p5
 ;
 
-intsign: PLUS | MINUS ;
+intliter: (PLUS | MINUS)? DIGIT+ ;
 
 unop: NOT | MINUS | LEN | ORD | CHR ;
 
 arrayelem: IDENT (LBRACKET expression RBRACKET)+ ;
-
-intliter: intsign? DIGIT+ ;
 
 boolliter: TRUE | FALSE;
 
