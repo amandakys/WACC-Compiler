@@ -61,7 +61,7 @@ exprNoBinOp:intliter
 | PAIRLITERAL
 | IDENT
 | arrayelem
-| unop (LPAREN expression RPAREN | IDENT)
+| unop (boolliter | charliter | strliter | PAIRLITERAL | IDENT | arrayelem | LPAREN expression RPAREN)
 | LPAREN expression RPAREN
 ;
 
