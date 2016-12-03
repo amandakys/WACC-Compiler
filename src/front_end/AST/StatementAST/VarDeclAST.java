@@ -106,7 +106,6 @@ public class VarDeclAST extends StatementAST {
 
     @Override
     public void translate() {
-        ProgramAST.size = Visitor.ST.findSize();
         ProgramAST.nextAddress = 0;
 
         if(rhs instanceof ArraylitAST) {
@@ -134,16 +133,19 @@ public class VarDeclAST extends StatementAST {
             CodeGen.main.add(new STORE(value, new PreIndex(res), identObj.getSize()));
         }
 
+        //increment the next available address (regarding the next available register)
         ProgramAST.nextAddress += identObj.getSize();
-        ProgramAST.size -= identObj.getSize();
+
+        //decrement the next available address (regarding sp)
+        Visitor.ST.decrementAddress(identObj.getSize());
 
         ShiftedReg address = new PreIndex(Register.SP,
-                new ImmValue(ProgramAST.size));
+                new ImmValue(Visitor.ST.getNextAvailableAddress()));
         Visitor.ST.addToMemoryAddress(ident, address);
 
         //jumpSP take care of the change in position of Stack pointer whenever it is add or sub
         ShiftedReg addressWithJump = new PreIndex(Register.SP,
-                new ImmValue(ProgramAST.size+Utility.getJumpSP()));
+                new ImmValue(Visitor.ST.getNextAvailableAddress()+Utility.getJumpSP()));
         CodeGen.main.add(new STORE(res, addressWithJump, identObj.getSize()));
     }
 }

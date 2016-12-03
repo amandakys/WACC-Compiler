@@ -12,13 +12,12 @@ public class SymbolTable {
     private SymbolTable encSymbolTable; //ref to enclosing symbol table
     private Map<String, IDENTIFIER> dict;
     private Map<String, ShiftedReg> memoryAddress;
-    private int size;
+    private int nextAvailableAddress;
 
     public SymbolTable(SymbolTable st) {
         dict = new LinkedHashMap<>();
         encSymbolTable = st;
         memoryAddress = new HashMap<>();
-        size = 0;
     }
 
     public SymbolTable getEncSymbolTable() {
@@ -28,8 +27,6 @@ public class SymbolTable {
     public void add(String name, IDENTIFIER object) {
         dict.put(name, object);
     }
-
-
 
     //find the identifier by the name in the symbol table
     public IDENTIFIER lookUp(String name) {
@@ -95,5 +92,17 @@ public class SymbolTable {
 
     public Map<String, ShiftedReg> getMemoryAddress() {
         return memoryAddress;
+    }
+
+    public void size() {
+        nextAvailableAddress = findSize();
+    }
+
+    public void decrementAddress(int value) {
+        nextAvailableAddress -= value;
+    }
+
+    public int getNextAvailableAddress() {
+        return nextAvailableAddress;
     }
 }

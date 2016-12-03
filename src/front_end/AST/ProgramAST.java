@@ -26,8 +26,6 @@ public class ProgramAST extends Node {
     //the next address available (e.g after pushing an int, if the size is 5, the next address should
     //be at 5-4 =1)
     public static int nextAddress = 0;
-    //specifies how many VARIABLE there are in current symbol table
-    public static int size;
 
     public ProgramAST(ParserRuleContext ctx, List<FunctionDeclAST> functions, StatementAST statement) {
         super(ctx);
@@ -65,12 +63,14 @@ public class ProgramAST extends Node {
     }
 
     public static void newScope(StatementAST statement) {
-        size = Visitor.ST.findSize();
+        //find how many address available in the program
+        Visitor.ST.size();
+
         boolean hasChanged = false;
         int saved_Size = Visitor.ST.findSize();
 
-        if(size != 0) {
-            int spSize = size;
+        if(saved_Size != 0) {
+            int spSize = saved_Size;
 
             if(spSize > STACK_SIZE ) {
                 Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(STACK_SIZE)));
@@ -95,7 +95,7 @@ public class ProgramAST extends Node {
                 Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(STACK_SIZE)));
                 while(spSize > STACK_SIZE) {
                     //increment stack pointer
-                    spSize = (int) (spSize - STACK_SIZE);
+                    spSize = spSize - STACK_SIZE;
                     Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
                 }
             } else {
