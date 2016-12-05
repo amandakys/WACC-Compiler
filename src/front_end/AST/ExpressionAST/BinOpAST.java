@@ -79,6 +79,15 @@ public class BinOpAST extends ExpressionAST {
 
     @Override
     public void translate() {
+        Integer evaluable = constantOptimise();
+        if(evaluable != null) {
+            String sign = evaluable < 0 ? "-" : "";
+            String value = evaluable.toString().replace("-", "");
+            IntLiterAST optimisedConst = new IntLiterAST(ctx, sign, value);
+            optimisedConst.translate();
+            return;
+        }
+
         //Holds the reference to the registers going to hold lhs & rhs value
         Register lhsResult = CodeGen.notUsedRegisters.peek();
         lhs.translate();
@@ -232,6 +241,41 @@ public class BinOpAST extends ExpressionAST {
             }
         }
     }
+
+    private Integer constantOptimise() {
+        Integer result = null;
+        Integer rhsValue = null;
+        Integer lhsValue = null;
+        if(lhs instanceof BinOpAST) {
+            lhsValue = ((BinOpAST) lhs).constantOptimise();
+        }
+        if(rhs instanceof BinOpAST) {
+            rhsValue = ((BinOpAST) rhs).constantOptimise();
+        }
+        if(lhs instanceof IntLiterAST && rhs instanceof IntLiterAST) {
+            rhsValue = ((IntLiterAST) rhs).getValue();
+            lhsValue = ((IntLiterAST) lhs).getValue();
+        }
+        if(rhsValue != null && lhsValue != null) {
+            switch(op) {
+                case "+":
+                    result = rhsValue + lhsValue;
+                    break;
+                case "-":
+                    result = rhsValue - lhsValue;
+                    break;
+                case "*":
+                    result = rhsValue * lhsValue;
+                    break;
+                case "%":
+                    result = rhsValue % lhsValue;
+                    break;
+            }
+
+        }
+        return result;
+    }
+
     /*
     Assign expected type & return type for specific operator this BinOp is having
      */
