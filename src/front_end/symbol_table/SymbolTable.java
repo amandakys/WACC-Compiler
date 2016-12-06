@@ -4,19 +4,15 @@ import java.util.*;
 
 import back_end.Utility;
 import back_end.data_type.register.ShiftedReg;
-import front_end.AST.Compare;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
-/**
- * Created by andikoh on 08/11/2016.
- */
 public class SymbolTable {
     private SymbolTable encSymbolTable; //ref to enclosing symbol table
     private Map<String, IDENTIFIER> dict;
     private Map<String, ShiftedReg> memoryAddress;
+    private int nextAvailableAddress;
 
     public SymbolTable(SymbolTable st) {
         dict = new LinkedHashMap<>();
@@ -32,14 +28,13 @@ public class SymbolTable {
         dict.put(name, object);
     }
 
-    public boolean containsValue(IDENTIFIER ident) {
-        return dict.containsValue(ident);
-    }
-
+    //find the identifier by the name in the symbol table
     public IDENTIFIER lookUp(String name) {
         return dict.get(name);
     }
 
+
+    //find the identifier by the name in the whole program scope
     public IDENTIFIER lookUpAll(String name) {
         SymbolTable S = this;
         while (S != null) {
@@ -65,6 +60,8 @@ public class SymbolTable {
         return size;
     }
 
+
+    // Calculate the shift of Stack Pointer due to parameters of function
     public int findStackShift(String x) {
         List<String> keys = new ArrayList<String>(dict.keySet());
         int indexOfx = keys.indexOf(x);
@@ -84,23 +81,28 @@ public class SymbolTable {
         int offset = 0;
 
         while (!S.getMemoryAddress().containsKey(name)) {
+            offset += S.findSize();
             S = S.getEncSymbolTable();
+        }
 
-            if (S == null) {
-                break;
-            }
-
-
-           offset++;
-       }
-       //jumpSP take care of cases where the sp really jump to different position
-       //using LDR sp, [sp, #4]! JumpSp is = 0 by default and is set back to 0 after use.
-       return S == null ? null : S.getMemoryAddress().get(name).addToShiftVal(offset+ Utility.getJumpSP());
-   }
+        //jumpSP take care of cases where the sp really jump to different position
+        //using LDR sp, [sp, #4]! JumpSp is = 0 by default and is set back to 0 after use.
+        return S.getMemoryAddress().get(name).addToShiftVal(offset + Utility.getJumpSP());
+    }
 
     public Map<String, ShiftedReg> getMemoryAddress() {
         return memoryAddress;
     }
+
+    public void size() {
+        nextAvailableAddress = findSize();
+    }
+
+    public void decrementAddress(int value) {
+        nextAvailableAddress -= value;
+    }
+
+    public int getNextAvailableAddress() {
+        return nextAvailableAddress;
+    }
 }
-
-

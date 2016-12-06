@@ -165,13 +165,6 @@ public class BasicParserBaseVisitor<T> extends AbstractParseTreeVisitor<T> imple
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitIntsign(@NotNull BasicParser.IntsignContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitExpr(@NotNull BasicParser.ExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

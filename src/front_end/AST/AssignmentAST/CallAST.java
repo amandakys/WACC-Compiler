@@ -25,9 +25,6 @@ import static back_end.Utility.addFunction;
 import static back_end.Utility.addMain;
 import static back_end.Utility.getJumpSP;
 
-/**
- * Created by tsd15 on 09/11/16.
- */
 public class CallAST extends AssignrhsAST{
     private String funcname;
     private ArglistAST arglist;
@@ -39,6 +36,9 @@ public class CallAST extends AssignrhsAST{
         this.funcname = funcname;
         this.arglist = arglist;
     }
+
+    //check if the function is already declared, has the right number of parameters with the exact type
+    //if not then print our error message and stop the program
     @Override
     public void check() {
         IDENTIFIER F = Visitor.ST.lookUpAll(funcname);
@@ -76,7 +76,10 @@ public class CallAST extends AssignrhsAST{
 
     @Override
     public void translate() {
-        int argsSize = 0;
+
+        int argsSize = 0;// initialise the sum size of all arguments to 0
+
+        //translate one argument at a time, STORE them into the correct stack position
         for(int i= arglist.size()-1; i >= 0; i--) {
             ExpressionAST arg = arglist.getExpression(i);
             int argSize = arg.getType().getSize();
@@ -101,10 +104,15 @@ public class CallAST extends AssignrhsAST{
         Utility.resetJumpSP();
         ImmValue argsSizeValue = new ImmValue(argsSize);
 
+        //create new branch for function
         addMain(new Branch("L", "f_"+funcname));
+
+        //if there are parameters required for the function then return the stack pointer to the correct position
         if (arglist.size() != 0) {
             addMain((new ADD(Register.SP, Register.SP, argsSizeValue)));
         }
+
+        //Move the result of the function from R0 to the top unused Register
         addMain(new MOV(CodeGen.notUsedRegisters.peek(),Register.R0));
 
     }

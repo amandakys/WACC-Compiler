@@ -5,7 +5,6 @@ import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PostIndex;
-import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.data_type.register.Shift;
 import back_end.instruction.Branch;
@@ -26,9 +25,6 @@ import java.util.List;
 import static back_end.Error.divideByZero;
 import static back_end.Error.overflow;
 
-/**
- * Created by donamphuong on 10/11/2016.
- */
 public class BinOpAST extends ExpressionAST {
     private String op;
     private List<String> expectedElemType = new ArrayList<>();
@@ -37,13 +33,20 @@ public class BinOpAST extends ExpressionAST {
     private ExpressionAST rhs;
     private ExpressionAST lhs;
     private boolean longExpr; // This fields tells if the BinOp is in a longEpr
-    private Register previousReg;
-    private String previousOp;
-    //2 following fields are allowed to access by UnOpAST
+    private Register previousReg; //holds previous register to support longExpr
+    private String previousOp; //holds previousOp to determine precedence
+    //2 following protected fields are accessible by UnOpAST
     protected static boolean hasErrorDivByZero;
     protected static boolean hasErrorOverflow;
 
     private final int SHIFT_VALUE = 31;
+
+    /*
+    TODO: the last test yet to pass is longSplitExpr.wacc. NOT POSSIBLE with current Parser
+    The problem lies in the expression parsing. eg. (-1 + 2) would be read as -(1 + 2).
+    Hence, passing this test is not achievable with current Parser, regardless of how BinOpAST ,UnOpAST and other
+    back_end codes are implemented.
+    */
 
     public BinOpAST(ParserRuleContext ctx, String op, ExpressionAST lhs, ExpressionAST rhs) {
         super(ctx);
@@ -59,12 +62,12 @@ public class BinOpAST extends ExpressionAST {
     @Override
     public void check() {
         identObj = Visitor.ST.lookUpAll(returnType);
-
+        //Checking rhs & lhs expressions
         lhs.checkNode();
         rhs.checkNode();
-
+        //getting type of expression
         String firstType = lhs.getType().getTypeName();
-
+        //Comparing type of expressions
         if(expectedElemType.contains(firstType)) {
             if(!rhs.getType().getTypeName().equals(lhs.getType().getTypeName())) {
                 error("not the same type");
@@ -76,10 +79,12 @@ public class BinOpAST extends ExpressionAST {
 
     @Override
     public void translate() {
+        //Holds the reference to the registers going to hold lhs & rhs value
         Register lhsResult = CodeGen.notUsedRegisters.peek();
         lhs.translate();
         Register rhsResult = CodeGen.notUsedRegisters.peek();
-        if ("+-*/%".contains(op)) {
+
+        if ("+-*/%".contains(op)) { //op is arithmetic
             if (!(lhs instanceof BinOpAST)) {
                 if (rhs instanceof BinOpAST) { //rhs is further BinOp
                     BinOpAST next = (BinOpAST) rhs;
@@ -91,23 +96,22 @@ public class BinOpAST extends ExpressionAST {
                         next.previousReg = previousReg;
                     }
                 }
-                if (!longExpr ||
-                        (!(rhs instanceof BinOpAST) && !(previousOp.equals(op)))) { // if
-                    // not a longExpr do as normal
+                if (!longExpr || (!(rhs instanceof BinOpAST) && !(previousOp.equals(op)))) {
+                    //run if rhs is not BinOp or not belongs to a longExpr
                     rhs.translate();
                 } else {
-    //            Utility.pushRegister(lhsResult);
-                        rhsResult = lhsResult;
-                        lhsResult = previousReg;
+                    //longExpr case, this will use register from previous BinOp to continue calculating
+                    rhsResult = lhsResult;
+                    lhsResult = previousReg;
                 }
             } else {
+                //lhs has higher precedence
                 rhs.translate();
             }
         } else {
             //op is a logical expression
             rhs.translate();
         }
-        //Utility.pushBackRegisters();
 
         switch(op) {
             case "+":
@@ -124,54 +128,46 @@ public class BinOpAST extends ExpressionAST {
                     CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("*")) {
                     CodeGen.main.add(new SMULL(lhsResult, rhsResult, lhsResult, rhsResult));
-                    // TODO:add ASR #31 shifting HERE as a third param for multNoWhitespaceExpr.wacc
                     Utility.pushRegister(rhsResult);
+                    //Mult involves shifting in CMP
                     CodeGen.main.add(new CMP(rhsResult, new PostIndex
                             (lhsResult, Shift.ASR, new ImmValue(SHIFT_VALUE))));
                     CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
                 }
-                Utility.pushRegister(rhsResult);
+                Utility.pushRegister(rhsResult); // push back register which holds temporary rhs value
+                /*
+                Error messages & functions will only be added if they are not yet declared
+                 */
                 if (!hasErrorOverflow) {
                     Utility.pushData(overflow);
                     PrintUtility.addToEndFunctions("p_integer_overflow");
+
                     if(!hasErrorDivByZero) {
                         PrintUtility.throwRuntimeError();
                     }
+
                     hasErrorOverflow = true;
                 }
                 break;
 
-//                try {
-//                    int val =
-//                    CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(val)));
-//                } catch (NumberFormatException e) {
-//                    Utility.pushData(OVERFLOW_ERROR_MESSAGE);
-//
-//                    Register second = CodeGen.toPushUnusedReg.get(0);
-//                    Register first = CodeGen.toPushUnusedReg.get(1);
-//
-//                    //CodeGen.main.add(new CMP(second, new PostIndex(first, ASR, new ImmValue(31))));
-//                    CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
-//                    PrintUtility.addToEndFunctions();("p_print_string");
-
             case "/":
             case "%":
                 CodeGen.main.add(new MOV(Register.R0, lhsResult));
-
-                    Register res = Utility.popParamReg();
-                    CodeGen.main.add(new MOV(res, rhsResult));
-                    CodeGen.main.add(new Branch("L", "p_check_divide_by_zero"));
-                    if(op.equals("/")) {
-                        CodeGen.main.add(new Branch("L", "__aeabi_idiv"));
-                    } else {
-                        CodeGen.main.add(new Branch("L", "__aeabi_idivmod"));
-                    }
-
+                Register res = Utility.popParamReg();
+                CodeGen.main.add(new MOV(res, rhsResult));
+                CodeGen.main.add(new Branch("L", "p_check_divide_by_zero"));
+                if(op.equals("/")) {
+                    CodeGen.main.add(new Branch("L", "__aeabi_idiv"));
+                } else {
+                    CodeGen.main.add(new Branch("L", "__aeabi_idivmod"));
+                }
                 res = op.equals("%") ? res : Register.R0;
                 CodeGen.main.add(new MOV(lhsResult, res));
 
+                /*
+                Error messages & functions will only be added if they are not yet declared
+                 */
                 if (!hasErrorDivByZero) {
-
                     Utility.pushData(divideByZero);
                     PrintUtility.addToEndFunctions("p_divide_by_zero");
 
@@ -230,14 +226,16 @@ public class BinOpAST extends ExpressionAST {
                 Utility.pushRegister(rhsResult);
                 break;
         }
-        if(longExpr) {
+        if(longExpr) { //case when this BinOp is in a longExpr
             Utility.pushRegister(rhsResult);
             if(rhs instanceof BinOpAST || previousOp.equals(op)) {
             rhs.translate();
             }
         }
     }
-
+    /*
+    Assign expected type & return type for specific operator this BinOp is having
+     */
     private void initialise() {
         switch (op) {
             case "*":
@@ -274,9 +272,5 @@ public class BinOpAST extends ExpressionAST {
 
     public String getOp() {
         return op;
-    }
-
-    public static boolean isHasErrorDivByZero() {
-        return hasErrorDivByZero;
     }
 }

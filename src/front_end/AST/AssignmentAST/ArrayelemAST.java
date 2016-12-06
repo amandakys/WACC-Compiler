@@ -37,7 +37,7 @@ public class ArrayelemAST extends ExpressionAST {
         super(ctx);
         this.ident = ident;
         this.expressions = expressionNodes;
-        this.hasError = false;
+        hasError = false;
     }
 
     @Override
@@ -61,23 +61,29 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        //addMain(new LOAD(r, new Address(r)));
-        int address = 0;
+        // take the first unused register in the stack
         Register first = Utility.popUnusedReg();
+
+        //take the first param register in the stack
         Register paramReg = Utility.popParamReg();
+
+        //find the the variable's address from its identifier from the current symbol table
         CodeGen.main.add(new ADD(first, Register.SP, Visitor.ST.getAddress(ident).getShiftVal()));
-        //CodeGen.main.add(new ADD(first, Register.SP, new ImmValue(address)));
+
         for(Node n : expressions) {
             Register reg = CodeGen.notUsedRegisters.peek();
 
             //load the first value of an array to a register
             n.translate();
 
+            //if two errors have not been printed yet
             if(!hasError) {
                 Utility.pushData(Error.arrayOutOfBoundsNegative);
                 Utility.pushData(Error.arrayOutOfBoundsLarge);
 
+                //add the print function to endFunctions to make sure it will be defined
                 PrintUtility.addToEndFunctions("p_check_array_bounds");
+                //throw runtime error
                 PrintUtility.throwRuntimeError();
                 hasError = true;
             }
@@ -88,12 +94,14 @@ public class ArrayelemAST extends ExpressionAST {
             CodeGen.main.add(new Branch("L", "p_check_array_bounds"));
 
             ProgramAST.nextAddress += identObj.getSize();
-            ShiftedReg size = new PostIndex(first, reg, Shift.LSL, new ImmValue(2));
 
             CodeGen.main.add(new ADD(first, first, new ImmValue(ARRAY_SIZE)));
-            CodeGen.main.add(new ADD(first, size));
-
-            address += identObj.getSize();
+            if(!identObj.getType().getTypeName().equals("char")) {
+                ShiftedReg size = new PostIndex(first, reg, Shift.LSL, new ImmValue(2));
+                CodeGen.main.add(new ADD(first, size));
+            } else {
+                CodeGen.main.add(new ADD(first, first, reg));
+            }
         }
 
         //when array elem is on the rhs of print, read,...

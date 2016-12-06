@@ -14,6 +14,7 @@ import front_end.AST.ExpressionAST.ArraylitAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import front_end.AST.StatementAST.StatementAST;
+import front_end.symbol_table.FUNCTION;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -45,46 +46,31 @@ public class AssignmentAST extends StatementAST {
 
     @Override
     public void translate() {
+
+        //get the top of the unsedRegisters stack
         Register result = CodeGen.notUsedRegisters.peek();
         Node lhsChild = lhs.getChild();
 
+        //translate righthandside
         rhs.translate();
 
-
-        if(lhsChild != null) {
+        if(lhsChild != null) { //if lhs is not an Ident
             Register res = CodeGen.notUsedRegisters.peek();
             lhsChild.translate();
+
+            //store the RHS address into the top of the Unused stack
             CodeGen.main.add(new STORE(result, new Address(res), rhs.getIdentObj().getSize()));
-        } else {
+        } else { //lhs is an Ident
+            //Store the RHS into the adress of the ident on the memory address
             ShiftedReg res = Visitor.ST.getAddress(lhs.getIdent());
-            CodeGen.main.add(new STORE(result, res, rhs.getIdentObj().getSize()));
+            int typeSize;
+            if (rhs.getIdentObj() instanceof FUNCTION) {
+                typeSize = ((FUNCTION) rhs.getIdentObj()).getReturntype().getSize();
+            } else {
+                typeSize = rhs.getIdentObj().getSize();
+            }
+            CodeGen.main.add(new STORE(result, res, typeSize));
         }
-
-//        if(rhs instanceof ArraylitAST || rhs instanceof NewpairAST) {
-//            int byte_size = 0;
-//            if(rhs instanceof ArraylitAST) {
-//                int arrSize = ((ArraylitAST) rhs).getArraylits().size();
-//                int ARRAY_SIZE = 4;
-//                byte_size = (arrSize + 1) * ARRAY_SIZE;
-//            } else {
-//                byte_size = rhs.getType().getSize() * 2;
-//            }
-//
-//            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(byte_size)));
-//            CodeGen.main.add(new Branch("L", "malloc"));
-//
-//            result = CodeGen.notUsedRegisters.peek();
-//            CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
-//        }
-
-//        ShiftedReg res = Visitor.ST.getAddress(lhs.getIdent());
-
-//        if (rhs instanceof ArraylitAST) {
-//            Register value = Utility.popUnusedReg();
-//
-//            CodeGen.main.add(new LOAD(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
-//            CodeGen.main.add(new STORE(value, new PreIndex(result), rhs.getIdentObj().getSize()));
-//        }
 
         ProgramAST.nextAddress += rhs.getIdentObj().getSize();
     }

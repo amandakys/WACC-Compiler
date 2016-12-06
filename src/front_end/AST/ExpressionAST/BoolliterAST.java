@@ -8,13 +8,11 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 public class BoolliterAST extends ExpressionAST{
     private String boolVal;
-    public static int occurences = 0;
 
     public BoolliterAST(ParserRuleContext ctx, String boolVal) {
         super(ctx);
         this.boolVal = boolVal;
         identObj = Visitor.ST.lookUpAll("bool");
-        occurences++;
     }
 
     @Override

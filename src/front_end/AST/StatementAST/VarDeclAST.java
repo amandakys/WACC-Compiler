@@ -27,16 +27,10 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by dtv15 on 09/11/16.
- */
-
 public class VarDeclAST extends StatementAST {
-    private String ident;
+    private String ident; //var name
     private TypeAST type;
     private AssignrhsAST rhs;
-
-    public static List<PAIR> existedTypes = new ArrayList<>();
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
@@ -65,7 +59,7 @@ public class VarDeclAST extends StatementAST {
             //assumes that this means rhs MUST be an arraylit
             if (rhs.getType() instanceof ARRAY) {
                 TYPE elementType = ((ArraytypeAST) type).getelementType();
-                // TODO:i need to fix this asap
+                // i need to fix this asap
                 //int arraysize = ((ArraylitAST) rhs).getSize();
 
 
@@ -112,7 +106,7 @@ public class VarDeclAST extends StatementAST {
 
     @Override
     public void translate() {
-        ProgramAST.nextAddress = identObj.getType().getSize() < 0 ? identObj.getSize() : 0;
+        ProgramAST.nextAddress = 0;
 
         if(rhs instanceof ArraylitAST) {
             ARRAY varType = (ARRAY) identObj.getType();
@@ -125,7 +119,6 @@ public class VarDeclAST extends StatementAST {
 
         //do not malloc a space on the stack if the pair is null
         if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
-            //if type does not exist before
             type.translate();
             rhs.translate();
         } else {
@@ -140,16 +133,19 @@ public class VarDeclAST extends StatementAST {
             CodeGen.main.add(new STORE(value, new PreIndex(res), identObj.getSize()));
         }
 
+        //increment the next available address (regarding the next available register)
         ProgramAST.nextAddress += identObj.getSize();
-        ProgramAST.size -= identObj.getSize();
+
+        //decrement the next available address (regarding sp)
+        Visitor.ST.decrementAddress(identObj.getSize());
 
         ShiftedReg address = new PreIndex(Register.SP,
-                new ImmValue(ProgramAST.size));
+                new ImmValue(Visitor.ST.getNextAvailableAddress()));
         Visitor.ST.addToMemoryAddress(ident, address);
 
         //jumpSP take care of the change in position of Stack pointer whenever it is add or sub
         ShiftedReg addressWithJump = new PreIndex(Register.SP,
-                new ImmValue(ProgramAST.size+Utility.getJumpSP()));
+                new ImmValue(Visitor.ST.getNextAvailableAddress()+Utility.getJumpSP()));
         CodeGen.main.add(new STORE(res, addressWithJump, identObj.getSize()));
     }
 }

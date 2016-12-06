@@ -15,9 +15,6 @@ import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.PAIR;
 
-/**
- * Created by tsd15 on 09/11/16.
- */
 public class FreeAST extends StatementAST {
     ExpressionAST expression;
 

@@ -62,9 +62,6 @@ public class PairelemAST extends AssignrhsAST{
     @Override
     public void translate() {
         Register r = Utility.popUnusedReg();
-        if(Visitor.ST.getAddress(token) != null) {
-            addMain(new LOAD(r, new Address(r)));
-        }
 
         //load the result to a register when necessary (i.e if pairelem is on the rhs, or on lhs)
         if(ctx instanceof BasicParser.PairelemContext

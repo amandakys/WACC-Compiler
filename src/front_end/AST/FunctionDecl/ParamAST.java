@@ -18,9 +18,11 @@ public class ParamAST extends Node {
         this.type = type;
         this.ident = ident;
         IDENTIFIER paramType;
+
+        //if the type of the parameter is an array
         if (type.getType() instanceof ARRAY) {
             paramType = new PARAM(new ARRAY(((ARRAY) type.getType()).getElementType(), 0));
-        } else if (type.getType() instanceof PAIR) {
+        } else if (type.getType() instanceof PAIR) { // if the type of the parameter is a pair
             paramType = new PARAM(new PAIR(((PAIR) type.getType()).getFirst(), ((PAIR) type.getType()).getSecond()));
 
         } else {

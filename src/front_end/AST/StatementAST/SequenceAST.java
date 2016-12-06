@@ -1,6 +1,8 @@
 package front_end.AST.StatementAST;
 
 import back_end.Utility;
+import front_end.AST.ProgramAST;
+import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
@@ -26,7 +28,5 @@ public class SequenceAST extends StatementAST {
             stat.translate();
             Utility.pushBackParam();
         }
-
-
     }
 }

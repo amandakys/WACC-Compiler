@@ -142,12 +142,6 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitArglist(@NotNull BasicParser.ArglistContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link BasicParser#intsign}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitIntsign(@NotNull BasicParser.IntsignContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code expr}
 	 * labeled alternative in {@link BasicParser#assignrhs}.
 	 * @param ctx the parse tree
