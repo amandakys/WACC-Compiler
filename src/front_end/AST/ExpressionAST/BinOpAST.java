@@ -252,9 +252,11 @@ public class BinOpAST extends ExpressionAST {
         if(rhs instanceof BinOpAST) {
             rhsValue = ((BinOpAST) rhs).constantOptimise();
         }
-        if(lhs instanceof IntLiterAST && rhs instanceof IntLiterAST) {
-            rhsValue = ((IntLiterAST) rhs).getValue();
+        if(lhs instanceof IntLiterAST) {
             lhsValue = ((IntLiterAST) lhs).getValue();
+        }
+        if(rhs instanceof IntLiterAST) {
+            rhsValue = ((IntLiterAST) rhs).getValue();
         }
         if(rhsValue != null && lhsValue != null) {
             switch(op) {
