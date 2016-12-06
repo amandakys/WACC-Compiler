@@ -125,6 +125,7 @@ public class BinOpAST extends ExpressionAST {
                     CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("-")){
                     CodeGen.main.add(new SUB(lhsResult, lhsResult, rhsResult));
+                    CodeGen.toPushUnusedReg.push(lhsResult);
                     Utility.pushRegister(rhsResult);
                     CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("*")) {

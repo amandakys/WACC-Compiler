@@ -96,8 +96,9 @@ public class CallAST extends AssignrhsAST{
             }
 
             Register freeToUse = CodeGen.toPushUnusedReg.pop();
-            addMain(new STORE(freeToUse, stackShift, argSize));
             Utility.pushRegister(freeToUse);
+            addMain(new STORE(freeToUse, stackShift, argSize));
+
         }
 
         Utility.resetJumpSP();
