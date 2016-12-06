@@ -44,15 +44,7 @@ public class MOV implements Instruction {
             Utility.pushRegister((Register) rhs);
 
         }
-
-        //set ZERO_FLAG if the value is 0, unset if it is 1
-        if(rhs instanceof ImmValue) {
-            if (((ImmValue) rhs).getValue().equals("0")) {
-                Utility.setZeroFlag();
-            } else if (((ImmValue) rhs).getValue().equals("1")) {
-                Utility.unSetZeroFlag();
-            }
-        }
+        
 
     }
 
