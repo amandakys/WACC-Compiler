@@ -44,7 +44,7 @@ public class MOV implements Instruction {
             Utility.pushRegister((Register) rhs);
 
         }
-        
+
 
     }
 
