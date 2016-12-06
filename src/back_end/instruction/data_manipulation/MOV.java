@@ -1,6 +1,7 @@
 package back_end.instruction.data_manipulation;
 
 import back_end.Utility;
+import back_end.data_type.ImmValue;
 import back_end.data_type.Operand;
 import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
@@ -20,7 +21,16 @@ public class MOV implements Instruction {
             Utility.pushRegister((Register) rhs);
 
         }
-        //CodeGen.notUsedRegisters.remove(dst);
+
+        //set ZERO_FLAG if the value is 0, unset if it is 1
+        if(rhs instanceof ImmValue) {
+            if (((ImmValue) rhs).getValue().equals("0")) {
+                Utility.setZeroFlag();
+            } else if (((ImmValue) rhs).getValue().equals("1")) {
+                Utility.unSetZeroFlag();
+            }
+        }
+
 
 
     }
@@ -34,7 +44,16 @@ public class MOV implements Instruction {
             Utility.pushRegister((Register) rhs);
 
         }
-        //CodeGen.notUsedRegisters.remove(dst);
+
+        //set ZERO_FLAG if the value is 0, unset if it is 1
+        if(rhs instanceof ImmValue) {
+            if (((ImmValue) rhs).getValue().equals("0")) {
+                Utility.setZeroFlag();
+            } else if (((ImmValue) rhs).getValue().equals("1")) {
+                Utility.unSetZeroFlag();
+            }
+        }
+
     }
 
     @Override
