@@ -42,4 +42,15 @@ public class PrintlnAST extends StatementAST {
     public ExpressionAST getExpression() {
         return expression;
     }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
 }

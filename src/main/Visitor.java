@@ -18,12 +18,10 @@ import front_end.symbol_table.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by andikoh on 08/11/2016.
- */
 public class Visitor extends BasicParserBaseVisitor<Node>{
     public static SymbolTable ST = new SymbolTable(null);
     private static List<CallAST> toBeVisited = new ArrayList<>();
+    private int index = 0;
 
     public Visitor() {
         SCALAR boolSca = new SCALAR("bool");
@@ -50,57 +48,96 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         List<FunctionDeclAST> functionASTs = new ArrayList<>();
 
         for (BasicParser.FunctionContext f: functions) {
-            functionASTs.add(visitFunction(f));
+            FunctionDeclAST func = visitFunction(f);
+            functionASTs.add(func);
+
+            setIndex(func);
         }
 
-        return new ProgramAST(ctx, functionASTs, (StatementAST) visit(ctx.statement()));
+        StatementAST stat = (StatementAST) visit(ctx.statement());
+        stat.setIndex(index);
+        //setIndex(stat);
+
+        return new ProgramAST(ctx, functionASTs, stat);
     }
 
     @Override
     public SkipAST visitSkip(BasicParser.SkipContext ctx) {
         //skip statement contains no information and has no checks;
-        return new SkipAST(ctx);
+        SkipAST skip = new SkipAST(ctx);
+        setIndex(skip);
+
+        return skip;
     }
 
     @Override
     public AssignmentAST visitAssignment(BasicParser.AssignmentContext ctx) {
-        AssignmentAST assignment = new AssignmentAST(ctx, visitAssignlhs(ctx.assignlhs()), (AssignrhsAST) visit(ctx.assignrhs()));
+        AssignlhsAST assignlhs = visitAssignlhs(ctx.assignlhs());
+        AssignrhsAST assignrhs = (AssignrhsAST) visit(ctx.assignrhs());
+        assignlhs.setIndex(index);
+        assignrhs.setIndex(index);
+
+        AssignmentAST assignment = new AssignmentAST(ctx, assignlhs, assignrhs);
         assignment.check();
+        setIndex(assignment);
+
         return assignment;
     }
 
     @Override
     public VarDeclAST visitVar_decl(BasicParser.Var_declContext ctx) {
-        VarDeclAST var = new VarDeclAST(ctx, visitType(ctx.type()), ctx.IDENT()
-                .getText(), (AssignrhsAST) visit(ctx.assignrhs()));
+        TypeAST typeAST = visitType(ctx.type());
+        AssignrhsAST assignrhsAST = (AssignrhsAST) visit(ctx.assignrhs());
+        typeAST.setIndex(index);
+        assignrhsAST.setIndex(index);
+
+        VarDeclAST var = new VarDeclAST(ctx, typeAST, ctx.IDENT().getText(), assignrhsAST);
         var.check();
+
+        setIndex(var);
+
         return var;
     }
 
     @Override
     public ReadAST visitRead(BasicParser.ReadContext ctx) {
+        AssignlhsAST assignlhsAST = visitAssignlhs(ctx.assignlhs());
+        assignlhsAST.setIndex(index);
 
-        ReadAST readAST = new ReadAST(ctx, visitAssignlhs(ctx.assignlhs()));
+        ReadAST readAST = new ReadAST(ctx, assignlhsAST);
         readAST.check();
+
+        setIndex(readAST);
+
         return readAST;
     }
 
     @Override
     public FreeAST visitFree(BasicParser.FreeContext ctx) {
-        FreeAST freeAST = new FreeAST(ctx, visitExpression(ctx.expression()));
+        ExpressionAST expressionAST = visitExpression(ctx.expression());
+        expressionAST.setIndex(index);
+
+        FreeAST freeAST = new FreeAST(ctx, expressionAST);
         freeAST.check();
+
+        setIndex(freeAST);
+
         return freeAST;
     }
 
     @Override
     public ReturnAST visitReturn(BasicParser.ReturnContext ctx) {
-
         TypeAST returnType = visitType((checkReturnInFunction(ctx)).type());
         ExpressionAST expression = visitExpression(ctx.expression());
+        returnType.setIndex(index);
+        expression.setIndex(index);
         returnType.checkType(expression);
 
-        ReturnAST returnAST = new ReturnAST(ctx, visitExpression(ctx.expression()));
+        ReturnAST returnAST = new ReturnAST(ctx, expression);
         returnAST.check();
+
+        setIndex(returnAST);
+
         return returnAST;
     }
 
@@ -119,15 +156,26 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     @Override
     public ExitAST visitExit(BasicParser.ExitContext ctx) {
         ExpressionAST expression = visitExpression(ctx.expression());
+        expression.setIndex(index);
+
         ExitAST exit = new ExitAST(ctx, expression);
         exit.check();
+
+        setIndex(exit);
+
         return exit;
     }
 
     @Override
     public PrintAST visitPrint(BasicParser.PrintContext ctx) {
-        PrintAST print = new PrintAST(ctx, visitExpression(ctx.expression()));
+        ExpressionAST expressionAST = visitExpression(ctx.expression());
+        expressionAST.setIndex(index);
+
+        PrintAST print = new PrintAST(ctx, expressionAST);
         print.check();
+
+        setIndex(print);
+
         return print;
     }
 
@@ -138,16 +186,26 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         FunctionDeclAST function;
 
         if (ctx.paramlist() == null) {
+            TypeAST typeAST = visitType(ctx.type());
+            typeAST.setIndex(index);
+
             //no params
-            function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText());
+            function = new FunctionDeclAST(ctx, typeAST, ctx.IDENT().getText());
         } else {
+            TypeAST typeAST = visitType(ctx.type());
+            ParamlistAST paramlistAST = visitParamlist(ctx.paramlist());
+            typeAST.setIndex(index);
+            paramlistAST.setIndex(index);
+
             //has params
             function = new FunctionDeclAST(ctx, visitType(ctx.type()), ctx.IDENT().getText(),
-                    visitParamlist(ctx.paramlist()));
+                   paramlistAST);
         }
 
         function.check();
+
         StatementAST statement = (StatementAST) visit(ctx.statement());
+        statement.setIndex(index);
         function.setStatement(statement);
 
         Visitor.ST = Visitor.ST.getEncSymbolTable();
@@ -167,8 +225,14 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
     @Override
     public PrintlnAST visitPrintln(BasicParser.PrintlnContext ctx) {
-        PrintlnAST print = new PrintlnAST(ctx, visitExpression(ctx.expression()));
+        ExpressionAST expressionAST = visitExpression(ctx.expression());
+        expressionAST.setIndex(index);
+
+        PrintlnAST print = new PrintlnAST(ctx, expressionAST);
         print.check();
+
+        setIndex(print);
+
         return print;
     }
 
@@ -176,39 +240,57 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     public IfAST visitIf(BasicParser.IfContext ctx) {
         //components
         ExpressionAST expr = visitExpression(ctx.expression());
+        expr.setIndex(index);
         Visitor.ST = new SymbolTable(Visitor.ST);
+
         StatementAST then = (StatementAST) visit(ctx.statement(0));
+        then.setIndex(index);
         SymbolTable thenST = Visitor.ST;
         Visitor.ST = Visitor.ST.getEncSymbolTable();
 
         Visitor.ST = new SymbolTable(Visitor.ST);
         StatementAST elseSt = (StatementAST) visit(ctx.statement(1));
+        elseSt.setIndex(index);
         SymbolTable elseST = Visitor.ST;
         Visitor.ST = Visitor.ST.getEncSymbolTable();
 
         IfAST ifAST = new IfAST(ctx, expr, then, elseSt, thenST, elseST);
         ifAST.check();
+
+        setIndex(ifAST);
+
         return ifAST;
     }
 
     @Override
     public WhileAST visitWhile(BasicParser.WhileContext ctx) {
         Visitor.ST = new SymbolTable(Visitor.ST);
+
         //components
         ExpressionAST expr = visitExpression(ctx.expression());
+        expr.setIndex(index);
         StatementAST statement = (StatementAST) visit(ctx.statement());
+        statement.setIndex(index);
 
         WhileAST whileAST = new WhileAST(ctx, expr, statement, ST);
         whileAST.check();
         Visitor.ST = Visitor.ST.getEncSymbolTable();
+
+        setIndex(whileAST);
+
         return whileAST;
     }
 
     @Override
     public BeginAST visitBegin(BasicParser.BeginContext ctx) {
         ST = new SymbolTable(ST);
-        BeginAST begin = new BeginAST(ctx, (StatementAST) visit(ctx.statement()));
+        StatementAST statementAST = (StatementAST) visit(ctx.statement());
+        statementAST.setIndex(index);
+
+        BeginAST begin = new BeginAST(ctx, statementAST);
         ST = ST.getEncSymbolTable();
+
+        setIndex(begin);
 
         return begin;
     }
@@ -222,7 +304,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             statementASTs.add((StatementAST) visit(s));
         }
 
-        return new SequenceAST(ctx, statementASTs);
+        SequenceAST sequenceAST = new SequenceAST(ctx, statementASTs);
+        //sequenceAST.setIndex(index);
+        return sequenceAST;
     }
 
     @Override
@@ -235,22 +319,9 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else {
             lhs = new AssignlhsAST(ctx, visitPairelem(ctx.pairelem()));
         }
-        return lhs;
-    }
 
-    public AssignrhsAST visitAssignrhs(BasicParser.AssignrhsContext ctx) {
-        if (ctx instanceof BasicParser.ExprContext) {
-            return visitExpr((BasicParser.ExprContext) ctx);
-        } else if (ctx instanceof BasicParser.ArraylitContext) {
-            return visitArraylit((BasicParser.ArraylitContext) ctx);
-        } else if (ctx instanceof BasicParser.NewpairContext) {
-            return visitNewpair((BasicParser.NewpairContext) ctx);
-        } else if (ctx instanceof BasicParser.PairelementContext) {
-            return visitPairelement((BasicParser.PairelementContext) ctx);
-        } else if(ctx instanceof BasicParser.FunctioncallContext) {
-            return visitFunctioncall((BasicParser.FunctioncallContext) ctx);
-        }
-        return null;
+        lhs.setIndex(index);
+        return lhs;
     }
 
     @Override
@@ -384,6 +455,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
         if(expression != null) {
             expression.checkNode();
+            expression.setIndex(index);
         }
 
         return expression;
@@ -409,6 +481,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
         if(binOpAST != null) {
             binOpAST.checkNode();
+            binOpAST.setIndex(index);
         }
         return binOpAST;
     }
@@ -620,6 +693,11 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         System.err.println("line: " + ctx.start.getLine() + ":" + ctx.start.getCharPositionInLine()
                 + " " + ctx.start.getText() + " " + message);
         System.exit(200);
+    }
+
+    private void setIndex(Node node) {
+        node.setIndex(index);
+        index++;
     }
 
 }

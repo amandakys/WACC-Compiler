@@ -9,12 +9,18 @@ public class SkipAST extends StatementAST {
     }
 
     @Override
-    public void check() {
+    public void check() {}
 
+    @Override
+    public void translate() {}
+
+    @Override
+    public void weight() {
+        size = 1;
     }
 
     @Override
-    public void translate() {
+    public void IRepresentation() {
 
     }
 }

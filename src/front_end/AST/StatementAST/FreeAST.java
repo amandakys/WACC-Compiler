@@ -37,8 +37,10 @@ public class FreeAST extends StatementAST {
         Register value = Utility.popUnusedReg();
         CodeGen.main.add(new LOAD(value, new Address(Register.SP)));
         CodeGen.main.add(new MOV(Register.R0, value));
+
         PrintUtility.throwRuntimeError();
         Utility.pushData(Error.nullReference);
+
         if (expression.getType() instanceof PAIR) {
             CodeGen.main.add(new Branch("L", "p_free_pair"));
             PrintUtility.addToEndFunctions(("p_free_pair"));
@@ -46,5 +48,16 @@ public class FreeAST extends StatementAST {
             CodeGen.main.add(new Branch("L", "p_free_array"));
             PrintUtility.addToEndFunctions(("p_free_array"));
         }
+    }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
     }
 }

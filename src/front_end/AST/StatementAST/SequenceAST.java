@@ -29,4 +29,19 @@ public class SequenceAST extends StatementAST {
             Utility.pushBackParam();
         }
     }
+
+    @Override
+    public void weight() {
+        for(StatementAST stat :  statements) {
+            stat.weight();
+            size += stat.getSize();
+        }
+    }
+
+    @Override
+    public void IRepresentation() {
+        for(StatementAST statement : statements) {
+            statement.IRepresentation();
+        }
+    }
 }

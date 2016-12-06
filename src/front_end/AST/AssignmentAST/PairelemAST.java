@@ -21,9 +21,6 @@ import front_end.symbol_table.PAIR;
 
 import static back_end.Utility.addMain;
 
-/**
- * Created by tsd15 on 09/11/16.
- */
 public class PairelemAST extends AssignrhsAST{
     private String token;
     private ExpressionAST expression;
@@ -93,5 +90,16 @@ public class PairelemAST extends AssignrhsAST{
             PrintUtility.throwRuntimeError();
             hasError = true;
         }
+    }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
     }
 }

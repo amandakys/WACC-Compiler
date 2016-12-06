@@ -8,6 +8,8 @@ import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.LOAD;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
 
@@ -17,6 +19,7 @@ public class IdentAST extends ExpressionAST {
     public IdentAST(ParserRuleContext ctx, String ident) {
         super(ctx);
         this.ident = ident;
+
         IDENTIFIER identType = Visitor.ST.lookUpAll(ident); //Type
 
         if (identType == null) {
@@ -28,10 +31,7 @@ public class IdentAST extends ExpressionAST {
 
     @Override
     public void check() {
-        IDENTIFIER I = Visitor.ST.lookUpAll(ident);
-        if(I == null) {
-            error("cannot find identifier: "+ ident);
-        }
+        //check has already been performed inside the constructor
     }
 
     @Override
@@ -46,6 +46,20 @@ public class IdentAST extends ExpressionAST {
         } else {
             //normal LDR
             CodeGen.main.add(new LOAD(result, Visitor.ST.getAddress(ident)));
+        }
+    }
+
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+        IGNode node = InterferenceGraph.findIGNode(ident);
+
+        if(node != null && node.getTo() < index) {
+            node.setTo(index - 1);
         }
     }
 

@@ -28,4 +28,14 @@ public class CharLitAST extends ExpressionAST {
             Utility.addMain(new MOV(Utility.popUnusedReg(), new ImmValue(0)));
         }
     }
+
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
 }

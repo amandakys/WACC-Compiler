@@ -59,4 +59,17 @@ public class NewpairAST extends AssignrhsAST {
             ProgramAST.nextAddress += identObj.getSize();
         }
     }
+
+    @Override
+    public void weight() {
+        for (ExpressionAST e : pairelems) {
+            e.weight();
+            size += e.getSize();
+        }
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
 }

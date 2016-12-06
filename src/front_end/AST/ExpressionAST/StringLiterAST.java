@@ -29,6 +29,16 @@ public class StringLiterAST extends ExpressionAST{
         Utility.addMain(new LOAD(Utility.popUnusedReg(), new LabelExpr(label)));
     }
 
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
     public String getValue() {
         return value;
     }

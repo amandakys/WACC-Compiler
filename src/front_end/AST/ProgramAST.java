@@ -62,6 +62,26 @@ public class ProgramAST extends Node {
         printUtility.ioFunctions();
     }
 
+    @Override
+    public void weight() {
+        for(FunctionDeclAST func : functions) {
+            func.weight();
+            size += func.getSize();
+        }
+
+        statement.weight();
+        size += statement.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        for(FunctionDeclAST func : functions) {
+            func.IRepresentation();
+        }
+
+        statement.IRepresentation();
+    }
+
     public static void newScope(StatementAST statement) {
         //find how many address available in the program
         Visitor.ST.size();

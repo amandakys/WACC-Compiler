@@ -35,6 +35,16 @@ public class IntLiterAST extends ExpressionAST {
         CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(val)));
     }
 
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
     public int getValue() {
         return Integer.parseInt(intsign + value);
     }

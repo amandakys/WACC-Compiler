@@ -25,6 +25,16 @@ public class BoolliterAST extends ExpressionAST{
         Utility.addMain(new MOV(Utility.popUnusedReg(), new ImmValue(boolVal.equals("true") ? 1 : 0)));
     }
 
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
     public String getBoolVal() {
         return boolVal;
     }

@@ -15,9 +15,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import static back_end.Error.overflow;
 
-/**
- * Created by andikoh on 10/11/2016.
- */
 public class UnopAST extends ExpressionAST {
     private String expectedElemType;
     private String returnType;
@@ -65,8 +62,6 @@ public class UnopAST extends ExpressionAST {
                     }
                     BinOpAST.hasErrorOverflow = true;
                 }
-
-//                PrintUtility.throwRuntimeError();
                 break;
             case "len":
                 //TODO: you can't put a register into load without popping it off the unusedRegs list
@@ -79,6 +74,17 @@ public class UnopAST extends ExpressionAST {
                 //Do nothing
                 break;
         }
+
+    }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
 
     }
 

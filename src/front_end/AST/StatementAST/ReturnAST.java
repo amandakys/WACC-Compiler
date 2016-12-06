@@ -10,12 +10,9 @@ import front_end.AST.Node;
 import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-
-/**
- * Created by tsd15 on 09/11/16.
- */
 public class ReturnAST extends StatementAST {
     Node expression;
+
     public ReturnAST(ParserRuleContext ctx, Node expression) {
         super(ctx);
         this.expression = expression;
@@ -38,7 +35,16 @@ public class ReturnAST extends StatementAST {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(addSize)));
         }
         CodeGen.main.add(new POP(Register.PC));
+    }
 
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
 
     }
 }

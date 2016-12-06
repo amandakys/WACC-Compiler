@@ -48,6 +48,17 @@ public class AssignlhsAST extends Node {
         }
     }
 
+    @Override
+    public void weight() {
+        child.weight();
+        size = child.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
     public Node getChild() {
         return child;
     }

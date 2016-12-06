@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionDeclAST extends Node {
-    private TypeAST returntype;
     private String returntypename;
     private String funcname;
+
+    private TypeAST returntype;
     private ParamlistAST parameters;
     private StatementAST statement;
-    private FUNCTION function;
 
 
     public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname) {
@@ -108,11 +108,8 @@ public class FunctionDeclAST extends Node {
 
     @Override
     public void translate() {
-        //Utility.pushData("\0");
-        function = (FUNCTION) identObj;
-
         //change the scope of the current symbol table to the one held by function
-        Visitor.ST = function.getSymtab();
+        Visitor.ST = ((FUNCTION) identObj).getSymtab();
 
         //size of a symbol table is equal to all the parameters and variables inside it
         int size = Visitor.ST.findSize();
@@ -160,5 +157,21 @@ public class FunctionDeclAST extends Node {
         Utility.pushBackRegisters();
         //restore the symbol table back to the outer one
         Visitor.ST = Visitor.ST.getEncSymbolTable();
+    }
+
+    @Override
+    public void weight() {
+        returntype.weight();
+        parameters.weight();
+        statement.weight();
+
+        size += returntype.getSize();
+        size += parameters.getSize();
+        statement.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
     }
 }

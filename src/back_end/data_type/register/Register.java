@@ -24,7 +24,4 @@ public enum Register implements Operand {
     public String toString() {
         return name().toLowerCase();
     }
-    public int toInt() {
-        return valueOf(name()).ordinal();
-    }
 }

@@ -85,7 +85,23 @@ public class IfAST extends StatementAST {
 
     }
 
-    private void newScope(SymbolTable ST, StatementAST statement) {
+    @Override
+    public void weight() {
+        expression.weight();
+        then.weight();
+        elseSt.weight();
+
+        size += expression.getSize();
+        size += then.getSize();
+        size += elseSt.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
+    public static void newScope(SymbolTable ST, StatementAST statement) {
         int spSize = ST.findSize();
 
         if(spSize > Utility.STACK_SIZE ) {

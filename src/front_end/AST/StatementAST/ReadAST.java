@@ -84,4 +84,15 @@ public class ReadAST extends StatementAST {
         PrintUtility.addToPlaceholders(placeholder);
         PrintUtility.addToEndFunctions(functionName);
     }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
 }

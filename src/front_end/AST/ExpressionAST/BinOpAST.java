@@ -62,9 +62,11 @@ public class BinOpAST extends ExpressionAST {
     @Override
     public void check() {
         identObj = Visitor.ST.lookUpAll(returnType);
+
         //Checking rhs & lhs expressions
         lhs.checkNode();
         rhs.checkNode();
+
         //getting type of expression
         String firstType = lhs.getType().getTypeName();
         //Comparing type of expressions
@@ -225,6 +227,7 @@ public class BinOpAST extends ExpressionAST {
                 Utility.pushRegister(rhsResult);
                 break;
         }
+
         if(longExpr) { //case when this BinOp is in a longExpr
             Utility.pushRegister(rhsResult);
             if(rhs instanceof BinOpAST || previousOp.equals(op)) {
@@ -232,6 +235,20 @@ public class BinOpAST extends ExpressionAST {
             }
         }
     }
+
+    @Override
+    public void weight() {
+        lhs.weight();
+        rhs.weight();
+        size = lhs.getSize() + rhs.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        rhs.IRepresentation();
+        lhs.IRepresentation();
+    }
+
     /*
     Assign expected type & return type for specific operator this BinOp is having
      */

@@ -27,6 +27,16 @@ public class PairliterAST extends ExpressionAST {
         }
     }
 
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
     public String getNullStr() {
         return nullStr;
     }

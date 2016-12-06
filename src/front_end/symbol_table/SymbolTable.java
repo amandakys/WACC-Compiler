@@ -4,6 +4,8 @@ import java.util.*;
 
 import back_end.Utility;
 import back_end.data_type.register.ShiftedReg;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +15,7 @@ public class SymbolTable {
     private Map<String, IDENTIFIER> dict;
     private Map<String, ShiftedReg> memoryAddress;
     private int nextAvailableAddress;
+    //next numbered register that needs to be used + assuming there is infinite number of registers
 
     public SymbolTable(SymbolTable st) {
         dict = new LinkedHashMap<>();

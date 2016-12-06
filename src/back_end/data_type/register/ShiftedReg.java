@@ -4,9 +4,6 @@ import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
 import front_end.symbol_table.TYPE;
 
-/**
- * Created by donamphuong on 21/11/2016.
- */
 public abstract class ShiftedReg extends Expression {
     protected Register baseReg;
 

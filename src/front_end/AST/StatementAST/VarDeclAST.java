@@ -8,24 +8,20 @@ import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
-import front_end.AST.AssignmentAST.PairelemAST;
-import front_end.AST.Compare;
 import front_end.AST.ExpressionAST.ArraylitAST;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
 import front_end.AST.ExpressionAST.PairliterAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
-import front_end.AST.TypeAST.PairelemtypeAST;
 import front_end.AST.TypeAST.PairtypeAST;
 import front_end.AST.TypeAST.TypeAST;
 import front_end.symbol_table.*;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class VarDeclAST extends StatementAST {
     private String ident; //var name
@@ -90,6 +86,8 @@ public class VarDeclAST extends StatementAST {
                 error(ident + " is already declared");
             } else {
                 identObj = new VARIABLE((TYPE) T);
+
+                //set when the variable is alive
                 Visitor.ST.add(ident, identObj);
 
                 //Checking rhs
@@ -147,5 +145,25 @@ public class VarDeclAST extends StatementAST {
         ShiftedReg addressWithJump = new PreIndex(Register.SP,
                 new ImmValue(Visitor.ST.getNextAvailableAddress()+Utility.getJumpSP()));
         CodeGen.main.add(new STORE(res, addressWithJump, identObj.getSize()));
+    }
+
+    @Override
+    public void weight() {
+        type.weight();
+        rhs.weight();
+
+        size += type.getSize();
+        size += rhs.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        IGNode node = new IGNode(ident);
+        node.setFrom(index);
+        node.setTo(index);
+        InterferenceGraph.nodes.add(node);
+
+        type.IRepresentation();
+        rhs.IRepresentation();
     }
 }

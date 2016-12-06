@@ -34,6 +34,16 @@ public class ExitAST extends StatementAST{
 
         Utility.addMain(new MOV(Register.R0, res));
         Utility.addMain(new Branch("L", "exit"));
+    }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
 
     }
 }

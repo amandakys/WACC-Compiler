@@ -65,6 +65,19 @@ public class ArraylitAST extends AssignrhsAST {
         }
     }
 
+    @Override
+    public void weight() {
+        for (ExpressionAST arrayelem : arraylits) {
+            arrayelem.weight();
+            size += arrayelem.getSize();
+        }
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
     public List<ExpressionAST> getArraylits() {
         return arraylits;
     }

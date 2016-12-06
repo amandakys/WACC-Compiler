@@ -116,6 +116,17 @@ public class CallAST extends AssignrhsAST{
 
     }
 
+    @Override
+    public void weight() {
+        arglist.weight();
+        size = arglist.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
     public void setReVisited() {
         isReVisited = true;
     }

@@ -72,6 +72,20 @@ public class WhileAST extends StatementAST {
         CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
     }
 
+    @Override
+    public void weight() {
+        expression.weight();
+        statement.weight();
+
+        size += expression.getSize();
+        size += statement.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
     private void newScope(StatementAST statement) {
         int spSize = ST.findSize();
 
@@ -86,8 +100,6 @@ public class WhileAST extends StatementAST {
             Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
         }
 
-        //Utility.addJumpSP(spSize);
-
         statement.translate();
 
         if(spSize > Utility.STACK_SIZE) {
@@ -101,6 +113,5 @@ public class WhileAST extends StatementAST {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
         }
 
-        //Utility.resetJumpSP();
     }
 }

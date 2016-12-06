@@ -7,9 +7,6 @@ import front_end.symbol_table.TYPE;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by tsd15 on 09/11/16.
- */
 public class ParamlistAST extends Node {
     List<ParamAST> parameters;
 
@@ -17,11 +14,6 @@ public class ParamlistAST extends Node {
         super(ctx);
         this.parameters = parameters;
     }
-
-    public List<ParamAST> getExpressions() {
-        return parameters;
-    }
-
 
     public List<TYPE> getParamTypes() {
         List<TYPE> paramTypes = new ArrayList<>();
@@ -38,8 +30,8 @@ public class ParamlistAST extends Node {
 
     @Override
     public void check() {
-        for(ParamAST n : parameters) {
-            n.check();
+        for(ParamAST p : parameters) {
+            p.check();
         }
     }
 
@@ -48,5 +40,18 @@ public class ParamlistAST extends Node {
         for (ParamAST p: parameters) {
             p.translate();
         }
+    }
+
+    @Override
+    public void weight() {
+        for (ParamAST p : parameters) {
+            p.weight();
+            size += p.getSize();
+        }
+    }
+
+    @Override
+    public void IRepresentation() {
+
     }
 }

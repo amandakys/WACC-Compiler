@@ -64,4 +64,15 @@ public class PairelemtypeAST extends Node {
             type.translate();
         }
     }
+
+    @Override
+    public void weight() {
+        type.weight();
+        size = type.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
 }

@@ -43,6 +43,17 @@ public class PrintAST extends StatementAST {
         pushPlaceholder();
     }
 
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
     /*
         This function find the appropriate placeholder depending on the type of expression, and push it
         if it does not exist in the CodeGen.data list. It also branch out to the appropriate function that

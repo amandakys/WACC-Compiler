@@ -93,9 +93,12 @@ public class ArrayelemAST extends ExpressionAST {
             CodeGen.main.add(new MOV(paramReg, first));
             CodeGen.main.add(new Branch("L", "p_check_array_bounds"));
 
+            //incrementing the next address with the object's size
             ProgramAST.nextAddress += identObj.getSize();
 
             CodeGen.main.add(new ADD(first, first, new ImmValue(ARRAY_SIZE)));
+
+            //shift the register if it is not a char
             if(!identObj.getType().getTypeName().equals("char")) {
                 ShiftedReg size = new PostIndex(first, reg, Shift.LSL, new ImmValue(2));
                 CodeGen.main.add(new ADD(first, size));
@@ -108,5 +111,15 @@ public class ArrayelemAST extends ExpressionAST {
         if(ctx.getParent() instanceof BasicParser.ExprNoBinOpContext) {
             CodeGen.main.add(new LOAD(first, new PreIndex(first)));
         }
+    }
+
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+
     }
 }
