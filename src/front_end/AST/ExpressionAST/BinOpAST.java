@@ -251,7 +251,12 @@ public class BinOpAST extends ExpressionAST {
         }
     }
 
-    private Boolean booleanOptimise() {
+    /*
+    This method will try to evaluate this binOp & return the result boolean.
+    Return null if failed to do so (eg. binOp contains a variable)
+    This method does not modify anything so can be made public allowing conditional branch statements to use
+     */
+    public Boolean booleanOptimise() {
         Boolean result = null;
         Integer rhsValue = null;
         Integer lhsValue = null;
@@ -314,6 +319,10 @@ public class BinOpAST extends ExpressionAST {
         return result;
     }
 
+    /*
+    This method will try to evaluate this binOp & return the result constant.
+    Return null if failed to do so (eg. containing a variable)
+     */
     private Integer constantOptimise() {
         Integer result = null;
         Integer rhsValue = null;
