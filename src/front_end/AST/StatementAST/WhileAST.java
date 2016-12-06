@@ -8,6 +8,7 @@ import back_end.instruction.LabelInstr;
 import back_end.instruction.condition.CMP;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.SUB;
+import front_end.AST.ExpressionAST.BinOpAST;
 import front_end.AST.ExpressionAST.BoolliterAST;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.ProgramAST;
@@ -42,10 +43,15 @@ public class WhileAST extends StatementAST {
         }
     }
 
+    /*if while (false) then skip the while loop since it will not be evaluated
+    * else, print out the source code as usual*/
+
     @Override
     public void translate() {
-        if((expression instanceof BoolliterAST)
-                && ((BoolliterAST) expression).equals("false")) {
+        if(((expression instanceof BoolliterAST)
+                && ((BoolliterAST) expression).equals("false")) ||
+                ((expression instanceof BinOpAST) && ((BinOpAST) expression)
+                        .booleanOptimise() == false)) {
             return;
         } else {
             String conditionLabel = labelCount.toString();

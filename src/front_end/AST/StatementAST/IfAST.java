@@ -3,6 +3,7 @@ package front_end.AST.StatementAST;
 import back_end.Utility;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.SUB;
+import front_end.AST.ExpressionAST.BinOpAST;
 import front_end.AST.ExpressionAST.BoolliterAST;
 import front_end.AST.ProgramAST;
 import front_end.symbol_table.IDENTIFIER;
@@ -50,19 +51,26 @@ public class IfAST extends StatementAST {
         elseSt.checkNode();
     }
 
+    /*if it is if (true) then only translate the then clause, since "else" is
+    not evaluated
+    otherwise, only translate the else clause, since "then" is not evaluated*/
+
     @Override
     public void translate() {
-        Register result = CodeGen.notUsedRegisters.peek();
-        expression.translate();
-        //jump to label if false
-        CodeGen.main.add(new CMP(result, new ImmValue(0)));
-        Utility.pushRegister(result);
 
-        if(!(expression instanceof BoolliterAST)) {
+        if(!(expression instanceof BoolliterAST) && (!(expression instanceof
+                BinOpAST) || (((BinOpAST) expression).booleanOptimise() ==
+                null ))) {
+
+            Register result = CodeGen.notUsedRegisters.peek();
+            expression.translate();
+            //jump to label if false
+            CodeGen.main.add(new CMP(result, new ImmValue(0)));
+            Utility.pushRegister(result);
             String l0 = labelCount.toString();
 
             CodeGen.main.add(new Branch("EQ", "L" + l0));
-            labelCount ++;
+            labelCount++;
             if (thenST.findSize() != 0) {
                 //new variables are declared
                 newScope(thenST, then);
@@ -85,7 +93,9 @@ public class IfAST extends StatementAST {
             Utility.pushBackRegisters();
 
             CodeGen.main.add(new LabelInstr("L" + l1));
-        } else if (((BoolliterAST) expression).getBoolVal().equals("false")) {
+
+        } else if (((BoolliterAST) expression).getBoolVal().equals("false")
+                || (((BinOpAST) expression).booleanOptimise() == false)) {
             //Zero flag = true means there is a 0, so the evaluation of if is
             // false
             if (elseST.findSize() != 0) {
@@ -95,7 +105,8 @@ public class IfAST extends StatementAST {
                 elseSt.translate();
             }
             Utility.pushBackRegisters();
-        } else {
+        } else if (((BoolliterAST) expression).getBoolVal().equals("true")
+                || (((BinOpAST) expression).booleanOptimise() == true)){
             //Zero flag = false means there is not any 0, so the evaluation of
             // if is true
             if (thenST.findSize() != 0) {
@@ -105,6 +116,8 @@ public class IfAST extends StatementAST {
                 then.translate();
             }
             Utility.pushBackRegisters();
+        } else {
+            return;
         }
 
 
