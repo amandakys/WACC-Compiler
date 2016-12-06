@@ -79,13 +79,22 @@ public class BinOpAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        Integer evaluable = constantOptimise();
-        if(evaluable != null) {
-            String sign = evaluable < 0 ? "-" : "";
-            String value = evaluable.toString().replace("-", "");
-            IntLiterAST optimisedConst = new IntLiterAST(ctx, sign, value);
-            optimisedConst.translate();
-            return;
+        if(returnType.equals("int")) {
+            Integer evaluable = constantOptimise();
+            if(evaluable != null) {
+                String sign = evaluable < 0 ? "-" : "";
+                String value = evaluable.toString().replace("-", "");
+                IntLiterAST optimisedConst = new IntLiterAST(ctx, sign, value);
+                optimisedConst.translate();
+                return;
+            }
+        } else { // return type is bool
+            Boolean evaluable = booleanOptimise();
+            if(evaluable != null) {
+                BoolliterAST optimisedBool = new BoolliterAST(ctx, evaluable.toString());
+                optimisedBool.translate();
+                return;
+            }
         }
 
         //Holds the reference to the registers going to hold lhs & rhs value
@@ -242,35 +251,101 @@ public class BinOpAST extends ExpressionAST {
         }
     }
 
+    private Boolean booleanOptimise() {
+        Boolean result = null;
+        Integer rhsValue = null;
+        Integer lhsValue = null;
+        if(lhs instanceof BinOpAST) {
+            if(((BinOpAST) lhs).returnType.equals("bool")) {
+                lhsValue = ((BinOpAST) lhs).booleanOptimise() ? 1 : 0;
+            } else { // return type is int
+                lhsValue = ((BinOpAST) lhs).constantOptimise();
+            }
+        } else if(lhs instanceof IntLiterAST) {
+            lhsValue = ((IntLiterAST) lhs).getValue();
+        } else if(lhs instanceof BoolliterAST) {
+            lhsValue = ((BoolliterAST) lhs).getBoolVal().equals("true") ? 1 : 0;
+        } else if(lhs instanceof CharLitAST) {
+            lhsValue = ((CharLitAST) lhs).getCodePoint();
+        }
+
+        if(rhs instanceof BinOpAST) {
+            if(((BinOpAST) rhs).returnType.equals("bool")) {
+                rhsValue = ((BinOpAST) rhs).booleanOptimise() ? 1 : 0;
+            } else {
+                rhsValue = ((BinOpAST) rhs).constantOptimise();
+            }
+        } else if(rhs instanceof IntLiterAST) {
+            rhsValue = ((IntLiterAST) rhs).getValue();
+        } else if(rhs instanceof BoolliterAST) {
+            rhsValue = ((BoolliterAST) rhs).getBoolVal().equals("true") ? 1 : 0;
+        } else if(rhs instanceof CharLitAST) {
+            rhsValue = ((CharLitAST) rhs).getCodePoint();
+        }
+
+        if(lhsValue != null && rhsValue != null) {
+            switch (op) {
+                case ">":
+                    result = lhsValue > rhsValue;
+                    break;
+                case ">=":
+                    result = lhsValue >= rhsValue;
+                    break;
+                case "<":
+                    result = lhsValue < rhsValue;
+                    break;
+                case "<=":
+                    result = lhsValue <= rhsValue;
+                    break;
+                case "==":
+                    result = lhsValue.equals(rhsValue);
+                    break;
+                case "!=":
+                    result = !lhsValue.equals(rhsValue);
+                    break;
+                case "&&":
+                    result = (lhsValue == 1) && (rhsValue == 1);
+                    break;
+                case "||":
+                    result = (lhsValue == 1) || (rhsValue == 1);
+                    break;
+            }
+        }
+        return result;
+    }
+
     private Integer constantOptimise() {
         Integer result = null;
         Integer rhsValue = null;
         Integer lhsValue = null;
         if(lhs instanceof BinOpAST) {
             lhsValue = ((BinOpAST) lhs).constantOptimise();
-        }
-        if(rhs instanceof BinOpAST) {
-            rhsValue = ((BinOpAST) rhs).constantOptimise();
-        }
-        if(lhs instanceof IntLiterAST) {
+        } else if(lhs instanceof IntLiterAST) {
             lhsValue = ((IntLiterAST) lhs).getValue();
         }
-        if(rhs instanceof IntLiterAST) {
+
+        if(rhs instanceof BinOpAST) {
+            rhsValue = ((BinOpAST) rhs).constantOptimise();
+        } else if(rhs instanceof IntLiterAST) {
             rhsValue = ((IntLiterAST) rhs).getValue();
         }
-        if(rhsValue != null && lhsValue != null) {
+
+        if(lhsValue != null && rhsValue != null) {
             switch(op) {
                 case "+":
-                    result = rhsValue + lhsValue;
+                    result = lhsValue + rhsValue;
                     break;
                 case "-":
-                    result = rhsValue - lhsValue;
+                    result = lhsValue - rhsValue;
                     break;
                 case "*":
-                    result = rhsValue * lhsValue;
+                    result = lhsValue * rhsValue;
+                    break;
+                case "/":
+                    result = lhsValue / rhsValue;
                     break;
                 case "%":
-                    result = rhsValue % lhsValue;
+                    result = lhsValue % rhsValue;
                     break;
             }
 

@@ -28,4 +28,8 @@ public class CharLitAST extends ExpressionAST {
             Utility.addMain(new MOV(Utility.popUnusedReg(), new ImmValue(0)));
         }
     }
+
+    public int getCodePoint() {
+        return charac.replace("\'", "").codePointAt(0);
+    }
 }
