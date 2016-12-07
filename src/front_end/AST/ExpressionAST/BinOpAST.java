@@ -7,6 +7,7 @@ import back_end.data_type.ImmValue;
 import back_end.data_type.register.PostIndex;
 import back_end.data_type.register.Register;
 import back_end.data_type.register.Shift;
+import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.Branch;
 import back_end.instruction.condition.AND;
 import back_end.instruction.condition.CMP;
@@ -79,8 +80,9 @@ public class BinOpAST extends ExpressionAST {
 
     @Override
     public void translate() {
+        //Extension: Trying evaluation
         if(returnType.equals("int")) {
-            Integer evaluable = constantOptimise();
+            Integer evaluable = constantOptimise(); //try evaluate & get result constant
             if(evaluable != null) {
                 String sign = evaluable < 0 ? "-" : "";
                 String value = evaluable.toString().replace("-", "");
@@ -88,8 +90,8 @@ public class BinOpAST extends ExpressionAST {
                 optimisedConst.translate();
                 return;
             }
-        } else { // return type is bool
-            Boolean evaluable = booleanOptimise();
+        } else { // return type must be a bool
+            Boolean evaluable = booleanOptimise(); //try evaluate & get boolean value
             if(evaluable != null) {
                 BoolliterAST optimisedBool = new BoolliterAST(ctx, evaluable.toString());
                 optimisedBool.translate();
@@ -144,6 +146,13 @@ public class BinOpAST extends ExpressionAST {
                     Utility.pushRegister(rhsResult);
                     CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("*")) {
+                    if(lhs instanceof IntLiterAST) {
+                        int shiftNumber = ((IntLiterAST) lhs).getValue();
+                        if(shiftNumber % 2 == 0) {
+                            CodeGen.main.add(new MOV(lhsResult, new PostIndex(rhsResult, Shift.ASR,
+                                    new ImmValue(shiftNumber / 2))));
+                        }
+                    }
                     CodeGen.main.add(new SMULL(lhsResult, rhsResult, lhsResult, rhsResult));
                     Utility.pushRegister(rhsResult);
                     //Mult involves shifting in CMP
