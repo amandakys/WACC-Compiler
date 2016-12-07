@@ -105,30 +105,13 @@ public class VarDeclAST extends StatementAST {
     @Override
     public void translate() {
         ProgramAST.nextAddress = 0;
-
-        if(rhs instanceof ArraylitAST) {
-            ARRAY varType = (ARRAY) identObj.getType();
-            int arrSize = ((ArraylitAST) rhs).getArraylits().size(); //varType.getElem_size
-            int array_size = arrSize*varType.getElementType().getSize() + identObj.getSize();
-            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(array_size)));
-        }
-
-        Register res = CodeGen.notUsedRegisters.peek();
+        Register res = rhs.getRegister();
 
         //do not malloc a space on the stack if the pair is null
         if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
-            type.translate();
             rhs.translate();
         } else {
             CodeGen.main.add(new LOAD(res, new ImmValue(0)));
-        }
-
-
-        if (rhs instanceof ArraylitAST) {
-            Register value = Utility.popUnusedReg();
-
-            CodeGen.main.add(new LOAD(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
-            CodeGen.main.add(new STORE(value, new PreIndex(res), identObj.getSize()));
         }
 
         //increment the next available address (regarding the next available register)
@@ -158,12 +141,9 @@ public class VarDeclAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        IGNode node = new IGNode(ident);
-        node.setFrom(index);
-        node.setTo(index);
-        InterferenceGraph.nodes.add(node);
+        StatementIRepresentation("var_dec");
 
-        type.IRepresentation();
+        rhs.setIGNode(IGNode);
         rhs.IRepresentation();
     }
 }

@@ -14,12 +14,11 @@ import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import main.CodeGen;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 
 public class PrintUtility {
     public static final int EXIT_CODE = -1;
-
-    public PrintUtility() {
-    }
 
     public static void addToEndFunctions(String s) {
         if (!CodeGen.endFunctions.contains(s)) {
@@ -85,7 +84,6 @@ public class PrintUtility {
                     p_free_array();
                     break;
             }
-            Utility.pushBackRegisters();
         }
     }
 
@@ -107,10 +105,12 @@ public class PrintUtility {
     }
 
     public void printString() {
+        Register register = InterferenceGraph.findRegister("p_print_string");
+
         Utility.addFunction(new LabelInstr("p_print_string"));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new LOAD(Utility.popParamReg(), new Address(Register.R0)));
-        Utility.addFunction(new ADD(Utility.popParamReg(), Register.R0, new ImmValue(4)));
+        Utility.addFunction(new LOAD(register, new Address(Register.R0)));
+        Utility.addFunction(new ADD(register, Register.R0, new ImmValue(4)));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(Utility.getStringPlaceholder())));
         printDefaults();
     }
@@ -118,7 +118,7 @@ public class PrintUtility {
     public void printInt() {
         Utility.addFunction(new LabelInstr("p_print_int"));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new MOV(Utility.popParamReg(), Register.R0));
+        Utility.addFunction(new MOV(InterferenceGraph.findRegister("p_print_int"), Register.R0));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(Utility.getIntPlaceholder())));
         printDefaults();
     }
@@ -126,7 +126,7 @@ public class PrintUtility {
     public void read(String type, String placeholder) {
         Utility.addFunction(new LabelInstr("p_read_" + type));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new MOV(Utility.popParamReg(), Register.R0));
+        Utility.addFunction(new MOV(InterferenceGraph.findRegister("p_read_" + type), Register.R0));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(placeholder)));
 
         Utility.addFunction(new ADD(Register.R0, Register.R0, new ImmValue(4)));
@@ -148,7 +148,7 @@ public class PrintUtility {
     public void printReference() {
         Utility.addFunction(new LabelInstr("p_print_reference"));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new MOV(Utility.popParamReg(), Register.R0));
+        Utility.addFunction(new MOV(InterferenceGraph.findRegister("p_print_reference"), Register.R0));
         CodeGen.functions.add(new LOAD(Register.R0, new LabelExpr(Utility.getReferencePlaceholder())));
         printDefaults();
     }
@@ -176,9 +176,10 @@ public class PrintUtility {
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
         CodeGen.functions.add(new LOAD("LT", Register.R0, new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsNegative))));
         CodeGen.functions.add(new Branch("LT", "p_throw_runtime_error"));
-        CodeGen.functions.add(new LOAD(Register.R1, new Address(Register.R1)));
+        Register register = InterferenceGraph.findRegister("p_throw_runtime_error");
+        CodeGen.functions.add(new LOAD(register, new Address(register)));
 
-        CodeGen.functions.add(new CMP(Register.R0, Register.R1));
+        CodeGen.functions.add(new CMP(Register.R0, register));
         CodeGen.functions.add(new LOAD("CS", Register.R0, new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsLarge))));
         CodeGen.functions.add(new Branch("CS", "p_throw_runtime_error"));
 
@@ -188,7 +189,7 @@ public class PrintUtility {
     public static void p_divide_by_zero() {
         CodeGen.functions.add(new LabelInstr("p_check_divide_by_zero"));
         CodeGen.functions.add(new PUSH(Register.LR));
-        CodeGen.functions.add(new CMP(Utility.popParamReg(), new ImmValue(0)));
+        CodeGen.functions.add(new CMP(InterferenceGraph.findRegister("p_check_divide_by_zero"), new ImmValue(0)));
         CodeGen.functions.add(new LOAD("EQ", Register.R0, new LabelExpr(getErrorMessage(Error.divideByZero))));
         CodeGen.functions.add(new Branch("LEQ", "p_throw_runtime_error"));
         CodeGen.functions.add(new POP(Register.PC));
@@ -236,13 +237,6 @@ public class PrintUtility {
                 return msg.substring(0, msg.length() - 2);
             }
         }
-
-//        for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
-//            if (CodeGen.toPushData.get(i).getValue().equals(error)) {
-//                String msg =  CodeGen.toPushData.get(i - 2).toString();
-//                return msg.substring(0, msg.length() - 2);
-//            }
-//        }
 
         return null;
     }

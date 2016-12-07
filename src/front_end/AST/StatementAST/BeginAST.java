@@ -35,6 +35,7 @@ public class BeginAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-
+        StatementIRepresentation("begin");
+        statement.IRepresentation();
     }
 }

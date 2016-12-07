@@ -23,7 +23,7 @@ public class PairliterAST extends ExpressionAST {
     @Override
     public void translate() {
         if(nullStr.equals("null")) {
-            CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(0)));
+            //CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(0)));
         }
     }
 

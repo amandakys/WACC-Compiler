@@ -81,10 +81,7 @@ public class BinOpAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        //Holds the reference to the registers going to hold lhs & rhs value
-        Register lhsResult = CodeGen.notUsedRegisters.peek();
         lhs.translate();
-        Register rhsResult = CodeGen.notUsedRegisters.peek();
 
         if ("+-*/%".contains(op)) { //op is arithmetic
             if (!(lhs instanceof BinOpAST)) {
@@ -92,19 +89,10 @@ public class BinOpAST extends ExpressionAST {
                     BinOpAST next = (BinOpAST) rhs;
                     next.longExpr = true; // because this is in a long expr
                     next.previousOp = op;
-                    if (previousReg == null) { //previousReg has not been set
-                        next.previousReg = lhsResult;
-                    } else { //keep the previousReg & pass it on
-                        next.previousReg = previousReg;
-                    }
                 }
                 if (!longExpr || (!(rhs instanceof BinOpAST) && !(previousOp.equals(op)))) {
                     //run if rhs is not BinOp or not belongs to a longExpr
                     rhs.translate();
-                } else {
-                    //longExpr case, this will use register from previous BinOp to continue calculating
-                    rhsResult = lhsResult;
-                    lhsResult = previousReg;
                 }
             } else {
                 //lhs has higher precedence
@@ -115,30 +103,28 @@ public class BinOpAST extends ExpressionAST {
             rhs.translate();
         }
 
+        Register lhsResult = lhs.getRegister();
+        Register rhsResult = rhs.getRegister();
+
         switch(op) {
             case "+":
             case "-":
             case "*":
                 if(op.equals("+")) {
                     CodeGen.main.add(new ADD(lhsResult, lhsResult, rhsResult));
-                    Utility.pushRegister(rhsResult);
                     CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("-")){
                     CodeGen.main.add(new SUB(lhsResult, lhsResult, rhsResult));
-                    Utility.pushRegister(rhsResult);
                     CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("*")) {
                     CodeGen.main.add(new SMULL(lhsResult, rhsResult, lhsResult, rhsResult));
-                    Utility.pushRegister(rhsResult);
                     //Mult involves shifting in CMP
                     CodeGen.main.add(new CMP(rhsResult, new PostIndex
                             (lhsResult, Shift.ASR, new ImmValue(SHIFT_VALUE))));
                     CodeGen.main.add(new Branch("LNE", "p_throw_overflow_error"));
                 }
-                Utility.pushRegister(rhsResult); // push back register which holds temporary rhs value
-                /*
-                Error messages & functions will only be added if they are not yet declared
-                 */
+
+                //Error messages & functions will only be added if they are not yet declared
                 if (!hasErrorOverflow) {
                     Utility.pushData(overflow);
                     PrintUtility.addToEndFunctions("p_integer_overflow");
@@ -153,17 +139,17 @@ public class BinOpAST extends ExpressionAST {
 
             case "/":
             case "%":
-                CodeGen.main.add(new MOV(Register.R0, lhsResult));
-                Register res = Utility.popParamReg();
-                CodeGen.main.add(new MOV(res, rhsResult));
-                CodeGen.main.add(new Branch("L", "p_check_divide_by_zero"));
-                if(op.equals("/")) {
-                    CodeGen.main.add(new Branch("L", "__aeabi_idiv"));
-                } else {
-                    CodeGen.main.add(new Branch("L", "__aeabi_idivmod"));
-                }
-                res = op.equals("%") ? res : Register.R0;
-                CodeGen.main.add(new MOV(lhsResult, res));
+                CodeGen.main.add(new MOV(getRegister(), lhsResult));
+
+//                CodeGen.main.add(new MOV(res, rhsResult));
+//                CodeGen.main.add(new Branch("L", "p_check_divide_by_zero"));
+//                if(op.equals("/")) {
+//                    CodeGen.main.add(new Branch("L", "__aeabi_idiv"));
+//                } else {
+//                    CodeGen.main.add(new Branch("L", "__aeabi_idivmod"));
+//                }
+//                res = op.equals("%") ? res : Register.R0;
+//                CodeGen.main.add(new MOV(lhsResult, res));
 
                 /*
                 Error messages & functions will only be added if they are not yet declared
@@ -184,52 +170,43 @@ public class BinOpAST extends ExpressionAST {
                 break;
             case ">":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                Utility.pushRegister(rhsResult);
                 CodeGen.main.add(new MOV("GT", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("LE", lhsResult, new ImmValue(0)));
                 break;
             case ">=":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                Utility.pushRegister(rhsResult);
                 CodeGen.main.add(new MOV("GE", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("LT", lhsResult, new ImmValue(0)));
                 break;
             case "<":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                Utility.pushRegister(rhsResult);
                 CodeGen.main.add(new MOV("LT", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("GE", lhsResult, new ImmValue(0)));
                 break;
             case "<=":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                Utility.pushRegister(rhsResult);
                 CodeGen.main.add(new MOV("LE", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("GT", lhsResult, new ImmValue(0)));
                 break;
             case "==":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                Utility.pushRegister(rhsResult);
                 CodeGen.main.add(new MOV("EQ", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("NE", lhsResult, new ImmValue(0)));
                 break;
             case "!=":
                 CodeGen.main.add(new CMP(lhsResult, rhsResult));
-                Utility.pushRegister(rhsResult);
                 CodeGen.main.add(new MOV("NE", lhsResult, new ImmValue(1)));
                 CodeGen.main.add(new MOV("EQ", lhsResult, new ImmValue(0)));
                 break;
             case "&&":
                 CodeGen.main.add(new AND(lhsResult, lhsResult, rhsResult));
-                Utility.pushRegister(rhsResult);
                 break;
             case "||":
                 CodeGen.main.add(new ORR(lhsResult, lhsResult, rhsResult));
-                Utility.pushRegister(rhsResult);
                 break;
         }
 
         if(longExpr) { //case when this BinOp is in a longExpr
-            Utility.pushRegister(rhsResult);
             if(rhs instanceof BinOpAST || previousOp.equals(op)) {
             rhs.translate();
             }

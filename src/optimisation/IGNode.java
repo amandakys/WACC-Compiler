@@ -1,5 +1,7 @@
 package optimisation;
 
+import back_end.data_type.register.Register;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,10 +9,9 @@ import java.util.List;
     The arbitrary node that represents the number of next register that will be used
  */
 public class IGNode {
-    //represent the name of the variable
-    private String identifier;
+    String identifier;
     //represent the designated register that will be used
-    private IGRegister register;
+    private Register register;
     //represent the range in which the object is alive
     private int from = 0, to = 0;
     private List<IGNode> neighbours = new ArrayList<>();
@@ -19,11 +20,11 @@ public class IGNode {
         this.identifier = identifier;
     }
 
-    public IGRegister getRegister() {
+    public Register getRegister() {
         return register;
     }
 
-    public void setRegister(IGRegister register) {
+    public void setRegister(Register register) {
        this.register = register;
     }
 
@@ -45,14 +46,15 @@ public class IGNode {
 
     public void addEdge(IGNode node) {
         neighbours.add(node);
-    }
-
-    public String getIdentifier() {
-        return identifier;
+        node.neighbours.add(this);
     }
 
     public List<IGNode> getNeighbours() {
         return neighbours;
+    }
+
+    public String getIdentifier() {
+        return identifier;
     }
 }
 

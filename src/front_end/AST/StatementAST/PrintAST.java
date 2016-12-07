@@ -15,6 +15,8 @@ import front_end.AST.ExpressionAST.*;
 import front_end.symbol_table.ARRAY;
 import front_end.symbol_table.TYPE;
 import main.CodeGen;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import static back_end.Utility.*;
@@ -36,9 +38,9 @@ public class PrintAST extends StatementAST {
     public void translate() {
         //Result of expression.translate() is stored CodeGen.notUsedRegisters.pop().Final result is stored
         // in R0 so peek at the register to move the value from CodeGen.notUsedRegisters.pop() to R0
-        Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
-        addMain(new MOV(Register.R0, result));
+
+        addMain(new MOV(Register.R0, expression.getRegister()));
 
         pushPlaceholder();
     }
@@ -51,7 +53,13 @@ public class PrintAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
+        StatementIRepresentation("print");
+        //p_read and read must be alive at the same time as they both come from ReadAST
+        IGNode p_print = new IGNode("p_print_" + findTypeName());
+        InterferenceGraph.nodes.add(p_print);
 
+        IGNode.addEdge(p_print);
+        expression.setIGNode(IGNode);
     }
 
     /*
@@ -61,20 +69,7 @@ public class PrintAST extends StatementAST {
      */
     private void pushPlaceholder() {
         String placeholder = "";
-        String typeName;
-        TYPE type = expression.getType();
-        if (type.getTypeName().equals("array")) {
-            if(((ARRAY) type).getElementType().getTypeName().equals("char")) {
-                typeName = "string";
-            } else {
-                typeName = "reference";
-            }
-        } else if(type.getTypeName().equals("pair")) {
-            typeName = "reference";
-        } else {
-            typeName = type.getTypeName();
-        }
-
+        String typeName = findTypeName();
         String functionName = "p_print_" + typeName;
 
         switch (typeName) {
@@ -110,5 +105,28 @@ public class PrintAST extends StatementAST {
         }
 
             PrintUtility.addToEndFunctions(functionName);
+    }
+
+    private String findTypeName() {
+        String typeName;
+        TYPE type = expression.getType();
+
+        switch (type.getTypeName()) {
+            case "array":
+                if (((ARRAY) type).getElementType().getTypeName().equals("char")) {
+                    typeName = "string";
+                } else {
+                    typeName = "reference";
+                }
+                break;
+            case "pair":
+                typeName = "reference";
+                break;
+            default:
+                typeName = type.getTypeName();
+                break;
+        }
+
+        return typeName;
     }
 }

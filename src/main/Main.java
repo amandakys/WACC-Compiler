@@ -3,6 +3,7 @@ package main;
 import antlr.BasicLexer;
 import antlr.BasicParser;
 import front_end.AST.Node;
+import front_end.AST.ProgramAST;
 import main.error_handler.SyntaxVisitor;
 import optimisation.GraphColour;
 import optimisation.InterferenceGraph;
@@ -52,6 +53,7 @@ public class Main {
         program.IRepresentation();
         InterferenceGraph.checkLiveness();
         GraphColour.colouringGraph();
+        //program.setRegister();
 
         //code generation
         CodeGen codeGen = new CodeGen();

@@ -10,6 +10,7 @@ import front_end.AST.StatementAST.StatementAST;
 import front_end.symbol_table.FUNCTION;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.IGNode;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class AssignmentAST extends StatementAST {
@@ -35,20 +36,16 @@ public class AssignmentAST extends StatementAST {
 
     @Override
     public void translate() {
-
-        //get the top of the unsedRegisters stack
-        Register result = CodeGen.notUsedRegisters.peek();
         Node lhsChild = lhs.getChild();
 
         //translate righthandside
         rhs.translate();
 
         if(lhsChild != null) { //if lhs is not an Ident
-            Register res = CodeGen.notUsedRegisters.peek();
             lhsChild.translate();
 
             //store the RHS address into the top of the Unused stack
-            CodeGen.main.add(new STORE(result, new Address(res), rhs.getIdentObj().getSize()));
+            CodeGen.main.add(new STORE(rhs.getRegister(), new Address(lhsChild.getRegister()), rhs.getIdentObj().getSize()));
         } else {//lhs is an Ident
 
             //Store the RHS into the adress of the ident on the memory address
@@ -60,7 +57,7 @@ public class AssignmentAST extends StatementAST {
             } else {
                 typeSize = rhs.getIdentObj().getSize();
             }
-            CodeGen.main.add(new STORE(result, res, typeSize));
+            CodeGen.main.add(new STORE(rhs.getRegister(), res, typeSize));
         }
 
         ProgramAST.nextAddress += rhs.getIdentObj().getSize();
@@ -75,6 +72,8 @@ public class AssignmentAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-
+        StatementIRepresentation("assignment");
+        lhs.IRepresentation();
+        rhs.setIGNode(IGNode);
     }
 }

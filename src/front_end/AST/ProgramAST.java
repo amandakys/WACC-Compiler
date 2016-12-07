@@ -12,6 +12,8 @@ import front_end.AST.FunctionDecl.FunctionDeclAST;
 import front_end.AST.StatementAST.StatementAST;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
@@ -49,7 +51,7 @@ public class ProgramAST extends Node {
 
         newScope(statement);
 
-        Utility.addMain(new LOAD(Register.R0, new ImmValue(0)));
+        Utility.addMain(new LOAD(getRegister(), new ImmValue(0)));
         Utility.addMain(new POP(Register.PC));
         Utility.addMain(new Directive("ltorg"));
 
@@ -80,6 +82,7 @@ public class ProgramAST extends Node {
         }
 
         statement.IRepresentation();
+        IGNode = statement.IGNode;
     }
 
     public static void newScope(StatementAST statement) {

@@ -80,39 +80,39 @@ public class CallAST extends AssignrhsAST{
         int argsSize = 0;// initialise the sum size of all arguments to 0
 
         //translate one argument at a time, STORE them into the correct stack position
-        for(int i= arglist.size()-1; i >= 0; i--) {
-            ExpressionAST arg = arglist.getExpression(i);
-            int argSize = arg.getType().getSize();
-            argsSize += argSize;
-
-            arg.translate();
-
-            PreIndex stackShift = new PreIndex(Register.SP, new ImmValue
-                    (-argSize), true);
-            if(i == arglist.size()-1) {
-                Utility.addJumpSP(argSize+Utility.getJumpSP());
-            } else {
-                Utility.plusJumpSP(argSize);
-            }
-
-            Register freeToUse = CodeGen.toPushUnusedReg.pop();
-            addMain(new STORE(freeToUse, stackShift, argSize));
-            Utility.pushRegister(freeToUse);
-        }
-
-        Utility.resetJumpSP();
-        ImmValue argsSizeValue = new ImmValue(argsSize);
-
-        //create new branch for function
-        addMain(new Branch("L", "f_"+funcname));
-
-        //if there are parameters required for the function then return the stack pointer to the correct position
-        if (arglist.size() != 0) {
-            addMain((new ADD(Register.SP, Register.SP, argsSizeValue)));
-        }
-
-        //Move the result of the function from R0 to the top unused Register
-        addMain(new MOV(CodeGen.notUsedRegisters.peek(),Register.R0));
+//        for(int i= arglist.size()-1; i >= 0; i--) {
+//            ExpressionAST arg = arglist.getExpression(i);
+//            int argSize = arg.getType().getSize();
+//            argsSize += argSize;
+//
+//            arg.translate();
+//
+//            PreIndex stackShift = new PreIndex(Register.SP, new ImmValue
+//                    (-argSize), true);
+//            if(i == arglist.size()-1) {
+//                Utility.addJumpSP(argSize+Utility.getJumpSP());
+//            } else {
+//                Utility.plusJumpSP(argSize);
+//            }
+//
+//            Register freeToUse = CodeGen.toPushUnusedReg.pop();
+//            addMain(new STORE(freeToUse, stackShift, argSize));
+//            Utility.pushRegister(freeToUse);
+//        }
+//
+//        Utility.resetJumpSP();
+//        ImmValue argsSizeValue = new ImmValue(argsSize);
+//
+//        //create new branch for function
+//        addMain(new Branch("L", "f_"+funcname));
+//
+//        //if there are parameters required for the function then return the stack pointer to the correct position
+//        if (arglist.size() != 0) {
+//            addMain((new ADD(Register.SP, Register.SP, argsSizeValue)));
+//        }
+//
+//        //Move the result of the function from R0 to the top unused Register
+//        addMain(new MOV(CodeGen.notUsedRegisters.peek(),Register.R0));
 
     }
 

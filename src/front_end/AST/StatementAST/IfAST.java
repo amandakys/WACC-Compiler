@@ -51,11 +51,9 @@ public class IfAST extends StatementAST {
 
     @Override
     public void translate() {
-        Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
         //jump to label if false
-        CodeGen.main.add(new CMP(result, new ImmValue(0)));
-        Utility.pushRegister(result);
+        CodeGen.main.add(new CMP(expression.getRegister(), new ImmValue(0)));
         String l0 = labelCount.toString();
 
         CodeGen.main.add(new Branch("EQ", "L" + l0));
@@ -66,7 +64,6 @@ public class IfAST extends StatementAST {
         } else {
             then.translate();
         }
-        Utility.pushBackRegisters();
 
         String l1 = labelCount.toString();
         labelCount++;
@@ -79,7 +76,6 @@ public class IfAST extends StatementAST {
         } else {
             elseSt.translate();
         }
-        Utility.pushBackRegisters();
 
         CodeGen.main.add(new LabelInstr("L" + l1));
 
@@ -98,7 +94,9 @@ public class IfAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-
+        expression.setIGNode(IGNode);
+        then.IRepresentation();
+        elseSt.IRepresentation();
     }
 
     public static void newScope(SymbolTable ST, StatementAST statement) {

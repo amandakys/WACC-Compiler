@@ -26,7 +26,6 @@ public class SequenceAST extends StatementAST {
     public void translate() {
         for(StatementAST stat : statements) {
             stat.translate();
-            Utility.pushBackParam();
         }
     }
 

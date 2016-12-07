@@ -1,8 +1,11 @@
 package front_end.AST;
 
+import back_end.data_type.register.Register;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.TYPE;
 import main.Visitor;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public abstract class Node {
@@ -16,6 +19,7 @@ public abstract class Node {
     protected int size;
     //index relative to the curent tree
     protected int index;
+    protected IGNode IGNode;
 
     public Node(ParserRuleContext ctx) {
         this.ctx = ctx;
@@ -28,6 +32,7 @@ public abstract class Node {
         }
     }
 
+    //use to ensure the node has no semantic a
     protected abstract void check();
 
     public IDENTIFIER getIdentObj() {
@@ -63,6 +68,7 @@ public abstract class Node {
         }
     }
 
+    //translate node to target language - aiding CodeGen
     public abstract void translate();
 
     public abstract void weight();
@@ -76,4 +82,12 @@ public abstract class Node {
     }
 
     public abstract void IRepresentation();
+
+    public Register getRegister() {
+        return IGNode.getRegister();
+    }
+
+    public void setIGNode(optimisation.IGNode IGNode) {
+        this.IGNode = IGNode;
+    }
 }

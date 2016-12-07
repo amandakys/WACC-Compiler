@@ -1,5 +1,6 @@
 package optimisation;
 
+import back_end.data_type.register.Register;
 import front_end.symbol_table.IDENTIFIER;
 
 import java.util.ArrayList;
@@ -18,23 +19,19 @@ public class InterferenceGraph {
 
                 //when two IGNodes have overlap live span
                 if(first.getFrom() <= next.getTo() && next.getFrom() <= first.getTo()) {
-                    addEdge(first, next);
+                    first.addEdge(next);
                 }
             }
         }
     }
 
-    public static IGNode findIGNode(String name) {
+    public static Register findRegister(String name) {
         for(IGNode n : nodes) {
             if(n.getIdentifier().equals(name)) {
-                return n;
+                return n.getRegister();
             }
         }
-        return null;
-    }
 
-    private static void addEdge(IGNode n, IGNode m) {
-        n.addEdge(m);
-        m.addEdge(n);
+        return null;
     }
 }

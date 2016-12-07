@@ -12,6 +12,7 @@ import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.symbol_table.ARRAY;
 import main.CodeGen;
+import optimisation.IGNode;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.PAIR;
 
@@ -34,9 +35,7 @@ public class FreeAST extends StatementAST {
 
     @Override
     public void translate() {
-        Register value = Utility.popUnusedReg();
-        CodeGen.main.add(new LOAD(value, new Address(Register.SP)));
-        CodeGen.main.add(new MOV(Register.R0, value));
+        CodeGen.main.add(new LOAD(getRegister(), new Address(Register.SP)));
 
         PrintUtility.throwRuntimeError();
         Utility.pushData(Error.nullReference);
@@ -58,6 +57,7 @@ public class FreeAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-
+        StatementIRepresentation("free");
+        expression.setIGNode(IGNode);
     }
 }

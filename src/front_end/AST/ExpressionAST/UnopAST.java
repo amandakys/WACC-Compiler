@@ -39,41 +39,41 @@ public class UnopAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        //Get reference to the Register holding value of expression translated
-        Register op = CodeGen.notUsedRegisters.peek();
-        expression.translate();
-
-        switch (unop) {
-            case "!":
-                //Using Exclusive Or with Immvalue 1
-                CodeGen.main.add(new EOR(op, op, new ImmValue(1)));
-                break;
-            case "-":
-                CodeGen.main.add(new RSBS(op, op));
-                CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
-                 /*
-                Error messages & functions will only be added if they are not yet declared
-                 */
-                if(!BinOpAST.hasErrorOverflow) {
-                    Utility.pushData(overflow);
-                    PrintUtility.addToEndFunctions("p_integer_overflow");
-                    if(!BinOpAST.hasErrorDivByZero) {
-                        PrintUtility.throwRuntimeError();
-                    }
-                    BinOpAST.hasErrorOverflow = true;
-                }
-                break;
-            case "len":
-                //TODO: you can't put a register into load without popping it off the unusedRegs list
-                CodeGen.main.add(new LOAD(op, new Address(op)));
-                break;
-            case "ord":
-                //Do nothing
-                break;
-            case "chr":
-                //Do nothing
-                break;
-        }
+//        //Get reference to the Register holding value of expression translated
+//        Register op = CodeGen.notUsedRegisters.peek();
+//        expression.translate();
+//
+//        switch (unop) {
+//            case "!":
+//                //Using Exclusive Or with Immvalue 1
+//                CodeGen.main.add(new EOR(op, op, new ImmValue(1)));
+//                break;
+//            case "-":
+//                CodeGen.main.add(new RSBS(op, op));
+//                CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
+//                 /*
+//                Error messages & functions will only be added if they are not yet declared
+//                 */
+//                if(!BinOpAST.hasErrorOverflow) {
+//                    Utility.pushData(overflow);
+//                    PrintUtility.addToEndFunctions("p_integer_overflow");
+//                    if(!BinOpAST.hasErrorDivByZero) {
+//                        PrintUtility.throwRuntimeError();
+//                    }
+//                    BinOpAST.hasErrorOverflow = true;
+//                }
+//                break;
+//            case "len":
+//                //TODO: you can't put a register into load without popping it off the unusedRegs list
+//                CodeGen.main.add(new LOAD(op, new Address(op)));
+//                break;
+//            case "ord":
+//                //Do nothing
+//                break;
+//            case "chr":
+//                //Do nothing
+//                break;
+//        }
 
     }
 

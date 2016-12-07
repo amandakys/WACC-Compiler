@@ -16,9 +16,9 @@ import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class WhileAST extends StatementAST {
-    ExpressionAST expression;
-    StatementAST statement;
-    SymbolTable ST;
+    private ExpressionAST expression;
+    private StatementAST statement;
+    private SymbolTable ST;
 
     public WhileAST(ParserRuleContext ctx, ExpressionAST expression, StatementAST statement, SymbolTable ST) {
         super(ctx);
@@ -50,25 +50,19 @@ public class WhileAST extends StatementAST {
         String whileBodyLabel = labelCount.toString();
         labelCount++;
         CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
-        Register result = CodeGen.notUsedRegisters.peek();
-        //Visitor.ST = ST;
+
         if (ST.findSize() != 0) {
             newScope(statement);
         } else {
             statement.translate();
         }
-        Utility.pushBackRegisters();
-        //Visitor.ST = Visitor.ST.getEncSymbolTable();
-        Utility.pushRegister(result);
+
         CodeGen.main.add(new LabelInstr("L" + conditionLabel));
 
-        result = CodeGen.notUsedRegisters.peek();
         expression.translate();
-        Utility.pushBackRegisters();
 
-        CodeGen.main.add(new CMP(result, new ImmValue(1)));
+        CodeGen.main.add(new CMP(expression.getRegister(), new ImmValue(1)));
 
-        Utility.pushRegister(result);
         CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
     }
 
@@ -83,7 +77,9 @@ public class WhileAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-
+        StatementIRepresentation("while");
+        expression.setIGNode(IGNode);
+        statement.IRepresentation();
     }
 
     private void newScope(StatementAST statement) {

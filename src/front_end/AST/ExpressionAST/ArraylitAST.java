@@ -5,13 +5,14 @@ import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
-import back_end.instruction.data_manipulation.MOV;
+import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.AssignrhsAST;
-import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import main.CodeGen;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.ARRAY;
 
@@ -20,6 +21,9 @@ import java.util.List;
 public class ArraylitAST extends AssignrhsAST {
     //Array list has stores a list of expression
     private List<ExpressionAST> arraylits;
+    //IGNode designated the register that stores the size of an array
+    //elem represents the register that is used to store array's elem's values
+    private IGNode elem;
 
     public ArraylitAST(ParserRuleContext ctx, List<ExpressionAST> arraylits) {
         super(ctx);
@@ -49,20 +53,29 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void translate() {
+        ARRAY varType = (ARRAY) identObj.getType();
+        int arrSize = arraylits.size();
+        //finding total array_size
+        int array_size = arrSize*varType.getElementType().getSize() + identObj.getSize();
+        CodeGen.main.add(new LOAD(getRegister(), new ImmValue(array_size)));
+
         CodeGen.main.add(new Branch("L", "malloc"));
-        CodeGen.main.add(new MOV(Utility.popUnusedReg(), Register.R0));
+
         //identObj.getSize() returns size of array
         ProgramAST.nextAddress += identObj.getSize();
+
+        Register res = arraylits.get(0).getRegister();
         //Transverse through the list to translate each expr
         for (ExpressionAST a: arraylits) {
-            Register res = CodeGen.notUsedRegisters.peek();
-
             a.translate();
 
-            Utility.addMain(new STORE(res, new PreIndex(Utility.getBefore(res),
+            Utility.addMain(new STORE(res, new PreIndex(getRegister(),
                     new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
             ProgramAST.nextAddress += a.getIdentObj().getType().getSize();
         }
+
+        CodeGen.main.add(new LOAD(res, new ImmValue(getArraylits().size())));
+        CodeGen.main.add(new STORE(res, new PreIndex(getRegister()), identObj.getSize()));
     }
 
     @Override
@@ -75,7 +88,14 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void IRepresentation() {
+        elem = new IGNode("arraylit_elem_value");
+        elem.addEdge(IGNode);
 
+        for(ExpressionAST e : arraylits) {
+            e.setIGNode(elem);
+        }
+
+        InterferenceGraph.nodes.add(elem);
     }
 
     public List<ExpressionAST> getArraylits() {

@@ -153,8 +153,6 @@ public class FunctionDeclAST extends Node {
         //CodeGen.main.add(new POP(Register.PC));
         CodeGen.main.add (new Directive("ltorg"));
 
-        //restore all the used registers before jumping out of the function scope
-        Utility.pushBackRegisters();
         //restore the symbol table back to the outer one
         Visitor.ST = Visitor.ST.getEncSymbolTable();
     }

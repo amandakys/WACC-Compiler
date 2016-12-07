@@ -1,29 +1,21 @@
 package front_end.AST.StatementAST;
 
 import back_end.PrintUtility;
-import back_end.Utility;
 import back_end.data_type.Address;
-import back_end.data_type.ImmValue;
-import back_end.data_type.LabelExpr;
-import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
-import back_end.instruction.LabelInstr;
-import back_end.instruction.POP;
-import back_end.instruction.PUSH;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.AssignmentAST.ArrayelemAST;
 import front_end.AST.AssignmentAST.AssignlhsAST;
 import front_end.AST.AssignmentAST.PairelemAST;
-import front_end.AST.ExpressionAST.IdentAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
-import front_end.symbol_table.PAIR;
 import front_end.symbol_table.TYPE;
-import main.CodeGen;
 import main.Visitor;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import static back_end.Utility.*;
@@ -45,7 +37,7 @@ public class ReadAST extends StatementAST {
         TYPE charType = Visitor.ST.lookUpAll("char").getType();
 
         if (!t.equals(intType) && !t.equals(charType)){
-            //error
+            //error as it can only read a char or an int
             error("read only takes int or char types");
         }
 
@@ -55,7 +47,6 @@ public class ReadAST extends StatementAST {
 
     @Override
     public void translate() {
-        Register r = CodeGen.notUsedRegisters.peek();
         Node exprChild = expression.getChild();
 
         if(exprChild != null) {
@@ -65,12 +56,11 @@ public class ReadAST extends StatementAST {
         ProgramAST.nextAddress -= identObj.getSize();
 
         if(exprChild instanceof PairelemAST || exprChild instanceof ArrayelemAST) {
-            addMain(new LOAD(r, new Address(r)));
+            addMain(new LOAD(getRegister(), new Address(getRegister())));
         } else {
-            addMain(new ADD(r, Register.SP, Visitor.ST.getAddress(expression.getIdent()).getShiftVal()));
+            addMain(new ADD(getRegister(), Register.SP, Visitor.ST.getAddress(expression.getIdent()).getShiftVal()));
         }
 
-        addMain(new MOV(Register.R0, r));
         String functionName = "p_read_" + expression.getType().getTypeName();
         addMain(new Branch("L", functionName));
 
@@ -93,6 +83,12 @@ public class ReadAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
+        StatementIRepresentation("read");
+        //p_read and read must be alive at the same time as they both come from ReadAST
+        IGNode p_read = new IGNode("p_read_" + expression.getType().getTypeName());
+        InterferenceGraph.nodes.add(p_read);
 
+        IGNode.addEdge(p_read);
+        expression.setIGNode(IGNode);
     }
 }

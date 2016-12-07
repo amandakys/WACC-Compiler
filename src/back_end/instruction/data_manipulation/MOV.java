@@ -4,25 +4,17 @@ import back_end.Utility;
 import back_end.data_type.Operand;
 import back_end.data_type.register.Register;
 import back_end.instruction.Instruction;
+import com.sun.org.apache.regexp.internal.RE;
 import main.CodeGen;
 
 public class MOV implements Instruction {
     private String condition;
     private Register dst;
     private Operand rhs;
+    private boolean isRedundant = false;
 
     public MOV(Register dst, Operand rhs) {
-        this.dst = dst;
-        this.rhs = rhs;
-        this.condition = "";
-
-        if(rhs instanceof Register && !dst.equals(rhs) && rhs != Register.R0) {
-            Utility.pushRegister((Register) rhs);
-
-        }
-        CodeGen.notUsedRegisters.remove(dst);
-
-
+        this("", dst, rhs);
     }
 
     public MOV(String condition, Register dst, Operand rhs) {
@@ -30,16 +22,16 @@ public class MOV implements Instruction {
         this.rhs = rhs;
         this.dst = dst;
 
-        if(rhs instanceof Register && !dst.equals(rhs) && rhs != Register.R0) {
-            Utility.pushRegister((Register) rhs);
-
+        if(rhs instanceof Register) {
+            if(((Register) rhs).getIndex() == dst.getIndex()) {
+                isRedundant = true;
+            }
         }
-        //CodeGen.notUsedRegisters.remove(dst);
     }
 
     @Override
     public String toString() {
-        return "\tMOV" + condition + " " + dst + ", " + rhs;
+        return isRedundant ? "" : "\tMOV" + condition + " " + dst + ", " + rhs;
     }
 
     @Override

@@ -21,9 +21,7 @@ public class SUB implements Instruction {
         this.rhs = rhs;
         if (rhs instanceof Register) {
             sFlag = "S";
-            Utility.pushRegister((Register) rhs);
         }
-        //CodeGen.notUsedRegisters.remove(dst);
     }
 
     @Override

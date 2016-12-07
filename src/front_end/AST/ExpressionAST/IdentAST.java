@@ -36,16 +36,14 @@ public class IdentAST extends ExpressionAST {
 
     @Override
     public void translate() {
-
-        Register result = Utility.popUnusedReg();
         String typeName = identObj.getType().getTypeName();
 
         if(typeName.equals("bool") || typeName.equals("char")) {
             //LDRSB only for signed byte ie bool & char
-            CodeGen.main.add(new LOAD("SB", result, Visitor.ST.getAddress(ident)));
+            CodeGen.main.add(new LOAD("SB", getRegister(), Visitor.ST.getAddress(ident)));
         } else {
             //normal LDR
-            CodeGen.main.add(new LOAD(result, Visitor.ST.getAddress(ident)));
+            CodeGen.main.add(new LOAD(getRegister(), Visitor.ST.getAddress(ident)));
         }
     }
 
@@ -56,10 +54,8 @@ public class IdentAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        IGNode node = InterferenceGraph.findIGNode(ident);
-
-        if(node != null && node.getTo() < index) {
-            node.setTo(index - 1);
+        if(IGNode != null && IGNode.getTo() < index) {
+            IGNode.setTo(index - 1);
         }
     }
 
