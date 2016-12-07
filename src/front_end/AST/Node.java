@@ -1,5 +1,6 @@
 package front_end.AST;
 
+import back_end.PrintUtility;
 import back_end.data_type.register.Register;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.TYPE;
@@ -87,7 +88,40 @@ public abstract class Node {
         return IGNode.getRegister();
     }
 
+    public optimisation.IGNode getIGNode() {
+        return IGNode;
+    }
+
     public void setIGNode(optimisation.IGNode IGNode) {
         this.IGNode = IGNode;
+    }
+
+    public void defaultIRep(String name) {
+        IGNode = new IGNode(name);
+        IGNode.setFrom(index);
+        IGNode.setTo(index);
+        Visitor.ST.add(IGNode);
+    }
+
+    public void addPrintFunc(String name) {
+        if(Visitor.ST.findIGNode(name) == null) {
+            IGNode p_func = new IGNode(name);
+            IGNode.addEdge(p_func);
+            Visitor.ST.add(p_func);
+        }
+    }
+
+    public void print_stringIR() {
+        if(Visitor.ST.findIGNode("print_string_mov") == null) {
+            IGNode string_mov = new IGNode("print_string_mov");
+            IGNode string_load = new IGNode("print_string_ldr");
+
+            string_mov.addEdge(string_load);
+            IGNode.addEdge(string_load);
+            IGNode.addEdge(string_mov);
+
+            Visitor.ST.add(string_load);
+            Visitor.ST.add(string_mov);
+        }
     }
 }

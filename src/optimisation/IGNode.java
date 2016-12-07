@@ -9,7 +9,9 @@ import java.util.List;
     The arbitrary node that represents the number of next register that will be used
  */
 public class IGNode {
-    String identifier;
+    private String identifier;
+    //isIdent is false when IGNode is an expression
+    private boolean isIdent = false;
     //represent the designated register that will be used
     private Register register;
     //represent the range in which the object is alive
@@ -55,6 +57,14 @@ public class IGNode {
 
     public String getIdentifier() {
         return identifier;
+    }
+
+    public void setIdent() {
+        isIdent = true;
+    }
+
+    public boolean isIdent() {
+        return isIdent;
     }
 }
 

@@ -1,7 +1,6 @@
 package front_end.AST.AssignmentAST;
 
 import back_end.data_type.Address;
-import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.Node;
@@ -10,7 +9,6 @@ import front_end.AST.StatementAST.StatementAST;
 import front_end.symbol_table.FUNCTION;
 import main.CodeGen;
 import main.Visitor;
-import optimisation.IGNode;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class AssignmentAST extends StatementAST {
@@ -72,8 +70,8 @@ public class AssignmentAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        StatementIRepresentation("assignment");
         lhs.IRepresentation();
-        rhs.setIGNode(IGNode);
+        rhs.IRepresentation();
+        IGNode = lhs.getIGNode();
     }
 }

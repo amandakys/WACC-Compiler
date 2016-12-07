@@ -16,6 +16,7 @@ import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.ARRAY;
 import front_end.symbol_table.IDENTIFIER;
@@ -61,56 +62,53 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void translate() {
-//        // take the first unused register in the stack
-//        Register first = Utility.popUnusedReg();
-//
-//        //take the first param register in the stack
-//        Register paramReg = Utility.popParamReg();
-//
-//        //find the the variable's address from its identifier from the current symbol table
-//        CodeGen.main.add(new ADD(first, Register.SP, Visitor.ST.getAddress(ident).getShiftVal()));
-//
-//        for(Node n : expressions) {
-//            Register reg = CodeGen.notUsedRegisters.peek();
-//
-//            //load the first value of an array to a register
-//            n.translate();
-//
-//            //if two errors have not been printed yet
-//            if(!hasError) {
-//                Utility.pushData(Error.arrayOutOfBoundsNegative);
-//                Utility.pushData(Error.arrayOutOfBoundsLarge);
-//
-//                //add the print function to endFunctions to make sure it will be defined
-//                PrintUtility.addToEndFunctions("p_check_array_bounds");
-//                //throw runtime error
-//                PrintUtility.throwRuntimeError();
-//                hasError = true;
-//            }
-//
-//            CodeGen.main.add(new LOAD(first, new Address(first)));
-//            CodeGen.main.add(new MOV(Register.R0, reg));
-//            CodeGen.main.add(new MOV(paramReg, first));
-//            CodeGen.main.add(new Branch("L", "p_check_array_bounds"));
-//
-//            //incrementing the next address with the object's size
-//            ProgramAST.nextAddress += identObj.getSize();
-//
-//            CodeGen.main.add(new ADD(first, first, new ImmValue(ARRAY_SIZE)));
-//
-//            //shift the register if it is not a char
-//            if(!identObj.getType().getTypeName().equals("char")) {
-//                ShiftedReg size = new PostIndex(first, reg, Shift.LSL, new ImmValue(2));
-//                CodeGen.main.add(new ADD(first, size));
-//            } else {
-//                CodeGen.main.add(new ADD(first, first, reg));
-//            }
-//        }
-//
-//        //when array elem is on the rhs of print, read,...
-//        if(ctx.getParent() instanceof BasicParser.ExprNoBinOpContext) {
-//            CodeGen.main.add(new LOAD(first, new PreIndex(first)));
-//        }
+        // take the first unused register in the stack
+        Register first = getRegister();
+
+        //find the the variable's address from its identifier from the current symbol table
+        CodeGen.main.add(new ADD(first, Register.SP, Visitor.ST.getAddress(ident).getShiftVal()));
+
+        for(Node n : expressions) {
+            //load the first value of an array to a register
+            n.translate();
+
+            //get the register that stores the value of n
+            Register reg = n.getRegister();
+
+            //if two errors have not been printed yet
+            if(!hasError) {
+                Utility.pushData(Error.arrayOutOfBoundsNegative);
+                Utility.pushData(Error.arrayOutOfBoundsLarge);
+
+                //add the print function to endFunctions to make sure it will be defined
+                PrintUtility.addToEndFunctions("p_check_array_bounds", reg);
+                //throw runtime error
+                PrintUtility.throwRuntimeError();
+                hasError = true;
+            }
+
+            CodeGen.main.add(new LOAD(first, new Address(first)));
+            CodeGen.main.add(new MOV(Register.R0, reg));
+            CodeGen.main.add(new Branch("L", "p_check_array_bounds"));
+
+            //incrementing the next address with the object's size
+            ProgramAST.nextAddress += identObj.getSize();
+
+            CodeGen.main.add(new ADD(first, first, new ImmValue(ARRAY_SIZE)));
+
+            //shift the register if it is not a char
+            if(!identObj.getType().getTypeName().equals("char")) {
+                ShiftedReg size = new PostIndex(first, reg, Shift.LSL, new ImmValue(2));
+                CodeGen.main.add(new ADD(first, size));
+            } else {
+                CodeGen.main.add(new ADD(first, first, reg));
+            }
+        }
+
+        //when array elem is on the rhs of print, read,...
+        if(ctx.getParent() instanceof BasicParser.ExprNoBinOpContext) {
+            CodeGen.main.add(new LOAD(first, new PreIndex(first)));
+        }
     }
 
     @Override
@@ -120,6 +118,10 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
+        IGNode = Visitor.ST.findIGNode(ident);
 
+        for(Node e : expressions) {
+            e.IRepresentation();
+        }
     }
 }

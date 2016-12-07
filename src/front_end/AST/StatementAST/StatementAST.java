@@ -11,11 +11,4 @@ public abstract class StatementAST extends Node {
     public StatementAST(ParserRuleContext ctx) {
         super(ctx);
     }
-
-    public void StatementIRepresentation(String name) {
-        IGNode = new IGNode(name);
-        IGNode.setFrom(index);
-        IGNode.setTo(index);
-        InterferenceGraph.nodes.add(IGNode);
-    }
 }

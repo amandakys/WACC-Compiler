@@ -1,20 +1,14 @@
 package front_end.AST.StatementAST;
 
 import back_end.PrintUtility;
-import back_end.Utility;
-import back_end.data_type.*;
 import back_end.data_type.register.Register;
 import back_end.instruction.*;
-import back_end.instruction.condition.CMP;
-import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
-import back_end.instruction.load_store.LOAD;
-import front_end.AST.AssignmentAST.ArrayelemAST;
-import front_end.AST.AssignmentAST.PairelemAST;
 import front_end.AST.ExpressionAST.*;
 import front_end.symbol_table.ARRAY;
+import front_end.symbol_table.PAIR;
+import front_end.symbol_table.STRING;
 import front_end.symbol_table.TYPE;
-import main.CodeGen;
 import optimisation.IGNode;
 import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -36,8 +30,6 @@ public class PrintAST extends StatementAST {
 
     @Override
     public void translate() {
-        //Result of expression.translate() is stored CodeGen.notUsedRegisters.pop().Final result is stored
-        // in R0 so peek at the register to move the value from CodeGen.notUsedRegisters.pop() to R0
         expression.translate();
 
         addMain(new MOV(Register.R0, expression.getRegister()));
@@ -53,13 +45,14 @@ public class PrintAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        StatementIRepresentation("print");
-        //p_read and read must be alive at the same time as they both come from ReadAST
-        IGNode p_print = new IGNode("p_print_" + findTypeName());
-        InterferenceGraph.nodes.add(p_print);
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
 
-        IGNode.addEdge(p_print);
-        expression.setIGNode(IGNode);
+        if(expression.getType() instanceof STRING) {
+            print_stringIR();
+        } else {
+            addPrintFunc("p_print_" + findTypeName());
+        }
     }
 
     /*
@@ -104,7 +97,7 @@ public class PrintAST extends StatementAST {
             }
         }
 
-            PrintUtility.addToEndFunctions(functionName);
+            PrintUtility.addToEndFunctions(functionName, getRegister());
     }
 
     private String findTypeName() {

@@ -52,6 +52,12 @@ public class ParamlistAST extends Node {
 
     @Override
     public void IRepresentation() {
+        for(ParamAST p : parameters) {
+            p.IRepresentation();
 
+            if(IGNode == null) {
+                IGNode = p.getIGNode();
+            }
+        }
     }
 }

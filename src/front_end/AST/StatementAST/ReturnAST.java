@@ -27,13 +27,14 @@ public class ReturnAST extends StatementAST {
 
     @Override
     public void translate() {
-//        expression.translate();
-//        int addSize = Utility.getJumpSP();
-//        CodeGen.main.add(new MOV(Register.R0, result));
-//        if (addSize!= 0) {
-//            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(addSize)));
-//        }
-//        CodeGen.main.add(new POP(Register.PC));
+        expression.translate();
+        int addSize = Utility.getJumpSP();
+
+        CodeGen.main.add(new MOV(Register.R0, getRegister()));
+        if (addSize!= 0) {
+            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(addSize)));
+        }
+        CodeGen.main.add(new POP(Register.PC));
     }
 
     @Override
@@ -44,7 +45,7 @@ public class ReturnAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        StatementIRepresentation("return");
-        expression.setIGNode(IGNode);
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
     }
 }

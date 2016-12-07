@@ -3,7 +3,10 @@ package front_end.AST.StatementAST;
 import front_end.AST.ProgramAST;
 import front_end.symbol_table.SymbolTable;
 import main.Visitor;
+import optimisation.GraphColour;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import static main.Visitor.ST;
 
 public class BeginAST extends StatementAST {
     private StatementAST statement;
@@ -35,7 +38,13 @@ public class BeginAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        StatementIRepresentation("begin");
+        Visitor.ST = ST;
+        defaultIRep("begin");
         statement.IRepresentation();
+
+        //check liveness as a different symbol table is opened
+        Visitor.ST.checkLiveness();
+        GraphColour.colouringGraph();
+        Visitor.ST = ST.getEncSymbolTable();
     }
 }

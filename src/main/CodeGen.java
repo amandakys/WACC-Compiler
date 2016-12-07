@@ -20,7 +20,7 @@ public class CodeGen {
     public static List<String> placeholders = new ArrayList<>();
     public static List<Instruction> toPushData = new ArrayList<>();
     public static int numPlaceholders = 0;
-    public static List<String> endFunctions = new ArrayList<>();
+    public static Map<String, Register> endFunctions = new HashMap<>();
 
 
     // variables & any non-primitive
@@ -62,7 +62,7 @@ public class CodeGen {
             bw.write(instr.toString() + (instr.toString().isEmpty() ? "" : "\n"));
         }
         for (Instruction instr : functions) {
-            bw.write(instr.toString() + "\n");
+            bw.write(instr.toString() + (instr.toString().isEmpty() ? "" : "\n"));
         }
 
         bw.close();

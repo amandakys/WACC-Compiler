@@ -3,6 +3,7 @@ package front_end.symbol_table;
 import java.util.*;
 
 import back_end.Utility;
+import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
 import optimisation.IGNode;
 import optimisation.InterferenceGraph;
@@ -15,12 +16,13 @@ public class SymbolTable {
     private Map<String, IDENTIFIER> dict;
     private Map<String, ShiftedReg> memoryAddress;
     private int nextAvailableAddress;
-    //next numbered register that needs to be used + assuming there is infinite number of registers
+    private InterferenceGraph graph;
 
     public SymbolTable(SymbolTable st) {
         dict = new LinkedHashMap<>();
         encSymbolTable = st;
         memoryAddress = new HashMap<>();
+        graph = new InterferenceGraph();
     }
 
     public SymbolTable getEncSymbolTable() {
@@ -57,7 +59,6 @@ public class SymbolTable {
             if (!(ident instanceof FUNCTION) && !(ident == null)) {
                 size += ident.getSize();
             }
-
         }
 
         return size;
@@ -97,6 +98,7 @@ public class SymbolTable {
         return memoryAddress;
     }
 
+    //recalculate the nextAvailableAddress
     public void size() {
         nextAvailableAddress = findSize();
     }
@@ -107,5 +109,29 @@ public class SymbolTable {
 
     public int getNextAvailableAddress() {
         return nextAvailableAddress;
+    }
+
+
+    /*
+        Instruction set for inteference graph
+     */
+    public void checkLiveness() {
+        graph.checkLiveness();
+    }
+
+    public Register findRegister(String name) {
+        return graph.findRegister(name);
+    }
+
+    public IGNode findIGNode(String name) {
+        return graph.findIGNode(name);
+    }
+
+    public void add(IGNode node) {
+        graph.add(node);
+    }
+
+    public List<IGNode> getNodes() {
+        return graph.getNodes();
     }
 }

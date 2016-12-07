@@ -41,6 +41,9 @@ public class SequenceAST extends StatementAST {
     public void IRepresentation() {
         for(StatementAST statement : statements) {
             statement.IRepresentation();
+            if(IGNode == null) {
+                IGNode = statement.getIGNode();
+            }
         }
     }
 }

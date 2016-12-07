@@ -8,7 +8,6 @@ import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
-import front_end.AST.ExpressionAST.ArraylitAST;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
 import front_end.AST.ExpressionAST.PairliterAST;
@@ -19,8 +18,6 @@ import front_end.AST.TypeAST.TypeAST;
 import front_end.symbol_table.*;
 import main.CodeGen;
 import main.Visitor;
-import optimisation.IGNode;
-import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class VarDeclAST extends StatementAST {
@@ -141,9 +138,10 @@ public class VarDeclAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        StatementIRepresentation("var_dec");
+        defaultIRep(ident);
+        IGNode.setIdent();
 
-        rhs.setIGNode(IGNode);
         rhs.IRepresentation();
+        IGNode = rhs.getIGNode();
     }
 }

@@ -36,6 +36,6 @@ public class CharLitAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-
+        defaultIRep("int_" + charac);
     }
 }

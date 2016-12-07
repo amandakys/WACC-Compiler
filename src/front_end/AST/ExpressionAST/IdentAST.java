@@ -54,6 +54,8 @@ public class IdentAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
+        IGNode = Visitor.ST.findIGNode(ident);
+
         if(IGNode != null && IGNode.getTo() < index) {
             IGNode.setTo(index - 1);
         }

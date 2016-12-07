@@ -9,11 +9,13 @@ import back_end.instruction.condition.CMP;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.SUB;
 import front_end.AST.ExpressionAST.ExpressionAST;
-import front_end.AST.ProgramAST;
 import front_end.symbol_table.SymbolTable;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.GraphColour;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import static main.Visitor.ST;
 
 public class WhileAST extends StatementAST {
     private ExpressionAST expression;
@@ -77,9 +79,19 @@ public class WhileAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        StatementIRepresentation("while");
-        expression.setIGNode(IGNode);
+        Visitor.ST = ST;
+        defaultIRep("while");
+
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
+
         statement.IRepresentation();
+
+        //check liveness as a different symbol table is opened
+        Visitor.ST.checkLiveness();
+        GraphColour.colouringGraph();
+
+        Visitor.ST = ST.getEncSymbolTable();
     }
 
     private void newScope(StatementAST statement) {

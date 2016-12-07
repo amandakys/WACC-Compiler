@@ -5,7 +5,6 @@ import back_end.data_type.Address;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 import back_end.instruction.data_manipulation.ADD;
-import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.AssignmentAST.ArrayelemAST;
 import front_end.AST.AssignmentAST.AssignlhsAST;
@@ -72,7 +71,7 @@ public class ReadAST extends StatementAST {
         }
 
         PrintUtility.addToPlaceholders(placeholder);
-        PrintUtility.addToEndFunctions(functionName);
+        PrintUtility.addToEndFunctions(functionName, getRegister());
     }
 
     @Override
@@ -83,11 +82,12 @@ public class ReadAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        StatementIRepresentation("read");
-        //p_read and read must be alive at the same time as they both come from ReadAST
-        IGNode p_read = new IGNode("p_read_" + expression.getType().getTypeName());
-        InterferenceGraph.nodes.add(p_read);
+        IGNode = expression.getIGNode();
 
+        IGNode p_read = new IGNode("p_read_" + expression.getType().getTypeName());
+        Visitor.ST.add(p_read);
+
+        //p_read and read must be alive at the same time as they both come from ReadAST
         IGNode.addEdge(p_read);
         expression.setIGNode(IGNode);
     }

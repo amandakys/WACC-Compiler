@@ -36,7 +36,7 @@ public class StringLiterAST extends ExpressionAST{
 
     @Override
     public void IRepresentation() {
-
+        defaultIRep("string_" + value);
     }
 
     public String getValue() {

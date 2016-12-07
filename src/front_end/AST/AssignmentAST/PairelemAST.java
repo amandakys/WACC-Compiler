@@ -84,7 +84,7 @@ public class PairelemAST extends AssignrhsAST{
 
         if(!hasError) {
             Utility.pushData(Error.nullReference);
-            PrintUtility.addToEndFunctions("p_check_null_pointer");
+            PrintUtility.addToEndFunctions("p_check_null_pointer", Register.R0);
             PrintUtility.throwRuntimeError();
             hasError = true;
         }
@@ -98,8 +98,15 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void IRepresentation() {
+        //IGNode's default initialisation
+        defaultIRep(token);
+
+        //set the range of IGNode
         if(IGNode != null && IGNode.getTo() < index) {
             IGNode.setTo(index - 1);
         }
+
+        //print_string is added because runtime error is thrown
+        print_stringIR();
     }
 }

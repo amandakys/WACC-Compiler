@@ -43,6 +43,7 @@ public class IntLiterAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
+        defaultIRep("int_" + intsign + value);
     }
 
     public int getValue() {

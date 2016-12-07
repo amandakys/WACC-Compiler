@@ -21,9 +21,6 @@ import java.util.List;
 public class ArraylitAST extends AssignrhsAST {
     //Array list has stores a list of expression
     private List<ExpressionAST> arraylits;
-    //IGNode designated the register that stores the size of an array
-    //elem represents the register that is used to store array's elem's values
-    private IGNode elem;
 
     public ArraylitAST(ParserRuleContext ctx, List<ExpressionAST> arraylits) {
         super(ctx);
@@ -88,14 +85,12 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void IRepresentation() {
-        elem = new IGNode("arraylit_elem_value");
-        elem.addEdge(IGNode);
+        //IGNode represents the register that is used to store array's elem's values
+        defaultIRep("elem_size");
 
         for(ExpressionAST e : arraylits) {
-            e.setIGNode(elem);
+            e.setIGNode(IGNode);
         }
-
-        InterferenceGraph.nodes.add(elem);
     }
 
     public List<ExpressionAST> getArraylits() {

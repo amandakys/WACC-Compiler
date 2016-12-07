@@ -9,6 +9,7 @@ import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import main.CodeGen;
+import main.Visitor;
 import optimisation.IGNode;
 import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -18,8 +19,6 @@ import java.util.List;
 public class NewpairAST extends AssignrhsAST {
     private List<ExpressionAST> pairelems;
     //IGNode represents register which store the size of a pair object
-    //there is also elem which is a register that stores the value of each element
-    private IGNode elem;
     //elemSize stores the size of each element
     private IGNode elemSize;
 
@@ -40,9 +39,6 @@ public class NewpairAST extends AssignrhsAST {
     @Override
     public void translate() {
         ProgramAST.nextAddress = 0;
-
-        CodeGen.main.add(new LOAD(getRegister(), new ImmValue(identObj.getSize() * 2)));
-        CodeGen.main.add(new Branch("L", "malloc"));
 
         for (ExpressionAST elem: pairelems) {
             elem.translate();
@@ -73,18 +69,18 @@ public class NewpairAST extends AssignrhsAST {
 
     @Override
     public void IRepresentation() {
-        //add the register that stores the size of a pair to the graph
-        IGNode = new IGNode("newpair_size");
-        InterferenceGraph.nodes.add(IGNode);
+        for(ExpressionAST e : pairelems) {
+            //add the register that stores the value of each element to the graph
+            e.IRepresentation();
+            //add the register that stores the size of a pair to the graph
+            IGNode = e.getIGNode();
 
-        //add the register that stores the value of each element to the graph
-        elem = new IGNode("newpair_elem_value");
-        pairelems.get(0).setIGNode(elem);
-        pairelems.get(1).setIGNode(elem);
-        InterferenceGraph.nodes.add(elem);
+            //add the register that stores the size of each element to the graph
+            elemSize = new IGNode(e + "_size");
+            Visitor.ST.add(elemSize);
 
-        //add the register that stores the size of each element to the graph
-        elemSize = new IGNode("newpair_elem_size");
-        InterferenceGraph.nodes.add(elemSize);
+            IGNode.addEdge(elemSize);
+            IGNode.addEdge(e.getIGNode());
+        }
     }
 }

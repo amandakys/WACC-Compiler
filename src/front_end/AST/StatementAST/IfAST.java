@@ -15,7 +15,10 @@ import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.symbol_table.SymbolTable;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.GraphColour;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import static main.Visitor.ST;
 
 public class IfAST extends StatementAST {
     // count for generic label names
@@ -51,7 +54,9 @@ public class IfAST extends StatementAST {
 
     @Override
     public void translate() {
+
         expression.translate();
+
         //jump to label if false
         CodeGen.main.add(new CMP(expression.getRegister(), new ImmValue(0)));
         String l0 = labelCount.toString();
@@ -94,9 +99,16 @@ public class IfAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        expression.setIGNode(IGNode);
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
+
         then.IRepresentation();
+
         elseSt.IRepresentation();
+
+        //check liveness as a different symbol table is opened
+        ST.checkLiveness();
+        GraphColour.colouringGraph();
     }
 
     public static void newScope(SymbolTable ST, StatementAST statement) {

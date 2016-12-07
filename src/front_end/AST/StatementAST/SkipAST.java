@@ -21,7 +21,7 @@ public class SkipAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-
+        defaultIRep("skip");
     }
 }
 
