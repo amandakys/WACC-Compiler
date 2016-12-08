@@ -43,8 +43,10 @@ public class WhileAST extends StatementAST {
         }
     }
 
-    /*if while (false) then skip the while loop since it will not be evaluated
-    * else, print out the source code as usual*/
+    /*while (expression)
+    * if the expression is "false" or is evaluated to "false" then the while
+    * loop is ignored. Therefore the sourcecode for while loop will not be
+    * printed out*/
 
     @Override
     public void translate() {

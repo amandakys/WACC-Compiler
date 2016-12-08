@@ -51,9 +51,12 @@ public class IfAST extends StatementAST {
         elseSt.checkNode();
     }
 
-    /*if it is if (true) then only translate the then clause, since "else" is
-    not evaluated
-    otherwise, only translate the else clause, since "then" is not evaluated*/
+    /*if (expresion)
+    * if the expression is "false" or is evaluated to "false" then only the
+    * "else" clause is needed. Therefore the "then" clause will not be
+    * printed in the sourcecode
+    * Similar with the expression "true", only the "then" clause is needed,
+    * so the "else" clause will not be printed.*/
 
     @Override
     public void translate() {
