@@ -7,7 +7,6 @@ import back_end.data_type.ImmValue;
 import back_end.data_type.register.PostIndex;
 import back_end.data_type.register.Register;
 import back_end.data_type.register.Shift;
-import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.Branch;
 import back_end.instruction.condition.AND;
 import back_end.instruction.condition.CMP;
@@ -332,7 +331,7 @@ public class BinOpAST extends ExpressionAST {
     This method will try to evaluate this binOp & return the result constant.
     Return null if failed to do so (eg. containing a variable)
      */
-    private Integer constantOptimise() {
+    public Integer constantOptimise() {
         Integer result = null;
         Integer rhsValue = null;
         Integer lhsValue = null;
