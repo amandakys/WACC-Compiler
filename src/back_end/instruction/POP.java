@@ -19,4 +19,14 @@ public class POP implements Instruction{
     public String getValue() {
         return reg.toString();
     }
+
+    @Override
+    public boolean toRemove() {
+        return false;
+    }
+
+    @Override
+    public boolean checkNext() {
+        return false;
+    }
 }

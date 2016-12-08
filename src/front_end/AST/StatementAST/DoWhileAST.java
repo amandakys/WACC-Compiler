@@ -1,6 +1,7 @@
 package front_end.AST.StatementAST;
 
 import back_end.Utility;
+import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
@@ -9,49 +10,46 @@ import back_end.instruction.condition.CMP;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.SUB;
 import front_end.AST.ExpressionAST.ExpressionAST;
-import front_end.AST.ProgramAST;
 import front_end.symbol_table.SymbolTable;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-public class WhileAST extends StatementAST {
-    ExpressionAST expression;
+/**
+ * Created by andikoh on 08/12/2016.
+ */
+public class DoWhileAST extends StatementAST {
     StatementAST statement;
+    ExpressionAST condition;
     SymbolTable ST;
-
-    public WhileAST(ParserRuleContext ctx, ExpressionAST expression, StatementAST statement, SymbolTable ST) {
+    public DoWhileAST(ParserRuleContext ctx, StatementAST statement, ExpressionAST condition, SymbolTable ST) {
         super(ctx);
-        this.expression = expression;
         this.statement = statement;
+        this.condition = condition;
         this.ST = ST;
-
     }
 
     @Override
-    public void check() {
-        //check that expression is valid
-        expression.checkNode();
+    protected void check() {
 
-        if (expression.getType().equals(Visitor.ST.lookUpAll("bool"))) {
+
+        if (condition.getType().equals(Visitor.ST.lookUpAll("bool"))) {
             //check that statement is valid
             statement.checkNode();
         } else {
             error("expression is not of type boolean");
         }
+
+        condition.checkNode();
     }
 
     @Override
     public void translate() {
-
-        String conditionLabel = labelCount.toString();
-        CodeGen.main.add(new Branch("", "L" + conditionLabel));
-        labelCount++;
         String whileBodyLabel = labelCount.toString();
         labelCount++;
         CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
-        Register result = CodeGen.notUsedRegisters.peek();
 
+        Register result = CodeGen.notUsedRegisters.peek();
         if (ST.findSize() != 0) {
             newScope(statement);
         } else {
@@ -59,14 +57,12 @@ public class WhileAST extends StatementAST {
         }
         Utility.pushBackRegisters();
         Utility.pushRegister(result);
-        CodeGen.main.add(new LabelInstr("L" + conditionLabel));
 
         result = CodeGen.notUsedRegisters.peek();
-        expression.translate();
+        condition.translate();
         Utility.pushBackRegisters();
 
         CodeGen.main.add(new CMP(result, new ImmValue(1)));
-
         Utility.pushRegister(result);
         CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
     }

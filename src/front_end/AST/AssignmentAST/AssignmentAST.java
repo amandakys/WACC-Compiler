@@ -74,4 +74,8 @@ public class AssignmentAST extends StatementAST {
 
         ProgramAST.nextAddress += rhs.getIdentObj().getSize();
     }
+
+    public AssignrhsAST getRhs() {
+        return rhs;
+    }
 }

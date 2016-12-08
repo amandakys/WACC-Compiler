@@ -1,5 +1,6 @@
 package front_end.AST.StatementAST;
 
+import antlr.BasicParser;
 import back_end.Utility;
 import back_end.data_type.*;
 
@@ -13,6 +14,8 @@ import front_end.AST.Compare;
 import front_end.AST.ExpressionAST.ArraylitAST;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
+import front_end.AST.ExpressionAST.BinOpAST;
+import front_end.AST.ExpressionAST.IdentAST;
 import front_end.AST.ExpressionAST.PairliterAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
@@ -31,12 +34,14 @@ public class VarDeclAST extends StatementAST {
     private String ident; //var name
     private TypeAST type;
     private AssignrhsAST rhs;
+    private boolean invariant;
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
         this.ident = ident;
         this.type = type;
         this.rhs = rhs;
+        this.invariant = false;
     }
 
     @Override
@@ -148,4 +153,15 @@ public class VarDeclAST extends StatementAST {
                 new ImmValue(Visitor.ST.getNextAvailableAddress()+Utility.getJumpSP()));
         CodeGen.main.add(new STORE(res, addressWithJump, identObj.getSize()));
     }
+
+    public AssignrhsAST getRhs() {
+        return rhs;
+    }
+
+//    @Override
+//    public void extractLoopInvariants() {
+//        if (!(rhs instanceof IdentAST && rhs instanceof BinOpAST)) {
+//            invariant = true;
+//        }
+//    }
 }
