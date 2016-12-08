@@ -42,4 +42,9 @@ public class PrintlnAST extends StatementAST {
     public ExpressionAST getExpression() {
         return expression;
     }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }

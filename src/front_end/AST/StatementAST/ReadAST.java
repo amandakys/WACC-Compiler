@@ -84,4 +84,9 @@ public class ReadAST extends StatementAST {
         PrintUtility.addToPlaceholders(placeholder);
         PrintUtility.addToEndFunctions(functionName);
     }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }

@@ -36,4 +36,9 @@ public class BeginAST extends StatementAST {
         ProgramAST.newScope(statement);
         Visitor.ST = ST.getEncSymbolTable();
     }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }

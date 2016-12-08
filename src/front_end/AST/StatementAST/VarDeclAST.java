@@ -11,12 +11,9 @@ import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.PairelemAST;
 import front_end.AST.Compare;
-import front_end.AST.ExpressionAST.ArraylitAST;
+import front_end.AST.ExpressionAST.*;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
-import front_end.AST.ExpressionAST.BinOpAST;
-import front_end.AST.ExpressionAST.IdentAST;
-import front_end.AST.ExpressionAST.PairliterAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
 import front_end.AST.TypeAST.PairelemtypeAST;
@@ -34,14 +31,12 @@ public class VarDeclAST extends StatementAST {
     private String ident; //var name
     private TypeAST type;
     private AssignrhsAST rhs;
-    private boolean invariant;
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
         this.ident = ident;
         this.type = type;
         this.rhs = rhs;
-        this.invariant = false;
     }
 
     @Override
@@ -158,10 +153,15 @@ public class VarDeclAST extends StatementAST {
         return rhs;
     }
 
-//    @Override
-//    public void extractLoopInvariants() {
-//        if (!(rhs instanceof IdentAST && rhs instanceof BinOpAST)) {
-//            invariant = true;
-//        }
-//    }
+    @Override
+    public boolean determineLoopInvariance() {
+        if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
+                rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
+                rhs instanceof UnopAST)) {
+            return true;
+        }
+        return false;
+    }
+
+
 }

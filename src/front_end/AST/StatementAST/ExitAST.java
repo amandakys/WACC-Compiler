@@ -36,4 +36,9 @@ public class ExitAST extends StatementAST{
         Utility.addMain(new Branch("L", "exit"));
 
     }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }

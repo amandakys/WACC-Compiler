@@ -100,4 +100,9 @@ public class PrintAST extends StatementAST {
 
             PrintUtility.addToEndFunctions(functionName);
     }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }

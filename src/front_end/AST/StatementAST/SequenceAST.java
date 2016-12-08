@@ -29,4 +29,24 @@ public class SequenceAST extends StatementAST {
             Utility.pushBackParam();
         }
     }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        //TODO: may need to be changed
+        return false;
+    }
+
+    @Override
+    public void extractLoopInvariants() {
+        for (StatementAST stat: statements) {
+            stat.extractLoopInvariants();
+        }
+    }
+
+    @Override
+    public void extractLoopDependents() {
+        for (StatementAST stat: statements) {
+            stat.extractLoopDependents();
+        }
+    }
 }
