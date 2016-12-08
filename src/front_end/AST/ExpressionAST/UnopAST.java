@@ -9,8 +9,6 @@ import back_end.instruction.Branch;
 import back_end.instruction.data_manipulation.EOR;
 import back_end.instruction.data_manipulation.RSBS;
 import back_end.instruction.load_store.LOAD;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import front_end.AST.AssignmentAST.ArrayelemAST;
 import front_end.symbol_table.ARRAY;
 import main.CodeGen;
 import main.Visitor;
@@ -96,7 +94,6 @@ public class UnopAST extends ExpressionAST {
                 }
                 break;
             case "len":
-                //TODO: you can't put a register into load without popping it off the unusedRegs list
                 CodeGen.main.add(new LOAD(op, new Address(op)));
                 break;
             case "ord":
@@ -126,16 +123,17 @@ public class UnopAST extends ExpressionAST {
 
     /*
     This medthod is called only when return type is int & therefore unOp can be "-" , "len" or "ord"
+    This method does not modify anything so can be made public allowing other classes to use
      */
-    private Integer constantOptimise() {
+    public Integer constantOptimise() {
         Integer result = null;
         //Expected types can only be int, array or char.
         if(expression instanceof IntLiterAST) {
             result = -(((IntLiterAST) expression).getValue());
         } else if(expression instanceof CharLitAST) {
             result = ((CharLitAST) expression).getCodePoint();
-        } else if(expression.getType() instanceof ARRAY) { //TODO: verify this
-//            ARRAY realType = (ARRAY) ((IdentAST)expression).getIdent();
+        } else if(expression.getType() instanceof ARRAY) {
+            result = ((ARRAY) expression.getType()).getElem_size();
         } else if(expression instanceof UnopAST){
             result = -(((UnopAST) expression).constantOptimise());
         } else if(expression instanceof BinOpAST) {
@@ -147,8 +145,9 @@ public class UnopAST extends ExpressionAST {
 
     /*
     This medthod is called only when return type is char & therefore unOp must be "chr"
+    This method does not modify anything so can be made public allowing other classes to use
      */
-    private Character chrOptimise() {
+    public Character chrOptimise() {
         Character result = null;
         //Expected type can only be int.
         if(expression instanceof IntLiterAST) {

@@ -59,15 +59,13 @@ public class VarDeclAST extends StatementAST {
             //assumes that this means rhs MUST be an arraylit
             if (rhs.getType() instanceof ARRAY) {
                 TYPE elementType = ((ArraytypeAST) type).getelementType();
-                // i need to fix this asap
-                //int arraysize = ((ArraylitAST) rhs).getSize();
-
+                int arraysize = ((ARRAY) rhs.getType()).getElem_size();
 
                 IDENTIFIER V = Visitor.ST.lookUp(ident);
                 if (V != null) {
                     error(ident + " is already declared");
                 } else {
-                    IDENTIFIER T = new ARRAY(elementType, 0);
+                    IDENTIFIER T = new ARRAY(elementType, arraysize);
                     identObj = new VARIABLE((TYPE) T);
                     Visitor.ST.add(ident, identObj);
                 }
