@@ -44,10 +44,14 @@ public class WhileAST extends StatementAST {
     }
 
     private boolean evaluateFalse() {
-        return ((expression instanceof BoolliterAST)
-                && ((BoolliterAST) expression).getBoolVal().equals("false")) ||
-                ((expression instanceof BinOpAST) && ((BinOpAST) expression)
-                        .booleanOptimise() == false);
+        if (expression instanceof BoolliterAST) {
+            return ((BoolliterAST) expression).getBoolVal().equals("false");
+        } else if (expression instanceof BinOpAST) {
+            if (((BinOpAST) expression).booleanOptimise() != null) {
+                return !((BinOpAST) expression).booleanOptimise();
+            }
+        }
+        return false;
     }
 
     /*while (expression)

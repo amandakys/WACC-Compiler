@@ -52,17 +52,25 @@ public class IfAST extends StatementAST {
     }
 
     private boolean evaluateFalse() {
-        return ((expression instanceof BoolliterAST)
-                && ((BoolliterAST) expression).getBoolVal().equals("false")) ||
-                ((expression instanceof BinOpAST) && ((BinOpAST) expression)
-                        .booleanOptimise() == false);
+        if (expression instanceof BoolliterAST) {
+            return ((BoolliterAST) expression).getBoolVal().equals("false");
+        } else if (expression instanceof BinOpAST) {
+            if (((BinOpAST) expression).booleanOptimise() != null) {
+                return !((BinOpAST) expression).booleanOptimise();
+            }
+        }
+        return false;
     }
 
     private boolean evaluateTrue() {
-        return (expression instanceof BoolliterAST &&((BoolliterAST)
-                expression).getBoolVal().equals("true"))
-                || (expression instanceof BinOpAST && (((BinOpAST) expression)
-                .booleanOptimise() == true));
+        if (expression instanceof BoolliterAST) {
+            return ((BoolliterAST) expression).getBoolVal().equals("true");
+        } else if (expression instanceof BinOpAST) {
+            if (((BinOpAST) expression).booleanOptimise() != null) {
+                return ((BinOpAST) expression).booleanOptimise();
+            }
+        }
+        return false;
     }
 
     /*if (expresion)
@@ -123,11 +131,8 @@ public class IfAST extends StatementAST {
                 then.translate();
             }
             Utility.pushBackRegisters();
-        } else {
-            return;
         }
-
-
+        
     }
 
     private void newScope(SymbolTable ST, StatementAST statement) {
