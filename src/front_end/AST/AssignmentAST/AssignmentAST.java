@@ -10,7 +10,7 @@ import back_end.instruction.Branch;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
-import front_end.AST.ExpressionAST.ArraylitAST;
+import front_end.AST.ExpressionAST.*;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import front_end.AST.StatementAST.StatementAST;
@@ -73,5 +73,15 @@ public class AssignmentAST extends StatementAST {
         }
 
         ProgramAST.nextAddress += rhs.getIdentObj().getSize();
+    }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
+                rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
+                rhs instanceof UnopAST)) {
+            return true;
+        }
+        return false;
     }
 }

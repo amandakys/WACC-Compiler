@@ -14,6 +14,7 @@ import antlr.BasicParser;
 import antlr.BasicParserBaseVisitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.*;
+import org.antlr.v4.runtime.misc.DoubleKeyMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -202,6 +203,18 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         whileAST.check();
         Visitor.ST = Visitor.ST.getEncSymbolTable();
         return whileAST;
+    }
+
+    @Override
+    public DoWhileAST visitDowhile(BasicParser.DowhileContext ctx) {
+        Visitor.ST = new SymbolTable(Visitor.ST);
+        StatementAST statement = (StatementAST) visit(ctx.statement());
+        ExpressionAST condition = visitExpression(ctx.expression());
+        DoWhileAST doWhileAST = new DoWhileAST(ctx, statement, condition, ST);
+        doWhileAST.checkNode();
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
+        return doWhileAST;
+
     }
 
     @Override
@@ -608,6 +621,8 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         }
         return pairelemtype;
     }
+
+
 
     public void checkUndefinedFunc() {
        for(CallAST node : toBeVisited) {

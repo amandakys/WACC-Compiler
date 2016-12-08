@@ -168,4 +168,9 @@ public class IfAST extends StatementAST {
 
         Utility.resetJumpSP();
     }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }

@@ -1,5 +1,6 @@
 package front_end.AST.StatementAST;
 
+import antlr.BasicParser;
 import back_end.Utility;
 import back_end.data_type.*;
 
@@ -10,10 +11,9 @@ import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.PairelemAST;
 import front_end.AST.Compare;
-import front_end.AST.ExpressionAST.ArraylitAST;
+import front_end.AST.ExpressionAST.*;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
-import front_end.AST.ExpressionAST.PairliterAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
 import front_end.AST.TypeAST.PairelemtypeAST;
@@ -148,4 +148,20 @@ public class VarDeclAST extends StatementAST {
                 new ImmValue(Visitor.ST.getNextAvailableAddress()+Utility.getJumpSP()));
         CodeGen.main.add(new STORE(res, addressWithJump, identObj.getSize()));
     }
+
+    public AssignrhsAST getRhs() {
+        return rhs;
+    }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
+                rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
+                rhs instanceof UnopAST)) {
+            return true;
+        }
+        return false;
+    }
+
+
 }

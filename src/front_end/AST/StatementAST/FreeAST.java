@@ -47,4 +47,9 @@ public class FreeAST extends StatementAST {
             PrintUtility.addToEndFunctions(("p_free_array"));
         }
     }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }
