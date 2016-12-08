@@ -51,10 +51,10 @@ public class WhileAST extends StatementAST {
     @Override
     public void translate() {
         if(((expression instanceof BoolliterAST)
-                && ((BoolliterAST) expression).equals("false")) ||
+                && ((BoolliterAST) expression).getBoolVal().equals("false"))/* ||
                 ((expression instanceof BinOpAST) && ((BinOpAST) expression)
-                        .booleanOptimise() == false)) {
-            return;
+                        .booleanOptimise() == false)*/) {
+
         } else {
             String conditionLabel = labelCount.toString();
             CodeGen.main.add(new Branch("", "L" + conditionLabel));

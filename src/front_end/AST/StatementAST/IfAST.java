@@ -61,9 +61,9 @@ public class IfAST extends StatementAST {
     @Override
     public void translate() {
 
-        if(!(expression instanceof BoolliterAST) && (!(expression instanceof
+        if(!(expression instanceof BoolliterAST)  /*&& (!(expression instanceof
                 BinOpAST) || (((BinOpAST) expression).booleanOptimise() ==
-                null ))) {
+                null ))*/) {
 
             Register result = CodeGen.notUsedRegisters.peek();
             expression.translate();
@@ -98,7 +98,7 @@ public class IfAST extends StatementAST {
             CodeGen.main.add(new LabelInstr("L" + l1));
 
         } else if (((BoolliterAST) expression).getBoolVal().equals("false")
-                || (((BinOpAST) expression).booleanOptimise() == false)) {
+                /*|| (((BinOpAST) expression).booleanOptimise() == false)*/) {
             //Zero flag = true means there is a 0, so the evaluation of if is
             // false
             if (elseST.findSize() != 0) {
@@ -109,7 +109,7 @@ public class IfAST extends StatementAST {
             }
             Utility.pushBackRegisters();
         } else if (((BoolliterAST) expression).getBoolVal().equals("true")
-                || (((BinOpAST) expression).booleanOptimise() == true)){
+                /*|| (((BinOpAST) expression).booleanOptimise() == true)*/){
             //Zero flag = false means there is not any 0, so the evaluation of
             // if is true
             if (thenST.findSize() != 0) {
