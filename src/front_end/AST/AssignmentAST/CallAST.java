@@ -76,7 +76,6 @@ public class CallAST extends AssignrhsAST{
 
     @Override
     public void translate() {
-
         int argsSize = 0;// initialise the sum size of all arguments to 0
 
         //translate one argument at a time, STORE them into the correct stack position
@@ -111,7 +110,6 @@ public class CallAST extends AssignrhsAST{
 
         //Move the result of the function from R0 to the designated Register
         addMain(new MOV(getRegister(), Register.R0));
-
     }
 
     @Override

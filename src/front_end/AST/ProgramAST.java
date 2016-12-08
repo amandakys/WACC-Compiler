@@ -92,9 +92,6 @@ public class ProgramAST extends Node {
         //to be the same as the first register in a statement
         statement.IRepresentation();
         IGNode = statement.IGNode;
-
-        Visitor.ST.checkLiveness();
-        GraphColour.colouringGraph();
     }
 
     public static void newScope(StatementAST statement) {

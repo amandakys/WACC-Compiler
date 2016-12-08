@@ -7,6 +7,7 @@ import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 
 import back_end.Error;
+import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.symbol_table.ARRAY;
@@ -34,6 +35,9 @@ public class FreeAST extends StatementAST {
     @Override
     public void translate() {
         CodeGen.main.add(new LOAD(getRegister(), new Address(Register.SP)));
+        CodeGen.main.add(new MOV(Register.R0, getRegister()));
+        //updating registers after MOV instruction
+        setRegister(Register.R0);
 
         PrintUtility.throwRuntimeError();
         Utility.pushData(Error.nullReference);

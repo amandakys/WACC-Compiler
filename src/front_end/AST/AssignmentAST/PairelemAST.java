@@ -70,8 +70,6 @@ public class PairelemAST extends AssignrhsAST{
                     Visitor.ST.getAddress(value).getShiftVal())));
         }
 
-        CodeGen.main.add(new MOV(Register.R0, getRegister()));
-
         int val = token.equals("fst") ? 0 : PAIR_SIZE;
 
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
@@ -98,8 +96,8 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void IRepresentation() {
-        //IGNode's default initialisation
-        defaultIRep(token);
+        expression.IRepresentation();
+        setIGNode(expression.getIGNode());
 
         //set the range of IGNode
         if(IGNode != null && IGNode.getTo() < index) {

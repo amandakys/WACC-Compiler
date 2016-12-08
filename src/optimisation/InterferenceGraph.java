@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InterferenceGraph {
-    private List<IGNode> nodes = new ArrayList<>();
+    private static List<IGNode> nodes = new ArrayList<>();
 
-    public void checkLiveness() {
+    public static void checkLiveness() {
         for(int i = 0; i < nodes.size(); i++) {
             IGNode first = nodes.get(i);
 
@@ -26,7 +26,7 @@ public class InterferenceGraph {
         }
     }
 
-    public Register findRegister(String name) {
+    public static Register findRegister(String name) {
         IGNode node = findIGNode(name);
         if(node != null) {
             return node.getRegister();
@@ -35,7 +35,7 @@ public class InterferenceGraph {
         return null;
     }
 
-    public IGNode findIGNode(String name) {
+    public static IGNode findIGNode(String name) {
         for(IGNode n : nodes) {
             if(n.getIdentifier().equals(name)) {
                 return n;
@@ -45,11 +45,11 @@ public class InterferenceGraph {
         return null;
     }
 
-    public void add(IGNode node) {
+    public static void add(IGNode node) {
         nodes.add(node);
     }
 
-    public List<IGNode> getNodes() {
+    public static List<IGNode> getNodes() {
         return nodes;
     }
 }

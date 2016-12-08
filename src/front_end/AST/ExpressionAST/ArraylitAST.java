@@ -1,16 +1,20 @@
 package front_end.AST.ExpressionAST;
 
+import antlr.BasicParser;
 import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
+import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
+import front_end.symbol_table.TYPE;
 import main.CodeGen;
+import main.Visitor;
 import optimisation.IGNode;
 import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -21,6 +25,9 @@ import java.util.List;
 public class ArraylitAST extends AssignrhsAST {
     //Array list has stores a list of expression
     private List<ExpressionAST> arraylits;
+    //IGNode stores the value of array's element
+    //stores the size of the array
+    private IGNode arraySize;
 
     public ArraylitAST(ParserRuleContext ctx, List<ExpressionAST> arraylits) {
         super(ctx);
@@ -52,27 +59,40 @@ public class ArraylitAST extends AssignrhsAST {
     public void translate() {
         ARRAY varType = (ARRAY) identObj.getType();
         int arrSize = arraylits.size();
+
         //finding total array_size
         int array_size = arrSize*varType.getElementType().getSize() + identObj.getSize();
         CodeGen.main.add(new LOAD(getRegister(), new ImmValue(array_size)));
 
+        //move the value from the designated register to R0 to preform malloc
+        CodeGen.main.add(new MOV(Register.R0, getRegister()));
         CodeGen.main.add(new Branch("L", "malloc"));
+        CodeGen.main.add(new MOV(arraySize.getRegister(), getRegister()));
 
         //identObj.getSize() returns size of array
         ProgramAST.nextAddress += identObj.getSize();
 
-        Register res = arraylits.get(0).getRegister();
+        Register res = getRegister();
         //Transverse through the list to translate each expr
         for (ExpressionAST a: arraylits) {
             a.translate();
 
-            Utility.addMain(new STORE(res, new PreIndex(getRegister(),
+            Utility.addMain(new STORE(res, new PreIndex(arraySize.getRegister(),
                     new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
             ProgramAST.nextAddress += a.getIdentObj().getType().getSize();
         }
 
         CodeGen.main.add(new LOAD(res, new ImmValue(getArraylits().size())));
-        CodeGen.main.add(new STORE(res, new PreIndex(getRegister()), identObj.getSize()));
+        CodeGen.main.add(new STORE(res, new PreIndex(arraySize.getRegister()), identObj.getSize()));
+
+        TYPE type = ((ARRAY) identObj).getElementType();
+        while(type.getTypeName().equals("array")) {
+            type = ((ARRAY) identObj).getElementType();
+        }
+
+        if(type.getTypeName().equals("int")) {
+            CodeGen.main.add(new MOV(getRegister(), arraySize.getRegister()));
+        }
     }
 
     @Override
@@ -85,12 +105,31 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void IRepresentation() {
+        //find the identifier which this array belongs to
+        String ident = "";
+        //ctx can either be Arraylit or Arrayliter so have to check ctx.getParent() as well as ctx.getParent().getParent()
+        if(ctx.getParent() instanceof BasicParser.Var_declContext) {
+            ident = ((BasicParser.Var_declContext) ctx.getParent()).IDENT().getText();
+        } else if(ctx.getParent().getParent() instanceof BasicParser.Var_declContext) {
+            ident = ((BasicParser.Var_declContext) ctx.getParent().getParent()).IDENT().getText();
+        } else if(ctx.getParent() instanceof BasicParser.AssignmentContext) {
+            ident = ((BasicParser.AssignmentContext) ctx.getParent()).assignlhs().IDENT().getText();
+        } else if(ctx.getParent().getParent() instanceof BasicParser.AssignmentContext) {
+            ident = ((BasicParser.AssignmentContext) ctx.getParent().getParent()).assignlhs().IDENT().getText();
+        }
+
         //IGNode represents the register that is used to store array's elem's values
-        defaultIRep("elem_size");
+        defaultIRep(ident + "_elem");
 
         for(ExpressionAST e : arraylits) {
-            e.setIGNode(IGNode);
+            e.IRepresentation();
         }
+
+        //add an IGNode which has the register that stores the array's size
+        arraySize = new IGNode(ident + "_array_size");
+        InterferenceGraph.add(arraySize);
+        IGNode.addEdge(arraySize);
+
     }
 
     public List<ExpressionAST> getArraylits() {

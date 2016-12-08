@@ -79,7 +79,6 @@ public class WhileAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        Visitor.ST = ST;
         defaultIRep("while");
 
         expression.IRepresentation();
@@ -87,11 +86,6 @@ public class WhileAST extends StatementAST {
 
         statement.IRepresentation();
 
-        //check liveness as a different symbol table is opened
-        Visitor.ST.checkLiveness();
-        GraphColour.colouringGraph();
-
-        Visitor.ST = ST.getEncSymbolTable();
     }
 
     private void newScope(StatementAST statement) {

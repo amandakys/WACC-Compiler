@@ -38,13 +38,7 @@ public class BeginAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        Visitor.ST = ST;
         defaultIRep("begin");
         statement.IRepresentation();
-
-        //check liveness as a different symbol table is opened
-        Visitor.ST.checkLiveness();
-        GraphColour.colouringGraph();
-        Visitor.ST = ST.getEncSymbolTable();
     }
 }

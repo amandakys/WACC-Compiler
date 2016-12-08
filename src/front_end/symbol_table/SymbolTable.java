@@ -16,13 +16,11 @@ public class SymbolTable {
     private Map<String, IDENTIFIER> dict;
     private Map<String, ShiftedReg> memoryAddress;
     private int nextAvailableAddress;
-    private InterferenceGraph graph;
 
     public SymbolTable(SymbolTable st) {
         dict = new LinkedHashMap<>();
         encSymbolTable = st;
         memoryAddress = new HashMap<>();
-        graph = new InterferenceGraph();
     }
 
     public SymbolTable getEncSymbolTable() {
@@ -109,29 +107,5 @@ public class SymbolTable {
 
     public int getNextAvailableAddress() {
         return nextAvailableAddress;
-    }
-
-
-    /*
-        Instruction set for inteference graph
-     */
-    public void checkLiveness() {
-        graph.checkLiveness();
-    }
-
-    public Register findRegister(String name) {
-        return graph.findRegister(name);
-    }
-
-    public IGNode findIGNode(String name) {
-        return graph.findIGNode(name);
-    }
-
-    public void add(IGNode node) {
-        graph.add(node);
-    }
-
-    public List<IGNode> getNodes() {
-        return graph.getNodes();
     }
 }

@@ -9,8 +9,8 @@ public class GraphColour {
         //represent how many registers are there in the program currently
         int currRegister = 0;
 
-        for(int i = 0; i <  Visitor.ST.getNodes().size(); i++) {
-            IGNode node = Visitor.ST.getNodes().get(i);
+        for(int i = 0; i <  InterferenceGraph.getNodes().size(); i++) {
+            IGNode node = InterferenceGraph.getNodes().get(i);
 
             //only colour nodes if it represents an expression, not an identifier
             if(!node.isIdent()) {
@@ -31,7 +31,7 @@ public class GraphColour {
                 }
 
                 if(i != 0) {
-                    IGNode before = Visitor.ST.getNodes().get(i - 1);
+                    IGNode before = InterferenceGraph.getNodes().get(i - 1);
                     //when a node is an identifier, set its register to be the same as the next register
                     if(before.isIdent()) {
                         before.setRegister(node.getRegister());

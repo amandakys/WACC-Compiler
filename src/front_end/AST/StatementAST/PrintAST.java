@@ -4,13 +4,12 @@ import back_end.PrintUtility;
 import back_end.data_type.register.Register;
 import back_end.instruction.*;
 import back_end.instruction.data_manipulation.MOV;
+import front_end.AST.AssignmentAST.ArrayelemAST;
+import front_end.AST.AssignmentAST.PairelemAST;
 import front_end.AST.ExpressionAST.*;
 import front_end.symbol_table.ARRAY;
-import front_end.symbol_table.PAIR;
 import front_end.symbol_table.STRING;
 import front_end.symbol_table.TYPE;
-import optimisation.IGNode;
-import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import static back_end.Utility.*;
@@ -32,7 +31,10 @@ public class PrintAST extends StatementAST {
     public void translate() {
         expression.translate();
 
-        addMain(new MOV(Register.R0, expression.getRegister()));
+        //TODO: pairelem?
+        if(!(expression instanceof ArrayelemAST)) {
+            addMain(new MOV(Register.R0, expression.getRegister()));
+        }
 
         pushPlaceholder();
     }
@@ -51,7 +53,7 @@ public class PrintAST extends StatementAST {
         if(expression.getType() instanceof STRING) {
             print_stringIR();
         } else {
-            addPrintFunc("p_print_" + findTypeName());
+            newIGNode("p_print_" + findTypeName());
         }
     }
 

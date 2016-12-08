@@ -54,10 +54,12 @@ public class IdentAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        IGNode = Visitor.ST.findIGNode(ident);
+        IGNode = InterferenceGraph.findIGNode(ident);
 
         if(IGNode != null && IGNode.getTo() < index) {
             IGNode.setTo(index - 1);
+        } else if(IGNode == null) {
+            defaultIRep(ident);
         }
     }
 

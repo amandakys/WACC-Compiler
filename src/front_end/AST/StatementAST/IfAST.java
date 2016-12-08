@@ -105,10 +105,6 @@ public class IfAST extends StatementAST {
         then.IRepresentation();
 
         elseSt.IRepresentation();
-
-        //check liveness as a different symbol table is opened
-        ST.checkLiveness();
-        GraphColour.colouringGraph();
     }
 
     public static void newScope(SymbolTable ST, StatementAST statement) {

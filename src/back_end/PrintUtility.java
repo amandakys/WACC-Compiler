@@ -109,8 +109,8 @@ public class PrintUtility {
     public void printString() {
         Utility.addFunction(new LabelInstr("p_print_string"));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new LOAD(Visitor.ST.findRegister("print_string_ldr"), new Address(Register.R0)));
-        Utility.addFunction(new ADD(Visitor.ST.findRegister("print_string_mov"), Register.R0, new ImmValue(4)));
+        Utility.addFunction(new LOAD(InterferenceGraph.findRegister("print_string_ldr"), new Address(Register.R0)));
+        Utility.addFunction(new ADD(InterferenceGraph.findRegister("print_string_mov"), Register.R0, new ImmValue(4)));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(Utility.getStringPlaceholder())));
 
         printDefaults();
@@ -119,7 +119,7 @@ public class PrintUtility {
     public void printInt() {
         Utility.addFunction(new LabelInstr("p_print_int"));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new MOV(Visitor.ST.findRegister(("p_print_int")), Register.R0));
+        Utility.addFunction(new MOV(InterferenceGraph.findRegister(("p_print_int")), Register.R0));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(Utility.getIntPlaceholder())));
         printDefaults();
     }
@@ -149,7 +149,7 @@ public class PrintUtility {
     public void printReference() {
         Utility.addFunction(new LabelInstr("p_print_reference"));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new MOV(Visitor.ST.findRegister("print_reference"), Register.R0));
+        Utility.addFunction(new MOV(InterferenceGraph.findRegister("p_print_reference"), Register.R0));
         CodeGen.functions.add(new LOAD(Register.R0, new LabelExpr(Utility.getReferencePlaceholder())));
         printDefaults();
     }
@@ -177,10 +177,10 @@ public class PrintUtility {
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
         CodeGen.functions.add(new LOAD("LT", Register.R0, new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsNegative))));
         CodeGen.functions.add(new Branch("LLT", "p_throw_runtime_error"));
-        CodeGen.functions.add(new LOAD(register, new Address(register)));
+        CodeGen.functions.add(new LOAD(Register.R1, new Address(register)));
 
-        CodeGen.functions.add(new CMP(Register.R0, register));
-        CodeGen.functions.add(new LOAD("CS", Register.R0, new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsLarge))));
+        CodeGen.functions.add(new CMP(Register.R0, Register.R1));
+        CodeGen.functions.add(new LOAD("CS", InterferenceGraph.findRegister("p_check_array_bounds"), new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsLarge))));
         CodeGen.functions.add(new Branch("CS", "p_throw_runtime_error"));
 
         CodeGen.functions.add(new POP(Register.PC));

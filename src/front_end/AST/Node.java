@@ -27,7 +27,7 @@ public abstract class Node {
     }
 
     public void checkNode() {
-        if(!isChecked) {
+        if (!isChecked) {
             check();
             isChecked = true;
         }
@@ -64,7 +64,7 @@ public abstract class Node {
     //check if the variable name is already in scope
     protected void checkIfInScope(String name) {
         IDENTIFIER N = Visitor.ST.lookUpAll(name);
-        if(N != null) {
+        if (N != null) {
             error(name + " has already been declared");
         }
     }
@@ -100,19 +100,19 @@ public abstract class Node {
         IGNode = new IGNode(name);
         IGNode.setFrom(index);
         IGNode.setTo(index);
-        Visitor.ST.add(IGNode);
+        InterferenceGraph.add(IGNode);
     }
 
-    public void addPrintFunc(String name) {
-        if(Visitor.ST.findIGNode(name) == null) {
+    public void newIGNode(String name) {
+        if (InterferenceGraph.findIGNode(name) == null) {
             IGNode p_func = new IGNode(name);
             IGNode.addEdge(p_func);
-            Visitor.ST.add(p_func);
+            InterferenceGraph.add(p_func);
         }
     }
 
     public void print_stringIR() {
-        if(Visitor.ST.findIGNode("print_string_mov") == null) {
+        if (InterferenceGraph.findIGNode("print_string_mov") == null) {
             IGNode string_mov = new IGNode("print_string_mov");
             IGNode string_load = new IGNode("print_string_ldr");
 
@@ -120,8 +120,12 @@ public abstract class Node {
             IGNode.addEdge(string_load);
             IGNode.addEdge(string_mov);
 
-            Visitor.ST.add(string_load);
-            Visitor.ST.add(string_mov);
+            InterferenceGraph.add(string_load);
+            InterferenceGraph.add(string_mov);
         }
+    }
+
+    public void setRegister(Register register) {
+        IGNode.setRegister(register);
     }
 }

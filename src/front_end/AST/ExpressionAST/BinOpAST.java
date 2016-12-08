@@ -17,8 +17,6 @@ import back_end.instruction.data_manipulation.SMULL;
 import back_end.instruction.data_manipulation.SUB;
 import main.CodeGen;
 import main.Visitor;
-import optimisation.IGNode;
-import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -134,7 +132,7 @@ public class BinOpAST extends ExpressionAST {
                     PrintUtility.addToEndFunctions("p_integer_overflow", lhsResult);
 
                     //a new function must be added as this also uses registers
-                    addPrintFunc("p_integer_overflow");
+                    newIGNode("p_integer_overflow");
 
                     if(!hasErrorDivByZero) {
                         PrintUtility.throwRuntimeError();

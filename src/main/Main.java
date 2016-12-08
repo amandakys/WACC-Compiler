@@ -5,6 +5,7 @@ import antlr.BasicParser;
 import front_end.AST.Node;
 import main.error_handler.SyntaxVisitor;
 import optimisation.GraphColour;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -46,6 +47,8 @@ public class Main {
 
         //optimisation
         program.IRepresentation();
+        InterferenceGraph.checkLiveness();
+        GraphColour.colouringGraph();
 
         //code generation
         CodeGen codeGen = new CodeGen();

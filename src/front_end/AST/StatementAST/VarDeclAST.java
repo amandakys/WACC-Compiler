@@ -102,13 +102,12 @@ public class VarDeclAST extends StatementAST {
     @Override
     public void translate() {
         ProgramAST.nextAddress = 0;
-        Register res = rhs.getRegister();
 
         //do not malloc a space on the stack if the pair is null
         if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
             rhs.translate();
         } else {
-            CodeGen.main.add(new LOAD(res, new ImmValue(0)));
+            CodeGen.main.add(new LOAD(rhs.getRegister(), new ImmValue(0)));
         }
 
         //increment the next available address (regarding the next available register)
@@ -124,7 +123,10 @@ public class VarDeclAST extends StatementAST {
         //jumpSP take care of the change in position of Stack pointer whenever it is add or sub
         ShiftedReg addressWithJump = new PreIndex(Register.SP,
                 new ImmValue(Visitor.ST.getNextAvailableAddress()+Utility.getJumpSP()));
-        CodeGen.main.add(new STORE(res, addressWithJump, identObj.getSize()));
+        CodeGen.main.add(new STORE(rhs.getRegister(), addressWithJump, identObj.getSize()));
+
+        //register used by the variable must be the same as register used by rhs
+        setRegister(rhs.getRegister());
     }
 
     @Override
@@ -138,10 +140,10 @@ public class VarDeclAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        defaultIRep(ident);
-        IGNode.setIdent();
-
         rhs.IRepresentation();
-        IGNode = rhs.getIGNode();
+
+        defaultIRep(ident);
+        IGNode.setRegister(rhs.getRegister());
+        IGNode.setIdent();
     }
 }

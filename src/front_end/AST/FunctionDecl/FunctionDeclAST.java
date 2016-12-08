@@ -173,21 +173,11 @@ public class FunctionDeclAST extends Node {
 
     @Override
     public void IRepresentation() {
-        //change the scope of the current symbol table to the one held by function
-        ST = ((FUNCTION) identObj).getSymtab();
-
         if(parameters != null) {
             parameters.IRepresentation();
         }
 
         statement.IRepresentation();
         IGNode = statement.getIGNode();
-
-        //check liveness as a different symbol table is opened
-        ST.checkLiveness();
-        GraphColour.colouringGraph();
-
-        //restore the symbol table back to the outer one
-        ST = ST.getEncSymbolTable();
     }
 }
