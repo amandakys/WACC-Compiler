@@ -132,7 +132,7 @@ public class IfAST extends StatementAST {
             }
             Utility.pushBackRegisters();
         }
-        
+
     }
 
     private void newScope(SymbolTable ST, StatementAST statement) {
