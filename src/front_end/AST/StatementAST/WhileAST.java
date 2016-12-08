@@ -8,6 +8,8 @@ import back_end.instruction.LabelInstr;
 import back_end.instruction.condition.CMP;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.SUB;
+import front_end.AST.ExpressionAST.BinOpAST;
+import front_end.AST.ExpressionAST.BoolliterAST;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.ProgramAST;
 import front_end.symbol_table.SymbolTable;
@@ -41,35 +43,53 @@ public class WhileAST extends StatementAST {
         }
     }
 
+    private boolean evaluateFalse() {
+        if (expression instanceof BoolliterAST) {
+            return ((BoolliterAST) expression).getBoolVal().equals("false");
+        } else if (expression instanceof BinOpAST) {
+            if (((BinOpAST) expression).booleanOptimise() != null) {
+                return !((BinOpAST) expression).booleanOptimise();
+            }
+        }
+        return false;
+    }
+
+    /*while (expression)
+    * if the expression is "false" or is evaluated to "false" then the while
+    * loop is ignored. Therefore the sourcecode for while loop will not be
+    * printed out*/
+
     @Override
     public void translate() {
+        if(!evaluateFalse()) {
+            String conditionLabel = labelCount.toString();
+            CodeGen.main.add(new Branch("", "L" + conditionLabel));
+            labelCount++;
+            String whileBodyLabel = labelCount.toString();
+            labelCount++;
+            CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
+            Register result = CodeGen.notUsedRegisters.peek();
+            //Visitor.ST = ST;
+            if (ST.findSize() != 0) {
+                newScope(statement);
+            } else {
+                statement.translate();
+            }
+            Utility.pushBackRegisters();
+            //Visitor.ST = Visitor.ST.getEncSymbolTable();
+            Utility.pushRegister(result);
+            CodeGen.main.add(new LabelInstr("L" + conditionLabel));
 
-        String conditionLabel = labelCount.toString();
-        CodeGen.main.add(new Branch("", "L" + conditionLabel));
-        labelCount++;
-        String whileBodyLabel = labelCount.toString();
-        labelCount++;
-        CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
-        Register result = CodeGen.notUsedRegisters.peek();
-        //Visitor.ST = ST;
-        if (ST.findSize() != 0) {
-            newScope(statement);
-        } else {
-            statement.translate();
+            result = CodeGen.notUsedRegisters.peek();
+            expression.translate();
+            Utility.pushBackRegisters();
+
+            CodeGen.main.add(new CMP(result, new ImmValue(1)));
+
+            Utility.pushRegister(result);
+            CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
         }
-        Utility.pushBackRegisters();
-        //Visitor.ST = Visitor.ST.getEncSymbolTable();
-        Utility.pushRegister(result);
-        CodeGen.main.add(new LabelInstr("L" + conditionLabel));
 
-        result = CodeGen.notUsedRegisters.peek();
-        expression.translate();
-        Utility.pushBackRegisters();
-
-        CodeGen.main.add(new CMP(result, new ImmValue(1)));
-
-        Utility.pushRegister(result);
-        CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
     }
 
     private void newScope(StatementAST statement) {

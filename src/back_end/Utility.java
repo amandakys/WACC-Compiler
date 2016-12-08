@@ -12,8 +12,8 @@ import java.util.Stack;
 public class Utility {
     private static Stack<Integer> jumpSP = new Stack<>();
     private static int NUM_QUOTATION = 2;
-
     public static int STACK_SIZE = (int) Math.pow(2, 10);
+    private static boolean ZERO_FLAG = false;
 
     public static void addMain(Instruction instr) {
         CodeGen.main.add(instr);
@@ -238,6 +238,18 @@ public class Utility {
         } else {
             return 0;
         }
+    }
+
+    public static void setZeroFlag() {
+        ZERO_FLAG = true;
+    }
+
+    public static void unSetZeroFlag() {
+        ZERO_FLAG = false;
+    }
+
+    public static boolean getZeroFlag() {
+        return ZERO_FLAG;
     }
 
 

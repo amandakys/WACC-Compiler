@@ -142,6 +142,7 @@ public class BinOpAST extends ExpressionAST {
                     CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("-")){
                     CodeGen.main.add(new SUB(lhsResult, lhsResult, rhsResult));
+                    CodeGen.toPushUnusedReg.push(lhsResult);
                     Utility.pushRegister(rhsResult);
                     CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("*")) {
@@ -259,6 +260,10 @@ public class BinOpAST extends ExpressionAST {
         }
     }
 
+    private boolean isNull(ExpressionAST exp) {
+        return ((BinOpAST) exp).booleanOptimise() == null;
+    }
+
     /*
     This method will try to evaluate this binOp & return the result boolean.
     Return null if failed to do so (eg. binOp contains a variable)
@@ -270,7 +275,9 @@ public class BinOpAST extends ExpressionAST {
         Integer lhsValue = null;
         if(lhs instanceof BinOpAST) {
             if(((BinOpAST) lhs).returnType.equals("bool")) {
-                lhsValue = ((BinOpAST) lhs).booleanOptimise() ? 1 : 0;
+                if (!isNull(lhs)) {
+                    lhsValue = ((BinOpAST) lhs).booleanOptimise() ? 1 : 0;
+                }
             } else { // return type is int
                 lhsValue = ((BinOpAST) lhs).constantOptimise();
             }
@@ -284,7 +291,9 @@ public class BinOpAST extends ExpressionAST {
 
         if(rhs instanceof BinOpAST) {
             if(((BinOpAST) rhs).returnType.equals("bool")) {
-                rhsValue = ((BinOpAST) rhs).booleanOptimise() ? 1 : 0;
+                if (!isNull(lhs)) {
+                    rhsValue = ((BinOpAST) rhs).booleanOptimise() ? 1 : 0;
+                }
             } else {
                 rhsValue = ((BinOpAST) rhs).constantOptimise();
             }
