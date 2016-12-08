@@ -43,6 +43,13 @@ public class WhileAST extends StatementAST {
         }
     }
 
+    private boolean evaluateFalse() {
+        return ((expression instanceof BoolliterAST)
+                && ((BoolliterAST) expression).getBoolVal().equals("false")) ||
+                ((expression instanceof BinOpAST) && ((BinOpAST) expression)
+                        .booleanOptimise() == false);
+    }
+
     /*while (expression)
     * if the expression is "false" or is evaluated to "false" then the while
     * loop is ignored. Therefore the sourcecode for while loop will not be
@@ -50,12 +57,7 @@ public class WhileAST extends StatementAST {
 
     @Override
     public void translate() {
-        if(((expression instanceof BoolliterAST)
-                && ((BoolliterAST) expression).getBoolVal().equals("false"))/* ||
-                ((expression instanceof BinOpAST) && ((BinOpAST) expression)
-                        .booleanOptimise() == false)*/) {
-
-        } else {
+        if(!evaluateFalse()) {
             String conditionLabel = labelCount.toString();
             CodeGen.main.add(new Branch("", "L" + conditionLabel));
             labelCount++;

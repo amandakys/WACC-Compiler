@@ -51,20 +51,30 @@ public class IfAST extends StatementAST {
         elseSt.checkNode();
     }
 
+    private boolean evaluateFalse() {
+        return ((expression instanceof BoolliterAST)
+                && ((BoolliterAST) expression).getBoolVal().equals("false")) ||
+                ((expression instanceof BinOpAST) && ((BinOpAST) expression)
+                        .booleanOptimise() == false);
+    }
+
+    private boolean evaluateTrue() {
+        return (expression instanceof BoolliterAST &&((BoolliterAST)
+                expression).getBoolVal().equals("true"))
+                || (expression instanceof BinOpAST && (((BinOpAST) expression)
+                .booleanOptimise() == true));
+    }
+
     /*if (expresion)
     * if the expression is "false" or is evaluated to "false" then only the
     * "else" clause is needed. Therefore the "then" clause will not be
     * printed in the sourcecode
     * Similar with the expression "true", only the "then" clause is needed,
     * so the "else" clause will not be printed.*/
-
     @Override
     public void translate() {
-
-        if(!(expression instanceof BoolliterAST)  /*&& (!(expression instanceof
-                BinOpAST) || (((BinOpAST) expression).booleanOptimise() ==
-                null ))*/) {
-
+        //can not be evaluated to "true" or "false"
+        if(!(evaluateFalse() || evaluateTrue())) {
             Register result = CodeGen.notUsedRegisters.peek();
             expression.translate();
             //jump to label if false
@@ -97,10 +107,7 @@ public class IfAST extends StatementAST {
 
             CodeGen.main.add(new LabelInstr("L" + l1));
 
-        } else if (((BoolliterAST) expression).getBoolVal().equals("false")
-                /*|| (((BinOpAST) expression).booleanOptimise() == false)*/) {
-            //Zero flag = true means there is a 0, so the evaluation of if is
-            // false
+        } else if (evaluateFalse()) {
             if (elseST.findSize() != 0) {
                 //new variables are declared
                 newScope(elseST, elseSt);
@@ -108,10 +115,7 @@ public class IfAST extends StatementAST {
                 elseSt.translate();
             }
             Utility.pushBackRegisters();
-        } else if (((BoolliterAST) expression).getBoolVal().equals("true")
-                /*|| (((BinOpAST) expression).booleanOptimise() == true)*/){
-            //Zero flag = false means there is not any 0, so the evaluation of
-            // if is true
+        } else if (evaluateTrue()){
             if (thenST.findSize() != 0) {
                 //new variables are declared
                 newScope(thenST, then);
