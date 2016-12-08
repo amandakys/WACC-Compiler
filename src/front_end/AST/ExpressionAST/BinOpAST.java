@@ -368,10 +368,14 @@ public class BinOpAST extends ExpressionAST {
                     result = lhsValue * rhsValue;
                     break;
                 case "/":
-                    result = lhsValue / rhsValue;
+                    if(rhsValue != 0) {
+                        result = lhsValue / rhsValue;
+                    }
                     break;
                 case "%":
-                    result = lhsValue % rhsValue;
+                    if(rhsValue != 0) {
+                        result = lhsValue % rhsValue;
+                    }
                     break;
             }
 
