@@ -51,7 +51,7 @@ public class NewpairAST extends AssignrhsAST {
 
         for (ExpressionAST elem: pairelems) {
             //store elem's value to sp - 4 and decrement sp by 4
-            if(!(elem instanceof IntLiterAST)) {
+            if(elem.equals(pairelems.get(1))) {
                 CodeGen.main.add(new PUSH(elem.getRegister()));
             }
             elem.translate();

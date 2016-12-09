@@ -93,6 +93,7 @@ public class ReadAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
+        expression.IRepresentation();
         IGNode = expression.getIGNode();
 
         IGNode p_read = new IGNode("p_read_" + expression.getType().getTypeName());
@@ -100,7 +101,6 @@ public class ReadAST extends StatementAST {
 
         //p_read and read must be alive at the same time as they both come from ReadAST
         IGNode.addEdge(p_read);
-        expression.setIGNode(IGNode);
     }
 
     @Override
