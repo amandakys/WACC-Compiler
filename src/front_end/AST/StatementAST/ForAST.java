@@ -68,39 +68,44 @@ public class ForAST extends StatementAST {
 
     @Override
     public void translate() {
-        if(!evaluateFalse()) {
-            String conditionLabel = labelCount.toString();
-            statements.get(0).translate(); //TODO: fix negative stackpointer & get rid of i when leaving for
-            CodeGen.main.add(new Branch("", "L" + conditionLabel));
-            labelCount++;
-            String forBodyLabel = labelCount.toString();
-            labelCount++;
-            CodeGen.main.add(new LabelInstr("L" + forBodyLabel));
-            Register result = CodeGen.notUsedRegisters.peek();
-            //Visitor.ST = ST;
-            if (ST.findSize() != 0) {
-                newScope(statements);
-            } else {
-                statements.get(2).translate();
-                statements.get(1).translate();
-            }
-            Utility.pushBackRegisters();
-            //Visitor.ST = Visitor.ST.getEncSymbolTable();
-            Utility.pushRegister(result);
-            CodeGen.main.add(new LabelInstr("L" + conditionLabel));
-
-            result = CodeGen.notUsedRegisters.peek();
-            expression.translate(); //have to be a binOp
-            Utility.pushBackRegisters();
-
-            CodeGen.main.add(new CMP(result, new ImmValue(1)));
-
-            Utility.pushRegister(result);
-            CodeGen.main.add(new Branch("EQ", "L" + forBodyLabel));
+        //statements.get(0).translate(); //TODO: fix negative stackpointer &
+        // get rid of i when leaving for
+        String initialILabel = labelCount.toString();
+        CodeGen.main.add(new Branch("", "L" + initialILabel));
+        labelCount++;
+        CodeGen.main.add(new LabelInstr("L" + initialILabel));
+        Register resultFirst = CodeGen.notUsedRegisters.peek();
+        newScopeFirst(statements.get(0));
+        String conditionLabel = labelCount.toString();
+        CodeGen.main.add(new Branch("", "L" + conditionLabel));
+        labelCount++;
+        String forBodyLabel = labelCount.toString();
+        labelCount++;
+        CodeGen.main.add(new LabelInstr("L" + forBodyLabel));
+        Register result = CodeGen.notUsedRegisters.peek();
+        //Visitor.ST = ST;
+        if (ST.findSize() != 0) {
+            newScope(statements);
+        } else {
+            statements.get(2).translate();
+            statements.get(1).translate();
         }
+        Utility.pushBackRegisters();
+        //Visitor.ST = Visitor.ST.getEncSymbolTable();
+        Utility.pushRegister(result);
+        CodeGen.main.add(new LabelInstr("L" + conditionLabel));
+
+        result = CodeGen.notUsedRegisters.peek();
+        expression.translate(); //have to be a binOp
+        Utility.pushBackRegisters();
+
+        CodeGen.main.add(new CMP(result, new ImmValue(1)));
+
+        Utility.pushRegister(result);
+        CodeGen.main.add(new Branch("EQ", "L" + forBodyLabel));
     }
 
-    private void newScope(List<StatementAST> statements) {
+    private void newScope(List<StatementAST> statements21) {
         int spSize = ST.findSize();
 
         if(spSize > Utility.STACK_SIZE ) {
@@ -116,8 +121,43 @@ public class ForAST extends StatementAST {
 
         //Utility.addJumpSP(spSize);
 
-        statements.get(2).translate();
-        statements.get(1).translate();
+        statements21.get(2).translate();
+        statements21.get(1).translate();
+
+
+
+        if(spSize > Utility.STACK_SIZE) {
+            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(Utility.STACK_SIZE)));
+            while(spSize > Utility.STACK_SIZE) {
+                //increment stack pointer
+                spSize = (int) (spSize - Utility.STACK_SIZE);
+                Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
+            }
+        } else {
+            Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
+        }
+
+        //Utility.resetJumpSP();
+    }
+
+    private void newScopeFirst(StatementAST statementFirst) {
+        int spSize = ST.findSize();
+
+        if(spSize > Utility.STACK_SIZE ) {
+            Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(Utility.STACK_SIZE)));
+            while(spSize > Utility.STACK_SIZE) {
+                //decrement stack pointer
+                spSize = (spSize - Utility.STACK_SIZE);
+                Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
+            }
+        } else {
+            Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
+        }
+
+        //Utility.addJumpSP(spSize);
+        statementFirst.translate();
+
+
 
         if(spSize > Utility.STACK_SIZE) {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(Utility.STACK_SIZE)));

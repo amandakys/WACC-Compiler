@@ -17,16 +17,16 @@ public class BasicParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		STAR=47, WHILE=17, MOD=49, CHAR=23, GREATEREQUAL=52, DO=19, FOR=18, EXCLUDECHAR=64, 
-		NOT=45, AND=57, ORD=31, LPAREN=39, IF=13, NOTEQUAL=56, LBRACKET=41, FREE=7, 
-		EXCLUDESTRING=66, RPAREN=40, GREATER=51, EOL=35, THEN=14, ESC_SLASH=61, 
-		ESCAPE=60, CHARCLOSE=65, COMMA=43, DONE=20, IS=3, PRINTLN=11, EQUAL=55, 
-		BEGIN=1, LESS=53, RETURN=8, ENDIF=16, IDENT=38, PLUS=50, PAIR=27, DIGIT=37, 
-		RBRACKET=42, COMMENT=36, PAIRLITERAL=29, NEWPAIR=28, EXIT=9, SECOND=26, 
-		OTHER=68, ELSE=15, BOOL=22, INT=21, MINUS=46, TRUE=33, SEMI=44, PRINT=10, 
-		CHR=32, SKIP=4, WS=59, READ=6, STRINGLITERAL=63, CHARLITERAL=62, OR=58, 
-		ASSIGN=5, LEN=30, CALL=12, STRINGCLOSE=67, DIV=48, END=2, FALSE=34, LESSEQUAL=54, 
-		STRING=24, FIRST=25;
+		PRINT=10, NEWPAIR=28, DO=19, CHR=32, MINUS=46, PAIRLITERAL=29, ELSE=15, 
+		EXCLUDECHAR=64, IF=13, LESSEQUAL=54, DONE=20, FOR=18, LPAREN=39, TRUE=33, 
+		IS=3, RPAREN=40, STRINGLITERAL=63, READ=6, NOTEQUAL=56, NOT=45, CHARCLOSE=65, 
+		AND=57, END=2, THEN=14, LESS=53, EXIT=9, PLUS=50, ORD=31, CALL=12, EXCLUDESTRING=66, 
+		PRINTLN=11, SEMI=44, CHAR=23, BEGIN=1, ASSIGN=5, FREE=7, INT=21, COMMENT=36, 
+		RETURN=8, CHARLITERAL=62, SKIP=4, WS=59, COMMA=43, EOL=35, MOD=49, OR=58, 
+		STRINGCLOSE=67, EQUAL=55, ENDIF=16, GREATER=51, LBRACKET=41, RBRACKET=42, 
+		FIRST=25, DIGIT=37, ESCAPE=60, DIV=48, OTHER=68, LEN=30, IDENT=38, STAR=47, 
+		BOOL=22, ESC_SLASH=61, GREATEREQUAL=52, STRING=24, WHILE=17, SECOND=26, 
+		FALSE=34, PAIR=27;
 	public static final String[] tokenNames = {
 		"<INVALID>", "'begin'", "'end'", "'is'", "'skip'", "'='", "'read'", "'free'", 
 		"'return'", "'exit'", "'print'", "'println'", "'call'", "'if'", "'then'", 
@@ -75,18 +75,18 @@ public class BasicParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class ProgramContext extends ParserRuleContext {
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
-		public List<FunctionContext> function() {
-			return getRuleContexts(FunctionContext.class);
-		}
 		public TerminalNode EOF() { return getToken(BasicParser.EOF, 0); }
 		public FunctionContext function(int i) {
 			return getRuleContext(FunctionContext.class,i);
 		}
 		public TerminalNode BEGIN() { return getToken(BasicParser.BEGIN, 0); }
 		public TerminalNode END() { return getToken(BasicParser.END, 0); }
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
+		}
+		public List<FunctionContext> function() {
+			return getRuleContexts(FunctionContext.class);
+		}
 		public ProgramContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -138,20 +138,20 @@ public class BasicParser extends Parser {
 	}
 
 	public static class FunctionContext extends ParserRuleContext {
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
 		public ParamlistContext paramlist() {
 			return getRuleContext(ParamlistContext.class,0);
 		}
-		public TerminalNode RPAREN() { return getToken(BasicParser.RPAREN, 0); }
+		public TerminalNode IS() { return getToken(BasicParser.IS, 0); }
+		public TerminalNode LPAREN() { return getToken(BasicParser.LPAREN, 0); }
+		public TerminalNode END() { return getToken(BasicParser.END, 0); }
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
-		public TerminalNode IS() { return getToken(BasicParser.IS, 0); }
-		public TerminalNode LPAREN() { return getToken(BasicParser.LPAREN, 0); }
+		public TerminalNode RPAREN() { return getToken(BasicParser.RPAREN, 0); }
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
+		}
 		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
-		public TerminalNode END() { return getToken(BasicParser.END, 0); }
 		public FunctionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -303,39 +303,54 @@ public class BasicParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
+	public static class ReadContext extends StatementContext {
+		public AssignlhsContext assignlhs() {
+			return getRuleContext(AssignlhsContext.class,0);
+		}
+		public TerminalNode READ() { return getToken(BasicParser.READ, 0); }
+		public ReadContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitRead(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class AssignmentContext extends StatementContext {
+		public TerminalNode ASSIGN() { return getToken(BasicParser.ASSIGN, 0); }
+		public AssignlhsContext assignlhs() {
+			return getRuleContext(AssignlhsContext.class,0);
+		}
+		public AssignrhsContext assignrhs() {
+			return getRuleContext(AssignrhsContext.class,0);
+		}
+		public AssignmentContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitAssignment(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class ForContext extends StatementContext {
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
-		}
-		public TerminalNode DO() { return getToken(BasicParser.DO, 0); }
-		public TerminalNode FOR() { return getToken(BasicParser.FOR, 0); }
 		public TerminalNode DONE() { return getToken(BasicParser.DONE, 0); }
+		public TerminalNode DO() { return getToken(BasicParser.DO, 0); }
 		public List<TerminalNode> SEMI() { return getTokens(BasicParser.SEMI); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
+		public TerminalNode FOR() { return getToken(BasicParser.FOR, 0); }
 		public TerminalNode SEMI(int i) {
 			return getToken(BasicParser.SEMI, i);
 		}
 		public StatementContext statement(int i) {
 			return getRuleContext(StatementContext.class,i);
 		}
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
 		public ForContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitFor(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class ReturnContext extends StatementContext {
-		public TerminalNode RETURN() { return getToken(BasicParser.RETURN, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public ReturnContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitReturn(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -348,19 +363,20 @@ public class BasicParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class Var_declContext extends StatementContext {
-		public AssignrhsContext assignrhs() {
-			return getRuleContext(AssignrhsContext.class,0);
+	public static class WhileContext extends StatementContext {
+		public TerminalNode DONE() { return getToken(BasicParser.DONE, 0); }
+		public TerminalNode DO() { return getToken(BasicParser.DO, 0); }
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
 		}
-		public TerminalNode ASSIGN() { return getToken(BasicParser.ASSIGN, 0); }
-		public TypeContext type() {
-			return getRuleContext(TypeContext.class,0);
+		public TerminalNode WHILE() { return getToken(BasicParser.WHILE, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
 		}
-		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
-		public Var_declContext(StatementContext ctx) { copyFrom(ctx); }
+		public WhileContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitVar_decl(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitWhile(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -376,6 +392,21 @@ public class BasicParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
+	public static class SequenceContext extends StatementContext {
+		public TerminalNode SEMI() { return getToken(BasicParser.SEMI, 0); }
+		public StatementContext statement(int i) {
+			return getRuleContext(StatementContext.class,i);
+		}
+		public List<StatementContext> statement() {
+			return getRuleContexts(StatementContext.class);
+		}
+		public SequenceContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitSequence(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class PrintContext extends StatementContext {
 		public TerminalNode PRINT() { return getToken(BasicParser.PRINT, 0); }
 		public ExpressionContext expression() {
@@ -388,68 +419,11 @@ public class BasicParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class BeginContext extends StatementContext {
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
-		public TerminalNode BEGIN() { return getToken(BasicParser.BEGIN, 0); }
-		public TerminalNode END() { return getToken(BasicParser.END, 0); }
-		public BeginContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitBegin(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class WhileContext extends StatementContext {
-		public StatementContext statement() {
-			return getRuleContext(StatementContext.class,0);
-		}
-		public TerminalNode WHILE() { return getToken(BasicParser.WHILE, 0); }
-		public TerminalNode DO() { return getToken(BasicParser.DO, 0); }
-		public TerminalNode DONE() { return getToken(BasicParser.DONE, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public WhileContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitWhile(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class AssignmentContext extends StatementContext {
-		public AssignrhsContext assignrhs() {
-			return getRuleContext(AssignrhsContext.class,0);
-		}
-		public TerminalNode ASSIGN() { return getToken(BasicParser.ASSIGN, 0); }
-		public AssignlhsContext assignlhs() {
-			return getRuleContext(AssignlhsContext.class,0);
-		}
-		public AssignmentContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitAssignment(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class FreeContext extends StatementContext {
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
-		public TerminalNode FREE() { return getToken(BasicParser.FREE, 0); }
-		public FreeContext(StatementContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitFree(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class PrintlnContext extends StatementContext {
+		public TerminalNode PRINTLN() { return getToken(BasicParser.PRINTLN, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public TerminalNode PRINTLN() { return getToken(BasicParser.PRINTLN, 0); }
 		public PrintlnContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
@@ -457,34 +431,47 @@ public class BasicParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class SequenceContext extends StatementContext {
-		public List<StatementContext> statement() {
-			return getRuleContexts(StatementContext.class);
+	public static class Var_declContext extends StatementContext {
+		public TerminalNode ASSIGN() { return getToken(BasicParser.ASSIGN, 0); }
+		public AssignrhsContext assignrhs() {
+			return getRuleContext(AssignrhsContext.class,0);
 		}
-		public TerminalNode SEMI() { return getToken(BasicParser.SEMI, 0); }
-		public StatementContext statement(int i) {
-			return getRuleContext(StatementContext.class,i);
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
 		}
-		public SequenceContext(StatementContext ctx) { copyFrom(ctx); }
+		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
+		public Var_declContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitSequence(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitVar_decl(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class FreeContext extends StatementContext {
+		public TerminalNode FREE() { return getToken(BasicParser.FREE, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public FreeContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitFree(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 	public static class IfContext extends StatementContext {
+		public TerminalNode ELSE() { return getToken(BasicParser.ELSE, 0); }
+		public TerminalNode IF() { return getToken(BasicParser.IF, 0); }
+		public TerminalNode THEN() { return getToken(BasicParser.THEN, 0); }
+		public TerminalNode ENDIF() { return getToken(BasicParser.ENDIF, 0); }
+		public StatementContext statement(int i) {
+			return getRuleContext(StatementContext.class,i);
+		}
 		public List<StatementContext> statement() {
 			return getRuleContexts(StatementContext.class);
 		}
-		public TerminalNode THEN() { return getToken(BasicParser.THEN, 0); }
-		public TerminalNode IF() { return getToken(BasicParser.IF, 0); }
-		public TerminalNode ELSE() { return getToken(BasicParser.ELSE, 0); }
-		public TerminalNode ENDIF() { return getToken(BasicParser.ENDIF, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
-		}
-		public StatementContext statement(int i) {
-			return getRuleContext(StatementContext.class,i);
 		}
 		public IfContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
@@ -493,15 +480,28 @@ public class BasicParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class ReadContext extends StatementContext {
-		public TerminalNode READ() { return getToken(BasicParser.READ, 0); }
-		public AssignlhsContext assignlhs() {
-			return getRuleContext(AssignlhsContext.class,0);
+	public static class BeginContext extends StatementContext {
+		public TerminalNode BEGIN() { return getToken(BasicParser.BEGIN, 0); }
+		public TerminalNode END() { return getToken(BasicParser.END, 0); }
+		public StatementContext statement() {
+			return getRuleContext(StatementContext.class,0);
 		}
-		public ReadContext(StatementContext ctx) { copyFrom(ctx); }
+		public BeginContext(StatementContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitRead(this);
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitBegin(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class ReturnContext extends StatementContext {
+		public TerminalNode RETURN() { return getToken(BasicParser.RETURN, 0); }
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
+		public ReturnContext(StatementContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitReturn(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -771,29 +771,36 @@ public class BasicParser extends Parser {
 			super.copyFrom(ctx);
 		}
 	}
+	public static class NewpairContext extends AssignrhsContext {
+		public TerminalNode NEWPAIR() { return getToken(BasicParser.NEWPAIR, 0); }
+		public TerminalNode LPAREN() { return getToken(BasicParser.LPAREN, 0); }
+		public TerminalNode COMMA() { return getToken(BasicParser.COMMA, 0); }
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public TerminalNode RPAREN() { return getToken(BasicParser.RPAREN, 0); }
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
+		public NewpairContext(AssignrhsContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitNewpair(this);
+			else return visitor.visitChildren(this);
+		}
+	}
 	public static class FunctioncallContext extends AssignrhsContext {
+		public TerminalNode LPAREN() { return getToken(BasicParser.LPAREN, 0); }
 		public TerminalNode CALL() { return getToken(BasicParser.CALL, 0); }
 		public TerminalNode RPAREN() { return getToken(BasicParser.RPAREN, 0); }
-		public TerminalNode LPAREN() { return getToken(BasicParser.LPAREN, 0); }
-		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
 		public ArglistContext arglist() {
 			return getRuleContext(ArglistContext.class,0);
 		}
+		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
 		public FunctioncallContext(AssignrhsContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitFunctioncall(this);
-			else return visitor.visitChildren(this);
-		}
-	}
-	public static class PairelementContext extends AssignrhsContext {
-		public PairelemContext pairelem() {
-			return getRuleContext(PairelemContext.class,0);
-		}
-		public PairelementContext(AssignrhsContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPairelement(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -808,24 +815,6 @@ public class BasicParser extends Parser {
 			else return visitor.visitChildren(this);
 		}
 	}
-	public static class NewpairContext extends AssignrhsContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public TerminalNode COMMA() { return getToken(BasicParser.COMMA, 0); }
-		public TerminalNode RPAREN() { return getToken(BasicParser.RPAREN, 0); }
-		public TerminalNode NEWPAIR() { return getToken(BasicParser.NEWPAIR, 0); }
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public TerminalNode LPAREN() { return getToken(BasicParser.LPAREN, 0); }
-		public NewpairContext(AssignrhsContext ctx) { copyFrom(ctx); }
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitNewpair(this);
-			else return visitor.visitChildren(this);
-		}
-	}
 	public static class ArraylitContext extends AssignrhsContext {
 		public ArrayliterContext arrayliter() {
 			return getRuleContext(ArrayliterContext.class,0);
@@ -834,6 +823,17 @@ public class BasicParser extends Parser {
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
 			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitArraylit(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class PairelementContext extends AssignrhsContext {
+		public PairelemContext pairelem() {
+			return getRuleContext(PairelemContext.class,0);
+		}
+		public PairelementContext(AssignrhsContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof BasicParserVisitor ) return ((BasicParserVisitor<? extends T>)visitor).visitPairelement(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -926,10 +926,10 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ArglistContext extends ParserRuleContext {
+		public List<TerminalNode> COMMA() { return getTokens(BasicParser.COMMA); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public List<TerminalNode> COMMA() { return getTokens(BasicParser.COMMA); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
@@ -983,11 +983,11 @@ public class BasicParser extends Parser {
 	}
 
 	public static class PairelemContext extends ParserRuleContext {
-		public TerminalNode FIRST() { return getToken(BasicParser.FIRST, 0); }
+		public TerminalNode SECOND() { return getToken(BasicParser.SECOND, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
-		public TerminalNode SECOND() { return getToken(BasicParser.SECOND, 0); }
+		public TerminalNode FIRST() { return getToken(BasicParser.FIRST, 0); }
 		public PairelemContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1030,11 +1030,11 @@ public class BasicParser extends Parser {
 		public ArraytypeContext arraytype() {
 			return getRuleContext(ArraytypeContext.class,0);
 		}
-		public BasetypeContext basetype() {
-			return getRuleContext(BasetypeContext.class,0);
-		}
 		public PairtypeContext pairtype() {
 			return getRuleContext(PairtypeContext.class,0);
+		}
+		public BasetypeContext basetype() {
+			return getRuleContext(BasetypeContext.class,0);
 		}
 		public TypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1086,9 +1086,9 @@ public class BasicParser extends Parser {
 
 	public static class BasetypeContext extends ParserRuleContext {
 		public TerminalNode BOOL() { return getToken(BasicParser.BOOL, 0); }
-		public TerminalNode INT() { return getToken(BasicParser.INT, 0); }
 		public TerminalNode STRING() { return getToken(BasicParser.STRING, 0); }
 		public TerminalNode CHAR() { return getToken(BasicParser.CHAR, 0); }
+		public TerminalNode INT() { return getToken(BasicParser.INT, 0); }
 		public BasetypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1127,20 +1127,20 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ArraytypeContext extends ParserRuleContext {
-		public BasetypeContext basetype() {
-			return getRuleContext(BasetypeContext.class,0);
-		}
-		public List<TerminalNode> LBRACKET() { return getTokens(BasicParser.LBRACKET); }
-		public TerminalNode RBRACKET(int i) {
-			return getToken(BasicParser.RBRACKET, i);
-		}
+		public List<TerminalNode> RBRACKET() { return getTokens(BasicParser.RBRACKET); }
 		public TerminalNode LBRACKET(int i) {
 			return getToken(BasicParser.LBRACKET, i);
+		}
+		public TerminalNode RBRACKET(int i) {
+			return getToken(BasicParser.RBRACKET, i);
 		}
 		public PairtypeContext pairtype() {
 			return getRuleContext(PairtypeContext.class,0);
 		}
-		public List<TerminalNode> RBRACKET() { return getTokens(BasicParser.RBRACKET); }
+		public BasetypeContext basetype() {
+			return getRuleContext(BasetypeContext.class,0);
+		}
+		public List<TerminalNode> LBRACKET() { return getTokens(BasicParser.LBRACKET); }
 		public ArraytypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1208,13 +1208,13 @@ public class BasicParser extends Parser {
 		public List<PairelemtypeContext> pairelemtype() {
 			return getRuleContexts(PairelemtypeContext.class);
 		}
-		public TerminalNode COMMA() { return getToken(BasicParser.COMMA, 0); }
-		public TerminalNode RPAREN() { return getToken(BasicParser.RPAREN, 0); }
-		public TerminalNode PAIR() { return getToken(BasicParser.PAIR, 0); }
-		public TerminalNode LPAREN() { return getToken(BasicParser.LPAREN, 0); }
 		public PairelemtypeContext pairelemtype(int i) {
 			return getRuleContext(PairelemtypeContext.class,i);
 		}
+		public TerminalNode LPAREN() { return getToken(BasicParser.LPAREN, 0); }
+		public TerminalNode PAIR() { return getToken(BasicParser.PAIR, 0); }
+		public TerminalNode COMMA() { return getToken(BasicParser.COMMA, 0); }
+		public TerminalNode RPAREN() { return getToken(BasicParser.RPAREN, 0); }
 		public PairtypeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1308,30 +1308,30 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ExprNoBinOpContext extends ParserRuleContext {
-		public StrliterContext strliter() {
-			return getRuleContext(StrliterContext.class,0);
+		public BoolliterContext boolliter() {
+			return getRuleContext(BoolliterContext.class,0);
 		}
 		public CharliterContext charliter() {
 			return getRuleContext(CharliterContext.class,0);
 		}
-		public UnopContext unop() {
-			return getRuleContext(UnopContext.class,0);
-		}
-		public TerminalNode RPAREN() { return getToken(BasicParser.RPAREN, 0); }
-		public TerminalNode PAIRLITERAL() { return getToken(BasicParser.PAIRLITERAL, 0); }
-		public ExpressionContext expression() {
-			return getRuleContext(ExpressionContext.class,0);
-		}
+		public TerminalNode LPAREN() { return getToken(BasicParser.LPAREN, 0); }
 		public IntliterContext intliter() {
 			return getRuleContext(IntliterContext.class,0);
 		}
-		public TerminalNode LPAREN() { return getToken(BasicParser.LPAREN, 0); }
+		public StrliterContext strliter() {
+			return getRuleContext(StrliterContext.class,0);
+		}
+		public TerminalNode RPAREN() { return getToken(BasicParser.RPAREN, 0); }
+		public TerminalNode PAIRLITERAL() { return getToken(BasicParser.PAIRLITERAL, 0); }
 		public ArrayelemContext arrayelem() {
 			return getRuleContext(ArrayelemContext.class,0);
 		}
+		public ExpressionContext expression() {
+			return getRuleContext(ExpressionContext.class,0);
+		}
 		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
-		public BoolliterContext boolliter() {
-			return getRuleContext(BoolliterContext.class,0);
+		public UnopContext unop() {
+			return getRuleContext(UnopContext.class,0);
 		}
 		public ExprNoBinOpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1421,11 +1421,11 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ExpressionContext extends ParserRuleContext {
-		public ExprNoBinOpContext exprNoBinOp() {
-			return getRuleContext(ExprNoBinOpContext.class,0);
-		}
 		public BinOpContext binOp() {
 			return getRuleContext(BinOpContext.class,0);
+		}
+		public ExprNoBinOpContext exprNoBinOp() {
+			return getRuleContext(ExprNoBinOpContext.class,0);
 		}
 		public ExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1473,20 +1473,20 @@ public class BasicParser extends Parser {
 		public P3Context p3() {
 			return getRuleContext(P3Context.class,0);
 		}
-		public P4Context p4() {
-			return getRuleContext(P4Context.class,0);
-		}
 		public P1Context p1() {
 			return getRuleContext(P1Context.class,0);
 		}
-		public P6Context p6() {
-			return getRuleContext(P6Context.class,0);
+		public P2Context p2() {
+			return getRuleContext(P2Context.class,0);
+		}
+		public P4Context p4() {
+			return getRuleContext(P4Context.class,0);
 		}
 		public P5Context p5() {
 			return getRuleContext(P5Context.class,0);
 		}
-		public P2Context p2() {
-			return getRuleContext(P2Context.class,0);
+		public P6Context p6() {
+			return getRuleContext(P6Context.class,0);
 		}
 		public BinOpContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1552,15 +1552,15 @@ public class BasicParser extends Parser {
 	}
 
 	public static class P1Context extends ParserRuleContext {
-		public ExprNoBinOpContext exprNoBinOp() {
-			return getRuleContext(ExprNoBinOpContext.class,0);
-		}
-		public TerminalNode DIV() { return getToken(BasicParser.DIV, 0); }
 		public P1Context p1() {
 			return getRuleContext(P1Context.class,0);
 		}
 		public TerminalNode STAR() { return getToken(BasicParser.STAR, 0); }
 		public TerminalNode MOD() { return getToken(BasicParser.MOD, 0); }
+		public TerminalNode DIV() { return getToken(BasicParser.DIV, 0); }
+		public ExprNoBinOpContext exprNoBinOp() {
+			return getRuleContext(ExprNoBinOpContext.class,0);
+		}
 		public P1Context(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1612,14 +1612,14 @@ public class BasicParser extends Parser {
 	}
 
 	public static class P2Context extends ParserRuleContext {
-		public TerminalNode MINUS() { return getToken(BasicParser.MINUS, 0); }
 		public P1Context p1() {
 			return getRuleContext(P1Context.class,0);
 		}
-		public TerminalNode PLUS() { return getToken(BasicParser.PLUS, 0); }
 		public P2Context p2() {
 			return getRuleContext(P2Context.class,0);
 		}
+		public TerminalNode PLUS() { return getToken(BasicParser.PLUS, 0); }
+		public TerminalNode MINUS() { return getToken(BasicParser.MINUS, 0); }
 		public P2Context(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1671,16 +1671,16 @@ public class BasicParser extends Parser {
 	}
 
 	public static class P3Context extends ParserRuleContext {
+		public TerminalNode LESS() { return getToken(BasicParser.LESS, 0); }
 		public P3Context p3() {
 			return getRuleContext(P3Context.class,0);
 		}
 		public TerminalNode GREATEREQUAL() { return getToken(BasicParser.GREATEREQUAL, 0); }
-		public TerminalNode LESS() { return getToken(BasicParser.LESS, 0); }
-		public TerminalNode LESSEQUAL() { return getToken(BasicParser.LESSEQUAL, 0); }
-		public TerminalNode GREATER() { return getToken(BasicParser.GREATER, 0); }
 		public P2Context p2() {
 			return getRuleContext(P2Context.class,0);
 		}
+		public TerminalNode LESSEQUAL() { return getToken(BasicParser.LESSEQUAL, 0); }
+		public TerminalNode GREATER() { return getToken(BasicParser.GREATER, 0); }
 		public P3Context(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1732,13 +1732,13 @@ public class BasicParser extends Parser {
 	}
 
 	public static class P4Context extends ParserRuleContext {
+		public TerminalNode EQUAL() { return getToken(BasicParser.EQUAL, 0); }
 		public P3Context p3() {
 			return getRuleContext(P3Context.class,0);
 		}
 		public P4Context p4() {
 			return getRuleContext(P4Context.class,0);
 		}
-		public TerminalNode EQUAL() { return getToken(BasicParser.EQUAL, 0); }
 		public TerminalNode NOTEQUAL() { return getToken(BasicParser.NOTEQUAL, 0); }
 		public P4Context(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -1794,10 +1794,10 @@ public class BasicParser extends Parser {
 		public P4Context p4() {
 			return getRuleContext(P4Context.class,0);
 		}
-		public TerminalNode AND() { return getToken(BasicParser.AND, 0); }
 		public P5Context p5() {
 			return getRuleContext(P5Context.class,0);
 		}
+		public TerminalNode AND() { return getToken(BasicParser.AND, 0); }
 		public P5Context(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1843,13 +1843,13 @@ public class BasicParser extends Parser {
 	}
 
 	public static class P6Context extends ParserRuleContext {
-		public TerminalNode OR() { return getToken(BasicParser.OR, 0); }
-		public P6Context p6() {
-			return getRuleContext(P6Context.class,0);
-		}
 		public P5Context p5() {
 			return getRuleContext(P5Context.class,0);
 		}
+		public P6Context p6() {
+			return getRuleContext(P6Context.class,0);
+		}
+		public TerminalNode OR() { return getToken(BasicParser.OR, 0); }
 		public P6Context(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1899,8 +1899,8 @@ public class BasicParser extends Parser {
 			return getToken(BasicParser.DIGIT, i);
 		}
 		public List<TerminalNode> DIGIT() { return getTokens(BasicParser.DIGIT); }
-		public TerminalNode MINUS() { return getToken(BasicParser.MINUS, 0); }
 		public TerminalNode PLUS() { return getToken(BasicParser.PLUS, 0); }
+		public TerminalNode MINUS() { return getToken(BasicParser.MINUS, 0); }
 		public IntliterContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1966,11 +1966,11 @@ public class BasicParser extends Parser {
 	}
 
 	public static class UnopContext extends ParserRuleContext {
+		public TerminalNode NOT() { return getToken(BasicParser.NOT, 0); }
+		public TerminalNode ORD() { return getToken(BasicParser.ORD, 0); }
 		public TerminalNode LEN() { return getToken(BasicParser.LEN, 0); }
 		public TerminalNode MINUS() { return getToken(BasicParser.MINUS, 0); }
-		public TerminalNode NOT() { return getToken(BasicParser.NOT, 0); }
 		public TerminalNode CHR() { return getToken(BasicParser.CHR, 0); }
-		public TerminalNode ORD() { return getToken(BasicParser.ORD, 0); }
 		public UnopContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2009,21 +2009,21 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ArrayelemContext extends ParserRuleContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
-		public List<ExpressionContext> expression() {
-			return getRuleContexts(ExpressionContext.class);
-		}
-		public List<TerminalNode> LBRACKET() { return getTokens(BasicParser.LBRACKET); }
-		public TerminalNode RBRACKET(int i) {
-			return getToken(BasicParser.RBRACKET, i);
-		}
+		public List<TerminalNode> RBRACKET() { return getTokens(BasicParser.RBRACKET); }
 		public TerminalNode LBRACKET(int i) {
 			return getToken(BasicParser.LBRACKET, i);
 		}
+		public TerminalNode RBRACKET(int i) {
+			return getToken(BasicParser.RBRACKET, i);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
+		}
+		public List<TerminalNode> LBRACKET() { return getTokens(BasicParser.LBRACKET); }
+		public List<ExpressionContext> expression() {
+			return getRuleContexts(ExpressionContext.class);
+		}
 		public TerminalNode IDENT() { return getToken(BasicParser.IDENT, 0); }
-		public List<TerminalNode> RBRACKET() { return getTokens(BasicParser.RBRACKET); }
 		public ArrayelemContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2078,8 +2078,8 @@ public class BasicParser extends Parser {
 	}
 
 	public static class BoolliterContext extends ParserRuleContext {
-		public TerminalNode TRUE() { return getToken(BasicParser.TRUE, 0); }
 		public TerminalNode FALSE() { return getToken(BasicParser.FALSE, 0); }
+		public TerminalNode TRUE() { return getToken(BasicParser.TRUE, 0); }
 		public BoolliterContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2155,12 +2155,12 @@ public class BasicParser extends Parser {
 	}
 
 	public static class StrliterContext extends ParserRuleContext {
+		public List<TerminalNode> EXCLUDESTRING() { return getTokens(BasicParser.EXCLUDESTRING); }
+		public TerminalNode STRINGLITERAL() { return getToken(BasicParser.STRINGLITERAL, 0); }
 		public TerminalNode STRINGCLOSE() { return getToken(BasicParser.STRINGCLOSE, 0); }
 		public TerminalNode EXCLUDESTRING(int i) {
 			return getToken(BasicParser.EXCLUDESTRING, i);
 		}
-		public List<TerminalNode> EXCLUDESTRING() { return getTokens(BasicParser.EXCLUDESTRING); }
-		public TerminalNode STRINGLITERAL() { return getToken(BasicParser.STRINGLITERAL, 0); }
 		public StrliterContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2208,8 +2208,8 @@ public class BasicParser extends Parser {
 	}
 
 	public static class CharacterContext extends ParserRuleContext {
-		public TerminalNode ESCAPE() { return getToken(BasicParser.ESCAPE, 0); }
 		public TerminalNode ESC_SLASH() { return getToken(BasicParser.ESC_SLASH, 0); }
+		public TerminalNode ESCAPE() { return getToken(BasicParser.ESCAPE, 0); }
 		public TerminalNode STRINGLITERAL() { return getToken(BasicParser.STRINGLITERAL, 0); }
 		public TerminalNode CHARLITERAL() { return getToken(BasicParser.CHARLITERAL, 0); }
 		public CharacterContext(ParserRuleContext parent, int invokingState) {
@@ -2261,18 +2261,18 @@ public class BasicParser extends Parser {
 	}
 
 	public static class ArrayliterContext extends ParserRuleContext {
+		public TerminalNode RBRACKET() { return getToken(BasicParser.RBRACKET, 0); }
+		public List<TerminalNode> COMMA() { return getTokens(BasicParser.COMMA); }
 		public ExpressionContext expression(int i) {
 			return getRuleContext(ExpressionContext.class,i);
 		}
-		public List<TerminalNode> COMMA() { return getTokens(BasicParser.COMMA); }
+		public TerminalNode LBRACKET() { return getToken(BasicParser.LBRACKET, 0); }
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
-		public TerminalNode LBRACKET() { return getToken(BasicParser.LBRACKET, 0); }
 		public TerminalNode COMMA(int i) {
 			return getToken(BasicParser.COMMA, i);
 		}
-		public TerminalNode RBRACKET() { return getToken(BasicParser.RBRACKET, 0); }
 		public ArrayliterContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
