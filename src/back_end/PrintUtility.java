@@ -149,7 +149,7 @@ public class PrintUtility {
     public void printReference() {
         Utility.addFunction(new LabelInstr("p_print_reference"));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new MOV(InterferenceGraph.findRegister("p_print_reference"), Register.R0));
+        Utility.addFunction(new MOV(Register.R1, InterferenceGraph.findRegister("p_print_reference")));
         CodeGen.functions.add(new LOAD(Register.R0, new LabelExpr(Utility.getReferencePlaceholder())));
         printDefaults();
     }
