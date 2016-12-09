@@ -79,25 +79,6 @@ public class BinOpAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        //Extension: Trying evaluation
-        if(returnType.equals("int")) {
-            Integer evaluable = constantOptimise(); //try evaluate & get result constant
-            if(evaluable != null) {
-                String sign = evaluable < 0 ? "-" : "";
-                String value = evaluable.toString().replace("-", "");
-                IntLiterAST optimisedConst = new IntLiterAST(ctx, sign, value);
-                optimisedConst.translate();
-                return;
-            }
-        } else { // return type must be a bool
-            Boolean evaluable = booleanOptimise(); //try evaluate & get boolean value
-            if(evaluable != null) {
-                BoolliterAST optimisedBool = new BoolliterAST(ctx, evaluable.toString());
-                optimisedBool.translate();
-                return;
-            }
-        }
-
         //Holds the reference to the registers going to hold lhs & rhs value
         Register lhsResult = CodeGen.notUsedRegisters.peek();
         lhs.translate();
@@ -263,6 +244,28 @@ public class BinOpAST extends ExpressionAST {
     private boolean isNull(ExpressionAST exp) {
         return ((BinOpAST) exp).booleanOptimise() == null;
     }
+
+    /*
+    Extension: Trying evaluation
+    Returning appropriate result of type BinOpAST(failed to evaluate) or IntLiterAST or BoolLiterAST(succeeded)
+     */
+    public ExpressionAST tryEvaluate() {
+        if(returnType.equals("int")) {
+            Integer evaluable = constantOptimise(); //try evaluate & get result constant
+            if(evaluable != null) {
+                String sign = evaluable < 0 ? "-" : "";
+                String value = evaluable.toString().replace("-", "");
+                return new IntLiterAST(ctx, sign, value);
+            }
+        } else { // return type must be a bool
+            Boolean evaluable = booleanOptimise(); //try evaluate & get boolean value
+            if(evaluable != null) {
+                return new BoolliterAST(ctx, evaluable.toString());
+            }
+        }
+        return this;
+    }
+
 
     /*
     This method will try to evaluate this binOp & return the result boolean.

@@ -1,6 +1,7 @@
 package front_end.AST.StatementAST;
 
 import back_end.Utility;
+import front_end.AST.ExpressionAST.IdentAST;
 import front_end.AST.ProgramAST;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -26,7 +27,45 @@ public class SequenceAST extends StatementAST {
     public void translate() {
         for(StatementAST stat : statements) {
             stat.translate();
-            Utility.pushBackParam();
+        }
+    }
+
+    @Override
+    public void weight() {
+        for(StatementAST stat :  statements) {
+            stat.weight();
+            size += stat.getSize();
+        }
+    }
+
+    @Override
+    public void IRepresentation() {
+        for(StatementAST statement : statements) {
+            statement.IRepresentation();
+            if(IGNode == null) {
+                IGNode = statement.getIGNode();
+            }
+        }
+    }
+
+    @Override
+    public void extractLoopInvariants(List<String> idents) {
+        for (StatementAST stat: statements) {
+            stat.extractLoopInvariants(idents);
+        }
+    }
+
+    @Override
+    public void extractLoopDependents(List<String> idents) {
+        for (StatementAST stat: statements) {
+            stat.extractLoopDependents(idents);
+        }
+    }
+
+    @Override
+    public void findLoopInvariants() {
+        for (StatementAST stat: statements) {
+            stat.findLoopInvariants();
         }
     }
 }

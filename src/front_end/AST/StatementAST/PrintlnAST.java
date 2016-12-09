@@ -20,6 +20,7 @@ import static back_end.data_type.register.Register.*;
 
 public class PrintlnAST extends StatementAST {
     private ExpressionAST expression;
+    private PrintAST printAST;
 
     public PrintlnAST(ParserRuleContext ctx, ExpressionAST expression) {
         super(ctx);
@@ -33,13 +34,27 @@ public class PrintlnAST extends StatementAST {
 
     @Override
     public void translate() {
-        (new PrintAST(null, expression)).translate();
+        printAST.translate();
         addMain(new Branch("L", "p_print_ln"));
-            PrintUtility.addToPlaceholders("\"\\0\"");
-            PrintUtility.addToEndFunctions("p_print_ln");
+        PrintUtility.addToPlaceholders("\"\\0\"");
+        PrintUtility.addToEndFunctions("p_print_ln", getRegister());
     }
 
     public ExpressionAST getExpression() {
         return expression;
     }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        printAST = new PrintAST(null, expression);
+        printAST.IRepresentation();
+        IGNode = printAST.getIGNode();
+    }
+
 }

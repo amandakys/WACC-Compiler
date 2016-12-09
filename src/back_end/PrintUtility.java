@@ -14,16 +14,17 @@ import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import main.CodeGen;
+import main.Visitor;
+import optimisation.InterferenceGraph;
+
+import java.util.Map;
 
 public class PrintUtility {
     public static final int EXIT_CODE = -1;
 
-    public PrintUtility() {
-    }
-
-    public static void addToEndFunctions(String s) {
-        if (!CodeGen.endFunctions.contains(s)) {
-            CodeGen.endFunctions.add(s);
+    public static void addToEndFunctions(String s, Register r) {
+        if (!CodeGen.endFunctions.containsKey(s)) {
+            CodeGen.endFunctions.put(s, r);
         }
     }
 
@@ -34,14 +35,14 @@ public class PrintUtility {
     }
 
     public static void throwRuntimeError() {
-        addToEndFunctions("p_throw_runtime_error");
+        addToEndFunctions("p_throw_runtime_error", Register.R0);
         addToPlaceholders("\"%.*s\\0\"");
-        addToEndFunctions("p_print_string");
+        addToEndFunctions("p_print_string", Register.R0);
     }
 
     public void ioFunctions() {
-        for (String s : CodeGen.endFunctions) {
-            switch (s) {
+        for (Map.Entry<String, Register> entry : CodeGen.endFunctions.entrySet()) {
+            switch (entry.getKey()) {
                 case "p_print_bool":
                     printBool();
                     break;
@@ -58,19 +59,19 @@ public class PrintUtility {
                     printlnInstr();
                     break;
                 case "p_read_int":
-                    read("int", Utility.getIntPlaceholder());
+                    read("int", Utility.getIntPlaceholder(), entry.getValue());
                     break;
                 case "p_read_char":
-                    read("char", Utility.getCharPlaceholder());
+                    read("char", Utility.getCharPlaceholder(), entry.getValue());
                     break;
                 case "p_check_array_bounds":
-                    p_check_array_bounds();
+                    p_check_array_bounds(entry.getValue());
                     break;
                 case "p_check_null_pointer":
                     p_check_null_pointer();
                     break;
                 case "p_divide_by_zero":
-                    p_divide_by_zero();
+                    p_divide_by_zero(entry.getValue());
                     break;
                 case "p_integer_overflow":
                     p_integer_overflow();
@@ -85,7 +86,6 @@ public class PrintUtility {
                     p_free_array();
                     break;
             }
-            Utility.pushBackRegisters();
         }
     }
 
@@ -109,24 +109,28 @@ public class PrintUtility {
     public void printString() {
         Utility.addFunction(new LabelInstr("p_print_string"));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new LOAD(Utility.popParamReg(), new Address(Register.R0)));
-        Utility.addFunction(new ADD(Utility.popParamReg(), Register.R0, new ImmValue(4)));
+        //TODO: InterferenceGraph.findRegister("print_string_ldr")
+        Utility.addFunction(new LOAD(Register.R1, new Address(Register.R0)));
+        //TODO: InterferenceGraph.findRegister("print_string_mov")
+        Utility.addFunction(new ADD(new Register(2), Register.R0, new ImmValue(4)));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(Utility.getStringPlaceholder())));
+
         printDefaults();
     }
 
     public void printInt() {
         Utility.addFunction(new LabelInstr("p_print_int"));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new MOV(Utility.popParamReg(), Register.R0));
+        Utility.addFunction(new MOV(Register.R1, (InterferenceGraph.findRegister("p_print_int"))));
+        Utility.addFunction(new MOV(InterferenceGraph.findRegister("p_print_int"), Register.R0));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(Utility.getIntPlaceholder())));
         printDefaults();
     }
 
-    public void read(String type, String placeholder) {
+    public void read(String type, String placeholder, Register register) {
         Utility.addFunction(new LabelInstr("p_read_" + type));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new MOV(Utility.popParamReg(), Register.R0));
+        Utility.addFunction(new MOV(Register.R1, register));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(placeholder)));
 
         Utility.addFunction(new ADD(Register.R0, Register.R0, new ImmValue(4)));
@@ -148,7 +152,7 @@ public class PrintUtility {
     public void printReference() {
         Utility.addFunction(new LabelInstr("p_print_reference"));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new MOV(Utility.popParamReg(), Register.R0));
+        Utility.addFunction(new MOV(Register.R1, Register.R0));
         CodeGen.functions.add(new LOAD(Register.R0, new LabelExpr(Utility.getReferencePlaceholder())));
         printDefaults();
     }
@@ -169,26 +173,26 @@ public class PrintUtility {
         CodeGen.functions.add(new Branch("L", "exit"));
     }
 
-    public static void p_check_array_bounds() {
+    public static void p_check_array_bounds(Register register) {
         CodeGen.functions.add(new LabelInstr("p_check_array_bounds"));
         CodeGen.functions.add(new PUSH(Register.LR));
 
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
         CodeGen.functions.add(new LOAD("LT", Register.R0, new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsNegative))));
-        CodeGen.functions.add(new Branch("LT", "p_throw_runtime_error"));
-        CodeGen.functions.add(new LOAD(Register.R1, new Address(Register.R1)));
+        CodeGen.functions.add(new Branch("LLT", "p_throw_runtime_error"));
+        CodeGen.functions.add(new LOAD(Register.R1, new Address(register)));
 
         CodeGen.functions.add(new CMP(Register.R0, Register.R1));
-        CodeGen.functions.add(new LOAD("CS", Register.R0, new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsLarge))));
+        CodeGen.functions.add(new LOAD("CS", InterferenceGraph.findRegister("p_check_array_bounds"), new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsLarge))));
         CodeGen.functions.add(new Branch("CS", "p_throw_runtime_error"));
 
         CodeGen.functions.add(new POP(Register.PC));
     }
 
-    public static void p_divide_by_zero() {
+    public static void p_divide_by_zero(Register register) {
         CodeGen.functions.add(new LabelInstr("p_check_divide_by_zero"));
         CodeGen.functions.add(new PUSH(Register.LR));
-        CodeGen.functions.add(new CMP(Utility.popParamReg(), new ImmValue(0)));
+        CodeGen.functions.add(new CMP(register, new ImmValue(0)));
         CodeGen.functions.add(new LOAD("EQ", Register.R0, new LabelExpr(getErrorMessage(Error.divideByZero))));
         CodeGen.functions.add(new Branch("LEQ", "p_throw_runtime_error"));
         CodeGen.functions.add(new POP(Register.PC));
@@ -236,13 +240,6 @@ public class PrintUtility {
                 return msg.substring(0, msg.length() - 2);
             }
         }
-
-//        for (int i = 2; i < CodeGen.toPushData.size(); i += 3) {
-//            if (CodeGen.toPushData.get(i).getValue().equals(error)) {
-//                String msg =  CodeGen.toPushData.get(i - 2).toString();
-//                return msg.substring(0, msg.length() - 2);
-//            }
-//        }
 
         return null;
     }

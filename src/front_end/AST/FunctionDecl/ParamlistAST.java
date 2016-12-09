@@ -49,4 +49,23 @@ public class ParamlistAST extends Node {
             p.translate();
         }
     }
+
+    @Override
+    public void weight() {
+        for (ParamAST p : parameters) {
+            p.weight();
+            size += p.getSize();
+        }
+    }
+
+    @Override
+    public void IRepresentation() {
+        for(ParamAST p : parameters) {
+            p.IRepresentation();
+
+            if(IGNode == null) {
+                IGNode = p.getIGNode();
+            }
+        }
+    }
 }

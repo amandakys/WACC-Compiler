@@ -8,6 +8,7 @@ import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.LOAD;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
 
@@ -36,16 +37,30 @@ public class IdentAST extends ExpressionAST {
 
     @Override
     public void translate() {
-
-        Register result = Utility.popUnusedReg();
         String typeName = identObj.getType().getTypeName();
 
         if(typeName.equals("bool") || typeName.equals("char")) {
             //LDRSB only for signed byte ie bool & char
-            CodeGen.main.add(new LOAD("SB", result, Visitor.ST.getAddress(ident)));
+            CodeGen.main.add(new LOAD("SB", getRegister(), Visitor.ST.getAddress(ident)));
         } else {
             //normal LDR
-            CodeGen.main.add(new LOAD(result, Visitor.ST.getAddress(ident)));
+            CodeGen.main.add(new LOAD(getRegister(), Visitor.ST.getAddress(ident)));
+        }
+    }
+
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+        IGNode = InterferenceGraph.findIGNode(ident);
+
+        if(IGNode != null && IGNode.getTo() < index) {
+            IGNode.setTo(index - 1);
+        } else if(IGNode == null) {
+            defaultIRep(ident);
         }
     }
 

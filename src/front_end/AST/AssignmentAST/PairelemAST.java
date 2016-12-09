@@ -61,8 +61,6 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void translate() {
-        Register r = Utility.popUnusedReg();
-
         //load the result to a register when necessary (i.e if pairelem is on the rhs, or on lhs)
         if(ctx instanceof BasicParser.PairelemContext
                 || ctx.getParent() instanceof BasicParser.PairelemContext) {
@@ -71,27 +69,45 @@ public class PairelemAST extends AssignrhsAST{
             if(expression instanceof IdentAST) {
                 value = ((IdentAST) expression).getIdent();
             }
-            CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP,
+            CodeGen.main.add(new LOAD(getRegister(), new PreIndex(Register.SP,
                     Visitor.ST.getAddress(value).getShiftVal())));
         }
-
-        CodeGen.main.add(new MOV(Register.R0, r));
 
         int val = token.equals("fst") ? 0 : PAIR_SIZE;
 
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
-        CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(val))));
+        CodeGen.main.add(new LOAD(getRegister(), new PreIndex(getRegister(), new ImmValue(val))));
 
         if(ctx instanceof BasicParser.PairelementContext
                 || ctx.getParent() instanceof BasicParser.PairelementContext) {
-            CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(0))));
+            CodeGen.main.add(new LOAD(getRegister(), new PreIndex(getRegister(), new ImmValue(0))));
         }
 
         if(!hasError) {
             Utility.pushData(Error.nullReference);
-            PrintUtility.addToEndFunctions("p_check_null_pointer");
+            PrintUtility.addToEndFunctions("p_check_null_pointer", Register.R0);
             PrintUtility.throwRuntimeError();
             hasError = true;
         }
+    }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        expression.IRepresentation();
+        setIGNode(expression.getIGNode());
+
+        //set the range of IGNode
+        if(IGNode != null && IGNode.getTo() < index) {
+            IGNode.setTo(index - 1);
+        }
+
+        //print_string is added because runtime error is thrown
+        print_stringIR();
     }
 }

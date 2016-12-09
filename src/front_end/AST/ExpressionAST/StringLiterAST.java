@@ -26,7 +26,17 @@ public class StringLiterAST extends ExpressionAST{
         String label = "msg_" + (CodeGen.data.size() - 1)/3;
 
         Utility.pushData(value);
-        Utility.addMain(new LOAD(Utility.popUnusedReg(), new LabelExpr(label)));
+        Utility.addMain(new LOAD(getRegister(), new LabelExpr(label)));
+    }
+
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+        defaultIRep("string_" + value);
     }
 
     public String getValue() {
