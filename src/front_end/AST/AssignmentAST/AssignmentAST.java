@@ -4,6 +4,10 @@ import back_end.data_type.Address;
 import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.STORE;
+<<<<<<< HEAD
+=======
+import front_end.AST.ExpressionAST.*;
+>>>>>>> b254bb1a8196684f77b37759ce994e5fdbb3cbb0
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import front_end.AST.StatementAST.StatementAST;
@@ -67,6 +71,7 @@ public class AssignmentAST extends StatementAST {
     }
 
     @Override
+<<<<<<< HEAD
     public void weight() {
         lhs.weight();
         rhs.weight();
@@ -76,5 +81,14 @@ public class AssignmentAST extends StatementAST {
     @Override
     public void IRepresentation() {
 
+=======
+    public boolean determineLoopInvariance() {
+        if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
+                rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
+                rhs instanceof UnopAST)) {
+            return true;
+        }
+        return false;
+>>>>>>> b254bb1a8196684f77b37759ce994e5fdbb3cbb0
     }
 }

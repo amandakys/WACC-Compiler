@@ -29,6 +29,7 @@ public class CharLitAST extends ExpressionAST {
         }
     }
 
+<<<<<<< HEAD
     @Override
     public void weight() {
         size = 1;
@@ -37,5 +38,9 @@ public class CharLitAST extends ExpressionAST {
     @Override
     public void IRepresentation() {
 
+=======
+    public int getCodePoint() {
+        return charac.replace("\'", "").codePointAt(0);
+>>>>>>> b254bb1a8196684f77b37759ce994e5fdbb3cbb0
     }
 }

@@ -59,4 +59,14 @@ public class ADD implements Instruction {
     public String getValue() {
         return lhs.toString() + " + " + rhs.toString();
     }
+
+    @Override
+    public boolean toRemove() {
+        return false;
+    }
+
+    @Override
+    public boolean checkNext() {
+        return false;
+    }
 }

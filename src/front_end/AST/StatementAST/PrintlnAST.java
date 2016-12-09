@@ -50,7 +50,10 @@ public class PrintlnAST extends StatementAST {
     }
 
     @Override
-    public void IRepresentation() {
+    public void IRepresentation() {}
 
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
     }
 }

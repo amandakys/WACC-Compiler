@@ -12,7 +12,6 @@ import java.util.Stack;
 public class Utility {
     private static Stack<Integer> jumpSP = new Stack<>();
     private static int NUM_QUOTATION = 2;
-
     public static int STACK_SIZE = (int) Math.pow(2, 10);
 
     public static void addMain(Instruction instr) {

@@ -24,7 +24,7 @@ public class SequenceAST extends StatementAST {
 
     @Override
     public void translate() {
-        for(StatementAST stat : statements) {
+        for (StatementAST stat : statements) {
             stat.translate();
             Utility.pushBackParam();
         }
@@ -32,16 +32,36 @@ public class SequenceAST extends StatementAST {
 
     @Override
     public void weight() {
-        for(StatementAST stat :  statements) {
+        for (StatementAST stat : statements) {
             stat.weight();
             size += stat.getSize();
         }
     }
 
+
     @Override
     public void IRepresentation() {
-        for(StatementAST statement : statements) {
+        for (StatementAST statement : statements) {
             statement.IRepresentation();
         }
+    }
+
+    @Override
+    public void extractLoopInvariants() {
+        for (StatementAST stat : statements) {
+            stat.extractLoopInvariants();
+        }
+    }
+
+    public void extractLoopDependents() {
+        for (StatementAST stat: statements) {
+            stat.extractLoopDependents();
+
+        }
+    }
+
+    public boolean determineLoopInvariance () {
+        //TODO: may need to be changed
+        return false;
     }
 }

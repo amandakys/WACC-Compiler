@@ -81,6 +81,25 @@ public class BinOpAST extends ExpressionAST {
 
     @Override
     public void translate() {
+        //Extension: Trying evaluation
+        if(returnType.equals("int")) {
+            Integer evaluable = constantOptimise(); //try evaluate & get result constant
+            if(evaluable != null) {
+                String sign = evaluable < 0 ? "-" : "";
+                String value = evaluable.toString().replace("-", "");
+                IntLiterAST optimisedConst = new IntLiterAST(ctx, sign, value);
+                optimisedConst.translate();
+                return;
+            }
+        } else { // return type must be a bool
+            Boolean evaluable = booleanOptimise(); //try evaluate & get boolean value
+            if(evaluable != null) {
+                BoolliterAST optimisedBool = new BoolliterAST(ctx, evaluable.toString());
+                optimisedBool.translate();
+                return;
+            }
+        }
+
         //Holds the reference to the registers going to hold lhs & rhs value
         Register lhsResult = CodeGen.notUsedRegisters.peek();
         lhs.translate();
@@ -129,6 +148,13 @@ public class BinOpAST extends ExpressionAST {
                     Utility.pushRegister(rhsResult);
                     CodeGen.main.add(new Branch("LVS", "p_throw_overflow_error"));
                 } else if(op.equals("*")) {
+                    if(lhs instanceof IntLiterAST) {
+                        int shiftNumber = ((IntLiterAST) lhs).getValue();
+                        if(shiftNumber % 2 == 0) {
+                            CodeGen.main.add(new MOV(lhsResult, new PostIndex(rhsResult, Shift.ASR,
+                                    new ImmValue(shiftNumber / 2))));
+                        }
+                    }
                     CodeGen.main.add(new SMULL(lhsResult, rhsResult, lhsResult, rhsResult));
                     Utility.pushRegister(rhsResult);
                     //Mult involves shifting in CMP
@@ -237,6 +263,7 @@ public class BinOpAST extends ExpressionAST {
         }
     }
 
+<<<<<<< HEAD
     @Override
     public void weight() {
         lhs.weight();
@@ -248,6 +275,129 @@ public class BinOpAST extends ExpressionAST {
     public void IRepresentation() {
         rhs.IRepresentation();
         lhs.IRepresentation();
+=======
+    private boolean isNull(ExpressionAST exp) {
+        return ((BinOpAST) exp).booleanOptimise() == null;
+    }
+
+    /*
+    This method will try to evaluate this binOp & return the result boolean.
+    Return null if failed to do so (eg. binOp contains a variable)
+    This method does not modify anything so can be made public allowing conditional branch statements to use
+     */
+    public Boolean booleanOptimise() {
+        Boolean result = null;
+        Integer rhsValue = null;
+        Integer lhsValue = null;
+        if(lhs instanceof BinOpAST) {
+            if(((BinOpAST) lhs).returnType.equals("bool")) {
+                if (!isNull(lhs)) {
+                    lhsValue = ((BinOpAST) lhs).booleanOptimise() ? 1 : 0;
+                }
+            } else { // return type is int
+                lhsValue = ((BinOpAST) lhs).constantOptimise();
+            }
+        } else if(lhs instanceof IntLiterAST) {
+            lhsValue = ((IntLiterAST) lhs).getValue();
+        } else if(lhs instanceof BoolliterAST) {
+            lhsValue = ((BoolliterAST) lhs).getBoolVal().equals("true") ? 1 : 0;
+        } else if(lhs instanceof CharLitAST) {
+            lhsValue = ((CharLitAST) lhs).getCodePoint();
+        }
+
+        if(rhs instanceof BinOpAST) {
+            if(((BinOpAST) rhs).returnType.equals("bool")) {
+                if (!isNull(lhs)) {
+                    rhsValue = ((BinOpAST) rhs).booleanOptimise() ? 1 : 0;
+                }
+            } else {
+                rhsValue = ((BinOpAST) rhs).constantOptimise();
+            }
+        } else if(rhs instanceof IntLiterAST) {
+            rhsValue = ((IntLiterAST) rhs).getValue();
+        } else if(rhs instanceof BoolliterAST) {
+            rhsValue = ((BoolliterAST) rhs).getBoolVal().equals("true") ? 1 : 0;
+        } else if(rhs instanceof CharLitAST) {
+            rhsValue = ((CharLitAST) rhs).getCodePoint();
+        }
+
+        if(lhsValue != null && rhsValue != null) {
+            switch (op) {
+                case ">":
+                    result = lhsValue > rhsValue;
+                    break;
+                case ">=":
+                    result = lhsValue >= rhsValue;
+                    break;
+                case "<":
+                    result = lhsValue < rhsValue;
+                    break;
+                case "<=":
+                    result = lhsValue <= rhsValue;
+                    break;
+                case "==":
+                    result = lhsValue.equals(rhsValue);
+                    break;
+                case "!=":
+                    result = !lhsValue.equals(rhsValue);
+                    break;
+                case "&&":
+                    result = (lhsValue == 1) && (rhsValue == 1);
+                    break;
+                case "||":
+                    result = (lhsValue == 1) || (rhsValue == 1);
+                    break;
+            }
+        }
+        return result;
+    }
+
+    /*
+    This method will try to evaluate this binOp & return the result constant.
+    Return null if failed to do so (eg. containing a variable)
+     */
+    public Integer constantOptimise() {
+        Integer result = null;
+        Integer rhsValue = null;
+        Integer lhsValue = null;
+        if(lhs instanceof BinOpAST) {
+            lhsValue = ((BinOpAST) lhs).constantOptimise();
+        } else if(lhs instanceof IntLiterAST) {
+            lhsValue = ((IntLiterAST) lhs).getValue();
+        }
+
+        if(rhs instanceof BinOpAST) {
+            rhsValue = ((BinOpAST) rhs).constantOptimise();
+        } else if(rhs instanceof IntLiterAST) {
+            rhsValue = ((IntLiterAST) rhs).getValue();
+        }
+
+        if(lhsValue != null && rhsValue != null) {
+            switch(op) {
+                case "+":
+                    result = lhsValue + rhsValue;
+                    break;
+                case "-":
+                    result = lhsValue - rhsValue;
+                    break;
+                case "*":
+                    result = lhsValue * rhsValue;
+                    break;
+                case "/":
+                    if(rhsValue != 0) {
+                        result = lhsValue / rhsValue;
+                    }
+                    break;
+                case "%":
+                    if(rhsValue != 0) {
+                        result = lhsValue % rhsValue;
+                    }
+                    break;
+            }
+
+        }
+        return result;
+>>>>>>> b254bb1a8196684f77b37759ce994e5fdbb3cbb0
     }
 
     /*

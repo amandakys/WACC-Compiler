@@ -86,6 +86,7 @@ public class ReadAST extends StatementAST {
     }
 
     @Override
+<<<<<<< HEAD
     public void weight() {
         expression.weight();
         size = expression.getSize();
@@ -94,5 +95,9 @@ public class ReadAST extends StatementAST {
     @Override
     public void IRepresentation() {
 
+=======
+    public boolean determineLoopInvariance() {
+        return false;
+>>>>>>> b254bb1a8196684f77b37759ce994e5fdbb3cbb0
     }
 }

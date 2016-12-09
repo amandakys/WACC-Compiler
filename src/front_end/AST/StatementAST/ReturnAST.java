@@ -48,4 +48,9 @@ public class ReturnAST extends StatementAST {
     public void IRepresentation() {
 
     }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }

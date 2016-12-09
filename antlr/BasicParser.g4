@@ -29,6 +29,7 @@ statement: SKIP                                         #skip
 | WHILE expression DO statement DONE                    #while
 | BEGIN statement END                                   #begin
 | statement SEMI statement                              #sequence
+| DO statement WHILE expression                         #dowhile
 ;
 
 assignlhs: IDENT | arrayelem | pairelem ;

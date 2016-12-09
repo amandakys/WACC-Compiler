@@ -43,6 +43,10 @@ public class CodeGen {
     //functions used in main
     public static List<Instruction> functions = new ArrayList<>();
 
+    public static List<Instruction> optText = new ArrayList<>();
+    public static List<Instruction> optMain = new ArrayList<>();
+    public static List<Instruction> optFunctions = new ArrayList<>();
+
     public CodeGen() {
         initialiseReg();
 

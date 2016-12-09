@@ -37,4 +37,8 @@ public class BeginAST extends StatementAST {
     public void IRepresentation() {
 
     }
+
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }
