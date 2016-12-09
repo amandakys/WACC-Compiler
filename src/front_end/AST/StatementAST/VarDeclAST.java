@@ -131,7 +131,7 @@ public class VarDeclAST extends StatementAST {
         CodeGen.main.add(new STORE(rhs.getRegister(), addressWithJump, identObj.getSize()));
 
         //register used by the variable must be the same as register used by rhs
-        setRegister(rhs.getRegister());
+        setIGNode(rhs.getIGNode());
     }
 
     @Override

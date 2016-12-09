@@ -128,7 +128,7 @@ public class PrintUtility {
     public void read(String type, String placeholder, Register register) {
         Utility.addFunction(new LabelInstr("p_read_" + type));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new MOV(register, Register.R0));
+        Utility.addFunction(new MOV(Register.R1, register));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(placeholder)));
 
         Utility.addFunction(new ADD(Register.R0, Register.R0, new ImmValue(4)));
