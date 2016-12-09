@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * Created by andikoh on 08/11/2016.
  */
-public class Visitor extends BasicParserBaseVisitor<Node>{
+public class Visitor extends BasicParserBaseVisitor<Node> {
     public static SymbolTable ST = new SymbolTable(null);
     private static List<CallAST> toBeVisited = new ArrayList<>();
 
@@ -447,7 +447,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else {
             op = ctx.STAR().getText();
         }
-        return new BinOpAST(ctx, op,visitExprNoBinOp(ctx.exprNoBinOp()), visitP1(ctx.p1()));
+        return (new BinOpAST(ctx, op,visitExprNoBinOp(ctx.exprNoBinOp()), visitP1(ctx.p1()))).tryEvaluate();
     }
 
     @Override
@@ -464,7 +464,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             op = ctx.PLUS().getText();
         }
 
-        return new BinOpAST(ctx, op,visitP1(ctx.p1()), visitP2(ctx.p2()));
+        return (new BinOpAST(ctx, op,visitP1(ctx.p1()), visitP2(ctx.p2()))).tryEvaluate();
     }
 
     @Override
@@ -484,7 +484,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else {
             op = ctx.LESSEQUAL().getText();
         }
-        return new BinOpAST(ctx, op,visitP2(ctx.p2()), visitP3(ctx.p3()));
+        return (new BinOpAST(ctx, op,visitP2(ctx.p2()), visitP3(ctx.p3()))).tryEvaluate();
     }
 
     @Override
@@ -500,7 +500,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else {
             op = ctx.NOTEQUAL().getText();
         }
-        return new BinOpAST(ctx, op,visitP3(ctx.p3()), visitP4(ctx.p4()));
+        return (new BinOpAST(ctx, op,visitP3(ctx.p3()), visitP4(ctx.p4()))).tryEvaluate();
     }
 
     @Override
@@ -509,7 +509,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             return visitP4(ctx.p4());
         }
 
-        return new BinOpAST(ctx, ctx.AND().getText(),visitP4(ctx.p4()), visitP5(ctx.p5()));
+        return (new BinOpAST(ctx, ctx.AND().getText(),visitP4(ctx.p4()), visitP5(ctx.p5()))).tryEvaluate();
     }
 
     @Override
@@ -518,7 +518,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
             return visitP5(ctx.p5());
         }
 
-        return new BinOpAST(ctx, ctx.OR().getText(),visitP5(ctx.p5()), visitP6(ctx.p6()));
+        return (new BinOpAST(ctx, ctx.OR().getText(),visitP5(ctx.p5()), visitP6(ctx.p6()))).tryEvaluate();
     }
 
     @Override

@@ -68,7 +68,6 @@ public class ForAST extends StatementAST {
 
     @Override
     public void translate() {
-        if(!evaluateFalse()) {
             String conditionLabel = labelCount.toString();
             statements.get(0).translate(); //TODO: fix negative stackpointer & get rid of i when leaving for
             CodeGen.main.add(new Branch("", "L" + conditionLabel));
@@ -97,7 +96,6 @@ public class ForAST extends StatementAST {
 
             Utility.pushRegister(result);
             CodeGen.main.add(new Branch("EQ", "L" + forBodyLabel));
-        }
     }
 
     private void newScope(List<StatementAST> statements) {
