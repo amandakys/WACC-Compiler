@@ -16,6 +16,7 @@ import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.FunctionDecl.ArglistAST;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.FUNCTION;
 import front_end.symbol_table.IDENTIFIER;
@@ -121,7 +122,7 @@ public class CallAST extends AssignrhsAST{
     @Override
     public void IRepresentation() {
         arglist.IRepresentation();
-        IGNode = arglist.getIGNode();
+        IGNode = InterferenceGraph.findIGNode(funcname + "_function");
     }
 
     public void setReVisited() {
