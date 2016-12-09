@@ -11,11 +11,14 @@ import back_end.instruction.data_manipulation.SUB;
 import front_end.AST.ExpressionAST.BinOpAST;
 import front_end.AST.ExpressionAST.BoolliterAST;
 import front_end.AST.ExpressionAST.ExpressionAST;
+import front_end.AST.ExpressionAST.IdentAST;
 import front_end.AST.ProgramAST;
 import front_end.symbol_table.SymbolTable;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
+
+import java.util.ArrayList;
 
 public class WhileAST extends StatementAST {
     ExpressionAST expression;
@@ -37,7 +40,7 @@ public class WhileAST extends StatementAST {
 
         if (expression.getType().equals(Visitor.ST.lookUpAll("bool"))) {
             //check that statement is valid
-            statement.findLoopInvariants();
+
             statement.checkNode();
         } else {
             error("expression is not of type boolean");
@@ -66,8 +69,15 @@ public class WhileAST extends StatementAST {
 //            if (ST.findSize() != 0) {
 //                newScope(statement, "invariant");
 //            } else {
-                statement.extractLoopInvariants();
+//                statement.extractLoopInvariants();
 //            }
+
+            if (expression instanceof BinOpAST) {
+                statement.extractLoopInvariants(((BinOpAST) expression).getIdents());
+            } else if (expression instanceof BoolliterAST) {
+                statement.extractLoopInvariants(new ArrayList<>());
+            }
+
             String conditionLabel = labelCount.toString();
             CodeGen.main.add(new Branch("", "L" + conditionLabel));
             labelCount++;
@@ -79,7 +89,11 @@ public class WhileAST extends StatementAST {
             if (ST.findSize() != 0) {
                 newScope(statement, "dependent");
             } else {
-                statement.extractLoopDependents();
+                if (expression instanceof BinOpAST) {
+                    statement.extractLoopDependents(((BinOpAST) expression).getIdents());
+                } else if (expression instanceof BoolliterAST) {
+                    statement.extractLoopDependents(new ArrayList<>());
+                }
             }
 
             CodeGen.main.add(new LabelInstr("L" + conditionLabel));
@@ -129,7 +143,11 @@ public class WhileAST extends StatementAST {
 //            case "invariant": statement.extractLoopInvariants(); break;
 //            case "dependent": statement.extractLoopDependents(); break;
 //        }
-        statement.extractLoopDependents();
+        if (expression instanceof BinOpAST) {
+            statement.extractLoopDependents(((BinOpAST) expression).getIdents());
+        } else if (expression instanceof BoolliterAST) {
+            statement.extractLoopDependents(new ArrayList<>());
+        }
 
         if(spSize > Utility.STACK_SIZE) {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(Utility.STACK_SIZE)));
@@ -144,8 +162,4 @@ public class WhileAST extends StatementAST {
 
     }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
-    }
 }

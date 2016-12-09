@@ -154,16 +154,16 @@ public class VarDeclAST extends StatementAST {
     }
 
 
-    @Override
-    public boolean determineLoopInvariance() {
-        if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
-                rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
-                rhs instanceof UnopAST)) {
-
-            return true;
-        }
-        return false;
-    }
+//    @Override
+//    public boolean determineLoopInvariance() {
+//        if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
+//                rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
+//                rhs instanceof UnopAST)) {
+//
+//            return true;
+//        }
+//        return false;
+//    }
 
 //    @Override
 //    public void findLoopInvariants() {

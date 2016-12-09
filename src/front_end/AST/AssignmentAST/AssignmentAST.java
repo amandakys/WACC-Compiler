@@ -19,6 +19,8 @@ import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import java.util.List;
+
 /**
  * Created by andikoh on 08/11/2016.
  */
@@ -89,10 +91,15 @@ public class AssignmentAST extends StatementAST {
     }
 
     @Override
-    public boolean determineLoopInvariance() {
+    public boolean determineLoopInvariance(List<String> idents) {
         if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
                 rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
                 rhs instanceof UnopAST)) {
+            if (lhs.getIdent() != null) { //lhs is an ident
+                if (idents.contains(lhs.getIdent())){
+                    return false;
+                }
+            }
             return true;
         }
         return false;

@@ -1,6 +1,7 @@
 package front_end.AST.StatementAST;
 
 import back_end.Utility;
+import front_end.AST.ExpressionAST.IdentAST;
 import front_end.AST.ProgramAST;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -48,16 +49,16 @@ public class SequenceAST extends StatementAST {
     }
 
     @Override
-    public void extractLoopInvariants() {
+    public void extractLoopInvariants(List<String> idents) {
         for (StatementAST stat: statements) {
-            stat.extractLoopInvariants();
+            stat.extractLoopInvariants(idents);
         }
     }
 
     @Override
-    public void extractLoopDependents() {
+    public void extractLoopDependents(List<String> idents) {
         for (StatementAST stat: statements) {
-            stat.extractLoopDependents();
+            stat.extractLoopDependents(idents);
         }
     }
 

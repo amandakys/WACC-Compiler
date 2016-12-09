@@ -421,4 +421,31 @@ public class BinOpAST extends ExpressionAST {
     public String getOp() {
         return op;
     }
+
+    public List<String> getIdents() {
+        List<String> idents = new ArrayList<>();
+
+        if (lhs instanceof BinOpAST && rhs instanceof BinOpAST) {
+            idents.addAll(((BinOpAST) lhs).getIdents());
+            idents.addAll(((BinOpAST) rhs).getIdents());
+        } else if (lhs instanceof BinOpAST) {
+            idents.addAll(((BinOpAST) lhs).getIdents());
+            if (rhs instanceof IdentAST) {
+                idents.add(((IdentAST) rhs).getIdent());
+            }
+        } else if (rhs instanceof BinOpAST) {
+            idents.addAll(((BinOpAST) rhs).getIdents());
+            if (lhs instanceof IdentAST) {
+                idents.add(((IdentAST) lhs).getIdent());
+            }
+        } else if (lhs instanceof IdentAST && rhs instanceof IdentAST) {
+            idents.add(((IdentAST) lhs).getIdent());
+            idents.add(((IdentAST) rhs).getIdent());
+        } else if (lhs instanceof IdentAST) {
+            idents.add(((IdentAST) lhs).getIdent());
+        } else if (rhs instanceof IdentAST) {
+            idents.add(((IdentAST) rhs).getIdent());
+        }
+        return idents;
+    }
 }
