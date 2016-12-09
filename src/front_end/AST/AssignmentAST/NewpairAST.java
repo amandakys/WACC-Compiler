@@ -1,5 +1,6 @@
 package front_end.AST.AssignmentAST;
 
+import antlr.BasicParser;
 import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
@@ -96,7 +97,7 @@ public class NewpairAST extends AssignrhsAST {
     @Override
     public void IRepresentation() {
         //add the register that stores the value of each element to the graph
-        defaultIRep("elem_value");
+        defaultIRep(findIdent() + "_elem_value");
 
         //add the register that stores the size of a pair to the graph
         pairSize = new IGNode("pair_size");

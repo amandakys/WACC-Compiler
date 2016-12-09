@@ -111,7 +111,8 @@ public class PrintUtility {
         Utility.addFunction(new PUSH(Register.LR));
         //TODO: InterferenceGraph.findRegister("print_string_ldr")
         Utility.addFunction(new LOAD(Register.R1, new Address(Register.R0)));
-        Utility.addFunction(new ADD(InterferenceGraph.findRegister("print_string_mov"), Register.R0, new ImmValue(4)));
+        //TODO: InterferenceGraph.findRegister("print_string_mov")
+        Utility.addFunction(new ADD(new Register(2), Register.R0, new ImmValue(4)));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(Utility.getStringPlaceholder())));
 
         printDefaults();

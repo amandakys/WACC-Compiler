@@ -105,19 +105,7 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void IRepresentation() {
-        //find the identifier which this array belongs to
-        String ident = "";
-        //ctx can either be Arraylit or Arrayliter so have to check ctx.getParent() as well as ctx.getParent().getParent()
-        if(ctx.getParent() instanceof BasicParser.Var_declContext) {
-            ident = ((BasicParser.Var_declContext) ctx.getParent()).IDENT().getText();
-        } else if(ctx.getParent().getParent() instanceof BasicParser.Var_declContext) {
-            ident = ((BasicParser.Var_declContext) ctx.getParent().getParent()).IDENT().getText();
-        } else if(ctx.getParent() instanceof BasicParser.AssignmentContext) {
-            ident = ((BasicParser.AssignmentContext) ctx.getParent()).assignlhs().IDENT().getText();
-        } else if(ctx.getParent().getParent() instanceof BasicParser.AssignmentContext) {
-            ident = ((BasicParser.AssignmentContext) ctx.getParent().getParent()).assignlhs().IDENT().getText();
-        }
-
+        String ident = findIdent();
         //IGNode represents the register that is used to store array's elem's values
         defaultIRep(ident + "_elem");
 

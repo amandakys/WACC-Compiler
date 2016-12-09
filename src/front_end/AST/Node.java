@@ -1,5 +1,6 @@
 package front_end.AST;
 
+import antlr.BasicParser;
 import back_end.data_type.register.Register;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.TYPE;
@@ -123,5 +124,21 @@ public abstract class Node {
 
     public void setRegister(Register register) {
         IGNode.setRegister(register);
+    }
+
+    public String findIdent() {
+        //find the identifier which this array belongs to
+        String ident = "";
+        //ctx can either be Arraylit or Arrayliter so have to check ctx.getParent() as well as ctx.getParent().getParent()
+        if(ctx.getParent() instanceof BasicParser.Var_declContext) {
+            ident = ((BasicParser.Var_declContext) ctx.getParent()).IDENT().getText();
+        } else if(ctx.getParent().getParent() instanceof BasicParser.Var_declContext) {
+            ident = ((BasicParser.Var_declContext) ctx.getParent().getParent()).IDENT().getText();
+        } else if(ctx.getParent() instanceof BasicParser.AssignmentContext) {
+            ident = ((BasicParser.AssignmentContext) ctx.getParent()).assignlhs().IDENT().getText();
+        } else if(ctx.getParent().getParent() instanceof BasicParser.AssignmentContext) {
+            ident = ((BasicParser.AssignmentContext) ctx.getParent().getParent()).assignlhs().IDENT().getText();
+        }
+        return ident;
     }
 }
