@@ -95,7 +95,9 @@ public class AssignmentAST extends StatementAST {
         if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
                 rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
                 rhs instanceof UnopAST)) {
-            if (lhs.getIdent() != null) { //lhs is an ident
+            if (idents.isEmpty()) {
+                return true;
+            } else if (lhs.getIdent() != null) { //lhs is an ident
                 if (idents.contains(lhs.getIdent())){
                     return false;
                 }

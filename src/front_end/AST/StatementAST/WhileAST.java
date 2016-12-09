@@ -19,6 +19,7 @@ import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class WhileAST extends StatementAST {
     ExpressionAST expression;
@@ -76,6 +77,10 @@ public class WhileAST extends StatementAST {
                 statement.extractLoopInvariants(((BinOpAST) expression).getIdents());
             } else if (expression instanceof BoolliterAST) {
                 statement.extractLoopInvariants(new ArrayList<>());
+            } else if (expression instanceof IdentAST) {
+                List<String> ident = new ArrayList<>();
+                ident.add(((IdentAST) expression).getIdent());
+                statement.extractLoopInvariants(ident);
             }
 
             String conditionLabel = labelCount.toString();
@@ -93,6 +98,10 @@ public class WhileAST extends StatementAST {
                     statement.extractLoopDependents(((BinOpAST) expression).getIdents());
                 } else if (expression instanceof BoolliterAST) {
                     statement.extractLoopDependents(new ArrayList<>());
+                } else if (expression instanceof IdentAST) {
+                    List<String> ident = new ArrayList<>();
+                    ident.add(((IdentAST) expression).getIdent());
+                    statement.extractLoopDependents(ident);
                 }
             }
 
@@ -147,6 +156,10 @@ public class WhileAST extends StatementAST {
             statement.extractLoopDependents(((BinOpAST) expression).getIdents());
         } else if (expression instanceof BoolliterAST) {
             statement.extractLoopDependents(new ArrayList<>());
+        } else if (expression instanceof IdentAST) {
+            List<String> ident = new ArrayList<>();
+            ident.add(((IdentAST) expression).getIdent());
+            statement.extractLoopDependents(ident);
         }
 
         if(spSize > Utility.STACK_SIZE) {
