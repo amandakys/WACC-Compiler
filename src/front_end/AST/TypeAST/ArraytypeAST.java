@@ -9,13 +9,9 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.ARRAY;
 import front_end.symbol_table.TYPE;
 
-/**
- * Created by andikoh on 09/11/2016.
- */
 public class ArraytypeAST extends TypeAST {
     private TypeAST type;
     private int arrayDepth;
-    private static int count = 0;
 
     public ArraytypeAST(ParserRuleContext ctx, TypeAST type, int arrayDepth){
         super(ctx);
@@ -29,6 +25,17 @@ public class ArraytypeAST extends TypeAST {
 
     @Override
     public void translate() {
+
+    }
+
+    @Override
+    public void weight() {
+        type.weight();
+        size = type.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
 
     }
 

@@ -9,18 +9,19 @@ public class SkipAST extends StatementAST {
     }
 
     @Override
-    public boolean determineLoopInvariance() {
-        return false;
+    public void check() {}
+
+    @Override
+    public void translate() {}
+
+    @Override
+    public void weight() {
+        size = 1;
     }
 
     @Override
-    public void check() {
-
-    }
-
-    @Override
-    public void translate() {
-
+    public void IRepresentation() {
+        defaultIRep("skip");
     }
 }
 

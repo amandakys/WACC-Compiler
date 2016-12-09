@@ -7,7 +7,6 @@ import front_end.symbol_table.TYPE;
 
 import java.util.List;
 
-
 public class ArglistAST extends Node {
     private List<ExpressionAST> expressions;
 
@@ -27,6 +26,9 @@ public class ArglistAST extends Node {
         return expressions.get(x).getType();
     }
 
+    /* getType takes an index, and return the expression at that index in
+   * List<ExpressionAST> expressions
+   */
     public ExpressionAST getExpression(int i) {
         return expressions.get(i);
     }
@@ -46,6 +48,25 @@ public class ArglistAST extends Node {
     public void translate() {
         for (ExpressionAST e: expressions) {
             e.translate();
+        }
+    }
+
+    @Override
+    public void weight() {
+        for(ExpressionAST e: expressions) {
+            e.weight();
+            size += e.getSize();
+        }
+    }
+
+    @Override
+    public void IRepresentation() {
+        for(ExpressionAST e : expressions) {
+            e.IRepresentation();
+
+            if(IGNode == null) {
+                IGNode = e.getIGNode();
+            }
         }
     }
 }

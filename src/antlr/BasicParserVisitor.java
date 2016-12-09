@@ -99,13 +99,6 @@ public interface BasicParserVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBoolliter(@NotNull BasicParser.BoolliterContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code dowhile}
-	 * labeled alternative in {@link BasicParser#statement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDowhile(@NotNull BasicParser.DowhileContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code println}
 	 * labeled alternative in {@link BasicParser#statement}.
 	 * @param ctx the parse tree

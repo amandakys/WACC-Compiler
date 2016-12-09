@@ -26,27 +26,24 @@ public class SequenceAST extends StatementAST {
     public void translate() {
         for(StatementAST stat : statements) {
             stat.translate();
-            Utility.pushBackParam();
         }
     }
 
     @Override
-    public boolean determineLoopInvariance() {
-        //TODO: may need to be changed
-        return false;
-    }
-
-    @Override
-    public void extractLoopInvariants() {
-        for (StatementAST stat: statements) {
-            stat.extractLoopInvariants();
+    public void weight() {
+        for(StatementAST stat :  statements) {
+            stat.weight();
+            size += stat.getSize();
         }
     }
 
     @Override
-    public void extractLoopDependents() {
-        for (StatementAST stat: statements) {
-            stat.extractLoopDependents();
+    public void IRepresentation() {
+        for(StatementAST statement : statements) {
+            statement.IRepresentation();
+            if(IGNode == null) {
+                IGNode = statement.getIGNode();
+            }
         }
     }
 }

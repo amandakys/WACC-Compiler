@@ -18,15 +18,4 @@ public class Offset {
     public String toString() {
         return value != null ? value.toString() : register.toString();
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof Offset) {
-            if (value.equals(((Offset) o).value) && register.equals(((Offset) o).register)) {
-                return true;
-            }
-        }
-
-        return false; 
-    }
 }

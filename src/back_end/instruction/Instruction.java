@@ -5,8 +5,4 @@ public interface Instruction {
     String toString();
 
     String getValue();
-
-    boolean toRemove();
-
-    boolean checkNext();
 }

@@ -22,10 +22,16 @@ public class BoolliterAST extends ExpressionAST{
 
     @Override
     public void translate() {
-        Utility.addMain(new MOV(Utility.popUnusedReg(), new ImmValue(boolVal.equals("true") ? 1 : 0)));
+        Utility.addMain(new MOV(getRegister(), new ImmValue(boolVal.equals("true") ? 1 : 0)));
     }
 
-    public String getBoolVal() {
-        return boolVal;
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+        defaultIRep("int_" + boolVal);
     }
 }

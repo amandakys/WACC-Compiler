@@ -18,14 +18,4 @@ public class Branch implements Instruction {
     public String getValue() {
         return label;
     }
-
-    @Override
-    public boolean toRemove() {
-        return false;
-    }
-
-    @Override
-    public boolean checkNext() {
-        return false;
-    }
 }

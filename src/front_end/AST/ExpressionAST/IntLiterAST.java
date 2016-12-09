@@ -6,6 +6,7 @@ import back_end.data_type.ImmValue;
 import back_end.instruction.load_store.LOAD;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.IGNode;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import static back_end.Error.overflow;
@@ -32,7 +33,17 @@ public class IntLiterAST extends ExpressionAST {
     @Override
     public void translate() {
         int val = Integer.parseInt(intsign + value);
-        CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(val)));
+        CodeGen.main.add(new LOAD(getRegister(), new ImmValue(val)));
+    }
+
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+        defaultIRep("int_" + intsign + value);
     }
 
     public int getValue() {

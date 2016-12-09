@@ -8,19 +8,19 @@ import back_end.instruction.LabelInstr;
 import back_end.instruction.condition.CMP;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.SUB;
-import front_end.AST.ExpressionAST.BinOpAST;
-import front_end.AST.ExpressionAST.BoolliterAST;
 import front_end.AST.ExpressionAST.ExpressionAST;
-import front_end.AST.ProgramAST;
 import front_end.symbol_table.SymbolTable;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.GraphColour;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import static main.Visitor.ST;
+
 public class WhileAST extends StatementAST {
-    ExpressionAST expression;
-    StatementAST statement;
-    SymbolTable ST;
+    private ExpressionAST expression;
+    private StatementAST statement;
+    private SymbolTable ST;
 
     public WhileAST(ParserRuleContext ctx, ExpressionAST expression, StatementAST statement, SymbolTable ST) {
         super(ctx);
@@ -43,52 +43,48 @@ public class WhileAST extends StatementAST {
         }
     }
 
-    private boolean evaluateFalse() {
-        if (expression instanceof BoolliterAST) {
-            return ((BoolliterAST) expression).getBoolVal().equals("false");
-        } else if (expression instanceof BinOpAST) {
-            if (((BinOpAST) expression).booleanOptimise() != null) {
-                return !((BinOpAST) expression).booleanOptimise();
-            }
-        }
-        return false;
-    }
-
-    /*while (expression)
-    * if the expression is "false" or is evaluated to "false" then the while
-    * loop is ignored. Therefore the sourcecode for while loop will not be
-    * printed out*/
-
     @Override
     public void translate() {
-        if(!evaluateFalse()) {
-            String conditionLabel = labelCount.toString();
-            CodeGen.main.add(new Branch("", "L" + conditionLabel));
-            labelCount++;
-            String whileBodyLabel = labelCount.toString();
-            labelCount++;
-            CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
-            Register result = CodeGen.notUsedRegisters.peek();
-            //Visitor.ST = ST;
-            if (ST.findSize() != 0) {
-                newScope(statement);
-            } else {
-                statement.translate();
-            }
-            Utility.pushBackRegisters();
-            //Visitor.ST = Visitor.ST.getEncSymbolTable();
-            Utility.pushRegister(result);
-            CodeGen.main.add(new LabelInstr("L" + conditionLabel));
 
-            result = CodeGen.notUsedRegisters.peek();
-            expression.translate();
-            Utility.pushBackRegisters();
+        String conditionLabel = labelCount.toString();
+        CodeGen.main.add(new Branch("", "L" + conditionLabel));
+        labelCount++;
+        String whileBodyLabel = labelCount.toString();
+        labelCount++;
+        CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
 
-            CodeGen.main.add(new CMP(result, new ImmValue(1)));
-
-            Utility.pushRegister(result);
-            CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
+        if (ST.findSize() != 0) {
+            newScope(statement);
+        } else {
+            statement.translate();
         }
+
+        CodeGen.main.add(new LabelInstr("L" + conditionLabel));
+
+        expression.translate();
+
+        CodeGen.main.add(new CMP(expression.getRegister(), new ImmValue(1)));
+
+        CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
+    }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        statement.weight();
+
+        size += expression.getSize();
+        size += statement.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        defaultIRep("while");
+
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
+
+        statement.IRepresentation();
 
     }
 
@@ -119,10 +115,5 @@ public class WhileAST extends StatementAST {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
         }
 
-    }
-
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
     }
 }

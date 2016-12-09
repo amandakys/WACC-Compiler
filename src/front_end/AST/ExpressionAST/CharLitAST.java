@@ -23,13 +23,19 @@ public class CharLitAST extends ExpressionAST {
     @Override
     public void translate() {
         if (!charac.equals("'\\0'")) {
-            Utility.addMain(new MOV(Utility.popUnusedReg(), new ImmValue(charac)));
+            Utility.addMain(new MOV(getRegister(), new ImmValue(charac)));
         } else {
-            Utility.addMain(new MOV(Utility.popUnusedReg(), new ImmValue(0)));
+            Utility.addMain(new MOV(getRegister(), new ImmValue(0)));
         }
     }
 
-    public int getCodePoint() {
-        return charac.replace("\'", "").codePointAt(0);
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+        defaultIRep("int_" + charac);
     }
 }

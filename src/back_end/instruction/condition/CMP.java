@@ -3,9 +3,6 @@ package back_end.instruction.condition;
 import back_end.data_type.Operand;
 import back_end.instruction.Instruction;
 
-/**
- * Created by andikoh on 21/11/2016.
- */
 public class CMP implements Instruction {
     private Operand one;
     private Operand two;
@@ -18,16 +15,6 @@ public class CMP implements Instruction {
     @Override
     public String getValue() {
         return null;
-    }
-
-    @Override
-    public boolean toRemove() {
-        return false;
-    }
-
-    @Override
-    public boolean checkNext() {
-        return false;
     }
 
     @Override

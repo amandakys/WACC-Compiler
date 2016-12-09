@@ -9,18 +9,12 @@ import back_end.instruction.Branch;
 import back_end.instruction.data_manipulation.EOR;
 import back_end.instruction.data_manipulation.RSBS;
 import back_end.instruction.load_store.LOAD;
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import front_end.AST.AssignmentAST.ArrayelemAST;
-import front_end.symbol_table.ARRAY;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import static back_end.Error.overflow;
 
-/**
- * Created by andikoh on 10/11/2016.
- */
 public class UnopAST extends ExpressionAST {
     private String expectedElemType;
     private String returnType;
@@ -45,35 +39,9 @@ public class UnopAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        //Extension: Trying evaluation
-        if(returnType.equals("bool")) { //unOp must be '!'
-            Boolean evaluable = booleanOptimise(); //try evaluate & get boolean value
-            if(evaluable != null) {
-                BoolliterAST optimisedBool = new BoolliterAST(ctx, evaluable.toString());
-                optimisedBool.translate();
-                return;
-            }
-        } else if(returnType.equals("int")) {
-            Integer evaluable = constantOptimise(); //try evaluate & get result constant
-            if(evaluable != null) {
-                String sign = evaluable < 0 ? "-" : "";
-                String value = evaluable.toString().replace("-", "");
-                IntLiterAST optimisedConst = new IntLiterAST(ctx, sign, value);
-                optimisedConst.translate();
-                return;
-            }
-        } else { // return type is char
-            Character evaluable = chrOptimise(); //try evaluate & get result char
-            if(evaluable != null) {
-                CharLitAST optimisedChar =  new CharLitAST(ctx, evaluable.toString());
-                optimisedChar.translate();
-                return;
-            }
-        }
-
         //Get reference to the Register holding value of expression translated
-        Register op = CodeGen.notUsedRegisters.peek();
         expression.translate();
+        Register op = expression.getRegister();
 
         switch (unop) {
             case "!":
@@ -88,7 +56,7 @@ public class UnopAST extends ExpressionAST {
                  */
                 if(!BinOpAST.hasErrorOverflow) {
                     Utility.pushData(overflow);
-                    PrintUtility.addToEndFunctions("p_integer_overflow");
+                    PrintUtility.addToEndFunctions("p_integer_overflow", getRegister());
                     if(!BinOpAST.hasErrorDivByZero) {
                         PrintUtility.throwRuntimeError();
                     }
@@ -96,7 +64,6 @@ public class UnopAST extends ExpressionAST {
                 }
                 break;
             case "len":
-                //TODO: you can't put a register into load without popping it off the unusedRegs list
                 CodeGen.main.add(new LOAD(op, new Address(op)));
                 break;
             case "ord":
@@ -106,59 +73,23 @@ public class UnopAST extends ExpressionAST {
                 //Do nothing
                 break;
         }
+
     }
 
-    /*
-    This medthod is called only when return type is bool & therefore unOp must be "!"
-     */
-    private Boolean booleanOptimise() {
-        Boolean result = null;
-        //Expected type can only be bool
-        if(expression instanceof BoolliterAST) {
-            result = !(((BoolliterAST) expression).getBoolVal().equals("true"));
-        } else if(expression instanceof UnopAST) {
-            result = !(((UnopAST) expression).booleanOptimise());
-        } else if(expression instanceof BinOpAST) {
-            result = !(((BinOpAST) expression).booleanOptimise()); // calling binOp.booleanOptimise()
-        }
-        return result;
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
     }
 
-    /*
-    This medthod is called only when return type is int & therefore unOp can be "-" , "len" or "ord"
-     */
-    private Integer constantOptimise() {
-        Integer result = null;
-        //Expected types can only be int, array or char.
-        if(expression instanceof IntLiterAST) {
-            result = -(((IntLiterAST) expression).getValue());
-        } else if(expression instanceof CharLitAST) {
-            result = ((CharLitAST) expression).getCodePoint();
-        } else if(expression.getType() instanceof ARRAY) { //TODO: verify this
-//            ARRAY realType = (ARRAY) ((IdentAST)expression).getIdent();
-        } else if(expression instanceof UnopAST){
-            result = -(((UnopAST) expression).constantOptimise());
-        } else if(expression instanceof BinOpAST) {
-            result = -(((BinOpAST) expression).constantOptimise());
-        }
+    @Override
+    public void IRepresentation() {
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
 
-        return result;
-    }
-
-    /*
-    This medthod is called only when return type is char & therefore unOp must be "chr"
-     */
-    private Character chrOptimise() {
-        Character result = null;
-        //Expected type can only be int.
-        if(expression instanceof IntLiterAST) {
-            result = (char) ((IntLiterAST) expression).getValue();
-        } else if(expression instanceof UnopAST) {
-            result = (char)(int) ((UnopAST) expression).constantOptimise();
-        } else if(expression instanceof BinOpAST) {
-            result = (char)(int) ((BinOpAST) expression).constantOptimise();
+        if(unop.equals("-")) {
+            print_stringIR();
         }
-        return result;
     }
 
     private void initialise() {

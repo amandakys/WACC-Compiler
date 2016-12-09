@@ -48,22 +48,4 @@ public class LOAD implements Instruction {
     public String getValue() {
         return expression.toString();
     }
-
-    @Override
-    public boolean toRemove() {
-        return false;
-    }
-
-    @Override
-    public boolean checkNext() {
-        return false;
-    }
-
-    public Register getRegister() {
-        return dst;
-    }
-
-    public Expression getExpression() {
-        return expression;
-    }
 }

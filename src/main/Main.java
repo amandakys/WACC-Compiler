@@ -4,6 +4,8 @@ import antlr.BasicLexer;
 import antlr.BasicParser;
 import front_end.AST.Node;
 import main.error_handler.SyntaxVisitor;
+import optimisation.GraphColour;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -13,9 +15,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * Created by andikoh on 08/11/2016.
- */
+
 public class Main {
     public static void main(String args[]) throws IOException {
         assert args.length == 1 : "Must have a pathname in order to compile";
@@ -25,7 +25,6 @@ public class Main {
         if(fileName.indexOf(".") > 0) {
             fileName = fileName.substring(0, fileName.lastIndexOf("."));
         }
-
 
         ANTLRInputStream input = new ANTLRFileStream(args[0]);
         BasicLexer lexer = new BasicLexer(input);
@@ -45,6 +44,11 @@ public class Main {
         Visitor semanticVisit = new Visitor();
         Node program = semanticVisit.visit(tree);
         semanticVisit.checkUndefinedFunc();
+
+        //optimisation
+        program.IRepresentation();
+        InterferenceGraph.checkLiveness();
+        GraphColour.colouringGraph();
 
         //code generation
         CodeGen codeGen = new CodeGen();

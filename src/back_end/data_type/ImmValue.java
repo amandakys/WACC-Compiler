@@ -25,14 +25,4 @@ public class ImmValue extends Expression {
     public String toString() {
         return isLetter ? "#\'" + value + "\'" : "#" + value;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof ImmValue) {
-            if (value.equals(((ImmValue) o).getValue())) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

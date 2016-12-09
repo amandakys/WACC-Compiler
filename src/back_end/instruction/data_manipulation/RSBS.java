@@ -27,14 +27,4 @@ public class RSBS implements Instruction {
     public String getValue() {
         return rn.toString();
     }
-
-    @Override
-    public boolean toRemove() {
-        return false;
-    }
-
-    @Override
-    public boolean checkNext() {
-        return false;
-    }
 }

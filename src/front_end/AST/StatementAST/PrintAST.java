@@ -1,20 +1,15 @@
 package front_end.AST.StatementAST;
 
 import back_end.PrintUtility;
-import back_end.Utility;
-import back_end.data_type.*;
 import back_end.data_type.register.Register;
 import back_end.instruction.*;
-import back_end.instruction.condition.CMP;
-import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
-import back_end.instruction.load_store.LOAD;
 import front_end.AST.AssignmentAST.ArrayelemAST;
 import front_end.AST.AssignmentAST.PairelemAST;
 import front_end.AST.ExpressionAST.*;
 import front_end.symbol_table.ARRAY;
+import front_end.symbol_table.STRING;
 import front_end.symbol_table.TYPE;
-import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import static back_end.Utility.*;
@@ -34,13 +29,32 @@ public class PrintAST extends StatementAST {
 
     @Override
     public void translate() {
-        //Result of expression.translate() is stored CodeGen.notUsedRegisters.pop().Final result is stored
-        // in R0 so peek at the register to move the value from CodeGen.notUsedRegisters.pop() to R0
-        Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
-        addMain(new MOV(Register.R0, result));
+
+        //TODO: pairelem?
+        if(!(expression instanceof ArrayelemAST)) {
+            addMain(new MOV(Register.R0, expression.getRegister()));
+        }
 
         pushPlaceholder();
+    }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
+
+        if(expression.getType() instanceof STRING) {
+            print_stringIR();
+        } else {
+            newIGNode("p_print_" + findTypeName());
+        }
     }
 
     /*
@@ -50,20 +64,7 @@ public class PrintAST extends StatementAST {
      */
     private void pushPlaceholder() {
         String placeholder = "";
-        String typeName;
-        TYPE type = expression.getType();
-        if (type.getTypeName().equals("array")) {
-            if(((ARRAY) type).getElementType().getTypeName().equals("char")) {
-                typeName = "string";
-            } else {
-                typeName = "reference";
-            }
-        } else if(type.getTypeName().equals("pair")) {
-            typeName = "reference";
-        } else {
-            typeName = type.getTypeName();
-        }
-
+        String typeName = findTypeName();
         String functionName = "p_print_" + typeName;
 
         switch (typeName) {
@@ -98,11 +99,29 @@ public class PrintAST extends StatementAST {
             }
         }
 
-            PrintUtility.addToEndFunctions(functionName);
+            PrintUtility.addToEndFunctions(functionName, getRegister());
     }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
+    private String findTypeName() {
+        String typeName;
+        TYPE type = expression.getType();
+
+        switch (type.getTypeName()) {
+            case "array":
+                if (((ARRAY) type).getElementType().getTypeName().equals("char")) {
+                    typeName = "string";
+                } else {
+                    typeName = "reference";
+                }
+                break;
+            case "pair":
+                typeName = "reference";
+                break;
+            default:
+                typeName = type.getTypeName();
+                break;
+        }
+
+        return typeName;
     }
 }

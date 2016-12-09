@@ -6,9 +6,6 @@ import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.*;
 
-/**
- * Created by tsd15 on 09/11/16.
- */
 public class ParamAST extends Node {
     private TypeAST type;
     private String ident;
@@ -28,7 +25,6 @@ public class ParamAST extends Node {
         } else {
             IDENTIFIER T = Visitor.ST.lookUpAll(type.getType().getTypeName());
             paramType = new PARAM((TYPE) T);
-            //paramType = T;
         }
 
         identObj = paramType;
@@ -44,15 +40,22 @@ public class ParamAST extends Node {
 
     }
 
+    @Override
+    public void weight() {
+        type.weight();
+        size = type.getSize();
+    }
+
     public int getSize() {
         return type.getType().getSize();
     }
 
-    public String getIdent() {
-        return this.ident;
+    @Override
+    public void IRepresentation() {
+        defaultIRep(ident);
     }
 
-    public IDENTIFIER getIdentObject() {
-        return  identObj;
+    public String getIdent() {
+        return this.ident;
     }
 }

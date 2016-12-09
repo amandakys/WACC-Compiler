@@ -21,9 +21,7 @@ public class SUB implements Instruction {
         this.rhs = rhs;
         if (rhs instanceof Register) {
             sFlag = "S";
-            Utility.pushRegister((Register) rhs);
         }
-        //CodeGen.notUsedRegisters.remove(dst);
     }
 
     @Override
@@ -34,15 +32,5 @@ public class SUB implements Instruction {
     @Override
     public String getValue() {
         return lhs.toString() + " - " + rhs.toString();
-    }
-
-    @Override
-    public boolean toRemove() {
-        return false;
-    }
-
-    @Override
-    public boolean checkNext() {
-        return false;
     }
 }

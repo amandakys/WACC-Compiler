@@ -76,7 +76,6 @@ public class CallAST extends AssignrhsAST{
 
     @Override
     public void translate() {
-
         int argsSize = 0;// initialise the sum size of all arguments to 0
 
         //translate one argument at a time, STORE them into the correct stack position
@@ -95,10 +94,7 @@ public class CallAST extends AssignrhsAST{
                 Utility.plusJumpSP(argSize);
             }
 
-            Register freeToUse = CodeGen.toPushUnusedReg.pop();
-            Utility.pushRegister(freeToUse);
-            addMain(new STORE(freeToUse, stackShift, argSize));
-
+            addMain(new STORE(getRegister(), stackShift, argSize));
         }
 
         Utility.resetJumpSP();
@@ -112,9 +108,20 @@ public class CallAST extends AssignrhsAST{
             addMain((new ADD(Register.SP, Register.SP, argsSizeValue)));
         }
 
-        //Move the result of the function from R0 to the top unused Register
-        addMain(new MOV(CodeGen.notUsedRegisters.peek(),Register.R0));
+        //Move the result of the function from R0 to the designated Register
+        addMain(new MOV(getRegister(), Register.R0));
+    }
 
+    @Override
+    public void weight() {
+        arglist.weight();
+        size = arglist.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        arglist.IRepresentation();
+        IGNode = arglist.getIGNode();
     }
 
     public void setReVisited() {

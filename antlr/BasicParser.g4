@@ -29,7 +29,6 @@ statement: SKIP                                         #skip
 | WHILE expression DO statement DONE                    #while
 | BEGIN statement END                                   #begin
 | statement SEMI statement                              #sequence
-| DO statement WHILE expression                         #dowhile
 ;
 
 assignlhs: IDENT | arrayelem | pairelem ;
@@ -55,7 +54,7 @@ pairtype: PAIR LPAREN pairelemtype COMMA pairelemtype RPAREN;
 
 pairelemtype: basetype | arraytype | PAIR;
 
-exprNoBinOp:intliter
+exprNoBinOp: intliter
 | boolliter
 | charliter
 | strliter
@@ -98,7 +97,7 @@ p6: p5 OR p6
 
 intliter: (PLUS | MINUS)? DIGIT+ ;
 
-unop: NOT | MINUS | LEN | ORD | CHR ;
+unop: NOT| MINUS | LEN | ORD | CHR ;
 
 arrayelem: IDENT (LBRACKET expression RBRACKET)+ ;
 
