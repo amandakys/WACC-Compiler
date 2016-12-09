@@ -11,31 +11,19 @@ public class GraphColour {
         for(int i = 0; i <  InterferenceGraph.getNodes().size(); i++) {
             IGNode node = InterferenceGraph.getNodes().get(i);
 
-            //only colour nodes if it represents an expression, not an identifier
-            if(!node.isIdent()) {
-
-                for(int j = 0; j <  currRegister; j++) {
-                    //if the current register can be used (i.e no neighbour use same register)
-                    if(canBeColored(node, j)) {
-                        //use the next available register
-                        node.setRegister(new Register(j));
-                        break;
-                    }
+            for(int j = 0; j <  currRegister; j++) {
+                //if the current register can be used (i.e no neighbour use same register)
+                if(canBeColored(node, j)) {
+                    //use the next available register
+                    node.setRegister(new Register(j));
+                    break;
                 }
+            }
 
-                //make another register and use it
-                if(node.getRegister() == null) {
-                    node.setRegister(new Register(currRegister));
-                    currRegister++;
-                }
-
-                if(i != 0) {
-                    IGNode before = InterferenceGraph.getNodes().get(i - 1);
-                    //when a node is an identifier, set its register to be the same as the next register
-                    if(before.isIdent()) {
-                        before.setRegister(node.getRegister());
-                    }
-                }
+            //make another register and use it
+            if(node.getRegister() == null) {
+                node.setRegister(new Register(currRegister));
+                currRegister++;
             }
         }
     }

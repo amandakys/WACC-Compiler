@@ -37,8 +37,6 @@ public class IdentAST extends ExpressionAST {
 
     @Override
     public void translate() {
-
-
         String typeName = identObj.getType().getTypeName();
 
         if(typeName.equals("bool") || typeName.equals("char")) {
