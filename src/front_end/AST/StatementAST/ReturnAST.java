@@ -3,6 +3,7 @@ package front_end.AST.StatementAST;
 import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
+import back_end.instruction.Directive;
 import back_end.instruction.POP;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
@@ -47,5 +48,10 @@ public class ReturnAST extends StatementAST {
     public void IRepresentation() {
         expression.IRepresentation();
         IGNode = expression.getIGNode();
+    }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
     }
 }

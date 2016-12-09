@@ -124,4 +124,9 @@ public class PrintAST extends StatementAST {
 
         return typeName;
     }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }

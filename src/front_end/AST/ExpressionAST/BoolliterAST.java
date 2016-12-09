@@ -34,4 +34,8 @@ public class BoolliterAST extends ExpressionAST{
     public void IRepresentation() {
         defaultIRep("int_" + boolVal);
     }
+
+    public String getBoolVal() {
+        return boolVal;
+    }
 }

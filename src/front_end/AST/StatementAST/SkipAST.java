@@ -9,7 +9,12 @@ public class SkipAST extends StatementAST {
     }
 
     @Override
-    public void check() {}
+    public void check() {
+    }
+
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 
     @Override
     public void translate() {}

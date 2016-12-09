@@ -18,6 +18,16 @@ public class CMP implements Instruction {
     }
 
     @Override
+    public boolean toRemove() {
+        return false;
+    }
+
+    @Override
+    public boolean checkNext() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return "\tCMP " + one.toString() + ", " + two.toString();
     }

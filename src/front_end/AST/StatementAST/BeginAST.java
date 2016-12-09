@@ -41,4 +41,8 @@ public class BeginAST extends StatementAST {
         defaultIRep("begin");
         statement.IRepresentation();
     }
+
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }

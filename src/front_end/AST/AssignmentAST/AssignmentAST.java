@@ -3,6 +3,7 @@ package front_end.AST.AssignmentAST;
 import back_end.data_type.Address;
 import back_end.data_type.register.ShiftedReg;
 import back_end.instruction.load_store.STORE;
+import front_end.AST.ExpressionAST.*;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import front_end.AST.StatementAST.StatementAST;
@@ -73,5 +74,14 @@ public class AssignmentAST extends StatementAST {
         lhs.IRepresentation();
         rhs.IRepresentation();
         IGNode = lhs.getIGNode();
+    }
+
+    public boolean determineLoopInvariance() {
+        if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
+                rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
+                rhs instanceof UnopAST)) {
+            return true;
+        }
+        return false;
     }
 }

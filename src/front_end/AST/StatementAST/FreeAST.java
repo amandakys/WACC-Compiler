@@ -65,4 +65,8 @@ public class FreeAST extends StatementAST {
         //print string is added as double free runtime error might be thrown
         print_stringIR();
     }
+
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }

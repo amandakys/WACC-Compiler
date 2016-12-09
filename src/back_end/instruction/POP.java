@@ -29,4 +29,14 @@ public class POP implements Instruction{
 
         return regString;
     }
+
+    @Override
+    public boolean toRemove() {
+        return false;
+    }
+
+    @Override
+    public boolean checkNext() {
+        return false;
+    }
 }

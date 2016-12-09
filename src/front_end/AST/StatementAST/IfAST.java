@@ -3,6 +3,8 @@ package front_end.AST.StatementAST;
 import back_end.Utility;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.SUB;
+import front_end.AST.ExpressionAST.BinOpAST;
+import front_end.AST.ExpressionAST.BoolliterAST;
 import front_end.AST.ProgramAST;
 import front_end.symbol_table.IDENTIFIER;
 
@@ -52,38 +54,83 @@ public class IfAST extends StatementAST {
         elseSt.checkNode();
     }
 
+    private boolean evaluateFalse() {
+        if (expression instanceof BoolliterAST) {
+            return ((BoolliterAST) expression).getBoolVal().equals("false");
+        } else if (expression instanceof BinOpAST) {
+            if (((BinOpAST) expression).booleanOptimise() != null) {
+                return !((BinOpAST) expression).booleanOptimise();
+            }
+        }
+        return false;
+    }
+
+    private boolean evaluateTrue() {
+        if (expression instanceof BoolliterAST) {
+            return ((BoolliterAST) expression).getBoolVal().equals("true");
+        } else if (expression instanceof BinOpAST) {
+            if (((BinOpAST) expression).booleanOptimise() != null) {
+                return ((BinOpAST) expression).booleanOptimise();
+            }
+        }
+        return false;
+    }
+
+    /*if (expresion)
+    * if the expression is "false" or is evaluated to "false" then only the
+    * "else" clause is needed. Therefore the "then" clause will not be
+    * printed in the sourcecode
+    * Similar with the expression "true", only the "then" clause is needed,
+    * so the "else" clause will not be printed.*/
     @Override
     public void translate() {
+        //can not be evaluated to "true" or "false"
+        if(!(evaluateFalse() || evaluateTrue())) {
+            expression.translate();
 
-        expression.translate();
+            //jump to label if false
+            CodeGen.main.add(new CMP(expression.getRegister(), new ImmValue(0)));
+            String l0 = labelCount.toString();
 
-        //jump to label if false
-        CodeGen.main.add(new CMP(expression.getRegister(), new ImmValue(0)));
-        String l0 = labelCount.toString();
+            CodeGen.main.add(new Branch("EQ", "L" + l0));
+            labelCount++;
+            if (thenST.findSize() != 0) {
+                //new variables are declared
+                newScope(thenST, then);
+            } else {
+                then.translate();
+            }
 
-        CodeGen.main.add(new Branch("EQ", "L" + l0));
-        labelCount ++;
-        if (thenST.findSize() != 0) {
-            //new variables are declared
-            newScope(thenST, then);
-        } else {
-            then.translate();
+            String l1 = labelCount.toString();
+            labelCount++;
+            CodeGen.main.add(new Branch("", "L" + l1));
+
+            CodeGen.main.add(new LabelInstr("L" + l0));
+            if (elseST.findSize() != 0) {
+                //new variables are declared
+                newScope(elseST, elseSt);
+            } else {
+                elseSt.translate();
+            }
+
+            CodeGen.main.add(new LabelInstr("L" + l1));
+
+        } else if (evaluateFalse()) {
+            if (elseST.findSize() != 0) {
+                //new variables are declared
+                newScope(elseST, elseSt);
+            } else {
+                elseSt.translate();
+            }
+
+        } else if (evaluateTrue()){
+            if (thenST.findSize() != 0) {
+                //new variables are declared
+                newScope(thenST, then);
+            } else {
+                then.translate();
+            }
         }
-
-        String l1 = labelCount.toString();
-        labelCount++;
-        CodeGen.main.add(new Branch("", "L" + l1));
-
-        CodeGen.main.add(new LabelInstr("L" + l0));
-        if (elseST.findSize() != 0) {
-            //new variables are declared
-            newScope(elseST, elseSt);
-        } else {
-            elseSt.translate();
-        }
-
-        CodeGen.main.add(new LabelInstr("L" + l1));
-
     }
 
     @Override
@@ -139,5 +186,10 @@ public class IfAST extends StatementAST {
         }
 
         Utility.resetJumpSP();
+    }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
     }
 }

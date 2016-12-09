@@ -47,4 +47,9 @@ public class ExitAST extends StatementAST{
     public void IRepresentation() {
         IGNode = expression.getIGNode();
     }
+
+    @Override
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 }
