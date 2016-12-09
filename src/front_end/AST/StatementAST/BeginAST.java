@@ -37,4 +37,16 @@ public class BeginAST extends StatementAST {
         Visitor.ST = ST.getEncSymbolTable();
     }
 
+    @Override
+    public void weight() {
+        statement.weight();
+        size = statement.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        defaultIRep("begin");
+        statement.IRepresentation();
+    }
+
 }

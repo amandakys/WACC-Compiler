@@ -26,7 +26,24 @@ public class SequenceAST extends StatementAST {
     public void translate() {
         for(StatementAST stat : statements) {
             stat.translate();
-            Utility.pushBackParam();
+        }
+    }
+
+    @Override
+    public void weight() {
+        for(StatementAST stat :  statements) {
+            stat.weight();
+            size += stat.getSize();
+        }
+    }
+
+    @Override
+    public void IRepresentation() {
+        for(StatementAST statement : statements) {
+            statement.IRepresentation();
+            if(IGNode == null) {
+                IGNode = statement.getIGNode();
+            }
         }
     }
 

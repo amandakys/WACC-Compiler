@@ -30,4 +30,14 @@ public class BasetypeAST extends TypeAST {
     public void translate() {
 
     }
+
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
 }

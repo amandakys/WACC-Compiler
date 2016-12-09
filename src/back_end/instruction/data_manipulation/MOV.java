@@ -19,11 +19,6 @@ public class MOV implements Instruction {
         this.rhs = rhs;
         this.condition = "";
 
-        if(rhs instanceof Register && !dst.equals(rhs) && rhs != Register.R0) {
-            Utility.pushRegister((Register) rhs);
-
-        }
-
         //set ZERO_FLAG if the value is 0, unset if it is 1
         if(rhs instanceof ImmValue) {
             if (((ImmValue) rhs).getValue().equals("0")) {
@@ -46,12 +41,6 @@ public class MOV implements Instruction {
         this.condition = condition;
         this.rhs = rhs;
         this.dst = dst;
-
-        if(rhs instanceof Register && !dst.equals(rhs) && rhs != Register.R0) {
-            Utility.pushRegister((Register) rhs);
-
-        }
-
     }
 
     @Override

@@ -45,35 +45,35 @@ public class UnopAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        //Extension: Trying evaluation
-        if(returnType.equals("bool")) { //unOp must be '!'
-            Boolean evaluable = booleanOptimise(); //try evaluate & get boolean value
-            if(evaluable != null) {
-                BoolliterAST optimisedBool = new BoolliterAST(ctx, evaluable.toString());
-                optimisedBool.translate();
-                return;
-            }
-        } else if(returnType.equals("int")) {
-            Integer evaluable = constantOptimise(); //try evaluate & get result constant
-            if(evaluable != null) {
-                String sign = evaluable < 0 ? "-" : "";
-                String value = evaluable.toString().replace("-", "");
-                IntLiterAST optimisedConst = new IntLiterAST(ctx, sign, value);
-                optimisedConst.translate();
-                return;
-            }
-        } else { // return type is char
-            Character evaluable = chrOptimise(); //try evaluate & get result char
-            if(evaluable != null) {
-                CharLitAST optimisedChar =  new CharLitAST(ctx, evaluable.toString());
-                optimisedChar.translate();
-                return;
-            }
-        }
+//        //Extension: Trying evaluation
+//        if(returnType.equals("bool")) { //unOp must be '!'
+//            Boolean evaluable = booleanOptimise(); //try evaluate & get boolean value
+//            if(evaluable != null) {
+//                BoolliterAST optimisedBool = new BoolliterAST(ctx, evaluable.toString());
+//                optimisedBool.translate();
+//                return;
+//            }
+//        } else if(returnType.equals("int")) {
+//            Integer evaluable = constantOptimise(); //try evaluate & get result constant
+//            if(evaluable != null) {
+//                String sign = evaluable < 0 ? "-" : "";
+//                String value = evaluable.toString().replace("-", "");
+//                IntLiterAST optimisedConst = new IntLiterAST(ctx, sign, value);
+//                optimisedConst.translate();
+//                return;
+//            }
+//        } else { // return type is char
+//            Character evaluable = chrOptimise(); //try evaluate & get result char
+//            if(evaluable != null) {
+//                CharLitAST optimisedChar =  new CharLitAST(ctx, evaluable.toString());
+//                optimisedChar.translate();
+//                return;
+//            }
+//        }
 
-        //Get reference to the Register holding value of expression translated
-        Register op = CodeGen.notUsedRegisters.peek();
         expression.translate();
+        //Get reference to the Register holding value of expression translated
+        Register op = expression.getRegister();
 
         switch (unop) {
             case "!":
@@ -88,7 +88,7 @@ public class UnopAST extends ExpressionAST {
                  */
                 if(!BinOpAST.hasErrorOverflow) {
                     Utility.pushData(overflow);
-                    PrintUtility.addToEndFunctions("p_integer_overflow");
+                    PrintUtility.addToEndFunctions("p_integer_overflow", getRegister());
                     if(!BinOpAST.hasErrorDivByZero) {
                         PrintUtility.throwRuntimeError();
                     }
@@ -105,6 +105,22 @@ public class UnopAST extends ExpressionAST {
             case "chr":
                 //Do nothing
                 break;
+        }
+    }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
+
+        if (unop.equals("-")) {
+            print_stringIR();
         }
     }
 

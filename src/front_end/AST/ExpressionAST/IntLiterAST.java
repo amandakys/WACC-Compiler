@@ -32,7 +32,17 @@ public class IntLiterAST extends ExpressionAST {
     @Override
     public void translate() {
         int val = Integer.parseInt(intsign + value);
-        CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(val)));
+        CodeGen.main.add(new LOAD(getRegister(), new ImmValue(val)));
+    }
+
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+        defaultIRep("int_" + intsign + value);
     }
 
     public int getValue() {

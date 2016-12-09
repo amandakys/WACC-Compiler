@@ -24,6 +24,8 @@ import front_end.symbol_table.PAIR;
 import front_end.symbol_table.TYPE;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import static back_end.Utility.*;
@@ -55,7 +57,6 @@ public class ReadAST extends StatementAST {
 
     @Override
     public void translate() {
-        Register r = CodeGen.notUsedRegisters.peek();
         Node exprChild = expression.getChild();
 
         if(exprChild != null) {
@@ -65,12 +66,11 @@ public class ReadAST extends StatementAST {
         ProgramAST.nextAddress -= identObj.getSize();
 
         if(exprChild instanceof PairelemAST || exprChild instanceof ArrayelemAST) {
-            addMain(new LOAD(r, new Address(r)));
+            addMain(new LOAD(getRegister(), new Address(getRegister())));
         } else {
-            addMain(new ADD(r, Register.SP, Visitor.ST.getAddress(expression.getIdent()).getShiftVal()));
+            addMain(new ADD(getRegister(), Register.SP, Visitor.ST.getAddress(expression.getIdent()).getShiftVal()));
         }
 
-        addMain(new MOV(Register.R0, r));
         String functionName = "p_read_" + expression.getType().getTypeName();
         addMain(new Branch("L", functionName));
 
@@ -82,7 +82,25 @@ public class ReadAST extends StatementAST {
         }
 
         PrintUtility.addToPlaceholders(placeholder);
-        PrintUtility.addToEndFunctions(functionName);
+        PrintUtility.addToEndFunctions(functionName, getRegister());
+    }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
+
+        IGNode p_read = new IGNode("p_read_" + expression.getType().getTypeName());
+        InterferenceGraph.add(p_read);
+
+        //p_read and read must be alive at the same time as they both come from ReadAST
+        IGNode.addEdge(p_read);
     }
 
 }
