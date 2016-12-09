@@ -37,6 +37,9 @@ public class ArrayelemAST extends ExpressionAST {
     private static boolean hasError;
     private final int ARRAY_SIZE = 4;
 
+    private IGNode arrayElem;
+    private IGNode arraySize;
+
     public ArrayelemAST(ParserRuleContext ctx, String ident, List<Node> expressionNodes) {
         super(ctx);
         this.ident = ident;
@@ -114,10 +117,7 @@ public class ArrayelemAST extends ExpressionAST {
             }
         }
 
-        //when array elem is on the rhs of print, read,...
-        if(ctx.getParent() instanceof BasicParser.ExprNoBinOpContext) {
-            CodeGen.main.add(new LOAD(first, new PreIndex(first)));
-        }
+        CodeGen.main.add(new MOV(reg, first));
 
         if(ctx.getParent() instanceof BasicParser.AssignlhsContext) {
             //store value at sp - 4 to register in arrayelem and decrement sp by 4
@@ -126,6 +126,7 @@ public class ArrayelemAST extends ExpressionAST {
             //store value at sp - 4 to register in arrayelem and decrement sp by 4
             CodeGen.main.add(new POP(first));
         }
+
     }
 
     @Override
@@ -135,6 +136,7 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
+        //IGNode stores the register that stores the array's element's value
         IGNode = new IGNode(ident + "_value");
 
         for(Node e : expressions) {

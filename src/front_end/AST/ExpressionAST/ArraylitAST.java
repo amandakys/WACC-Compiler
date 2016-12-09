@@ -1,6 +1,6 @@
 package front_end.AST.ExpressionAST;
 
-import antlr.BasicParser;
+import front_end.AST.ExpressionAST.ExpressionAST;
 import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
@@ -10,7 +10,6 @@ import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.AssignrhsAST;
-import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import front_end.symbol_table.TYPE;
@@ -33,11 +32,11 @@ public class ArraylitAST extends AssignrhsAST {
         super(ctx);
         this.arraylits = arraylits;
 
-        if(!arraylits.isEmpty()) {
+        if (!arraylits.isEmpty()) {
             //check all expressions are of the same type
             Node firstElem = arraylits.get(0);
 
-            for (ExpressionAST a: arraylits) {
+            for (ExpressionAST a : arraylits) {
                 firstElem.checkType(a);
             }
 
@@ -50,7 +49,7 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void check() {
-        for(ExpressionAST a : arraylits) {
+        for (ExpressionAST a : arraylits) {
             a.checkNode();
         }
     }
@@ -109,8 +108,9 @@ public class ArraylitAST extends AssignrhsAST {
         //IGNode represents the register that is used to store array's elem's values
         defaultIRep(ident + "_elem");
 
-        for(ExpressionAST e : arraylits) {
+        for (ExpressionAST e : arraylits) {
             e.IRepresentation();
+            IGNode.addEdge(e.getIGNode());
         }
 
         //add an IGNode which has the register that stores the array's size

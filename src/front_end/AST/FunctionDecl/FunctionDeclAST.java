@@ -175,8 +175,10 @@ public class FunctionDeclAST extends Node {
         if(parameters != null) {
             parameters.IRepresentation();
         }
-        
+
         defaultIRep(funcname + "_function");
+        IGNode.setIdent();
+
         statement.IRepresentation();
         IGNode.addEdge(statement.getIGNode());
     }

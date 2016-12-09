@@ -19,7 +19,8 @@ public class InterferenceGraph {
                 //when two IGNodes have overlap live span
                 if(first.getFrom() <= next.getTo() && next.getFrom() <= first.getTo()
                         && (first.getFrom() != 0 && next.getFrom() != 0
-                        && first.getTo() != 0 && next.getTo() != 0)) {
+                        && first.getTo() != 0 && next.getTo() != 0)
+                        && first.isIdent() && next.isIdent()) {
                     first.addEdge(next);
                 }
             }
