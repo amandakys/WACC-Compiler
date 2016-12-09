@@ -3,6 +3,7 @@ package front_end.AST.ExpressionAST;
 import back_end.PrintUtility;
 import back_end.Utility;
 import back_end.data_type.Address;
+import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
@@ -43,32 +44,6 @@ public class UnopAST extends ExpressionAST {
 
     @Override
     public void translate() {
-//        //Extension: Trying evaluation
-//        if(returnType.equals("bool")) { //unOp must be '!'
-//            Boolean evaluable = booleanOptimise(); //try evaluate & get boolean value
-//            if(evaluable != null) {
-//                BoolliterAST optimisedBool = new BoolliterAST(ctx, evaluable.toString());
-//                optimisedBool.translate();
-//                return;
-//            }
-//        } else if(returnType.equals("int")) {
-//            Integer evaluable = constantOptimise(); //try evaluate & get result constant
-//            if(evaluable != null) {
-//                String sign = evaluable < 0 ? "-" : "";
-//                String value = evaluable.toString().replace("-", "");
-//                IntLiterAST optimisedConst = new IntLiterAST(ctx, sign, value);
-//                optimisedConst.translate();
-//                return;
-//            }
-//        } else { // return type is char
-//            Character evaluable = chrOptimise(); //try evaluate & get result char
-//            if(evaluable != null) {
-//                CharLitAST optimisedChar =  new CharLitAST(ctx, evaluable.toString());
-//                optimisedChar.translate();
-//                return;
-//            }
-//        }
-
         expression.translate();
         //Get reference to the Register holding value of expression translated
         Register op = expression.getRegister();
@@ -119,6 +94,29 @@ public class UnopAST extends ExpressionAST {
         if (unop.equals("-")) {
             print_stringIR();
         }
+    }
+
+    //Extension: Trying evaluation
+    public ExpressionAST tryEvaluation() {
+        if(returnType.equals("bool")) { //unOp must be '!'
+            Boolean evaluable = booleanOptimise(); //try evaluate & get boolean value
+            if(evaluable != null) {
+                return new BoolliterAST(ctx, evaluable.toString());
+            }
+        } else if(returnType.equals("int")) {
+            Integer evaluable = constantOptimise(); //try evaluate & get result constant
+            if(evaluable != null) {
+                String sign = evaluable < 0 ? "-" : "";
+                String value = evaluable.toString().replace("-", "");
+                return new IntLiterAST(ctx, sign, value);
+            }
+        } else { // return type is char
+            Character evaluable = chrOptimise(); //try evaluate & get result char
+            if(evaluable != null) {
+                return new CharLitAST(ctx, evaluable.toString());
+            }
+        }
+        return this;
     }
 
     /*

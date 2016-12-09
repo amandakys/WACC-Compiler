@@ -482,7 +482,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         } else if (ctx.arrayelem() != null) {
             expression = visitArrayelem(ctx.arrayelem());
         } else if (ctx.unop() != null){
-            expression = new UnopAST(ctx, visitExpression(ctx.expression()), ctx.unop().getText());
+            expression = (new UnopAST(ctx, visitExpression(ctx.expression()), ctx.unop().getText())).tryEvaluation();
         } else if (ctx.LPAREN() != null) {
             expression = visitExpression(ctx.expression());
         }

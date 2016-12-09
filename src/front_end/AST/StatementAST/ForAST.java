@@ -68,34 +68,44 @@ public class ForAST extends StatementAST {
 
     @Override
     public void translate() {
-            String conditionLabel = labelCount.toString();
-            statements.get(0).translate(); //TODO: fix negative stackpointer & get rid of i when leaving for
-            CodeGen.main.add(new Branch("", "L" + conditionLabel));
-            labelCount++;
-            String forBodyLabel = labelCount.toString();
-            labelCount++;
-            CodeGen.main.add(new LabelInstr("L" + forBodyLabel));
-            Register result = CodeGen.notUsedRegisters.peek();
-            //Visitor.ST = ST;
-            if (ST.findSize() != 0) {
-                newScope(statements);
-            } else {
-                statements.get(2).translate();
-                statements.get(1).translate();
-            }
-            Utility.pushBackRegisters();
-            //Visitor.ST = Visitor.ST.getEncSymbolTable();
-            Utility.pushRegister(result);
-            CodeGen.main.add(new LabelInstr("L" + conditionLabel));
+//            String conditionLabel = labelCount.toString();
+//            statements.get(0).translate(); //TODO: fix negative stackpointer & get rid of i when leaving for
+//            CodeGen.main.add(new Branch("", "L" + conditionLabel));
+//            labelCount++;
+//            String forBodyLabel = labelCount.toString();
+//            labelCount++;
+//            CodeGen.main.add(new LabelInstr("L" + forBodyLabel));
+//            Register result = CodeGen.notUsedRegisters.peek();
+//            //Visitor.ST = ST;
+//            if (ST.findSize() != 0) {
+//                newScope(statements);
+//            } else {
+//                statements.get(2).translate();
+//                statements.get(1).translate();
+//            }
+//            Utility.pushBackRegisters();
+//            //Visitor.ST = Visitor.ST.getEncSymbolTable();
+//            Utility.pushRegister(result);
+//            CodeGen.main.add(new LabelInstr("L" + conditionLabel));
+//
+//            result = CodeGen.notUsedRegisters.peek();
+//            expression.translate(); //have to be a binOp
+//            Utility.pushBackRegisters();
+//
+//            CodeGen.main.add(new CMP(result, new ImmValue(1)));
+//
+//            Utility.pushRegister(result);
+//            CodeGen.main.add(new Branch("EQ", "L" + forBodyLabel));
+    }
 
-            result = CodeGen.notUsedRegisters.peek();
-            expression.translate(); //have to be a binOp
-            Utility.pushBackRegisters();
+    @Override
+    public void weight() {
 
-            CodeGen.main.add(new CMP(result, new ImmValue(1)));
+    }
 
-            Utility.pushRegister(result);
-            CodeGen.main.add(new Branch("EQ", "L" + forBodyLabel));
+    @Override
+    public void IRepresentation() {
+
     }
 
     private void newScope(List<StatementAST> statements) {
