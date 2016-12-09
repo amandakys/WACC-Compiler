@@ -263,7 +263,6 @@ public class BinOpAST extends ExpressionAST {
         }
     }
 
-<<<<<<< HEAD
     @Override
     public void weight() {
         lhs.weight();
@@ -275,7 +274,8 @@ public class BinOpAST extends ExpressionAST {
     public void IRepresentation() {
         rhs.IRepresentation();
         lhs.IRepresentation();
-=======
+    }
+
     private boolean isNull(ExpressionAST exp) {
         return ((BinOpAST) exp).booleanOptimise() == null;
     }
@@ -397,7 +397,6 @@ public class BinOpAST extends ExpressionAST {
 
         }
         return result;
->>>>>>> b254bb1a8196684f77b37759ce994e5fdbb3cbb0
     }
 
     /*

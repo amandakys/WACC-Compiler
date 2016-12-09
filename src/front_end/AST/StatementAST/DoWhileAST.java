@@ -67,6 +67,16 @@ public class DoWhileAST extends StatementAST {
         CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
     }
 
+    @Override
+    public void weight() {
+        
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
     private void newScope(StatementAST statement) {
         int spSize = ST.findSize();
 

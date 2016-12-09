@@ -132,14 +132,10 @@ public class WhileAST extends StatementAST {
         } else {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(spSize)));
         }
-
-<<<<<<< HEAD
-=======
     }
 
     @Override
     public boolean determineLoopInvariance() {
         return false;
->>>>>>> b254bb1a8196684f77b37759ce994e5fdbb3cbb0
     }
 }
