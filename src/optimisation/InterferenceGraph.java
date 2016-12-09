@@ -1,12 +1,12 @@
 package optimisation;
 
-import front_end.symbol_table.IDENTIFIER;
+import back_end.data_type.register.Register;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InterferenceGraph {
-    public static List<IGNode> nodes = new ArrayList<>();
+    private static List<IGNode> nodes = new ArrayList<>();
 
     public static void checkLiveness() {
         for(int i = 0; i < nodes.size(); i++) {
@@ -17,11 +17,22 @@ public class InterferenceGraph {
                 IGNode next = nodes.get(j);
 
                 //when two IGNodes have overlap live span
-                if(first.getFrom() <= next.getTo() && next.getFrom() <= first.getTo()) {
-                    addEdge(first, next);
+                if(first.getFrom() <= next.getTo() && next.getFrom() <= first.getTo()
+                        && (first.getFrom() != 0 && next.getFrom() != 0
+                        && first.getTo() != 0 && next.getTo() != 0)) {
+                    first.addEdge(next);
                 }
             }
         }
+    }
+
+    public static Register findRegister(String name) {
+        IGNode node = findIGNode(name);
+        if(node != null) {
+            return node.getRegister();
+        }
+
+        return null;
     }
 
     public static IGNode findIGNode(String name) {
@@ -30,11 +41,15 @@ public class InterferenceGraph {
                 return n;
             }
         }
+
         return null;
     }
 
-    private static void addEdge(IGNode n, IGNode m) {
-        n.addEdge(m);
-        m.addEdge(n);
+    public static void add(IGNode node) {
+        nodes.add(node);
+    }
+
+    public static List<IGNode> getNodes() {
+        return nodes;
     }
 }

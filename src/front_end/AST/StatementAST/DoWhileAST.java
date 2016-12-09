@@ -15,9 +15,6 @@ import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
-/**
- * Created by andikoh on 08/12/2016.
- */
 public class DoWhileAST extends StatementAST {
     StatementAST statement;
     ExpressionAST condition;
@@ -49,21 +46,16 @@ public class DoWhileAST extends StatementAST {
         labelCount++;
         CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
 
-        Register result = CodeGen.notUsedRegisters.peek();
         if (ST.findSize() != 0) {
             newScope(statement);
         } else {
             statement.translate();
         }
-        Utility.pushBackRegisters();
-        Utility.pushRegister(result);
+        Register result = statement.getRegister();
 
-        result = CodeGen.notUsedRegisters.peek();
         condition.translate();
-        Utility.pushBackRegisters();
 
         CodeGen.main.add(new CMP(result, new ImmValue(1)));
-        Utility.pushRegister(result);
         CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
     }
 

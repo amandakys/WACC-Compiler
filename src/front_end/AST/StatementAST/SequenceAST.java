@@ -26,7 +26,6 @@ public class SequenceAST extends StatementAST {
     public void translate() {
         for (StatementAST stat : statements) {
             stat.translate();
-            Utility.pushBackParam();
         }
     }
 
@@ -43,6 +42,9 @@ public class SequenceAST extends StatementAST {
     public void IRepresentation() {
         for (StatementAST statement : statements) {
             statement.IRepresentation();
+            if(IGNode == null) {
+                IGNode = statement.getIGNode();
+            }
         }
     }
 

@@ -69,8 +69,8 @@ public class UnopAST extends ExpressionAST {
         }
 
         //Get reference to the Register holding value of expression translated
-        Register op = CodeGen.notUsedRegisters.peek();
         expression.translate();
+        Register op = expression.getRegister();
 
         switch (unop) {
             case "!":
@@ -85,7 +85,7 @@ public class UnopAST extends ExpressionAST {
                  */
                 if(!BinOpAST.hasErrorOverflow) {
                     Utility.pushData(overflow);
-                    PrintUtility.addToEndFunctions("p_integer_overflow");
+                    PrintUtility.addToEndFunctions("p_integer_overflow", getRegister());
                     if(!BinOpAST.hasErrorDivByZero) {
                         PrintUtility.throwRuntimeError();
                     }
@@ -93,7 +93,6 @@ public class UnopAST extends ExpressionAST {
                 }
                 break;
             case "len":
-                //TODO: you can't put a register into load without popping it off the unusedRegs list
                 CodeGen.main.add(new LOAD(op, new Address(op)));
                 break;
             case "ord":
@@ -166,7 +165,12 @@ public class UnopAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
 
+        if(unop.equals("-")) {
+            print_stringIR();
+        }
     }
 
     private void initialise() {

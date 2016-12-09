@@ -6,8 +6,8 @@ import back_end.data_type.Address;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 
-import back_end.instruction.data_manipulation.MOV;
 import back_end.Error;
+import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.symbol_table.ARRAY;
@@ -34,19 +34,20 @@ public class FreeAST extends StatementAST {
 
     @Override
     public void translate() {
-        Register value = Utility.popUnusedReg();
-        CodeGen.main.add(new LOAD(value, new Address(Register.SP)));
-        CodeGen.main.add(new MOV(Register.R0, value));
+        CodeGen.main.add(new LOAD(getRegister(), new Address(Register.SP)));
+        CodeGen.main.add(new MOV(Register.R0, getRegister()));
+        //updating registers after MOV instruction
+        setRegister(Register.R0);
 
         PrintUtility.throwRuntimeError();
         Utility.pushData(Error.nullReference);
 
         if (expression.getType() instanceof PAIR) {
             CodeGen.main.add(new Branch("L", "p_free_pair"));
-            PrintUtility.addToEndFunctions(("p_free_pair"));
+            PrintUtility.addToEndFunctions(("p_free_pair"), getRegister());
         } else if (expression.getType() instanceof ARRAY) {
             CodeGen.main.add(new Branch("L", "p_free_array"));
-            PrintUtility.addToEndFunctions(("p_free_array"));
+            PrintUtility.addToEndFunctions(("p_free_array"), getRegister());
         }
     }
 
@@ -58,6 +59,11 @@ public class FreeAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
+
+        //print string is added as double free runtime error might be thrown
+        print_stringIR();
     }
 
     public boolean determineLoopInvariance() {

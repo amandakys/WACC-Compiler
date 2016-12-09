@@ -11,16 +11,18 @@ import back_end.instruction.data_manipulation.SUB;
 import front_end.AST.ExpressionAST.BinOpAST;
 import front_end.AST.ExpressionAST.BoolliterAST;
 import front_end.AST.ExpressionAST.ExpressionAST;
-import front_end.AST.ProgramAST;
 import front_end.symbol_table.SymbolTable;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.GraphColour;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import static main.Visitor.ST;
+
 public class WhileAST extends StatementAST {
-    ExpressionAST expression;
-    StatementAST statement;
-    SymbolTable ST;
+    private ExpressionAST expression;
+    private StatementAST statement;
+    private SymbolTable ST;
 
     public WhileAST(ParserRuleContext ctx, ExpressionAST expression, StatementAST statement, SymbolTable ST) {
         super(ctx);
@@ -68,28 +70,21 @@ public class WhileAST extends StatementAST {
             String whileBodyLabel = labelCount.toString();
             labelCount++;
             CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
-            Register result = CodeGen.notUsedRegisters.peek();
-            //Visitor.ST = ST;
+
             if (ST.findSize() != 0) {
                 newScope(statement);
             } else {
                 statement.translate();
             }
-            Utility.pushBackRegisters();
-            //Visitor.ST = Visitor.ST.getEncSymbolTable();
-            Utility.pushRegister(result);
+
             CodeGen.main.add(new LabelInstr("L" + conditionLabel));
 
-            result = CodeGen.notUsedRegisters.peek();
             expression.translate();
-            Utility.pushBackRegisters();
 
-            CodeGen.main.add(new CMP(result, new ImmValue(1)));
+            CodeGen.main.add(new CMP(expression.getRegister(), new ImmValue(1)));
 
-            Utility.pushRegister(result);
             CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
         }
-
     }
 
     @Override
@@ -103,6 +98,12 @@ public class WhileAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
+        defaultIRep("while");
+
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
+
+        statement.IRepresentation();
 
     }
 

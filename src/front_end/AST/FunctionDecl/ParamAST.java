@@ -25,7 +25,6 @@ public class ParamAST extends Node {
         } else {
             IDENTIFIER T = Visitor.ST.lookUpAll(type.getType().getTypeName());
             paramType = new PARAM((TYPE) T);
-            //paramType = T;
         }
 
         identObj = paramType;
@@ -53,7 +52,7 @@ public class ParamAST extends Node {
 
     @Override
     public void IRepresentation() {
-
+        defaultIRep(ident);
     }
 
     public String getIdent() {

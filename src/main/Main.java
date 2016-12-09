@@ -15,9 +15,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * Created by andikoh on 08/11/2016.
- */
+
 public class Main {
     public static void main(String args[]) throws IOException {
         assert args.length == 1 : "Must have a pathname in order to compile";
@@ -27,7 +25,6 @@ public class Main {
         if(fileName.indexOf(".") > 0) {
             fileName = fileName.substring(0, fileName.lastIndexOf("."));
         }
-
 
         ANTLRInputStream input = new ANTLRFileStream(args[0]);
         BasicLexer lexer = new BasicLexer(input);

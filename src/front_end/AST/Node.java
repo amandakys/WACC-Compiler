@@ -1,8 +1,12 @@
 package front_end.AST;
 
+import back_end.PrintUtility;
+import back_end.data_type.register.Register;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.TYPE;
 import main.Visitor;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public abstract class Node {
@@ -16,18 +20,20 @@ public abstract class Node {
     protected int size;
     //index relative to the curent tree
     protected int index;
+    protected IGNode IGNode;
 
     public Node(ParserRuleContext ctx) {
         this.ctx = ctx;
     }
 
     public void checkNode() {
-        if(!isChecked) {
+        if (!isChecked) {
             check();
             isChecked = true;
         }
     }
 
+    //use to ensure the node has no semantic a
     protected abstract void check();
 
     public IDENTIFIER getIdentObj() {
@@ -58,11 +64,12 @@ public abstract class Node {
     //check if the variable name is already in scope
     protected void checkIfInScope(String name) {
         IDENTIFIER N = Visitor.ST.lookUpAll(name);
-        if(N != null) {
+        if (N != null) {
             error(name + " has already been declared");
         }
     }
 
+    //translate node to target language - aiding CodeGen
     public abstract void translate();
 
     public abstract void weight();
@@ -76,4 +83,49 @@ public abstract class Node {
     }
 
     public abstract void IRepresentation();
+
+    public Register getRegister() {
+        return IGNode.getRegister();
+    }
+
+    public optimisation.IGNode getIGNode() {
+        return IGNode;
+    }
+
+    public void setIGNode(optimisation.IGNode IGNode) {
+        this.IGNode = IGNode;
+    }
+
+    public void defaultIRep(String name) {
+        IGNode = new IGNode(name);
+        IGNode.setFrom(index);
+        IGNode.setTo(index);
+        InterferenceGraph.add(IGNode);
+    }
+
+    public void newIGNode(String name) {
+        if (InterferenceGraph.findIGNode(name) == null) {
+            IGNode p_func = new IGNode(name);
+            IGNode.addEdge(p_func);
+            InterferenceGraph.add(p_func);
+        }
+    }
+
+    public void print_stringIR() {
+        if (InterferenceGraph.findIGNode("print_string_mov") == null) {
+            IGNode string_mov = new IGNode("print_string_mov");
+            IGNode string_load = new IGNode("print_string_ldr");
+
+            string_mov.addEdge(string_load);
+            IGNode.addEdge(string_load);
+            IGNode.addEdge(string_mov);
+
+            InterferenceGraph.add(string_load);
+            InterferenceGraph.add(string_mov);
+        }
+    }
+
+    public void setRegister(Register register) {
+        IGNode.setRegister(register);
+    }
 }

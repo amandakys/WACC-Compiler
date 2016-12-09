@@ -13,19 +13,6 @@ import java.util.*;
 
 
 public class CodeGen {
-
-    //initialising notUsedRegisters available in a program
-    public static Stack<Register> notUsedRegisters = new Stack<>();
-    public static Stack<Register> paramRegister = new Stack<>();
-
-    //registers that are popped are saved to be pushed back after a function ended
-    public static Stack<Register> toPushParamReg = new Stack<>();
-    public static Stack<Register> toPushUnusedReg = new Stack<>();
-
-
-    private final int NUM_RESERVED_REGS = 11;
-    private final int NUM_PARAM_REGS = 3;
-
     // for String
     public static List<Instruction> data = new ArrayList<>();
     public static int numStrings = 0;
@@ -33,7 +20,7 @@ public class CodeGen {
     public static List<String> placeholders = new ArrayList<>();
     public static List<Instruction> toPushData = new ArrayList<>();
     public static int numPlaceholders = 0;
-    public static List<String> endFunctions = new ArrayList<>();
+    public static Map<String, Register> endFunctions = new HashMap<>();
 
 
     // variables & any non-primitive
@@ -48,8 +35,6 @@ public class CodeGen {
     public static List<Instruction> optFunctions = new ArrayList<>();
 
     public CodeGen() {
-        initialiseReg();
-
         data.add(new Directive("data"));
         text.add(new Directive("text"));
         main.add(new Directive("global main"));
@@ -61,9 +46,9 @@ public class CodeGen {
         BufferedWriter bw = new BufferedWriter(fw);
 
         data.addAll(toPushData);
-        if(data.size() != 1){
-            for(Instruction instr : data) {
-                if(instr instanceof LabelInstr) {
+        if (data.size() != 1) {
+            for (Instruction instr : data) {
+                if (instr instanceof LabelInstr) {
                     bw.newLine();
                 }
 
@@ -72,34 +57,18 @@ public class CodeGen {
             bw.newLine();
         }
 
-        for(Instruction instr : text) {
-            bw.write(instr.toString() + "\n") ;
+        for (Instruction instr : text) {
+            bw.write(instr.toString() + "\n");
         }
         bw.newLine();
 
-        for(Instruction instr : main) {
-            bw.write(instr.toString() + "\n");
+        for (Instruction instr : main) {
+            bw.write(instr.toString() + (instr.toString().isEmpty() ? "" : "\n"));
         }
-        for(Instruction instr : functions) {
-            bw.write(instr.toString() + "\n");
+        for (Instruction instr : functions) {
+            bw.write(instr.toString() + (instr.toString().isEmpty() ? "" : "\n"));
         }
 
         bw.close();
-    }
-
-    private void initialiseReg() {
-        //an iterator to traverse through all components in enum class Register
-        List<Register> allRegs = new ArrayList<>(EnumSet.allOf(Register.class));
-
-        for(int i = NUM_RESERVED_REGS; i >= 1; i--) {
-
-            if(i <= NUM_PARAM_REGS || i == 12) {
-                //reg 1-3 and reg 12 are used to save parameters
-                paramRegister.push(allRegs.get(i));
-            } else {
-                //reg 4-11 are preserved to be used in the program
-                notUsedRegisters.push(allRegs.get(i));
-            }
-        }
     }
 }

@@ -25,10 +25,6 @@ public class STORE implements Instruction {
         if(size == 1) {
             this.type = "B";
         }
-
-        if(dst != Register.R0) {
-            Utility.pushRegister(dst);
-        }
     }
 
     @Override

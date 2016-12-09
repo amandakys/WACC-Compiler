@@ -3,6 +3,7 @@ package front_end.symbol_table;
 import java.util.*;
 
 import back_end.Utility;
+import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
 import optimisation.IGNode;
 import optimisation.InterferenceGraph;
@@ -15,7 +16,6 @@ public class SymbolTable {
     private Map<String, IDENTIFIER> dict;
     private Map<String, ShiftedReg> memoryAddress;
     private int nextAvailableAddress;
-    //next numbered register that needs to be used + assuming there is infinite number of registers
 
     public SymbolTable(SymbolTable st) {
         dict = new LinkedHashMap<>();
@@ -57,7 +57,6 @@ public class SymbolTable {
             if (!(ident instanceof FUNCTION) && !(ident == null)) {
                 size += ident.getSize();
             }
-
         }
 
         return size;
@@ -97,6 +96,7 @@ public class SymbolTable {
         return memoryAddress;
     }
 
+    //recalculate the nextAvailableAddress
     public void size() {
         nextAvailableAddress = findSize();
     }

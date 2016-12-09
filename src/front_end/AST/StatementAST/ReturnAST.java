@@ -12,7 +12,7 @@ import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public class ReturnAST extends StatementAST {
-    Node expression;
+    private Node expression;
 
     public ReturnAST(ParserRuleContext ctx, Node expression) {
         super(ctx);
@@ -28,11 +28,11 @@ public class ReturnAST extends StatementAST {
 
     @Override
     public void translate() {
-        Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
         int addSize = Utility.getJumpSP();
-        CodeGen.main.add(new MOV(Register.R0, result));
-        if (addSize != 0) {
+
+        CodeGen.main.add(new MOV(Register.R0, getRegister()));
+        if (addSize!= 0) {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(addSize)));
         }
         CodeGen.main.add(new POP(Register.PC));
@@ -46,7 +46,8 @@ public class ReturnAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
     }
 
     @Override

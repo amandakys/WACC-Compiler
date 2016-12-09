@@ -11,6 +11,7 @@ public class MOV implements Instruction {
     private String condition;
     private Register dst;
     private Operand rhs;
+
     private boolean toRemove = false;
     private boolean checkNext = true;
 
@@ -19,10 +20,6 @@ public class MOV implements Instruction {
         this.rhs = rhs;
         this.condition = "";
 
-        if(rhs instanceof Register && !dst.equals(rhs) && rhs != Register.R0) {
-            Utility.pushRegister((Register) rhs);
-
-        }
 
         //set ZERO_FLAG if the value is 0, unset if it is 1
         if(rhs instanceof ImmValue) {
@@ -46,12 +43,6 @@ public class MOV implements Instruction {
         this.condition = condition;
         this.rhs = rhs;
         this.dst = dst;
-
-        if(rhs instanceof Register && !dst.equals(rhs) && rhs != Register.R0) {
-            Utility.pushRegister((Register) rhs);
-
-        }
-
     }
 
     @Override
