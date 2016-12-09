@@ -77,4 +77,9 @@ public abstract class ShiftedReg extends Expression {
         this.shiftVal = shiftVal;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        //TODO: not sure how to implement this function
+        return false;
+    }
 }

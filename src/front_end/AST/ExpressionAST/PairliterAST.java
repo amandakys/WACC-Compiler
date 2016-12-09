@@ -2,8 +2,10 @@ package front_end.AST.ExpressionAST;
 
 import back_end.Utility;
 import back_end.data_type.ImmValue;
+import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import main.CodeGen;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.PAIR;
 
@@ -23,8 +25,18 @@ public class PairliterAST extends ExpressionAST {
     @Override
     public void translate() {
         if(nullStr.equals("null")) {
-            CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(0)));
+            CodeGen.main.add(new MOV(InterferenceGraph.findRegister("null"), new ImmValue(0)));
         }
+    }
+
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+        defaultIRep(nullStr);
     }
 
     public String getNullStr() {

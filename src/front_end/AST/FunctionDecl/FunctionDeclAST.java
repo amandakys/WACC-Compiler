@@ -23,6 +23,8 @@ import front_end.symbol_table.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static main.Visitor.ST;
+
 public class FunctionDeclAST extends Node {
     private TypeAST returntype;
     private String returntypename;
@@ -108,25 +110,22 @@ public class FunctionDeclAST extends Node {
 
     @Override
     public void translate() {
-        //Utility.pushData("\0");
-        function = (FUNCTION) identObj;
-
         //change the scope of the current symbol table to the one held by function
-        Visitor.ST = function.getSymtab();
+        ST = ((FUNCTION) identObj).getSymtab();
 
         //size of a symbol table is equal to all the parameters and variables inside it
-        int size = Visitor.ST.findSize();
+        int size = ST.findSize();
 
         int sizeOfParams = 0;
         if (parameters != null) {
             for (ParamAST p : parameters.getParams()) {
-                int shift = Visitor.ST.findStackShift(p.getIdent());
+                int shift = ST.findStackShift(p.getIdent());
 
                 //shifted value is calculated by the size of all the previous parameters
                 ShiftedReg address = new PreIndex(Register.SP,
                         new ImmValue(shift));
                 //add the parameter to the Memory address in it correct position
-                Visitor.ST.addToMemoryAddress(p.getIdent(), address);
+                ST.addToMemoryAddress(p.getIdent(), address);
 
                 //increment sizeOfParams each time iterate to a param
                 sizeOfParams += p.getSize();
@@ -156,9 +155,31 @@ public class FunctionDeclAST extends Node {
         //CodeGen.main.add(new POP(Register.PC));
         CodeGen.main.add (new Directive("ltorg"));
 
-        //restore all the used registers before jumping out of the function scope
-        Utility.pushBackRegisters();
         //restore the symbol table back to the outer one
-        Visitor.ST = Visitor.ST.getEncSymbolTable();
+        ST = ST.getEncSymbolTable();
+    }
+
+    @Override
+    public void weight() {
+        returntype.weight();
+        parameters.weight();
+        statement.weight();
+
+        size += returntype.getSize();
+        size += parameters.getSize();
+        statement.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        if(parameters != null) {
+            parameters.IRepresentation();
+        }
+
+        defaultIRep(funcname + "_function");
+        IGNode.setIdent();
+
+        statement.IRepresentation();
+        IGNode.addEdge(statement.getIGNode());
     }
 }

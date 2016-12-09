@@ -29,4 +29,14 @@ public class Directive implements Instruction {
     public String getValue() {
         return value;
     }
+
+    @Override
+    public boolean toRemove() {
+        return false;
+    }
+
+    @Override
+    public boolean checkNext() {
+        return false;
+    }
 }

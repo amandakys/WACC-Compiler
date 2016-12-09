@@ -1,5 +1,6 @@
 package front_end.AST.StatementAST;
 
+import antlr.BasicParser;
 import back_end.Utility;
 import back_end.data_type.*;
 
@@ -10,10 +11,9 @@ import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.PairelemAST;
 import front_end.AST.Compare;
-import front_end.AST.ExpressionAST.ArraylitAST;
+import front_end.AST.ExpressionAST.*;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.AssignmentAST.CallAST;
-import front_end.AST.ExpressionAST.PairliterAST;
 import front_end.AST.ProgramAST;
 import front_end.AST.TypeAST.ArraytypeAST;
 import front_end.AST.TypeAST.PairelemtypeAST;
@@ -31,6 +31,7 @@ public class VarDeclAST extends StatementAST {
     private String ident; //var name
     private TypeAST type;
     private AssignrhsAST rhs;
+    private boolean invariant;
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
@@ -106,29 +107,11 @@ public class VarDeclAST extends StatementAST {
     public void translate() {
         ProgramAST.nextAddress = 0;
 
-        if(rhs instanceof ArraylitAST) {
-            ARRAY varType = (ARRAY) identObj.getType();
-            int arrSize = ((ArraylitAST) rhs).getArraylits().size(); //varType.getElem_size
-            int array_size = arrSize*varType.getElementType().getSize() + identObj.getSize();
-            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(array_size)));
-        }
-
-        Register res = CodeGen.notUsedRegisters.peek();
-
         //do not malloc a space on the stack if the pair is null
         if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
-            type.translate();
             rhs.translate();
         } else {
-            CodeGen.main.add(new LOAD(res, new ImmValue(0)));
-        }
-
-
-        if (rhs instanceof ArraylitAST) {
-            Register value = Utility.popUnusedReg();
-
-            CodeGen.main.add(new LOAD(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
-            CodeGen.main.add(new STORE(value, new PreIndex(res), identObj.getSize()));
+            CodeGen.main.add(new LOAD(rhs.getRegister(), new ImmValue(0)));
         }
 
         //increment the next available address (regarding the next available register)
@@ -144,6 +127,50 @@ public class VarDeclAST extends StatementAST {
         //jumpSP take care of the change in position of Stack pointer whenever it is add or sub
         ShiftedReg addressWithJump = new PreIndex(Register.SP,
                 new ImmValue(Visitor.ST.getNextAvailableAddress()+Utility.getJumpSP()));
-        CodeGen.main.add(new STORE(res, addressWithJump, identObj.getSize()));
+        CodeGen.main.add(new STORE(rhs.getRegister(), addressWithJump, identObj.getSize()));
+
+        //register used by the variable must be the same as register used by rhs
+        setIGNode(rhs.getIGNode());
     }
+
+    @Override
+    public void weight() {
+        type.weight();
+        rhs.weight();
+
+        size += type.getSize();
+        size += rhs.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        rhs.IRepresentation();
+
+        defaultIRep(ident);
+        IGNode.setRegister(rhs.getRegister());
+        IGNode.setIdent();
+    }
+
+
+//    @Override
+//    public boolean determineLoopInvariance() {
+//        if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
+//                rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
+//                rhs instanceof UnopAST)) {
+//
+//            return true;
+//        }
+//        return false;
+//    }
+
+//    @Override
+//    public void findLoopInvariants() {
+//        if (determineLoopInvariance()) {
+//            //invariant
+//            Visitor.ST.getEncSymbolTable().add(ident, identObj);
+//
+//        }
+//    }
+
+
 }

@@ -32,6 +32,17 @@ public class ArraytypeAST extends TypeAST {
 
     }
 
+    @Override
+    public void weight() {
+        type.weight();
+        size = type.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
     public TYPE getelementType() {
         return type.getType();
     }

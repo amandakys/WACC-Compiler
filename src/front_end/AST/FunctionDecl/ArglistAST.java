@@ -48,4 +48,23 @@ public class ArglistAST extends Node {
             e.translate();
         }
     }
+
+    @Override
+    public void weight() {
+        for(ExpressionAST e: expressions) {
+            e.weight();
+            size += e.getSize();
+        }
+    }
+
+    @Override
+    public void IRepresentation() {
+        for(ExpressionAST e : expressions) {
+            e.IRepresentation();
+
+            if(IGNode == null) {
+                IGNode = e.getIGNode();
+            }
+        }
+    }
 }

@@ -83,22 +83,20 @@ public class IfAST extends StatementAST {
     public void translate() {
         //can not be evaluated to "true" or "false"
         if(!(evaluateFalse() || evaluateTrue())) {
-            Register result = CodeGen.notUsedRegisters.peek();
             expression.translate();
+
             //jump to label if false
-            CodeGen.main.add(new CMP(result, new ImmValue(0)));
-            Utility.pushRegister(result);
+            CodeGen.main.add(new CMP(expression.getRegister(), new ImmValue(0)));
             String l0 = labelCount.toString();
 
             CodeGen.main.add(new Branch("EQ", "L" + l0));
-            labelCount++;
+            labelCount ++;
             if (thenST.findSize() != 0) {
                 //new variables are declared
                 newScope(thenST, then);
             } else {
                 then.translate();
             }
-            Utility.pushBackRegisters();
 
             String l1 = labelCount.toString();
             labelCount++;
@@ -111,7 +109,6 @@ public class IfAST extends StatementAST {
             } else {
                 elseSt.translate();
             }
-            Utility.pushBackRegisters();
 
             CodeGen.main.add(new LabelInstr("L" + l1));
 
@@ -122,7 +119,7 @@ public class IfAST extends StatementAST {
             } else {
                 elseSt.translate();
             }
-            Utility.pushBackRegisters();
+
         } else if (evaluateTrue()){
             if (thenST.findSize() != 0) {
                 //new variables are declared
@@ -130,9 +127,30 @@ public class IfAST extends StatementAST {
             } else {
                 then.translate();
             }
-            Utility.pushBackRegisters();
+
         }
 
+    }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        then.weight();
+        elseSt.weight();
+
+        size += expression.getSize();
+        size += then.getSize();
+        size += elseSt.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
+
+        then.IRepresentation();
+
+        elseSt.IRepresentation();
     }
 
     private void newScope(SymbolTable ST, StatementAST statement) {
@@ -168,4 +186,5 @@ public class IfAST extends StatementAST {
 
         Utility.resetJumpSP();
     }
+
 }

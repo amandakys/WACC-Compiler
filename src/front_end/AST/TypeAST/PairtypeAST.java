@@ -26,6 +26,20 @@ public class PairtypeAST extends TypeAST {
     public void translate() {
     }
 
+    @Override
+    public void weight() {
+        first.weight();
+        second.weight();
+
+        size += first.getSize();
+        size += second.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
+    }
+
     public TYPE typeFirst() {
         return first.getType();
     }

@@ -55,13 +55,23 @@ public class PairelemtypeAST extends Node {
 
     @Override
     public void translate() {
-        Register r = CodeGen.notUsedRegisters.peek();
         if(type == null) {
-            CodeGen.main.add(new STORE(Utility.popUnusedReg(), new Address(Register.R0), identObj.getSize()));
-            CodeGen.main.add(new STORE(Register.R0, new PreIndex(r, new ImmValue(identObj.getSize())),
+            CodeGen.main.add(new STORE(getRegister(), new Address(Register.R0), identObj.getSize()));
+            CodeGen.main.add(new STORE(Register.R0, new PreIndex(getRegister(), new ImmValue(identObj.getSize())),
                     ProgramAST.nextAddress));
         } else {
             type.translate();
         }
+    }
+
+    @Override
+    public void weight() {
+        type.weight();
+        size = type.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+
     }
 }

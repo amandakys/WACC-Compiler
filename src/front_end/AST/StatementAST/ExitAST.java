@@ -29,11 +29,23 @@ public class ExitAST extends StatementAST{
 
     @Override
     public void translate() {
-        Register res = CodeGen.notUsedRegisters.peek();
         expression.translate();
 
-        Utility.addMain(new MOV(Register.R0, res));
+        //exit function in ARM takes the value store in R0 as exit code
+        Utility.addMain(new MOV(Register.R0, expression.getRegister()));
         Utility.addMain(new Branch("L", "exit"));
-
     }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
+    }
+
 }

@@ -23,7 +23,6 @@ public class ADD implements Instruction {
 
         if (rhs instanceof Register) {
             sFlag = "S";
-            Utility.pushRegister((Register) rhs); //to pass incFunction
         }
         //CodeGen.notUsedRegisters.push(lhs);
         //CodeGen.notUsedRegisters.remove(dest); //to pass incFunction
@@ -36,10 +35,8 @@ public class ADD implements Instruction {
 
         if (rhs instanceof Register) {
             sFlag = "S";
-            Utility.pushRegister((Register) rhs); //to pass incFunction
         }
         //CodeGen.notUsedRegisters.push(lhs);
-        CodeGen.notUsedRegisters.remove(dest); //to pass incFunction
     }
 
     @Override
@@ -58,5 +55,15 @@ public class ADD implements Instruction {
     @Override
     public String getValue() {
         return lhs.toString() + " + " + rhs.toString();
+    }
+
+    @Override
+    public boolean toRemove() {
+        return false;
+    }
+
+    @Override
+    public boolean checkNext() {
+        return false;
     }
 }
