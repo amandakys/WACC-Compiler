@@ -85,6 +85,7 @@ public class AssignmentAST extends StatementAST {
         lhs.IRepresentation();
         rhs.IRepresentation();
         IGNode = lhs.getIGNode();
+        lhs.getIGNode().addEdge(rhs.getIGNode());
     }
 
     @Override

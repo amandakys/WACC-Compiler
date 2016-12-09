@@ -103,7 +103,7 @@ public class WhileAST extends StatementAST {
         IGNode = expression.getIGNode();
 
         statement.IRepresentation();
-
+        IGNode.addEdge(statement.getIGNode());
     }
 
     private void newScope(StatementAST statement) {

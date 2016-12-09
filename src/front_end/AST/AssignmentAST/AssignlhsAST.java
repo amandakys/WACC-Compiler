@@ -59,6 +59,7 @@ public class AssignlhsAST extends Node {
     public void IRepresentation() {
         if(child != null) {
             child.IRepresentation();
+            IGNode = child.getIGNode();
         } else {
             IGNode = InterferenceGraph.findIGNode(ident);
 

@@ -56,7 +56,7 @@ public class PrintAST extends StatementAST {
         expression.IRepresentation();
         IGNode = expression.getIGNode();
 
-        if(expression.getType() instanceof STRING) {
+        if(expression instanceof StringLiterAST) {
             print_stringIR();
         } else {
             newIGNode("p_print_" + findTypeName());

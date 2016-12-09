@@ -51,7 +51,6 @@ public class ArrayelemAST extends ExpressionAST {
         if (N == null) {
             error("undeclared variable");
         } else {
-
             for (Node n : expressions) {
                 n.checkNode();
                 TYPE T = Visitor.ST.lookUpAll("int").getType();
@@ -71,9 +70,17 @@ public class ArrayelemAST extends ExpressionAST {
         Register reg = expressions.get(0).getRegister();
 
         CodeGen.main.add(new LOAD(reg, Visitor.ST.getAddress(ident)));
-        //store value at sp - 4 to register in arrayelem and decrement sp by 4
-        CodeGen.main.add(new PUSH(first));
-        CodeGen.main.add(new MOV(first, reg));
+
+        if(ctx.getParent() instanceof BasicParser.AssignlhsContext) {
+            //store value at sp - 4 to register in arrayelem and decrement sp by 4
+            CodeGen.main.add(new PUSH(reg, first));
+            CodeGen.main.add(new LOAD(first,
+                    Visitor.ST.getAddress(ident).addToShiftVal(ARRAY_SIZE * 2)));
+        } else {
+            //store value at sp - 4 to register in arrayelem and decrement sp by 4
+            CodeGen.main.add(new PUSH(first));
+            CodeGen.main.add(new MOV(first, reg));
+        }
 
         for(Node n : expressions) {
             //load the first value of an array to a register
@@ -112,8 +119,13 @@ public class ArrayelemAST extends ExpressionAST {
             CodeGen.main.add(new LOAD(first, new PreIndex(first)));
         }
 
-        CodeGen.main.add(new MOV(reg, first));
-        CodeGen.main.add(new POP(first));
+        if(ctx.getParent() instanceof BasicParser.AssignlhsContext) {
+            //store value at sp - 4 to register in arrayelem and decrement sp by 4
+            CodeGen.main.add(new POP(reg, first));
+        } else {
+            //store value at sp - 4 to register in arrayelem and decrement sp by 4
+            CodeGen.main.add(new POP(first));
+        }
     }
 
     @Override

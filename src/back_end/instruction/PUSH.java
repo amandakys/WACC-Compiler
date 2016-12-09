@@ -1,22 +1,33 @@
 package back_end.instruction;
 
 import back_end.data_type.register.Register;
+import main.CodeGen;
 
 public class PUSH implements Instruction{
-    private Register reg;
+    private Register[] reg;
 
-    public PUSH(Register reg) {
+    public PUSH(Register... reg) {
         this.reg = reg;
     }
 
     @Override
     public String toString() {
-        return "\tPUSH {" + reg + "}";
+        return "\tPUSH {" + getValue() + "}";
     }
 
     @Override
     public String getValue() {
-        return reg.toString();
+        String regString = "";
+
+        for(int i = 0; i < reg.length; i++) {
+            regString += reg[i].toString();
+
+            if (i != reg.length - 1) {
+                regString += ", ";
+            }
+        }
+
+        return regString;
     }
 
     @Override
