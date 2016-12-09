@@ -31,6 +31,7 @@ public class VarDeclAST extends StatementAST {
     private String ident; //var name
     private TypeAST type;
     private AssignrhsAST rhs;
+    private boolean invariant;
 
     public VarDeclAST(ParserRuleContext ctx, TypeAST type, String ident, AssignrhsAST rhs) {
         super(ctx);
@@ -151,19 +152,27 @@ public class VarDeclAST extends StatementAST {
         IGNode.setRegister(rhs.getRegister());
         IGNode.setIdent();
     }
-    public AssignrhsAST getRhs() {
-        return rhs;
-    }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
-                rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
-                rhs instanceof UnopAST)) {
-            return true;
-        }
-        return false;
-    }
+
+//    @Override
+//    public boolean determineLoopInvariance() {
+//        if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
+//                rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
+//                rhs instanceof UnopAST)) {
+//
+//            return true;
+//        }
+//        return false;
+//    }
+
+//    @Override
+//    public void findLoopInvariants() {
+//        if (determineLoopInvariance()) {
+//            //invariant
+//            Visitor.ST.getEncSymbolTable().add(ident, identObj);
+//
+//        }
+//    }
 
 
 }

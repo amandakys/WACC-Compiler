@@ -57,8 +57,4 @@ public class PrintlnAST extends StatementAST {
         IGNode = printAST.getIGNode();
     }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
-    }
 }

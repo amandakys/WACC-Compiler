@@ -49,8 +49,4 @@ public class BeginAST extends StatementAST {
         statement.IRepresentation();
     }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
-    }
 }

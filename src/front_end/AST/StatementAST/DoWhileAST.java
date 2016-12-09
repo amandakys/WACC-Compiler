@@ -99,8 +99,4 @@ public class DoWhileAST extends StatementAST {
         //Utility.resetJumpSP();
     }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
-    }
 }

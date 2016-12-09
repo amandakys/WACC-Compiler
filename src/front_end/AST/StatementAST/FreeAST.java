@@ -66,8 +66,4 @@ public class FreeAST extends StatementAST {
         print_stringIR();
     }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
-    }
 }

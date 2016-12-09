@@ -103,8 +103,4 @@ public class ReadAST extends StatementAST {
         IGNode.addEdge(p_read);
     }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
-    }
 }

@@ -53,8 +53,4 @@ public class ReturnAST extends StatementAST {
         IGNode = expression.getIGNode();
     }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
-    }
 }
