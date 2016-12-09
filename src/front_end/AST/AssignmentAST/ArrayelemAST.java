@@ -98,8 +98,9 @@ public class ArrayelemAST extends ExpressionAST {
 
             CodeGen.main.add(new ADD(first, first, new ImmValue(ARRAY_SIZE)));
 
-            //shift the register if it is not a char
-            if(!identObj.getType().getTypeName().equals("char")) {
+            //shift the register if it is not a char or a bool
+            if(!(identObj.getType().getTypeName().equals("char")
+                    || identObj.getType().getTypeName().equals("bool"))) {
                 ShiftedReg size = new PostIndex(first, reg, Shift.LSL, new ImmValue(2));
                 CodeGen.main.add(new ADD(first, size));
             } else {
