@@ -45,31 +45,31 @@ public class UnopAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        //Extension: Trying evaluation
-        if(returnType.equals("bool")) { //unOp must be '!'
-            Boolean evaluable = booleanOptimise(); //try evaluate & get boolean value
-            if(evaluable != null) {
-                BoolliterAST optimisedBool = new BoolliterAST(ctx, evaluable.toString());
-                optimisedBool.translate();
-                return;
-            }
-        } else if(returnType.equals("int")) {
-            Integer evaluable = constantOptimise(); //try evaluate & get result constant
-            if(evaluable != null) {
-                String sign = evaluable < 0 ? "-" : "";
-                String value = evaluable.toString().replace("-", "");
-                IntLiterAST optimisedConst = new IntLiterAST(ctx, sign, value);
-                optimisedConst.translate();
-                return;
-            }
-        } else { // return type is char
-            Character evaluable = chrOptimise(); //try evaluate & get result char
-            if(evaluable != null) {
-                CharLitAST optimisedChar =  new CharLitAST(ctx, evaluable.toString());
-                optimisedChar.translate();
-                return;
-            }
-        }
+//        //Extension: Trying evaluation
+//        if(returnType.equals("bool")) { //unOp must be '!'
+//            Boolean evaluable = booleanOptimise(); //try evaluate & get boolean value
+//            if(evaluable != null) {
+//                BoolliterAST optimisedBool = new BoolliterAST(ctx, evaluable.toString());
+//                optimisedBool.translate();
+//                return;
+//            }
+//        } else if(returnType.equals("int")) {
+//            Integer evaluable = constantOptimise(); //try evaluate & get result constant
+//            if(evaluable != null) {
+//                String sign = evaluable < 0 ? "-" : "";
+//                String value = evaluable.toString().replace("-", "");
+//                IntLiterAST optimisedConst = new IntLiterAST(ctx, sign, value);
+//                optimisedConst.translate();
+//                return;
+//            }
+//        } else { // return type is char
+//            Character evaluable = chrOptimise(); //try evaluate & get result char
+//            if(evaluable != null) {
+//                CharLitAST optimisedChar =  new CharLitAST(ctx, evaluable.toString());
+//                optimisedChar.translate();
+//                return;
+//            }
+//        }
 
         expression.translate();
         //Get reference to the Register holding value of expression translated
