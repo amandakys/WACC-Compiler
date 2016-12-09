@@ -205,6 +205,25 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     }
 
     @Override
+    public ForAST visitFor(BasicParser.ForContext ctx) {
+        Visitor.ST = new SymbolTable(Visitor.ST);
+        //components
+        List<BasicParser.StatementContext> statements = ctx.statement();
+        List<StatementAST> statementASTs = new ArrayList<>();
+
+        for (BasicParser.StatementContext s : statements) {
+            statementASTs.add((StatementAST) visit(s));
+        }
+
+        ExpressionAST expr = visitExpression(ctx.expression());
+
+        ForAST forAST = new ForAST(ctx, statementASTs, expr, ST);
+        forAST.check();
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
+        return forAST;
+    }
+
+    @Override
     public BeginAST visitBegin(BasicParser.BeginContext ctx) {
         ST = new SymbolTable(ST);
         BeginAST begin = new BeginAST(ctx, (StatementAST) visit(ctx.statement()));

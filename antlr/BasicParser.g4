@@ -16,19 +16,20 @@ paramlist: param (COMMA param)*;
 
 param: type IDENT;
 
-statement: SKIP                                         #skip
-| type IDENT ASSIGN assignrhs                           #var_decl
-| assignlhs ASSIGN assignrhs                            #assignment
-| READ assignlhs                                        #read
-| FREE expression                                       #free
-| RETURN expression                                     #return
-| EXIT expression                                       #exit
-| PRINT expression                                      #print
-| PRINTLN expression                                    #println
-| IF expression THEN statement ELSE statement ENDIF     #if
-| WHILE expression DO statement DONE                    #while
-| BEGIN statement END                                   #begin
-| statement SEMI statement                              #sequence
+statement: SKIP                                                     #skip
+| type IDENT ASSIGN assignrhs                                       #var_decl
+| assignlhs ASSIGN assignrhs                                        #assignment
+| READ assignlhs                                                    #read
+| FREE expression                                                   #free
+| RETURN expression                                                 #return
+| EXIT expression                                                   #exit
+| PRINT expression                                                  #print
+| PRINTLN expression                                                #println
+| IF expression THEN statement ELSE statement ENDIF                 #if
+| WHILE expression DO statement DONE                                #while
+| FOR statement SEMI expression SEMI statement DO statement DONE    #for
+| BEGIN statement END                                               #begin
+| statement SEMI statement                                          #sequence
 ;
 
 assignlhs: IDENT | arrayelem | pairelem ;

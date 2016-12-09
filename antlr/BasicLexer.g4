@@ -17,6 +17,7 @@ THEN: 'then';
 ELSE: 'else';
 ENDIF: 'fi';
 WHILE: 'while';
+FOR: 'for';
 DO: 'do';
 DONE: 'done';
 
