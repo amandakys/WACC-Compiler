@@ -68,27 +68,41 @@ public class WhileAST extends StatementAST {
             String whileBodyLabel = labelCount.toString();
             labelCount++;
             CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
-            Register result = CodeGen.notUsedRegisters.peek();
-            //Visitor.ST = ST;
+
             if (ST.findSize() != 0) {
                 newScope(statement);
             } else {
                 statement.translate();
             }
-            Utility.pushBackRegisters();
-            //Visitor.ST = Visitor.ST.getEncSymbolTable();
-            Utility.pushRegister(result);
+
             CodeGen.main.add(new LabelInstr("L" + conditionLabel));
 
-            result = CodeGen.notUsedRegisters.peek();
             expression.translate();
-            Utility.pushBackRegisters();
 
-            CodeGen.main.add(new CMP(result, new ImmValue(1)));
+            CodeGen.main.add(new CMP(expression.getRegister(), new ImmValue(1)));
 
-            Utility.pushRegister(result);
             CodeGen.main.add(new Branch("EQ", "L" + whileBodyLabel));
         }
+
+    }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        statement.weight();
+
+        size += expression.getSize();
+        size += statement.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        defaultIRep("while");
+
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
+
+        statement.IRepresentation();
 
     }
 

@@ -7,6 +7,5 @@ public abstract class AssignrhsAST extends Node {
 
     public AssignrhsAST(ParserRuleContext ctx) {
         super(ctx);
-
     }
 }

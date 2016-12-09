@@ -13,6 +13,7 @@ import front_end.AST.AssignmentAST.ArrayelemAST;
 import front_end.AST.AssignmentAST.PairelemAST;
 import front_end.AST.ExpressionAST.*;
 import front_end.symbol_table.ARRAY;
+import front_end.symbol_table.STRING;
 import front_end.symbol_table.TYPE;
 import main.CodeGen;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -34,13 +35,32 @@ public class PrintAST extends StatementAST {
 
     @Override
     public void translate() {
-        //Result of expression.translate() is stored CodeGen.notUsedRegisters.pop().Final result is stored
-        // in R0 so peek at the register to move the value from CodeGen.notUsedRegisters.pop() to R0
-        Register result = CodeGen.notUsedRegisters.peek();
         expression.translate();
-        addMain(new MOV(Register.R0, result));
+
+        //TODO: pairelem?
+        if(!(expression instanceof ArrayelemAST)) {
+            addMain(new MOV(Register.R0, expression.getRegister()));
+        }
 
         pushPlaceholder();
+    }
+
+    @Override
+    public void weight() {
+        expression.weight();
+        size = expression.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        expression.IRepresentation();
+        IGNode = expression.getIGNode();
+
+        if(expression.getType() instanceof STRING) {
+            print_stringIR();
+        } else {
+            newIGNode("p_print_" + findTypeName());
+        }
     }
 
     /*
@@ -98,7 +118,30 @@ public class PrintAST extends StatementAST {
             }
         }
 
-            PrintUtility.addToEndFunctions(functionName);
+            PrintUtility.addToEndFunctions(functionName, getRegister());
+    }
+
+    private String findTypeName() {
+        String typeName;
+        TYPE type = expression.getType();
+
+        switch (type.getTypeName()) {
+            case "array":
+                if (((ARRAY) type).getElementType().getTypeName().equals("char")) {
+                    typeName = "string";
+                } else {
+                    typeName = "reference";
+                }
+                break;
+            case "pair":
+                typeName = "reference";
+                break;
+            default:
+                typeName = type.getTypeName();
+                break;
+        }
+
+        return typeName;
     }
 
     @Override

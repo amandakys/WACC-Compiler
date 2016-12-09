@@ -101,30 +101,6 @@ public class Utility {
         return msg.substring(0, msg.length() - 2);
     }
 
-    public static Register popParamReg() {
-        Register r = CodeGen.paramRegister.pop();
-        CodeGen.toPushParamReg.push(r);
-        return r;
-    }
-    //Check the top of the toPushUnusedReg so that order is maintained
-    //For example when push R5 in, have to make sure R4 is still on top
-    public static Register popUnusedReg() {
-        Register r = CodeGen.notUsedRegisters.pop();
-        if (!CodeGen.toPushUnusedReg.isEmpty()) {
-            Register topToPush = CodeGen.toPushUnusedReg.peek();
-            if(topToPush.ordinal() < r.ordinal()) {
-                topToPush = CodeGen.toPushUnusedReg.pop();
-                CodeGen.toPushUnusedReg.push(r);
-                CodeGen.toPushUnusedReg.push(topToPush);
-            }
-        } else {
-            CodeGen.toPushUnusedReg.push(r);
-        }
-
-
-        return r;
-    }
-
     /*
         This traverses through only the element in CodeGen.data that starts with ascii directive to see if
         a placeholder has been pushed to CodeGen.data or not. E.g: hasPlaceholder("%d\\0") returns true if
@@ -159,50 +135,6 @@ public class Utility {
             }
         }
         return null;
-    }
-
-    public static Register getBefore(Register r) {
-        int index = Character.getNumericValue(r.toString().charAt(r.toString().length() - 1)) - 1;
-        return Register.values()[index];
-    }
-
-    /*
-        Push back the registers that are not needed to store value back onto the stack
-     */
-    public static void pushBackRegisters() {
-        pushBackParam();
-
-        while (!CodeGen.toPushUnusedReg.isEmpty()) {
-            Register r = CodeGen.toPushUnusedReg.pop();
-
-            if (!CodeGen.notUsedRegisters.contains(r)) {
-                CodeGen.notUsedRegisters.push(r);
-            }
-        }
-    }
-
-    //Push back the parameter register that is not needed anymore back onto the stack
-
-    public static void pushBackParam() {
-        while (!CodeGen.toPushParamReg.isEmpty()) {
-            Register r = CodeGen.toPushParamReg.pop();
-
-            if (!CodeGen.paramRegister.contains(r)) {
-                CodeGen.paramRegister.push(r);
-            }
-        }
-    }
-
-    //push register from the toPush stack onto the notUsed stack and remove it from toPush
-
-    public static void pushRegister(Register r) {
-        if (r.equals(Register.SP)) {
-            return;
-        }
-        if (!CodeGen.notUsedRegisters.contains(r)) {
-            CodeGen.notUsedRegisters.push(r);
-            CodeGen.toPushUnusedReg.remove(r);
-        }
     }
 
     //get the value of the shift of stack pointer

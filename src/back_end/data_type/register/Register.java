@@ -2,29 +2,33 @@ package back_end.data_type.register;
 
 import back_end.data_type.Operand;
 
-public enum Register implements Operand {
-    R0,
-    R1,
-    R2,
-    R3,
-    R4,
-    R5,
-    R6,
-    R7,
-    R8,
-    R9,
-    R10,
-    R11,
-    R12,
-    SP,
-    LR,
-    PC;
+public class Register implements Operand {
+    public static Register R0 = new Register(0);
+    public static Register R1 = new Register(1);
+    public static Register SP = new Register(13);
+    public static Register LR = new Register(14);
+    public static Register PC = new Register(15);
+
+    private int index;
+
+    public Register(int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
+    }
 
     @Override
     public String toString() {
-        return name().toLowerCase();
-    }
-    public int toInt() {
-        return valueOf(name()).ordinal();
+        if(index == 13) {
+            return "sp";
+        } else if(index == 14) {
+            return "lr";
+        } else if(index == 15) {
+            return "pc";
+        }
+
+        return "r" + index;
     }
 }

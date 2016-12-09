@@ -46,33 +46,45 @@ public class AssignmentAST extends StatementAST {
 
     @Override
     public void translate() {
-
-        //get the top of the unsedRegisters stack
-        Register result = CodeGen.notUsedRegisters.peek();
         Node lhsChild = lhs.getChild();
 
         //translate righthandside
         rhs.translate();
 
         if(lhsChild != null) { //if lhs is not an Ident
-            Register res = CodeGen.notUsedRegisters.peek();
             lhsChild.translate();
 
             //store the RHS address into the top of the Unused stack
-            CodeGen.main.add(new STORE(result, new Address(res), rhs.getIdentObj().getSize()));
-        } else { //lhs is an Ident
+            CodeGen.main.add(new STORE(rhs.getRegister(), new Address(lhsChild.getRegister()), rhs.getIdentObj().getSize()));
+        } else {//lhs is an Ident
+
             //Store the RHS into the adress of the ident on the memory address
             ShiftedReg res = Visitor.ST.getAddress(lhs.getIdent());
             int typeSize;
+
             if (rhs.getIdentObj() instanceof FUNCTION) {
                 typeSize = ((FUNCTION) rhs.getIdentObj()).getReturntype().getSize();
             } else {
                 typeSize = rhs.getIdentObj().getSize();
             }
-            CodeGen.main.add(new STORE(result, res, typeSize));
+            CodeGen.main.add(new STORE(rhs.getRegister(), res, typeSize));
         }
 
         ProgramAST.nextAddress += rhs.getIdentObj().getSize();
+    }
+
+    @Override
+    public void weight() {
+        lhs.weight();
+        rhs.weight();
+        size = lhs.getSize() + rhs.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        lhs.IRepresentation();
+        rhs.IRepresentation();
+        IGNode = lhs.getIGNode();
     }
 
     @Override

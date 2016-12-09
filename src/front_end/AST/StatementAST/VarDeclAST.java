@@ -108,29 +108,11 @@ public class VarDeclAST extends StatementAST {
     public void translate() {
         ProgramAST.nextAddress = 0;
 
-        if(rhs instanceof ArraylitAST) {
-            ARRAY varType = (ARRAY) identObj.getType();
-            int arrSize = ((ArraylitAST) rhs).getArraylits().size(); //varType.getElem_size
-            int array_size = arrSize*varType.getElementType().getSize() + identObj.getSize();
-            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(array_size)));
-        }
-
-        Register res = CodeGen.notUsedRegisters.peek();
-
         //do not malloc a space on the stack if the pair is null
         if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
-            type.translate();
             rhs.translate();
         } else {
-            CodeGen.main.add(new LOAD(res, new ImmValue(0)));
-        }
-
-
-        if (rhs instanceof ArraylitAST) {
-            Register value = Utility.popUnusedReg();
-
-            CodeGen.main.add(new LOAD(value, new ImmValue(((ArraylitAST) rhs).getArraylits().size())));
-            CodeGen.main.add(new STORE(value, new PreIndex(res), identObj.getSize()));
+            CodeGen.main.add(new LOAD(rhs.getRegister(), new ImmValue(0)));
         }
 
         //increment the next available address (regarding the next available register)
@@ -146,9 +128,29 @@ public class VarDeclAST extends StatementAST {
         //jumpSP take care of the change in position of Stack pointer whenever it is add or sub
         ShiftedReg addressWithJump = new PreIndex(Register.SP,
                 new ImmValue(Visitor.ST.getNextAvailableAddress()+Utility.getJumpSP()));
-        CodeGen.main.add(new STORE(res, addressWithJump, identObj.getSize()));
+        CodeGen.main.add(new STORE(rhs.getRegister(), addressWithJump, identObj.getSize()));
+
+        //register used by the variable must be the same as register used by rhs
+        setRegister(rhs.getRegister());
     }
 
+    @Override
+    public void weight() {
+        type.weight();
+        rhs.weight();
+
+        size += type.getSize();
+        size += rhs.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        rhs.IRepresentation();
+
+        defaultIRep(ident);
+        IGNode.setRegister(rhs.getRegister());
+        IGNode.setIdent();
+    }
     public AssignrhsAST getRhs() {
         return rhs;
     }

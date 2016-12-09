@@ -44,6 +44,17 @@ public class ParamAST extends Node {
 
     }
 
+    @Override
+    public void weight() {
+        type.weight();
+        size = type.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        defaultIRep(ident);
+    }
+
     public int getSize() {
         return type.getType().getSize();
     }

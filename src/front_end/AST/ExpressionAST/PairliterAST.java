@@ -22,9 +22,16 @@ public class PairliterAST extends ExpressionAST {
 
     @Override
     public void translate() {
-        if(nullStr.equals("null")) {
-            CodeGen.main.add(new LOAD(Utility.popUnusedReg(), new ImmValue(0)));
-        }
+    }
+
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+        defaultIRep(nullStr);
     }
 
     public String getNullStr() {

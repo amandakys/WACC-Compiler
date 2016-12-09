@@ -38,6 +38,18 @@ public class BeginAST extends StatementAST {
     }
 
     @Override
+    public void weight() {
+        statement.weight();
+        size = statement.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        defaultIRep("begin");
+        statement.IRepresentation();
+    }
+
+    @Override
     public boolean determineLoopInvariance() {
         return false;
     }

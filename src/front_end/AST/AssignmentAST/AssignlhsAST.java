@@ -2,6 +2,7 @@ package front_end.AST.AssignmentAST;
 
 import front_end.AST.Node;
 import main.Visitor;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
 
@@ -45,6 +46,25 @@ public class AssignlhsAST extends Node {
     public void translate() {
         if (child != null) {
             child.translate();
+        }
+    }
+
+    @Override
+    public void weight() {
+        child.weight();
+        size = child.getSize();
+    }
+
+    @Override
+    public void IRepresentation() {
+        if(child != null) {
+            child.IRepresentation();
+        } else {
+            IGNode = InterferenceGraph.findIGNode(ident);
+
+            if(IGNode != null && IGNode.getTo() < index) {
+                IGNode.setTo(index - 1);
+            }
         }
     }
 

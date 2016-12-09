@@ -22,5 +22,14 @@ public class SkipAST extends StatementAST {
     public void translate() {
 
     }
+
+    @Override
+    public void weight() {
+        size = 1;
+    }
+
+    @Override
+    public void IRepresentation() {
+    }
 }
 
