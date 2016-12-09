@@ -12,7 +12,9 @@ public abstract class StatementAST extends Node {
         super(ctx);
     }
 
-    public abstract boolean determineLoopInvariance();
+    public boolean determineLoopInvariance() {
+        return false;
+    }
 //    public void determineLoopInvariance() {
 //        if (this instanceof VarDeclAST) {
 //            if (!(((VarDeclAST) this).getRhs() instanceof IdentAST && ((VarDeclAST) this).getRhs() instanceof BinOpAST)) {
@@ -32,6 +34,7 @@ public abstract class StatementAST extends Node {
 //
 //        }
 //    }
+    public void findLoopInvariants() {}
 
     public void extractLoopInvariants() {
         if (determineLoopInvariance()) {

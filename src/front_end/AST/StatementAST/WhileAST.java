@@ -37,6 +37,7 @@ public class WhileAST extends StatementAST {
 
         if (expression.getType().equals(Visitor.ST.lookUpAll("bool"))) {
             //check that statement is valid
+            statement.findLoopInvariants();
             statement.checkNode();
         } else {
             error("expression is not of type boolean");
@@ -62,18 +63,24 @@ public class WhileAST extends StatementAST {
     @Override
     public void translate() {
         if(!evaluateFalse()) {
+//            if (ST.findSize() != 0) {
+//                newScope(statement, "invariant");
+//            } else {
+                statement.extractLoopInvariants();
+//            }
             String conditionLabel = labelCount.toString();
             CodeGen.main.add(new Branch("", "L" + conditionLabel));
             labelCount++;
             String whileBodyLabel = labelCount.toString();
             labelCount++;
+
             CodeGen.main.add(new LabelInstr("L" + whileBodyLabel));
             Register result = CodeGen.notUsedRegisters.peek();
             //Visitor.ST = ST;
             if (ST.findSize() != 0) {
-                newScope(statement);
+                newScope(statement, "dependent");
             } else {
-                statement.translate();
+                statement.extractLoopDependents();
             }
             Utility.pushBackRegisters();
             //Visitor.ST = Visitor.ST.getEncSymbolTable();
@@ -92,7 +99,7 @@ public class WhileAST extends StatementAST {
 
     }
 
-    private void newScope(StatementAST statement) {
+    private void newScope(StatementAST statement, String type) {
         int spSize = ST.findSize();
 
         if(spSize > Utility.STACK_SIZE ) {
@@ -105,8 +112,11 @@ public class WhileAST extends StatementAST {
         } else {
             Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
         }
-
-        statement.translate();
+//        switch(type) {
+//            case "invariant": statement.extractLoopInvariants(); break;
+//            case "dependent": statement.extractLoopDependents(); break;
+//        }
+        statement.extractLoopDependents();
 
         if(spSize > Utility.STACK_SIZE) {
             Utility.addMain(new ADD(Register.SP, Register.SP, new ImmValue(Utility.STACK_SIZE)));

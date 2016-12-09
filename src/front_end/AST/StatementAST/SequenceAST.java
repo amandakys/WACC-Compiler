@@ -31,12 +31,6 @@ public class SequenceAST extends StatementAST {
     }
 
     @Override
-    public boolean determineLoopInvariance() {
-        //TODO: may need to be changed
-        return false;
-    }
-
-    @Override
     public void extractLoopInvariants() {
         for (StatementAST stat: statements) {
             stat.extractLoopInvariants();
@@ -47,6 +41,13 @@ public class SequenceAST extends StatementAST {
     public void extractLoopDependents() {
         for (StatementAST stat: statements) {
             stat.extractLoopDependents();
+        }
+    }
+
+    @Override
+    public void findLoopInvariants() {
+        for (StatementAST stat: statements) {
+            stat.findLoopInvariants();
         }
     }
 }

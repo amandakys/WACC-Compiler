@@ -48,8 +48,4 @@ public class FreeAST extends StatementAST {
         }
     }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
-    }
 }

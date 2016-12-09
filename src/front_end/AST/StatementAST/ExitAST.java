@@ -37,8 +37,4 @@ public class ExitAST extends StatementAST{
 
     }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
-    }
 }

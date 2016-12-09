@@ -44,8 +44,4 @@ public class ReturnAST extends StatementAST {
 
     }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
-    }
 }

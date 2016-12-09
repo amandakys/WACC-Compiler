@@ -1,5 +1,6 @@
 package main;
 
+import back_end.OptimisationUtility;
 import back_end.instruction.LabelInstr;
 import back_end.data_type.register.Register;
 import back_end.instruction.Directive;
@@ -72,17 +73,23 @@ public class CodeGen {
             bw.newLine();
         }
 
-        for(Instruction instr : text) {
-            bw.write(instr.toString() + "\n") ;
+        OptimisationUtility.optimiseInstructions();
+        List<Instruction> optimised = OptimisationUtility.getOptimised();
+        for (Instruction instr: optimised) {
+            bw.write(instr.toString() + "\n");
         }
-        bw.newLine();
 
-        for(Instruction instr : main) {
-            bw.write(instr.toString() + "\n");
-        }
-        for(Instruction instr : functions) {
-            bw.write(instr.toString() + "\n");
-        }
+//        for(Instruction instr : text) {
+//            bw.write(instr.toString() + "\n") ;
+//        }
+//        bw.newLine();
+//
+//        for(Instruction instr : main) {
+//            bw.write(instr.toString() + "\n");
+//        }
+//        for(Instruction instr : functions) {
+//            bw.write(instr.toString() + "\n");
+//        }
 
         bw.close();
     }

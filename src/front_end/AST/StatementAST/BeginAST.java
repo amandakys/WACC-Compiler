@@ -37,8 +37,4 @@ public class BeginAST extends StatementAST {
         Visitor.ST = ST.getEncSymbolTable();
     }
 
-    @Override
-    public boolean determineLoopInvariance() {
-        return false;
-    }
 }

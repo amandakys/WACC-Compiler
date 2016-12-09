@@ -83,4 +83,8 @@ public class OptimisationUtility {
         }
     }
 
+    public static List<Instruction> getOptimised() {
+        return optimised;
+    }
+
 }
