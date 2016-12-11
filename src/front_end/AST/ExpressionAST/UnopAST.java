@@ -2,9 +2,8 @@ package front_end.AST.ExpressionAST;
 
 import back_end.PrintUtility;
 import back_end.Utility;
-import back_end.data_type.Address;
-import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
+import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 import back_end.instruction.data_manipulation.EOR;
@@ -69,7 +68,7 @@ public class UnopAST extends ExpressionAST {
                 }
                 break;
             case "len":
-                CodeGen.main.add(new LOAD(op, new Address(op)));
+                CodeGen.main.add(new LOAD(op, new PreIndex(op)));
                 break;
             case "ord":
                 //Do nothing

@@ -1,6 +1,5 @@
 package back_end;
 
-import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
 import back_end.data_type.LabelExpr;
 import back_end.data_type.register.PreIndex;
@@ -14,7 +13,6 @@ import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import main.CodeGen;
-import main.Visitor;
 import optimisation.InterferenceGraph;
 
 import java.util.Map;
@@ -110,7 +108,7 @@ public class PrintUtility {
         Utility.addFunction(new LabelInstr("p_print_string"));
         Utility.addFunction(new PUSH(Register.LR));
         //TODO: InterferenceGraph.findRegister("print_string_ldr")
-        Utility.addFunction(new LOAD(Register.R1, new Address(Register.R0)));
+        Utility.addFunction(new LOAD(Register.R1, new PreIndex(Register.R0)));
         //TODO: InterferenceGraph.findRegister("print_string_mov")
         Utility.addFunction(new ADD(new Register(2), Register.R0, new ImmValue(4)));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(Utility.getStringPlaceholder())));
@@ -180,7 +178,7 @@ public class PrintUtility {
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
         CodeGen.functions.add(new LOAD("LT", Register.R0, new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsNegative))));
         CodeGen.functions.add(new Branch("LLT", "p_throw_runtime_error"));
-        CodeGen.functions.add(new LOAD(Register.R1, new Address(register)));
+        CodeGen.functions.add(new LOAD(Register.R1, new PreIndex(Register.R1)));
 
         CodeGen.functions.add(new CMP(Register.R0, Register.R1));
         CodeGen.functions.add(new LOAD("CS", InterferenceGraph.findRegister("p_check_array_bounds"), new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsLarge))));
@@ -216,9 +214,9 @@ public class PrintUtility {
         CodeGen.functions.add(new LabelInstr("p_free_pair"));
         p_free();
         CodeGen.functions.add(new PUSH(Register.R0));
-        CodeGen.functions.add(new LOAD(Register.R0, new Address(Register.R0)));
+        CodeGen.functions.add(new LOAD(Register.R0, new PreIndex(Register.R0)));
         CodeGen.functions.add(new Branch("L", "free"));
-        CodeGen.functions.add(new LOAD(Register.R0, new Address(Register.SP)));
+        CodeGen.functions.add(new LOAD(Register.R0, new PreIndex(Register.SP)));
         CodeGen.functions.add(new LOAD(Register.R0, new PreIndex(Register.R0, new ImmValue(4))));
         CodeGen.functions.add(new Branch("L", "free"));
         CodeGen.functions.add(new POP(Register.R0));

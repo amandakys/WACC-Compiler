@@ -36,11 +36,7 @@ public class PrintAST extends StatementAST {
     @Override
     public void translate() {
         expression.translate();
-
-        //TODO: pairelem?
-        if(!(expression instanceof ArrayelemAST)) {
-            addMain(new MOV(Register.R0, expression.getRegister()));
-        }
+        addMain(new MOV(Register.R0, expression.getRegister()));
 
         pushPlaceholder();
     }

@@ -1,15 +1,11 @@
 package front_end.AST.TypeAST;
 
-import back_end.Utility;
-import back_end.data_type.Address;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.load_store.STORE;
-import front_end.AST.AssignmentAST.AssignlhsAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
-import front_end.symbol_table.TYPE;
 import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -56,7 +52,7 @@ public class PairelemtypeAST extends Node {
     @Override
     public void translate() {
         if(type == null) {
-            CodeGen.main.add(new STORE(getRegister(), new Address(Register.R0), identObj.getSize()));
+            CodeGen.main.add(new STORE(getRegister(), new PreIndex(Register.R0), identObj.getSize()));
             CodeGen.main.add(new STORE(Register.R0, new PreIndex(getRegister(), new ImmValue(identObj.getSize())),
                     ProgramAST.nextAddress));
         } else {

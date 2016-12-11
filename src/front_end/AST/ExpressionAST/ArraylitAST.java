@@ -1,6 +1,5 @@
 package front_end.AST.ExpressionAST;
 
-import front_end.AST.ExpressionAST.ExpressionAST;
 import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
@@ -12,7 +11,6 @@ import back_end.instruction.load_store.STORE;
 import front_end.AST.AssignmentAST.AssignrhsAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
-import front_end.symbol_table.TYPE;
 import main.CodeGen;
 import optimisation.IGNode;
 import optimisation.InterferenceGraph;
@@ -24,9 +22,10 @@ import java.util.List;
 public class ArraylitAST extends AssignrhsAST {
     //Array list has stores a list of expression
     private List<ExpressionAST> arraylits;
+
     //IGNode stores the value of array's element
     //stores the size of the array
-    private IGNode arraySize;
+    private IGNode arrayElem;
 
     public ArraylitAST(ParserRuleContext ctx, List<ExpressionAST> arraylits) {
         super(ctx);
@@ -56,42 +55,26 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void translate() {
-        ARRAY varType = (ARRAY) identObj.getType();
-        int arrSize = arraylits.size();
-
-        //finding total array_size
-        int array_size = arrSize*varType.getElementType().getSize() + identObj.getSize();
-        CodeGen.main.add(new LOAD(getRegister(), new ImmValue(array_size)));
-
-        //move the value from the designated register to R0 to preform malloc
-        CodeGen.main.add(new MOV(Register.R0, getRegister()));
+        //Store size in R0 to malloc successfully
+        CodeGen.main.add(new MOV(Register.R0,
+                new ImmValue((arraylits.size() + 1) * ((ARRAY) identObj).getElem_size())));
         CodeGen.main.add(new Branch("L", "malloc"));
-        CodeGen.main.add(new MOV(arraySize.getRegister(), getRegister()));
 
+        CodeGen.main.add(new MOV(getRegister(), arrayElem.getRegister()));
         //identObj.getSize() returns size of array
         ProgramAST.nextAddress += identObj.getSize();
-
-        Register res = getRegister();
         //Transverse through the list to translate each expr
         for (ExpressionAST a: arraylits) {
             a.translate();
 
-            Utility.addMain(new STORE(res, new PreIndex(arraySize.getRegister(),
+            Utility.addMain(new STORE(arrayElem.getRegister(), new PreIndex(getRegister(),
                     new ImmValue(ProgramAST.nextAddress)), identObj.getSize()));
             ProgramAST.nextAddress += a.getIdentObj().getType().getSize();
         }
 
-        CodeGen.main.add(new LOAD(res, new ImmValue(getArraylits().size())));
-        CodeGen.main.add(new STORE(res, new PreIndex(arraySize.getRegister()), identObj.getSize()));
+        CodeGen.main.add(new LOAD(arrayElem.getRegister(), new ImmValue(arraylits.size())));
+        CodeGen.main.add(new STORE(arrayElem.getRegister(),new PreIndex(getRegister()), identObj.getSize()));
 
-        TYPE type = ((ARRAY) identObj).getElementType();
-        while(type.getTypeName().equals("array")) {
-            type = ((ARRAY) identObj).getElementType();
-        }
-
-        if(type.getTypeName().equals("int")) {
-            CodeGen.main.add(new MOV(getRegister(), arraySize.getRegister()));
-        }
     }
 
     @Override
@@ -105,19 +88,20 @@ public class ArraylitAST extends AssignrhsAST {
     @Override
     public void IRepresentation() {
         String ident = findIdent();
+
         //IGNode represents the register that is used to store array's elem's values
-        defaultIRep(ident + "_elem");
+        arrayElem = new IGNode(ident + "_elem");
+        InterferenceGraph.add(arrayElem);
+
+        //IGNode which has the register that stores the array's size
+        IGNode = new IGNode(ident + "_array_size");
+        IGNode.addEdge(arrayElem);
+        linkToString(arrayElem);
+        InterferenceGraph.add(IGNode);
 
         for (ExpressionAST e : arraylits) {
-            e.IRepresentation();
-            IGNode.addEdge(e.getIGNode());
+            e.setIGNode(arrayElem);
         }
-
-        //add an IGNode which has the register that stores the array's size
-        arraySize = new IGNode(ident + "_array_size");
-        InterferenceGraph.add(arraySize);
-        IGNode.addEdge(arraySize);
-
     }
 
     public List<ExpressionAST> getArraylits() {

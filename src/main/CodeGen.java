@@ -23,17 +23,12 @@ public class CodeGen {
     public static int numPlaceholders = 0;
     public static Map<String, Register> endFunctions = new HashMap<>();
 
-
     // variables & any non-primitive
     public static List<Instruction> text = new ArrayList<>();
     //main
     public static List<Instruction> main = new ArrayList<>();
     //functions used in main
     public static List<Instruction> functions = new ArrayList<>();
-
-    public static List<Instruction> optText = new ArrayList<>();
-    public static List<Instruction> optMain = new ArrayList<>();
-    public static List<Instruction> optFunctions = new ArrayList<>();
 
     public CodeGen() {
         data.add(new Directive("data"));
@@ -58,23 +53,23 @@ public class CodeGen {
             bw.newLine();
         }
 
-        OptimisationUtility.optimiseInstructions();
-        List<Instruction> optimised = OptimisationUtility.getOptimised();
-        for (Instruction instr: optimised) {
+//        OptimisationUtility.optimiseInstructions();
+//        List<Instruction> optimised = OptimisationUtility.getOptimised();
+//        for (Instruction instr: optimised) {
+//            bw.write(instr.toString() + "\n");
+//        }
+
+        for(Instruction instr : text) {
+            bw.write(instr.toString() + "\n") ;
+        }
+        bw.newLine();
+
+        for(Instruction instr : main) {
             bw.write(instr.toString() + "\n");
         }
-
-//        for(Instruction instr : text) {
-//            bw.write(instr.toString() + "\n") ;
-//        }
-//        bw.newLine();
-//
-//        for(Instruction instr : main) {
-//            bw.write(instr.toString() + "\n");
-//        }
-//        for(Instruction instr : functions) {
-//            bw.write(instr.toString() + "\n");
-//        }
+        for(Instruction instr : functions) {
+            bw.write(instr.toString() + "\n");
+        }
 
         bw.close();
     }

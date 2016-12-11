@@ -1,28 +1,17 @@
 package front_end.AST.StatementAST;
 
 import back_end.PrintUtility;
-import back_end.Utility;
-import back_end.data_type.Address;
-import back_end.data_type.ImmValue;
-import back_end.data_type.LabelExpr;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
-import back_end.instruction.LabelInstr;
-import back_end.instruction.POP;
-import back_end.instruction.PUSH;
 import back_end.instruction.data_manipulation.ADD;
-import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.AssignmentAST.ArrayelemAST;
 import front_end.AST.AssignmentAST.AssignlhsAST;
 import front_end.AST.AssignmentAST.PairelemAST;
-import front_end.AST.ExpressionAST.IdentAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
-import front_end.symbol_table.PAIR;
 import front_end.symbol_table.TYPE;
-import main.CodeGen;
 import main.Visitor;
 import optimisation.IGNode;
 import optimisation.InterferenceGraph;
@@ -66,7 +55,7 @@ public class ReadAST extends StatementAST {
         ProgramAST.nextAddress -= identObj.getSize();
 
         if(exprChild instanceof PairelemAST || exprChild instanceof ArrayelemAST) {
-            addMain(new LOAD(getRegister(), new Address(getRegister())));
+            addMain(new LOAD(getRegister(), new PreIndex(getRegister())));
         } else {
             addMain(new ADD(getRegister(), Register.SP, Visitor.ST.getAddress(expression.getIdent()).getShiftVal()));
         }

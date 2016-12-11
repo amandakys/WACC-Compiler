@@ -2,7 +2,7 @@ package front_end.AST.StatementAST;
 
 import back_end.PrintUtility;
 import back_end.Utility;
-import back_end.data_type.Address;
+import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
 
@@ -34,7 +34,7 @@ public class FreeAST extends StatementAST {
 
     @Override
     public void translate() {
-        CodeGen.main.add(new LOAD(getRegister(), new Address(Register.SP)));
+        CodeGen.main.add(new LOAD(getRegister(), new PreIndex(Register.SP)));
         CodeGen.main.add(new MOV(Register.R0, getRegister()));
         //updating registers after MOV instruction
         setRegister(Register.R0);

@@ -14,6 +14,7 @@ import back_end.instruction.data_manipulation.MOV;
 import front_end.AST.ExpressionAST.ExpressionAST;
 
 import back_end.instruction.load_store.LOAD;
+import front_end.AST.ExpressionAST.IntLiterAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import main.CodeGen;
@@ -37,7 +38,8 @@ public class ArrayelemAST extends ExpressionAST {
     private static boolean hasError;
     private final int ARRAY_SIZE = 4;
 
-    private IGNode arrayElem;
+    //IGNode stores array's elem's value
+    //arraySize stores the size of the current array
     private IGNode arraySize;
 
     public ArrayelemAST(ParserRuleContext ctx, String ident, List<Node> expressionNodes) {
@@ -69,23 +71,14 @@ public class ArrayelemAST extends ExpressionAST {
     public void translate() {
         // take the first unused register in the stack
         Register first = getRegister();
-        //get the register that stores the value of n - all values will be stored in the same register
-        Register reg = expressions.get(0).getRegister();
 
-        CodeGen.main.add(new LOAD(reg, Visitor.ST.getAddress(ident)));
-
-        if(ctx.getParent() instanceof BasicParser.AssignlhsContext) {
-            //store value at sp - 4 to register in arrayelem and decrement sp by 4
-            CodeGen.main.add(new PUSH(reg, first));
-            CodeGen.main.add(new LOAD(first,
-                    Visitor.ST.getAddress(ident).addToShiftVal(ARRAY_SIZE * 2)));
-        } else {
-            //store value at sp - 4 to register in arrayelem and decrement sp by 4
-            CodeGen.main.add(new PUSH(first));
-            CodeGen.main.add(new MOV(first, reg));
-        }
+        //find the the variable's address from its identifier from the current symbol table
+        CodeGen.main.add(new ADD(first, Register.SP, Visitor.ST.getAddress(ident).getShiftVal()));
+        CodeGen.main.add(new LOAD(expressions.get(0).getRegister(), new ImmValue(0)));
 
         for(Node n : expressions) {
+            Register reg = n.getRegister();
+
             //load the first value of an array to a register
             n.translate();
 
@@ -95,12 +88,15 @@ public class ArrayelemAST extends ExpressionAST {
                 Utility.pushData(Error.arrayOutOfBoundsLarge);
 
                 //add the print function to endFunctions to make sure it will be defined
-                PrintUtility.addToEndFunctions("p_check_array_bounds", first);
+                PrintUtility.addToEndFunctions("p_check_array_bounds", getRegister());
                 //throw runtime error
                 PrintUtility.throwRuntimeError();
                 hasError = true;
             }
 
+            CodeGen.main.add(new LOAD(first, new PreIndex(first)));
+            CodeGen.main.add(new MOV(Register.R0, reg));
+            CodeGen.main.add(new MOV(Register.R1, first));
             CodeGen.main.add(new Branch("L", "p_check_array_bounds"));
 
             //incrementing the next address with the object's size
@@ -117,16 +113,10 @@ public class ArrayelemAST extends ExpressionAST {
             }
         }
 
-        CodeGen.main.add(new MOV(reg, first));
-
-        if(ctx.getParent() instanceof BasicParser.AssignlhsContext) {
-            //store value at sp - 4 to register in arrayelem and decrement sp by 4
-            CodeGen.main.add(new POP(reg, first));
-        } else {
-            //store value at sp - 4 to register in arrayelem and decrement sp by 4
-            CodeGen.main.add(new POP(first));
+        //when array elem is on the rhs of print, read,...
+        if(ctx.getParent() instanceof BasicParser.ExprNoBinOpContext) {
+            CodeGen.main.add(new LOAD(first, new PreIndex(first)));
         }
-
     }
 
     @Override
@@ -136,44 +126,22 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        //IGNode stores the register that stores the array's element's value
-        IGNode = new IGNode(ident + "_value");
+        //IGNode stores the register that stores this array's element's value
+        IGNode = InterferenceGraph.findIGNode(ident + "_array_size");
 
-        for(Node e : expressions) {
-            e.setIGNode(InterferenceGraph.findIGNode(ident));
+        for (Node e : expressions) {
+            e.setIGNode(InterferenceGraph.findIGNode(ident + "_elem"));
         }
 
         newIGNode("p_check_array_bounds");
-        //print string is needed to throw runtime error
-        if (InterferenceGraph.findIGNode("print_string_mov") == null) {
-            IGNode string_mov = new IGNode("print_string_mov");
-            IGNode string_load = new IGNode("print_string_ldr");
+    }
 
-            //find array_elem
-            IGNode arrayElem = InterferenceGraph.findIGNode(ident + "_elem");
-            //find array_size
-            IGNode arraySize = InterferenceGraph.findIGNode(ident + "_array_size");
-            //remove array_size so that print_string will have appropriate registers to call printf
-            InterferenceGraph.getNodes().remove(arraySize);
-            string_mov.addEdge(string_load);
-
-            arrayElem.addEdge(string_load);
-            arrayElem.addEdge(string_mov);
-            arrayElem.addEdge(IGNode);
-
-            IGNode.addEdge(string_load);
-            IGNode.addEdge(string_mov);
-            IGNode.addEdge(arraySize);
-
-            InterferenceGraph.add(string_load);
-            InterferenceGraph.add(string_mov);
-
-            //add arraySize back
-            InterferenceGraph.add(arraySize);
-            arraySize.addEdge(string_load);
-            arraySize.addEdge(string_mov);
+    private String findPosition() {
+        String result = "[";
+        for(Node e : expressions) {
+            result += ((IntLiterAST) e).getValue() + "]";
         }
 
-        InterferenceGraph.add(IGNode);
+        return result;
     }
 }

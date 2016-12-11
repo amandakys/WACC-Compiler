@@ -85,7 +85,7 @@ public abstract class Node {
         return IGNode.getRegister();
     }
 
-    public optimisation.IGNode getIGNode() {
+    public IGNode getIGNode() {
         return IGNode;
     }
 
@@ -140,5 +140,39 @@ public abstract class Node {
             ident = ((BasicParser.AssignmentContext) ctx.getParent().getParent()).assignlhs().IDENT().getText();
         }
         return ident;
+    }
+
+    public void linkToString(IGNode... nodes) {
+        IGNode string_mov;
+        IGNode string_load;
+
+        //print string is needed to throw runtime error
+        if (InterferenceGraph.findIGNode("print_string_mov") == null) {
+            string_mov = new IGNode("print_string_mov");
+        } else {
+            string_mov = InterferenceGraph.findIGNode("print_string_mov");
+        }
+
+        if (InterferenceGraph.findIGNode("print_string_ldr") == null) {
+            string_load = new IGNode("print_string_ldr");
+        } else {
+            string_load = InterferenceGraph.findIGNode("print_string_ldr");
+        }
+
+        for(IGNode node : nodes) {
+            if(!node.equals(IGNode)) {
+                node.addEdge(string_load);
+                node.addEdge(string_mov);
+            }
+        }
+
+        string_mov.addEdge(string_load);
+
+        IGNode.addEdge(string_load);
+        IGNode.addEdge(string_mov);
+
+        InterferenceGraph.add(string_load);
+        InterferenceGraph.add(string_mov);
+
     }
 }

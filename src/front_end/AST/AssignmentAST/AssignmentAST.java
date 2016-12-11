@@ -1,14 +1,7 @@
 package front_end.AST.AssignmentAST;
 
-import back_end.Utility;
-import back_end.data_type.Address;
-import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
-import back_end.data_type.register.Register;
 import back_end.data_type.register.ShiftedReg;
-import back_end.instruction.Branch;
-import back_end.instruction.data_manipulation.MOV;
-import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.ExpressionAST.*;
 import front_end.AST.Node;
@@ -57,7 +50,7 @@ public class AssignmentAST extends StatementAST {
             lhsChild.translate();
 
             //store the RHS address into the top of the Unused stack
-            CodeGen.main.add(new STORE(rhs.getRegister(), new Address(lhsChild.getRegister()), rhs.getIdentObj().getSize()));
+            CodeGen.main.add(new STORE(rhs.getRegister(), new PreIndex(lhsChild.getRegister()), rhs.getIdentObj().getSize()));
         } else {//lhs is an Ident
 
             //Store the RHS into the adress of the ident on the memory address

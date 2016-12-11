@@ -15,9 +15,13 @@ public class MOV implements Instruction {
     private boolean checkNext = true;
 
     public MOV(Register dst, Operand rhs) {
+       this("", dst, rhs);
+    }
+
+    public MOV(String condition, Register dst, Operand rhs) {
         this.dst = dst;
         this.rhs = rhs;
-        this.condition = "";
+        this.condition = condition;
 
         //set ZERO_FLAG if the value is 0, unset if it is 1
         if(rhs instanceof ImmValue) {
@@ -34,13 +38,6 @@ public class MOV implements Instruction {
                 checkNext = false;
             }
         }
-
-    }
-
-    public MOV(String condition, Register dst, Operand rhs) {
-        this.condition = condition;
-        this.rhs = rhs;
-        this.dst = dst;
     }
 
     @Override

@@ -13,9 +13,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by andikoh on 07/12/2016.
- */
 public class OptimisationUtility {
     private static boolean ZERO_FLAG = false;
     private static List<Instruction> optimised = new ArrayList<>();
@@ -28,11 +25,8 @@ public class OptimisationUtility {
         ZERO_FLAG = false;
     }
 
-    public static boolean getZeroFlag() {
-        return ZERO_FLAG;
-    }
-
     public static void checkNextAndReplace(Instruction one, Instruction two) {
+
         if (one instanceof STORE && two instanceof LOAD) {
             //check load instruction is not loading from the same address into the same register
             Register r1 = ((STORE) one).getRegister();
@@ -40,11 +34,14 @@ public class OptimisationUtility {
 
             Register r2 = ((LOAD) two).getRegister();
             Expression e2 = ((LOAD) two).getExpression();
+
             if (r1.equals(r2) && e1.equals(e2)) {
                 //load is unecesary
                 optimised.add(one);
             }
+
         } else if (one instanceof MOV && two instanceof MOV){
+
             if (((MOV) two).getRhs() instanceof Register && ((MOV) one).getDst().equals(((MOV) two).getRhs())) {
                 //can be simplified
                 optimised.add(new MOV(((MOV) two).getDst(), ((MOV) one).getRhs()));
