@@ -7,6 +7,9 @@ import main.CodeGen;
 import main.Visitor;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class StringLiterAST extends ExpressionAST{
     private String value;
 
@@ -37,6 +40,12 @@ public class StringLiterAST extends ExpressionAST{
     @Override
     public void IRepresentation() {
         defaultIRep("string_" + value);
+
+        List<ExpressionAST> chars = new ArrayList<>();
+        for(int i = 0; i < value.length(); i++) {
+            chars.add(new CharLitAST(ctx, String.valueOf(value.charAt(i))));
+        }
+        (new ArraylitAST(ctx, chars)).IRepresentation();
     }
 
     public String getValue() {

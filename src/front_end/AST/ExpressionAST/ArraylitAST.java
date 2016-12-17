@@ -1,6 +1,7 @@
 package front_end.AST.ExpressionAST;
 
 import back_end.Utility;
+import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
@@ -90,7 +91,6 @@ public class ArraylitAST extends AssignrhsAST {
     @Override
     public void IRepresentation() {
         String ident = findIdent();
-
         //IGNode represents the register that is used to store array's elem's values
         arrayElem = new IGNode(ident + "_elem");
         arrayIndex = new IGNode(ident + "_index");

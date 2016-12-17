@@ -33,6 +33,6 @@ public class ARRAY extends TYPE{
     }
 
     public int getElem_size() {
-        return type.getSize();
+        return elem_size == 0 ? 0 : type.getSize();
     }
 }
