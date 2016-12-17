@@ -111,10 +111,12 @@ public class VarDeclAST extends StatementAST {
 
         //do not malloc a space on the stack if the pair is null
         if(!(rhs instanceof PairliterAST && ((PairliterAST) rhs).getNullStr().equals("null"))) {
+            type.translate();
             rhs.translate();
         } else {
             CodeGen.main.add(new LOAD(rhs.getRegister(), new ImmValue(0)));
         }
+
 
         //increment the next available address (regarding the next available register)
         ProgramAST.nextAddress += identObj.getSize();

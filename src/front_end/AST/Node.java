@@ -152,10 +152,14 @@ public abstract class Node {
                 ident = ((BasicParser.Var_declContext) context.getParent()).IDENT().getText();
             } else if(context.getParent().getParent() instanceof BasicParser.Var_declContext) {
                 ident = ((BasicParser.Var_declContext) context.getParent().getParent()).IDENT().getText();
-            } else if(context.getParent() instanceof BasicParser.AssignmentContext) {
-                ident = ((BasicParser.AssignmentContext) context.getParent()).assignlhs().IDENT().getText();
-            } else if(context.getParent().getParent() instanceof BasicParser.AssignmentContext) {
-                ident = ((BasicParser.AssignmentContext) context.getParent().getParent()).assignlhs().IDENT().getText();
+            } else if(context instanceof BasicParser.AssignlhsContext) {
+                ident = ((BasicParser.AssignlhsContext) context).IDENT().getText();
+            } else if(context.getParent() instanceof BasicParser.AssignlhsContext) {
+                if(context instanceof BasicParser.PairelemContext) {
+                    ident = findIdent(((BasicParser.PairelemContext) context).expression());
+                } else if(context instanceof BasicParser.ArrayelemContext) {
+                    ident = ((BasicParser.ArrayelemContext) context).IDENT().getText();
+                }
             }
         }
 

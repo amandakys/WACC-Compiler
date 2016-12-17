@@ -25,7 +25,7 @@ public class PairliterAST extends ExpressionAST {
     @Override
     public void translate() {
         if(nullStr.equals("null")) {
-            CodeGen.main.add(new MOV(InterferenceGraph.findRegister("null"), new ImmValue(0)));
+            CodeGen.main.add(new MOV(getRegister(), new ImmValue(0)));
         }
     }
 
@@ -36,7 +36,6 @@ public class PairliterAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        defaultIRep(nullStr);
     }
 
     public String getNullStr() {
