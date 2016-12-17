@@ -18,6 +18,18 @@ public class IGNode {
     private int from = 0, to = 0;
     private List<IGNode> neighbours = new ArrayList<>();
 
+    public IGNode() {
+
+    }
+
+    public IGNode(IGNode node) {
+        identifier = node.getIdentifier();
+        register = node.getRegister();
+        from = node.getFrom();
+        to = node.getTo();
+        neighbours = node.getNeighbours();
+    }
+
     public IGNode(String identifier) {
         this.identifier = identifier;
     }
@@ -47,8 +59,10 @@ public class IGNode {
     }
 
     public void addEdge(IGNode node) {
-        neighbours.add(node);
-        node.neighbours.add(this);
+        if(!neighbours.contains(node)) {
+            neighbours.add(node);
+            node.neighbours.add(this);
+        }
     }
 
     public List<IGNode> getNeighbours() {
@@ -65,6 +79,10 @@ public class IGNode {
 
     public boolean isIdent() {
         return isIdent;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 }
 

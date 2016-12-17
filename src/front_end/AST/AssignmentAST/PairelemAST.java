@@ -8,11 +8,14 @@ import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
+import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.ExpressionAST.IdentAST;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.PAIR;
@@ -57,6 +60,8 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void translate() {
+        Register r = getRegister();
+
         //load the result to a register when necessary (i.e if pairelem is on the rhs, or on lhs)
         if(ctx instanceof BasicParser.PairelemContext
                 || ctx.getParent() instanceof BasicParser.PairelemContext) {
@@ -65,23 +70,26 @@ public class PairelemAST extends AssignrhsAST{
             if(expression instanceof IdentAST) {
                 value = ((IdentAST) expression).getIdent();
             }
-            CodeGen.main.add(new LOAD(getRegister(), new PreIndex(Register.SP,
+            CodeGen.main.add(new LOAD(r, new PreIndex(Register.SP,
                     Visitor.ST.getAddress(value).getShiftVal())));
         }
+
+        CodeGen.main.add(new MOV(Register.R0, r));
 
         int val = token.equals("fst") ? 0 : PAIR_SIZE;
 
         CodeGen.main.add(new Branch("L", "p_check_null_pointer"));
-        CodeGen.main.add(new LOAD(getRegister(), new PreIndex(getRegister(), new ImmValue(val))));
+        CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(val))));
 
         if(ctx instanceof BasicParser.PairelementContext
                 || ctx.getParent() instanceof BasicParser.PairelementContext) {
-            CodeGen.main.add(new LOAD(getRegister(), new PreIndex(getRegister(), new ImmValue(0))));
+            CodeGen.main.add(new LOAD(r, new PreIndex(r, new ImmValue(0))));
         }
+
 
         if(!hasError) {
             Utility.pushData(Error.nullReference);
-            PrintUtility.addToEndFunctions("p_check_null_pointer", Register.R0);
+            PrintUtility.addToEndFunctions("p_check_null_pointer", r);
             PrintUtility.throwRuntimeError();
             hasError = true;
         }
@@ -95,15 +103,17 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void IRepresentation() {
-        expression.IRepresentation();
-        setIGNode(expression.getIGNode());
+        IGNode = InterferenceGraph.findIGNode(expression.findIdent());
+
+        IGNode identNode = new IGNode(IGNode);
+        identNode.setIdentifier(findIdent());
+
+        linkToString(identNode);
+        InterferenceGraph.add(identNode);
 
         //set the range of IGNode
         if(IGNode != null && IGNode.getTo() < index) {
             IGNode.setTo(index - 1);
         }
-
-        //print_string is added because runtime error is thrown
-        print_stringIR();
     }
 }

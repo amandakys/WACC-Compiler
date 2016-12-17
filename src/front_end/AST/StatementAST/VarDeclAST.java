@@ -22,6 +22,8 @@ import front_end.AST.TypeAST.TypeAST;
 import front_end.symbol_table.*;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
@@ -128,9 +130,6 @@ public class VarDeclAST extends StatementAST {
         ShiftedReg addressWithJump = new PreIndex(Register.SP,
                 new ImmValue(Visitor.ST.getNextAvailableAddress()+Utility.getJumpSP()));
         CodeGen.main.add(new STORE(rhs.getRegister(), addressWithJump, identObj.getSize()));
-
-        //register used by the variable must be the same as register used by rhs
-        setIGNode(rhs.getIGNode());
     }
 
     @Override
@@ -146,8 +145,9 @@ public class VarDeclAST extends StatementAST {
     public void IRepresentation() {
         rhs.IRepresentation();
 
-        defaultIRep(ident);
-        IGNode.setRegister(rhs.getRegister());
+        IGNode = new IGNode(ident);
+        //register used by the variable must be the same as register used by rhs
+        IGNode = rhs.getIGNode();
         IGNode.setIdent();
     }
 

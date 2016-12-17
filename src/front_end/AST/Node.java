@@ -3,6 +3,7 @@ package front_end.AST;
 import antlr.BasicParser;
 import back_end.data_type.Expression;
 import back_end.data_type.register.Register;
+import front_end.AST.ExpressionAST.IdentAST;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.TYPE;
 import main.Visitor;
@@ -143,15 +144,19 @@ public abstract class Node {
     public String findIdent(ParserRuleContext context) {
         //find the identifier which this array belongs to
         String ident = "";
-        //ctx can either be Arraylit or Arrayliter so have to check ctx.getParent() as well as ctx.getParent().getParent()
-        if(context.getParent() instanceof BasicParser.Var_declContext) {
-            ident = ((BasicParser.Var_declContext) context.getParent()).IDENT().getText();
-        } else if(context.getParent().getParent() instanceof BasicParser.Var_declContext) {
-            ident = ((BasicParser.Var_declContext) context.getParent().getParent()).IDENT().getText();
-        } else if(context.getParent() instanceof BasicParser.AssignmentContext) {
-            ident = ((BasicParser.AssignmentContext) context.getParent()).assignlhs().IDENT().getText();
-        } else if(context.getParent().getParent() instanceof BasicParser.AssignmentContext) {
-            ident = ((BasicParser.AssignmentContext) context.getParent().getParent()).assignlhs().IDENT().getText();
+        if(this instanceof IdentAST) {
+            ident = ((IdentAST) this).getIdent();
+        } else {
+            //ctx can either be Arraylit or Arrayliter so have to check ctx.getParent() as well as ctx.getParent().getParent()
+            if(context.getParent() instanceof BasicParser.Var_declContext) {
+                ident = ((BasicParser.Var_declContext) context.getParent()).IDENT().getText();
+            } else if(context.getParent().getParent() instanceof BasicParser.Var_declContext) {
+                ident = ((BasicParser.Var_declContext) context.getParent().getParent()).IDENT().getText();
+            } else if(context.getParent() instanceof BasicParser.AssignmentContext) {
+                ident = ((BasicParser.AssignmentContext) context.getParent()).assignlhs().IDENT().getText();
+            } else if(context.getParent().getParent() instanceof BasicParser.AssignmentContext) {
+                ident = ((BasicParser.AssignmentContext) context.getParent().getParent()).assignlhs().IDENT().getText();
+            }
         }
 
         return ident;
@@ -164,6 +169,7 @@ public abstract class Node {
         for (IGNode n : nodes) {
             n.addEdge(message);
         }
+        IGNode.addEdge(message);
     }
 
     public void linkToString(IGNode... nodes) {

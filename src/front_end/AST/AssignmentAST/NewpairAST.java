@@ -1,19 +1,13 @@
 package front_end.AST.AssignmentAST;
 
-import antlr.BasicParser;
-import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
 import back_end.instruction.Branch;
-import back_end.instruction.POP;
-import back_end.instruction.PUSH;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import back_end.instruction.load_store.STORE;
 import front_end.AST.ExpressionAST.ExpressionAST;
-import front_end.AST.ExpressionAST.IntLiterAST;
-import front_end.AST.ExpressionAST.PairliterAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
 import main.CodeGen;
@@ -50,40 +44,25 @@ public class NewpairAST extends AssignrhsAST {
     public void translate() {
         ProgramAST.nextAddress = 0;
 
+        CodeGen.main.add(new LOAD(Register.R0, new ImmValue(identObj.getSize() * 2)));
+        CodeGen.main.add(new Branch("L", "malloc"));
+        CodeGen.main.add(new MOV(getRegister(), Register.R0));
+
         for (ExpressionAST elem: pairelems) {
-            //store elem's value to sp - 4 and decrement sp by 4
-            if(elem.equals(pairelems.get(1))) {
-                CodeGen.main.add(new PUSH(elem.getRegister()));
-            }
+            Register res = elem.getRegister();
+
             elem.translate();
 
             int sizeElem = elem.getIdentObj().getSize();
 
-            //store elem's value to sp - 4 and decrement sp by 4
-            CodeGen.main.add(new PUSH(elem.getRegister()));
-            //load the size of each element
-            CodeGen.main.add(new MOV(elem.getRegister(), new ImmValue(sizeElem)));
+            CodeGen.main.add(new LOAD(Register.R0, new ImmValue(sizeElem)));
             CodeGen.main.add(new Branch("L", "malloc"));
-            //load pair's size from sp and increment sp by 4
-            CodeGen.main.add(new POP(pairSize.getRegister()));
-            //store the size of each element to the memory address specified by the size of a pair & next available address
-            CodeGen.main.add(new STORE(pairSize.getRegister(), new PreIndex(elem.getRegister()),
-                    elem.getIdentObj().getSize()));
+            CodeGen.main.add(new STORE(res, new PreIndex(Register.R0), elem.getIdentObj().getSize()));
+            CodeGen.main.add(new STORE(Register.R0, new PreIndex(getRegister(), new ImmValue(ProgramAST.nextAddress)),
+                    identObj.getSize()));
 
             ProgramAST.nextAddress += identObj.getSize();
         }
-
-        //store pair's size to sp - 4 and decrement sp by 4
-        CodeGen.main.add(new PUSH(getRegister()));
-        CodeGen.main.add(new LOAD(getRegister(), new ImmValue(identObj.getSize() * 2)));
-        CodeGen.main.add(new Branch("L", "malloc"));
-        //load elemSize's and pair's elem's value from sp and increment sp by 4, 8
-        CodeGen.main.add(new POP(pairSize.getRegister(), elemSize.getRegister()));
-
-        CodeGen.main.add(new STORE(elemSize.getRegister(), new PreIndex(getRegister(),
-                new ImmValue(0)), identObj.getSize()));
-        CodeGen.main.add(new STORE(pairSize.getRegister(), new PreIndex(getRegister(),
-                new ImmValue(4)), identObj.getSize()));
     }
 
     @Override
@@ -96,24 +75,27 @@ public class NewpairAST extends AssignrhsAST {
 
     @Override
     public void IRepresentation() {
-        //add the register that stores the value of each element to the graph
-        defaultIRep(findIdent() + "_elem_value");
-
+        String ident = findIdent();
         //add the register that stores the size of a pair to the graph
-        pairSize = new IGNode("pair_size");
-        InterferenceGraph.add(pairSize);
+        IGNode = new IGNode(ident);
+
+        //add the register that stores the value of each element to the graph
+        pairSize = new IGNode(ident + "_pair_size");
 
         for(ExpressionAST e : pairelems) {
-            e.IRepresentation();
+            e.setIGNode(pairSize);
         }
 
         //add the register that stores the size of pair's elemSize
-        elemSize = new IGNode("elem_size");
-        InterferenceGraph.add(elemSize);
+        elemSize = new IGNode(ident + "_elem_size");
 
         //indicate that these register must be alive at the same time
+        linkToString(elemSize, pairSize);
         IGNode.addEdge(elemSize);
         IGNode.addEdge(pairSize);
-        pairSize.addEdge(elemSize);
+
+        InterferenceGraph.add(IGNode);
+        InterferenceGraph.add(pairSize);
+        InterferenceGraph.add(elemSize);
     }
 }
