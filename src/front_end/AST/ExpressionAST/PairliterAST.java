@@ -5,12 +5,13 @@ import back_end.data_type.ImmValue;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import main.CodeGen;
+import optimisation.IGNode;
 import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.PAIR;
 
 public class PairliterAST extends ExpressionAST {
-    String nullStr;
+    private String nullStr;
     public PairliterAST(ParserRuleContext ctx, String text) {
         super(ctx);
         nullStr = text;
@@ -36,6 +37,12 @@ public class PairliterAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
+        defaultIRep("null");
+
+        IGNode newNode = new IGNode(IGNode);
+        newNode.setIdentifier(findIdent());
+
+        InterferenceGraph.add(newNode);
     }
 
     public String getNullStr() {
