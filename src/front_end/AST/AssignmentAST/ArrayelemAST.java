@@ -74,7 +74,6 @@ public class ArrayelemAST extends ExpressionAST {
 
         //find the the variable's address from its identifier from the current symbol table
         CodeGen.main.add(new ADD(first, Register.SP, Visitor.ST.getAddress(ident).getShiftVal()));
-        CodeGen.main.add(new LOAD(expressions.get(0).getRegister(), new ImmValue(0)));
 
         for(Node n : expressions) {
             Register reg = n.getRegister();
@@ -126,11 +125,16 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        //IGNode stores the register that stores this array's element's value
-        IGNode = InterferenceGraph.findIGNode(ident + "_array_size");
+        if(ctx.getParent() instanceof BasicParser.AssignlhsContext) {
+            arraySize = InterferenceGraph.findIGNode(ident + "_array_size");
+            IGNode = InterferenceGraph.findIGNode(ident + "_elem");
+        } else {
+            IGNode = InterferenceGraph.findIGNode(ident + "_array_size");
+            arraySize = InterferenceGraph.findIGNode(ident + "_elem");
+        }
 
         for (Node e : expressions) {
-            e.setIGNode(InterferenceGraph.findIGNode(ident + "_elem"));
+            e.setIGNode(InterferenceGraph.findIGNode(ident + "_index"));
         }
 
         newIGNode("p_check_array_bounds");
@@ -143,5 +147,10 @@ public class ArrayelemAST extends ExpressionAST {
         }
 
         return result;
+    }
+
+    @Override
+    public IGNode getIGNode() {
+        return InterferenceGraph.findIGNode(ident + "_array_size");
     }
 }

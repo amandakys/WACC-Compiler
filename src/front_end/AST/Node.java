@@ -103,7 +103,6 @@ public abstract class Node {
     public void newIGNode(String name) {
         if (InterferenceGraph.findIGNode(name) == null) {
             IGNode p_func = new IGNode(name);
-            IGNode.addEdge(p_func);
             InterferenceGraph.add(p_func);
         }
     }
@@ -142,7 +141,17 @@ public abstract class Node {
         return ident;
     }
 
+    public void linkToMessage(IGNode... nodes) {
+        IGNode message = new IGNode("message");
+        InterferenceGraph.add(message);
+
+        for (IGNode n : nodes) {
+            n.addEdge(message);
+        }
+    }
+
     public void linkToString(IGNode... nodes) {
+        IGNode message = new IGNode("message");
         IGNode string_mov;
         IGNode string_load;
 
@@ -163,14 +172,19 @@ public abstract class Node {
             if(!node.equals(IGNode)) {
                 node.addEdge(string_load);
                 node.addEdge(string_mov);
+                node.addEdge(message);
             }
         }
 
         string_mov.addEdge(string_load);
+        message.addEdge(string_load);
+        message.addEdge(string_mov);
 
         IGNode.addEdge(string_load);
         IGNode.addEdge(string_mov);
+        IGNode.addEdge(message);
 
+        InterferenceGraph.add(message);
         InterferenceGraph.add(string_load);
         InterferenceGraph.add(string_mov);
 

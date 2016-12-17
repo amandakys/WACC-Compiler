@@ -176,7 +176,7 @@ public class PrintUtility {
         CodeGen.functions.add(new PUSH(Register.LR));
 
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
-        CodeGen.functions.add(new LOAD("LT", Register.R0, new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsNegative))));
+        CodeGen.functions.add(new LOAD("LT", InterferenceGraph.findRegister("p_check_array_bounds"), new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsNegative))));
         CodeGen.functions.add(new Branch("LLT", "p_throw_runtime_error"));
         CodeGen.functions.add(new LOAD(Register.R1, new PreIndex(Register.R1)));
 

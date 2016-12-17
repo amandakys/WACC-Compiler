@@ -42,6 +42,7 @@ public class AssignmentAST extends StatementAST {
     @Override
     public void translate() {
         Node lhsChild = lhs.getChild();
+        rhs.setRegister(lhs.getRegister());
 
         //translate righthandside
         rhs.translate();

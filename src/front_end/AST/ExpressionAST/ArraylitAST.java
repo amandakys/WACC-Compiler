@@ -26,6 +26,7 @@ public class ArraylitAST extends AssignrhsAST {
     //IGNode stores the value of array's element
     //stores the size of the array
     private IGNode arrayElem;
+    private IGNode arrayIndex;
 
     public ArraylitAST(ParserRuleContext ctx, List<ExpressionAST> arraylits) {
         super(ctx);
@@ -57,10 +58,11 @@ public class ArraylitAST extends AssignrhsAST {
     public void translate() {
         //Store size in R0 to malloc successfully
         CodeGen.main.add(new MOV(Register.R0,
-                new ImmValue((arraylits.size() + 1) * ((ARRAY) identObj).getElem_size())));
+                new ImmValue(identObj.getSize() +
+                        (arraylits.size()) * ((ARRAY) identObj).getElem_size())));
         CodeGen.main.add(new Branch("L", "malloc"));
 
-        CodeGen.main.add(new MOV(getRegister(), arrayElem.getRegister()));
+        CodeGen.main.add(new MOV(getRegister(), Register.R0));
         //identObj.getSize() returns size of array
         ProgramAST.nextAddress += identObj.getSize();
         //Transverse through the list to translate each expr
@@ -91,20 +93,21 @@ public class ArraylitAST extends AssignrhsAST {
 
         //IGNode represents the register that is used to store array's elem's values
         arrayElem = new IGNode(ident + "_elem");
-        InterferenceGraph.add(arrayElem);
+        arrayIndex = new IGNode(ident + "_index");
 
         //IGNode which has the register that stores the array's size
         IGNode = new IGNode(ident + "_array_size");
         IGNode.addEdge(arrayElem);
-        linkToString(arrayElem);
+        IGNode.addEdge(arrayIndex);
+        arrayElem.addEdge(arrayIndex);
+
+        linkToString(arrayElem, arrayIndex, arrayIndex);
         InterferenceGraph.add(IGNode);
+        InterferenceGraph.add(arrayElem);
+        InterferenceGraph.add(arrayIndex);
 
         for (ExpressionAST e : arraylits) {
             e.setIGNode(arrayElem);
         }
-    }
-
-    public List<ExpressionAST> getArraylits() {
-        return arraylits;
     }
 }

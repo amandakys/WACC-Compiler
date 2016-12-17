@@ -151,26 +151,4 @@ public class VarDeclAST extends StatementAST {
         IGNode.setIdent();
     }
 
-
-//    @Override
-//    public boolean determineLoopInvariance() {
-//        if ((rhs instanceof ArraylitAST || rhs instanceof BoolliterAST || rhs instanceof CharLitAST ||
-//                rhs instanceof IntLiterAST || rhs instanceof PairliterAST || rhs instanceof StringLiterAST ||
-//                rhs instanceof UnopAST)) {
-//
-//            return true;
-//        }
-//        return false;
-//    }
-
-//    @Override
-//    public void findLoopInvariants() {
-//        if (determineLoopInvariance()) {
-//            //invariant
-//            Visitor.ST.getEncSymbolTable().add(ident, identObj);
-//
-//        }
-//    }
-
-
 }
