@@ -130,13 +130,11 @@ public abstract class Node {
     public String findIdent() {
         //find the identifier which this array belongs to
         String ident = findIdent(ctx);
-        if(ctx instanceof BasicParser.ExprNoBinOpContext) {
-            ParserRuleContext context = ctx.getParent().getParent();
-            if(context instanceof BasicParser.ExprContext) {
-                ident = findIdent(context.getParent());
-            } else {
-                ident = findIdent(context);
-            }
+        ParserRuleContext context = ctx.getParent().getParent();
+        if(context instanceof BasicParser.ExprContext) {
+            ident = findIdent(context.getParent());
+        } else {
+            ident = findIdent(context);
         }
         return ident;
     }
