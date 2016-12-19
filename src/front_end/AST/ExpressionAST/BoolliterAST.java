@@ -32,7 +32,7 @@ public class BoolliterAST extends ExpressionAST{
 
     @Override
     public void IRepresentation() {
-        defaultIRep("int_" + boolVal);
+        defaultIRep("bool_" + boolVal);
     }
 
     public String getBoolVal() {

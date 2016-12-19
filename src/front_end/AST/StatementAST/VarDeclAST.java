@@ -150,10 +150,10 @@ public class VarDeclAST extends StatementAST {
     public void IRepresentation() {
         rhs.IRepresentation();
 
-        IGNode = new IGNode(ident);
-        //register used by the variable must be the same as register used by rhs
-        IGNode = rhs.getIGNode();
+        IGNode = new IGNode(rhs.getIGNode());
+        IGNode.setIdentifier(ident);
         IGNode.setIdent();
+        InterferenceGraph.add(IGNode);
     }
 
 }
