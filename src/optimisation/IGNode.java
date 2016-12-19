@@ -65,12 +65,6 @@ public class IGNode {
         }
     }
 
-    public void addAllEdge(IGNode node) {
-        for(IGNode n : node.neighbours) {
-            addEdge(n);
-        }
-    }
-
     public List<IGNode> getNeighbours() {
         return neighbours;
     }
@@ -89,6 +83,10 @@ public class IGNode {
 
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public void setNeighbours(List<IGNode> neighbours) {
+        this.neighbours = neighbours;
     }
 }
 

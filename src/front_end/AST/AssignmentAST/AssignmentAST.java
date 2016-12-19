@@ -83,7 +83,7 @@ public class AssignmentAST extends StatementAST {
     public void IRepresentation() {
         rhs.IRepresentation();
         lhs.IRepresentation();
-        rhs.getIGNode().addAllEdge(lhs.getIGNode());
+        rhs.getIGNode().setNeighbours(lhs.getIGNode().getNeighbours());
         lhs.getIGNode().addEdge(rhs.getIGNode());
 
         IGNode = lhs.getIGNode();
