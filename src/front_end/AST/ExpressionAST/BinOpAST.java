@@ -244,6 +244,18 @@ public class BinOpAST extends ExpressionAST {
     @Override
     public void IRepresentation() {
         lhs.IRepresentation();
+
+        //lhs & rhs cannot be stored the same register as they are two separate values
+        String rhsIdent = rhs.getIdent();
+        String toRemove = "";
+        //if they store the same value -> confusion -> remove the confusion
+        for(String ident: lhs.getIGNode().getIdentifierList()) {
+            if(ident.equals(rhsIdent)) {
+                toRemove = ident;
+            }
+        }
+
+        lhs.getIGNode().getIdentifierList().remove(toRemove);
         rhs.IRepresentation();
 
         IGNode = lhs.getIGNode();

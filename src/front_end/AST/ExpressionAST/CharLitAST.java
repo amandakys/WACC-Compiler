@@ -36,7 +36,8 @@ public class CharLitAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        defaultIRep("int_" + charac);
+        ident = "char_" + charac;
+        defaultIRep(ident);
     }
 
     public int getCodePoint() {

@@ -36,8 +36,11 @@ public class InterferenceGraph {
     }
 
     public static IGNode findIGNode(String name) {
+        //check every node that is in the Interference Graph
         for(IGNode n : nodes) {
+            //check every identifier in that node
             for(String ident : n.getIdentifierList()) {
+                //when it has the same name
                 if(ident.equals(name)) {
                     return n;
                 }

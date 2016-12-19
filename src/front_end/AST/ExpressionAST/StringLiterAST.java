@@ -39,7 +39,8 @@ public class StringLiterAST extends ExpressionAST{
 
     @Override
     public void IRepresentation() {
-        defaultIRep("string_" + value);
+        ident = "string_" + value;
+        defaultIRep(ident);
 
         List<ExpressionAST> chars = new ArrayList<>();
         for(int i = 0; i < value.length(); i++) {
