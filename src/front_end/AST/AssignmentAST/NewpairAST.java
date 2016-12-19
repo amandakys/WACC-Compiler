@@ -20,10 +20,6 @@ import java.util.List;
 
 public class NewpairAST extends AssignrhsAST {
     private List<ExpressionAST> pairelems;
-    //IGNode represents element's value which store the size of a pair object
-    //elemSize stores pair's individual elemSize's size
-    private IGNode elemSize;
-    private IGNode pairSize;
 
     public NewpairAST(ParserRuleContext ctx, List<ExpressionAST> pairelems) {
         super(ctx);
@@ -79,19 +75,19 @@ public class NewpairAST extends AssignrhsAST {
         IGNode = InterferenceGraph.findIGNode(ident);
 
         //add the register that stores the value of each element to the graph
-        pairSize = InterferenceGraph.findIGNode(ident + "_pair_size");
+        IGNode elemValue = InterferenceGraph.findIGNode(ident + "_elem");
 
         for(ExpressionAST e : pairelems) {
-            e.setIGNode(pairSize);
+            e.setIGNode(elemValue);
         }
 
         //add the register that stores the size of pair's elemSize
-        elemSize = InterferenceGraph.findIGNode(ident + "_elem_size");
+        IGNode elemSize = InterferenceGraph.findIGNode(ident + "_elem_size");
 
         //indicate that these register must be alive at the same time
         linkToString();
-        elemSize.addEdge(pairSize);
+        elemSize.addEdge(elemValue);
         IGNode.addEdge(elemSize);
-        IGNode.addEdge(pairSize);
+        IGNode.addEdge(elemValue);
     }
 }

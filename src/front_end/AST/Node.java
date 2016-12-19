@@ -120,7 +120,9 @@ public abstract class Node {
     }
 
     public void linkToMessage() {
-       GraphColour.startReg = 1;
+       if(GraphColour.startReg < 1) {
+           GraphColour.startReg = 1;
+       }
     }
 
     public void linkToString() {

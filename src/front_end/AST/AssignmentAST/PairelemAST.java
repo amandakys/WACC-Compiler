@@ -102,7 +102,13 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void IRepresentation() {
-        IGNode = InterferenceGraph.findIGNode(expression.getIdent());
+        if(ctx.getParent() instanceof BasicParser.PairelementContext) {
+            //when pairelement is on the rhs
+            IGNode = InterferenceGraph.findIGNode(expression.getIdent());
+        } else {
+            //when pairelement is on the lhs
+            IGNode = InterferenceGraph.findIGNode(expression.getIdent() + "_elem");
+        }
 
         linkToString();
 

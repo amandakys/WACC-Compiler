@@ -16,10 +16,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
 
-/**
- * Created by andikoh on 08/11/2016.
- */
-
 public class AssignmentAST extends StatementAST {
     AssignlhsAST lhs;
     AssignrhsAST rhs;
@@ -54,7 +50,8 @@ public class AssignmentAST extends StatementAST {
             lhsChild.translate();
 
             //store the RHS address into the top of the Unused stack
-            CodeGen.main.add(new STORE(rhs.getRegister(), new PreIndex(lhsChild.getRegister()), rhs.getIdentObj().getSize()));
+            CodeGen.main.add(new STORE(rhs.getRegister(),
+                    new PreIndex(lhsChild.getRegister()), rhs.getIdentObj().getSize()));
         } else {//lhs is an Ident
 
             //Store the RHS into the adress of the ident on the memory address
@@ -83,7 +80,6 @@ public class AssignmentAST extends StatementAST {
     public void IRepresentation() {
         rhs.IRepresentation();
         lhs.IRepresentation();
-        rhs.getIGNode().setNeighbours(lhs.getIGNode().getNeighbours());
         lhs.getIGNode().addEdge(rhs.getIGNode());
 
         IGNode = lhs.getIGNode();
