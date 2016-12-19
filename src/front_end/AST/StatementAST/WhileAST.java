@@ -126,6 +126,7 @@ public class WhileAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
+
         expression.IRepresentation();
         IGNode = expression.getIGNode();
 

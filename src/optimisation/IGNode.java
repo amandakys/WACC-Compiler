@@ -9,29 +9,15 @@ import java.util.List;
     The arbitrary node that represents the number of next register that will be used
  */
 public class IGNode {
-    private String identifier;
-    //isIdent is false when IGNode is an expression
-    private boolean isIdent = false;
+    private List<String> identifierList = new ArrayList<>();
     //represent the designated register that will be used
     private Register register;
     //represent the range in which the object is alive
     private int from = 0, to = 0;
     private List<IGNode> neighbours = new ArrayList<>();
 
-    public IGNode() {
-
-    }
-
-    public IGNode(IGNode node) {
-        identifier = node.getIdentifier();
-        register = node.getRegister();
-        from = node.getFrom();
-        to = node.getTo();
-        neighbours = node.getNeighbours();
-    }
-
     public IGNode(String identifier) {
-        this.identifier = identifier;
+        this.identifierList.add(identifier);
     }
 
     public Register getRegister() {
@@ -59,7 +45,7 @@ public class IGNode {
     }
 
     public void addEdge(IGNode node) {
-        if(!neighbours.contains(node)) {
+        if(!neighbours.contains(node) && node != this) {
             neighbours.add(node);
             node.neighbours.add(this);
         }
@@ -69,24 +55,16 @@ public class IGNode {
         return neighbours;
     }
 
-    public String getIdentifier() {
-        return identifier;
-    }
-
-    public void setIdent() {
-        isIdent = true;
-    }
-
-    public boolean isIdent() {
-        return isIdent;
-    }
-
-    public void setIdentifier(String identifier) {
-        this.identifier = identifier;
+    public List<String> getIdentifierList() {
+        return identifierList;
     }
 
     public void setNeighbours(List<IGNode> neighbours) {
         this.neighbours = neighbours;
+    }
+
+    public void addIdentifier(String identifier) {
+        this.identifierList.add(identifier);
     }
 }
 

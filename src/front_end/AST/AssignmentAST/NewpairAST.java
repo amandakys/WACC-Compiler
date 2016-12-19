@@ -76,25 +76,22 @@ public class NewpairAST extends AssignrhsAST {
     @Override
     public void IRepresentation() {
         //add the register that stores the size of a pair to the graph
-        IGNode = new IGNode(ident);
+        IGNode = InterferenceGraph.findIGNode(ident);
 
         //add the register that stores the value of each element to the graph
-        pairSize = new IGNode(ident + "_pair_size");
+        pairSize = InterferenceGraph.findIGNode(ident + "_pair_size");
 
         for(ExpressionAST e : pairelems) {
             e.setIGNode(pairSize);
         }
 
         //add the register that stores the size of pair's elemSize
-        elemSize = new IGNode(ident + "_elem_size");
+        elemSize = InterferenceGraph.findIGNode(ident + "_elem_size");
 
         //indicate that these register must be alive at the same time
-        linkToString(elemSize, pairSize);
+        linkToString();
+        elemSize.addEdge(pairSize);
         IGNode.addEdge(elemSize);
         IGNode.addEdge(pairSize);
-
-        InterferenceGraph.add(IGNode);
-        InterferenceGraph.add(pairSize);
-        InterferenceGraph.add(elemSize);
     }
 }

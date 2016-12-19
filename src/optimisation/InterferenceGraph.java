@@ -19,8 +19,7 @@ public class InterferenceGraph {
                 //when two IGNodes have overlap live span
                 if(first.getFrom() <= next.getTo() && next.getFrom() <= first.getTo()
                         && (first.getFrom() != 0 && next.getFrom() != 0
-                        && first.getTo() != 0 && next.getTo() != 0)
-                        && first.isIdent() && next.isIdent()) {
+                        && first.getTo() != 0 && next.getTo() != 0)) {
                     first.addEdge(next);
                 }
             }
@@ -38,22 +37,16 @@ public class InterferenceGraph {
 
     public static IGNode findIGNode(String name) {
         for(IGNode n : nodes) {
-            if(n.getIdentifier().equals(name)) {
-                return n;
+            for(String ident : n.getIdentifierList()) {
+                if(ident.equals(name)) {
+                    return n;
+                }
             }
         }
 
-        return null;
-    }
-
-    public static void add(IGNode node) {
-        for(IGNode n : nodes) {
-            if (n.getIdentifier().equals(node.getIdentifier())) {
-                return;
-            }
-        }
-
-        nodes.add(node);
+        IGNode newNode = new IGNode(name);
+        nodes.add(newNode);
+        return newNode;
     }
 
     public static List<IGNode> getNodes() {

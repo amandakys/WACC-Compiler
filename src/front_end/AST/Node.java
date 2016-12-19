@@ -7,6 +7,7 @@ import front_end.AST.ExpressionAST.IdentAST;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.TYPE;
 import main.Visitor;
+import optimisation.GraphColour;
 import optimisation.IGNode;
 import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -96,31 +97,22 @@ public abstract class Node {
     }
 
     public void defaultIRep(String name) {
-        IGNode = new IGNode(name);
+        IGNode = InterferenceGraph.findIGNode(name);
         IGNode.setFrom(index);
         IGNode.setTo(index);
-        InterferenceGraph.add(IGNode);
     }
 
     public void newIGNode(String name) {
-        if (InterferenceGraph.findIGNode(name) == null) {
-            IGNode p_func = new IGNode(name);
-            InterferenceGraph.add(p_func);
-        }
+        InterferenceGraph.findIGNode(name);
     }
 
     public void print_stringIR() {
-        if (InterferenceGraph.findIGNode("print_string_mov") == null) {
-            IGNode string_mov = new IGNode("print_string_mov");
-            IGNode string_load = new IGNode("print_string_ldr");
+        IGNode string_mov = InterferenceGraph.findIGNode("print_string_mov");
+        IGNode string_load = InterferenceGraph.findIGNode("print_string_ldr");
 
-            string_mov.addEdge(string_load);
-            IGNode.addEdge(string_load);
-            IGNode.addEdge(string_mov);
-
-            InterferenceGraph.add(string_load);
-            InterferenceGraph.add(string_mov);
-        }
+        string_mov.addEdge(string_load);
+        IGNode.addEdge(string_load);
+        IGNode.addEdge(string_mov);
     }
 
     public void setRegister(Register register) {
@@ -128,52 +120,10 @@ public abstract class Node {
     }
 
     public void linkToMessage(IGNode... nodes) {
-        IGNode message = new IGNode("message");
-        InterferenceGraph.add(message);
-
-        for (IGNode n : nodes) {
-            n.addEdge(message);
-        }
-        IGNode.addEdge(message);
+       GraphColour.startReg = 1;
     }
 
-    public void linkToString(IGNode... nodes) {
-        IGNode message = new IGNode("message");
-        IGNode string_mov;
-        IGNode string_load;
-
-        //print string is needed to throw runtime error
-        if (InterferenceGraph.findIGNode("print_string_mov") == null) {
-            string_mov = new IGNode("print_string_mov");
-        } else {
-            string_mov = InterferenceGraph.findIGNode("print_string_mov");
-        }
-
-        if (InterferenceGraph.findIGNode("print_string_ldr") == null) {
-            string_load = new IGNode("print_string_ldr");
-        } else {
-            string_load = InterferenceGraph.findIGNode("print_string_ldr");
-        }
-
-        for(IGNode node : nodes) {
-            if(!node.equals(IGNode)) {
-                node.addEdge(string_load);
-                node.addEdge(string_mov);
-                node.addEdge(message);
-            }
-        }
-
-        string_mov.addEdge(string_load);
-        message.addEdge(string_load);
-        message.addEdge(string_mov);
-
-        IGNode.addEdge(string_load);
-        IGNode.addEdge(string_mov);
-        IGNode.addEdge(message);
-
-        InterferenceGraph.add(message);
-        InterferenceGraph.add(string_load);
-        InterferenceGraph.add(string_mov);
-
+    public void linkToString() {
+        GraphColour.startReg = 3;
     }
 }

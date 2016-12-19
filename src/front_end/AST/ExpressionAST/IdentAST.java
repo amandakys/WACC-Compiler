@@ -58,7 +58,7 @@ public class IdentAST extends ExpressionAST {
         IGNode = InterferenceGraph.findIGNode(ident);
 
         if(IGNode != null && IGNode.getTo() < index) {
-            IGNode.setTo(index - 1);
+            IGNode.setTo(index);
         } else if(IGNode == null) {
             defaultIRep(ident);
         }

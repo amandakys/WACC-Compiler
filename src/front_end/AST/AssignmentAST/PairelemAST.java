@@ -104,6 +104,8 @@ public class PairelemAST extends AssignrhsAST{
     public void IRepresentation() {
         IGNode = InterferenceGraph.findIGNode(expression.getIdent());
 
+        linkToString();
+
         //set the range of IGNode
         if(IGNode != null && IGNode.getTo() < index) {
             IGNode.setTo(index - 1);
