@@ -53,9 +53,11 @@ public class PrintAST extends StatementAST {
         IGNode = expression.getIGNode();
 
         if(expression instanceof StringLiterAST) {
+            linkToString();
             print_stringIR();
         } else if(!(expression instanceof PairliterAST)){
             //when expression is not null
+            linkToMessage();
             newIGNode("p_print_" + findTypeName());
         }
     }

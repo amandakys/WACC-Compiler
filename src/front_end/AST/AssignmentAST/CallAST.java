@@ -121,8 +121,10 @@ public class CallAST extends AssignrhsAST{
 
     @Override
     public void IRepresentation() {
-        arglist.IRepresentation();
         IGNode = InterferenceGraph.findIGNode(funcname + "_function");
+
+        arglist.setIGNode(IGNode);
+        arglist.IRepresentation();
     }
 
     public void setReVisited() {

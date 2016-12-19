@@ -92,7 +92,7 @@ public abstract class Node {
         return IGNode;
     }
 
-    public void setIGNode(optimisation.IGNode IGNode) {
+    public void setIGNode(IGNode IGNode) {
         this.IGNode = IGNode;
     }
 
@@ -119,7 +119,7 @@ public abstract class Node {
         IGNode.setRegister(register);
     }
 
-    public void linkToMessage(IGNode... nodes) {
+    public void linkToMessage() {
        GraphColour.startReg = 1;
     }
 

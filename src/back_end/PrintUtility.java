@@ -119,7 +119,6 @@ public class PrintUtility {
     public void printInt() {
         Utility.addFunction(new LabelInstr("p_print_int"));
         Utility.addFunction(new PUSH(Register.LR));
-        Utility.addFunction(new MOV(Register.R1, (InterferenceGraph.findRegister("p_print_int"))));
         Utility.addFunction(new MOV(InterferenceGraph.findRegister("p_print_int"), Register.R0));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(Utility.getIntPlaceholder())));
         printDefaults();
