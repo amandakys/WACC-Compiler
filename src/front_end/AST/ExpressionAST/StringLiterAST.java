@@ -16,6 +16,7 @@ public class StringLiterAST extends ExpressionAST{
     public StringLiterAST(ParserRuleContext ctx, String value) {
         super(ctx);
         this.value = value;
+        this.ident = "string_" + value;
         identObj = Visitor.ST.lookUpAll("string");
     }
 
@@ -39,8 +40,7 @@ public class StringLiterAST extends ExpressionAST{
 
     @Override
     public void IRepresentation() {
-        ident = "string_" + value;
-        defaultIRep(ident);
+        defaultIRep("string_" + value);
 
         List<ExpressionAST> chars = new ArrayList<>();
         for(int i = 0; i < value.length(); i++) {

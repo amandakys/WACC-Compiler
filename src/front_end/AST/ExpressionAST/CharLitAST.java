@@ -12,6 +12,7 @@ public class CharLitAST extends ExpressionAST {
     public CharLitAST(ParserRuleContext ctx, String charac) {
         super(ctx);
         this.charac = charac;
+        this.ident = "char_" + charac;
         identObj = Visitor.ST.lookUpAll("char");
     }
 
@@ -36,8 +37,7 @@ public class CharLitAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        ident = "char_" + charac;
-        defaultIRep(ident);
+        defaultIRep("char_" + charac);
     }
 
     public int getCodePoint() {

@@ -21,6 +21,7 @@ public class IntLiterAST extends ExpressionAST {
         //only leaves digit in the string value, e.g "1-2-3" will be stored as "123"
         this.value = value.replaceAll("\\D+","");;
         this.intsign = intsign;
+        this.ident = "int_" + intsign + value;
         identObj = Visitor.ST.lookUpAll("int");
     }
 
@@ -42,8 +43,7 @@ public class IntLiterAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        ident = "int_" + intsign + value;
-        defaultIRep(ident);
+        defaultIRep("int_" + intsign + value);
     }
 
     public int getValue() {

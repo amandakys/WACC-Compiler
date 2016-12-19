@@ -12,6 +12,7 @@ public class BoolliterAST extends ExpressionAST{
     public BoolliterAST(ParserRuleContext ctx, String boolVal) {
         super(ctx);
         this.boolVal = boolVal;
+        this.ident = "bool_" + boolVal;
         identObj = Visitor.ST.lookUpAll("bool");
     }
 
@@ -32,8 +33,7 @@ public class BoolliterAST extends ExpressionAST{
 
     @Override
     public void IRepresentation() {
-        ident = "bool_" + boolVal;
-        defaultIRep(ident);
+        defaultIRep("bool_" + boolVal);
     }
 
     public String getBoolVal() {
