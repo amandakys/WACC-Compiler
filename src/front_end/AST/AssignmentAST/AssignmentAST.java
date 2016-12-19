@@ -42,7 +42,6 @@ public class AssignmentAST extends StatementAST {
     @Override
     public void translate() {
         Node lhsChild = lhs.getChild();
-        rhs.setRegister(lhs.getRegister());
 
         //translate righthandside
         rhs.translate();
@@ -72,7 +71,7 @@ public class AssignmentAST extends StatementAST {
     @Override
     public void weight() {
         lhs.weight();
-        rhs.weight();
+        rhs.setIGNode(lhs.getIGNode());
         size = lhs.getSize() + rhs.getSize();
     }
 
