@@ -11,7 +11,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import static back_end.Error.overflow;
 
 public class IntLiterAST extends ExpressionAST {
-
     private String intsign; //intsign, can be null(for positive), "+" or "-"
     private String value;
 
@@ -21,7 +20,7 @@ public class IntLiterAST extends ExpressionAST {
         //only leaves digit in the string value, e.g "1-2-3" will be stored as "123"
         this.value = value.replaceAll("\\D+","");;
         this.intsign = intsign;
-        this.ident = "int_" + intsign + value;
+        this.ident = "int_" + this.intsign + this.value;
         identObj = Visitor.ST.lookUpAll("int");
     }
 
