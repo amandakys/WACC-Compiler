@@ -4,6 +4,7 @@ import back_end.Utility;
 import back_end.data_type.ImmValue;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
+import front_end.AST.AssignmentAST.AssignrhsAST;
 import main.CodeGen;
 import optimisation.IGNode;
 import optimisation.InterferenceGraph;
@@ -12,6 +13,7 @@ import front_end.symbol_table.PAIR;
 
 public class PairliterAST extends ExpressionAST {
     private String nullStr;
+
     public PairliterAST(ParserRuleContext ctx, String text) {
         super(ctx);
         nullStr = text;
@@ -37,12 +39,7 @@ public class PairliterAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        defaultIRep("null");
-
-        IGNode newNode = new IGNode(IGNode);
-        newNode.setIdentifier(findIdent());
-
-        InterferenceGraph.add(newNode);
+        defaultIRep(ident);
     }
 
     public String getNullStr() {

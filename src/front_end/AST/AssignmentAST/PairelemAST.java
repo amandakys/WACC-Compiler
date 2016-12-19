@@ -103,10 +103,12 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void IRepresentation() {
-        IGNode = InterferenceGraph.findIGNode(expression.findIdent());
+        //if pairelem is not assigned to a variable
+        ident = ident == null ? ((IdentAST) expression).getIdent() : ident;
+        IGNode = InterferenceGraph.findIGNode(ident);
 
         IGNode identNode = new IGNode(IGNode);
-        identNode.setIdentifier(findIdent());
+        identNode.setIdentifier(ident);
 
         linkToString(identNode);
         InterferenceGraph.add(identNode);

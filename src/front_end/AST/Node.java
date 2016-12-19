@@ -127,45 +127,6 @@ public abstract class Node {
         IGNode.setRegister(register);
     }
 
-    public String findIdent() {
-        //find the identifier which this array belongs to
-        String ident = findIdent(ctx);
-        ParserRuleContext context = ctx.getParent().getParent();
-        if(context instanceof BasicParser.ExprContext) {
-            ident = findIdent(context.getParent());
-        } else {
-            ident = findIdent(context);
-        }
-        return ident;
-    }
-
-    public String findIdent(ParserRuleContext context) {
-        //find the identifier which this array belongs to
-        String ident = "";
-        if(this instanceof IdentAST) {
-            ident = ((IdentAST) this).getIdent();
-        } else {
-            //ctx can either be Arraylit or Arrayliter so have to check ctx.getParent() as well as ctx.getParent().getParent()
-            if(context.getParent() instanceof BasicParser.Var_declContext) {
-                ident = ((BasicParser.Var_declContext) context.getParent()).IDENT().getText();
-            } else if(context.getParent().getParent() instanceof BasicParser.Var_declContext) {
-                ident = ((BasicParser.Var_declContext) context.getParent().getParent()).IDENT().getText();
-            } else if(context instanceof BasicParser.AssignlhsContext) {
-                ident = ((BasicParser.AssignlhsContext) context).IDENT().getText();
-            } else if(context.getParent() instanceof BasicParser.AssignlhsContext) {
-                if(context instanceof BasicParser.PairelemContext) {
-                    ident = findIdent(((BasicParser.PairelemContext) context).expression());
-                } else if(context instanceof BasicParser.ArrayelemContext) {
-                    ident = ((BasicParser.ArrayelemContext) context).IDENT().getText();
-                }
-            } else if(context instanceof BasicParser.Var_declContext) {
-                ident = ((BasicParser.Var_declContext) context).IDENT().getText();
-            }
-        }
-
-        return ident;
-    }
-
     public void linkToMessage(IGNode... nodes) {
         IGNode message = new IGNode("message");
         InterferenceGraph.add(message);

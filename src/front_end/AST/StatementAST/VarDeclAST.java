@@ -40,6 +40,9 @@ public class VarDeclAST extends StatementAST {
         this.ident = ident;
         this.type = type;
         this.rhs = rhs;
+
+        //set ident of the rhs to aid IRepresentation later when finding the appropriate IGNode
+        rhs.setIdent(ident);
     }
 
     @Override

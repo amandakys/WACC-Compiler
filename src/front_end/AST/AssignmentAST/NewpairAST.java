@@ -75,7 +75,6 @@ public class NewpairAST extends AssignrhsAST {
 
     @Override
     public void IRepresentation() {
-        String ident = findIdent();
         //add the register that stores the size of a pair to the graph
         IGNode = new IGNode(ident);
 

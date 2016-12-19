@@ -90,7 +90,6 @@ public class ArraylitAST extends AssignrhsAST {
 
     @Override
     public void IRepresentation() {
-        String ident = findIdent();
         //IGNode represents the register that is used to store array's elem's values
         arrayElem = new IGNode(ident + "_elem");
         arrayIndex = new IGNode(ident + "_index");

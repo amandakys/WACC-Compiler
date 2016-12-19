@@ -47,7 +47,9 @@ public class InterferenceGraph {
     }
 
     public static void add(IGNode node) {
-        nodes.add(node);
+        if(!nodes.contains(node)) {
+            nodes.add(node);
+        }
     }
 
     public static List<IGNode> getNodes() {
