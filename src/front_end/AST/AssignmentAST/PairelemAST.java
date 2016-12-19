@@ -20,9 +20,6 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
 import front_end.symbol_table.PAIR;
 
-/**
- * Created by tsd15 on 09/11/16.
- */
 public class PairelemAST extends AssignrhsAST{
     private String token;
     private ExpressionAST expression;
@@ -35,6 +32,8 @@ public class PairelemAST extends AssignrhsAST{
         this.token = token;
         this.expression = expression;
         this.hasError = false;
+
+        this.ident = expression.getIdent();
     }
 
     @Override
@@ -103,15 +102,14 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void IRepresentation() {
-        //if pairelem is not assigned to a variable
-        ident = ident == null ? ((IdentAST) expression).getIdent() : ident;
-        IGNode = InterferenceGraph.findIGNode(ident);
-
-        IGNode identNode = new IGNode(IGNode);
-        identNode.setIdentifier(ident);
-
-        linkToString(identNode);
-        InterferenceGraph.add(identNode);
+        if(ctx.getParent() instanceof BasicParser.PairelementContext) {
+            IGNode node = new IGNode(InterferenceGraph.findIGNode(expression.getIdent()));
+            IGNode = node;
+            IGNode.setIdentifier(ident);
+            InterferenceGraph.add(IGNode);
+        } else {
+            IGNode = InterferenceGraph.findIGNode(expression.getIdent());
+        }
 
         //set the range of IGNode
         if(IGNode != null && IGNode.getTo() < index) {

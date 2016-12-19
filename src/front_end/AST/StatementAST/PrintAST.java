@@ -54,7 +54,8 @@ public class PrintAST extends StatementAST {
 
         if(expression instanceof StringLiterAST) {
             print_stringIR();
-        } else {
+        } else if(!(expression instanceof PairliterAST)){
+            //when expression is not null
             newIGNode("p_print_" + findTypeName());
         }
     }

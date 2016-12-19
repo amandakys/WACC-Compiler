@@ -74,6 +74,11 @@ public class AssignlhsAST extends Node {
     }
 
     public String getIdent() {
+        if(ident == null) {
+            return (child instanceof ArrayelemAST) ? ((ArrayelemAST) child).getIdent()
+                    : ((PairelemAST) child).getIdent();
+        }
+
         return ident;
     }
 }

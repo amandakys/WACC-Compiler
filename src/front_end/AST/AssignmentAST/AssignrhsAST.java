@@ -13,4 +13,8 @@ public abstract class AssignrhsAST extends Node {
     public void setIdent(String ident) {
         this.ident = ident;
     }
+
+    public String getIdent() {
+        return ident;
+    }
 }

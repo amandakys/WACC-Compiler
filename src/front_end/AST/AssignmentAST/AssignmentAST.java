@@ -10,6 +10,8 @@ import front_end.AST.StatementAST.StatementAST;
 import front_end.symbol_table.FUNCTION;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;
@@ -26,6 +28,8 @@ public class AssignmentAST extends StatementAST {
         super(ctx);
         this.lhs = lhs;
         this.rhs = rhs;
+
+        rhs.setIdent(lhs.getIdent());
     }
 
     @Override
@@ -71,16 +75,18 @@ public class AssignmentAST extends StatementAST {
     @Override
     public void weight() {
         lhs.weight();
-        rhs.setIGNode(lhs.getIGNode());
+        rhs.weight();
         size = lhs.getSize() + rhs.getSize();
     }
 
     @Override
     public void IRepresentation() {
-        lhs.IRepresentation();
         rhs.IRepresentation();
-        IGNode = lhs.getIGNode();
+        lhs.IRepresentation();
+        rhs.getIGNode().addAllEdge(lhs.getIGNode());
+        lhs.getIGNode().addEdge(rhs.getIGNode());
 
+        IGNode = lhs.getIGNode();
     }
 
     @Override
