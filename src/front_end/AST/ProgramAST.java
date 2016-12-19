@@ -51,7 +51,7 @@ public class ProgramAST extends Node {
         //open a new scope for the statement
         newScope(statement);
 
-        Utility.addMain(new MOV(getRegister(), new ImmValue(0)));
+        Utility.addMain(new MOV(Register.R0, new ImmValue(0)));
         Utility.addMain(new POP(Register.PC));
 
         //push placeholders to data
@@ -86,7 +86,6 @@ public class ProgramAST extends Node {
         //find IRepresentation of the statement & set the register used by the program
         //to be the same as the first register in a statement
         statement.IRepresentation();
-        IGNode = statement.IGNode;
     }
 
     public static void newScope(StatementAST statement) {

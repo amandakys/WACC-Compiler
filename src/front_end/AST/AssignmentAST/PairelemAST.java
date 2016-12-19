@@ -102,14 +102,7 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void IRepresentation() {
-        if(ctx.getParent() instanceof BasicParser.PairelementContext) {
-            IGNode node = new IGNode(InterferenceGraph.findIGNode(expression.getIdent()));
-            IGNode = node;
-            IGNode.setIdentifier(ident);
-            InterferenceGraph.add(IGNode);
-        } else {
-            IGNode = InterferenceGraph.findIGNode(expression.getIdent());
-        }
+        IGNode = InterferenceGraph.findIGNode(expression.getIdent());
 
         //set the range of IGNode
         if(IGNode != null && IGNode.getTo() < index) {

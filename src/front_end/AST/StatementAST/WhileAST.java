@@ -126,8 +126,6 @@ public class WhileAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        defaultIRep("while");
-
         expression.IRepresentation();
         IGNode = expression.getIGNode();
 
@@ -148,10 +146,7 @@ public class WhileAST extends StatementAST {
         } else {
             Utility.addMain(new SUB(Register.SP, Register.SP, new ImmValue(spSize)));
         }
-//        switch(type) {
-//            case "invariant": statement.extractLoopInvariants(); break;
-//            case "dependent": statement.extractLoopDependents(); break;
-//        }
+
         if (expression instanceof BinOpAST) {
             statement.extractLoopDependents(((BinOpAST) expression).getIdents());
         } else if (expression instanceof BoolliterAST) {

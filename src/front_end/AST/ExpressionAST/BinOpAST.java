@@ -56,7 +56,8 @@ public class BinOpAST extends ExpressionAST {
         this.lhs = lhs;
         hasErrorDivByZero = false;
         hasErrorOverflow = false;
-        longExpr = false;
+        this.longExpr = false;
+
         initialise();
     }
 

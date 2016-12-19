@@ -7,8 +7,6 @@ import back_end.Utility;
 import back_end.data_type.*;
 import back_end.data_type.register.*;
 import back_end.instruction.Branch;
-import back_end.instruction.POP;
-import back_end.instruction.PUSH;
 import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import front_end.AST.ExpressionAST.ExpressionAST;
@@ -29,18 +27,12 @@ import front_end.symbol_table.TYPE;
 import java.util.ArrayList;
 import java.util.List;
 
-import static back_end.Utility.addMain;
-
 public class ArrayelemAST extends ExpressionAST {
     private String ident;
     private List<Node> expressions = new ArrayList<>();
 
     private static boolean hasError;
     private final int ARRAY_SIZE = 4;
-
-    //IGNode stores array's elem's value
-    //arraySize stores the size of the current array
-    private IGNode arraySize;
 
     public ArrayelemAST(ParserRuleContext ctx, String ident, List<Node> expressionNodes) {
         super(ctx);
@@ -126,11 +118,9 @@ public class ArrayelemAST extends ExpressionAST {
     @Override
     public void IRepresentation() {
         if(ctx.getParent() instanceof BasicParser.AssignlhsContext) {
-            arraySize = InterferenceGraph.findIGNode(ident + "_array_size");
             IGNode = InterferenceGraph.findIGNode(ident + "_elem");
         } else {
             IGNode = InterferenceGraph.findIGNode(ident + "_array_size");
-            arraySize = InterferenceGraph.findIGNode(ident + "_elem");
         }
 
         for (Node e : expressions) {

@@ -39,7 +39,7 @@ public class PairliterAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        defaultIRep(ident);
+        defaultIRep(nullStr);
     }
 
     public String getNullStr() {
