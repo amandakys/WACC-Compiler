@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ArrayelemAST extends ExpressionAST {
-    private String ident;
+    private String arrayIdent;
     private List<Node> expressions = new ArrayList<>();
 
     private static boolean hasError;
@@ -36,7 +36,7 @@ public class ArrayelemAST extends ExpressionAST {
 
     public ArrayelemAST(ParserRuleContext ctx, String ident, List<Node> expressionNodes) {
         super(ctx);
-        this.ident = ident;
+        this.arrayIdent = ident;
         this.expressions = expressionNodes;
         hasError = false;
     }
@@ -44,7 +44,7 @@ public class ArrayelemAST extends ExpressionAST {
     @Override
     public void check() {
         //check idents
-        IDENTIFIER N = Visitor.ST.lookUpAll(ident);
+        IDENTIFIER N = Visitor.ST.lookUpAll(arrayIdent);
         if (N == null) {
             error("undeclared variable");
         } else {
@@ -65,7 +65,7 @@ public class ArrayelemAST extends ExpressionAST {
         Register first = getRegister();
 
         //find the the variable's address from its identifier from the current symbol table
-        CodeGen.main.add(new ADD(first, Register.SP, Visitor.ST.getAddress(ident).getShiftVal()));
+        CodeGen.main.add(new ADD(first, Register.SP, Visitor.ST.getAddress(arrayIdent).getShiftVal()));
 
         for(Node n : expressions) {
             Register reg = n.getRegister();
@@ -117,17 +117,31 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        if(ctx.getParent() instanceof BasicParser.AssignlhsContext) {
-            IGNode = InterferenceGraph.findIGNode(ident + "_elem");
-        } else {
-            IGNode = InterferenceGraph.findIGNode(ident + "_array_size");
+        IGNode = InterferenceGraph.findIGNode(arrayIdent + findPosition());
+        if(IGNode.getFrom() == 0 || IGNode.getFrom() > index) {
+            IGNode.setFrom(index);
         }
 
-        for (Node e : expressions) {
-            e.setIGNode(InterferenceGraph.findIGNode(ident + "_index"));
+        //array_pos is linked to node array_elem in Interference Graph. It's destroyed after we exit array_elem
+        IGNode array_pos = InterferenceGraph.findIGNode("array_pos" + findPosition());
+        array_pos.addEdge(IGNode);
+
+        for(Node n : expressions) {
+            n.setIGNode(array_pos);
         }
 
-        newIGNode("p_check_array_bounds");
+        //print error message may caused by array out of bound exception
+        reserveRegForPrintStr();
+
+        //set the range of IGNode
+        if(IGNode.getTo() < index) {
+            IGNode.setTo(index);
+        }
+
+        IGNode parent = InterferenceGraph.findIGNode(ident);
+        if(parent.getTo() < index) {
+            parent.setTo(index);
+        }
     }
 
     private String findPosition() {
@@ -137,10 +151,5 @@ public class ArrayelemAST extends ExpressionAST {
         }
 
         return result;
-    }
-
-    @Override
-    public IGNode getIGNode() {
-        return InterferenceGraph.findIGNode(ident + "_array_size");
     }
 }

@@ -1,6 +1,7 @@
 package front_end.AST.AssignmentAST;
 
 import front_end.AST.Node;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 public abstract class AssignrhsAST extends Node {
@@ -16,5 +17,9 @@ public abstract class AssignrhsAST extends Node {
 
     public String getIdent() {
         return ident;
+    }
+
+    public void IRepresentation() {
+        IGNode = InterferenceGraph.findIGNode(ident);
     }
 }

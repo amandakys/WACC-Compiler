@@ -84,11 +84,6 @@ public class ReadAST extends StatementAST {
     public void IRepresentation() {
         expression.IRepresentation();
         IGNode = expression.getIGNode();
-
-        IGNode p_read = InterferenceGraph.findIGNode("p_read_" + expression.getType().getTypeName());
-
-        //p_read and read must be alive at the same time as they both come from ReadAST
-        IGNode.addEdge(p_read);
     }
 
 }

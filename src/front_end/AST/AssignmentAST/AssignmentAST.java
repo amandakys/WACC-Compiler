@@ -17,8 +17,8 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import java.util.List;
 
 public class AssignmentAST extends StatementAST {
-    AssignlhsAST lhs;
-    AssignrhsAST rhs;
+    private AssignlhsAST lhs;
+    private AssignrhsAST rhs;
 
     public AssignmentAST(ParserRuleContext ctx, AssignlhsAST lhs, AssignrhsAST rhs) {
         super(ctx);
@@ -80,7 +80,7 @@ public class AssignmentAST extends StatementAST {
     public void IRepresentation() {
         rhs.IRepresentation();
         lhs.IRepresentation();
-        lhs.getIGNode().addEdge(rhs.getIGNode());
+        lhs.getIGNode().addAll(rhs.getIGNode());
 
         IGNode = lhs.getIGNode();
     }

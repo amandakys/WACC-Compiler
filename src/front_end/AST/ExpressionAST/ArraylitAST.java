@@ -1,7 +1,6 @@
 package front_end.AST.ExpressionAST;
 
 import back_end.Utility;
-import back_end.data_type.Expression;
 import back_end.data_type.ImmValue;
 import back_end.data_type.register.PreIndex;
 import back_end.data_type.register.Register;
@@ -27,7 +26,6 @@ public class ArraylitAST extends AssignrhsAST {
     //IGNode stores the value of array's element
     //stores the size of the array
     private IGNode arrayElem;
-    private IGNode arrayIndex;
 
     public ArraylitAST(ParserRuleContext ctx, List<ExpressionAST> arraylits) {
         super(ctx);
@@ -91,17 +89,12 @@ public class ArraylitAST extends AssignrhsAST {
     @Override
     public void IRepresentation() {
         //IGNode which has the register that stores the array's size
-        IGNode = InterferenceGraph.findIGNode(ident + "_array_size");
+        IGNode = InterferenceGraph.findIGNode(ident);
 
         //IGNode represents the register that is used to store array's elem's values
         arrayElem = InterferenceGraph.findIGNode(ident + "_elem");
-        arrayIndex = InterferenceGraph.findIGNode(ident + "_index");
 
         IGNode.addEdge(arrayElem);
-        IGNode.addEdge(arrayIndex);
-        arrayElem.addEdge(arrayIndex);
-
-        linkToString();
 
         for (ExpressionAST e : arraylits) {
             e.setIGNode(arrayElem);

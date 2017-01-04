@@ -13,6 +13,7 @@ import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
 import back_end.instruction.load_store.LOAD;
 import main.CodeGen;
+import optimisation.GraphColour;
 import optimisation.InterferenceGraph;
 
 import java.util.Map;
@@ -38,9 +39,10 @@ public class PrintUtility {
         addToEndFunctions("p_print_string", Register.R0);
     }
 
-    public void ioFunctions() {
+    public static void ioFunctions() {
         for (Map.Entry<String, Register> entry : CodeGen.endFunctions.entrySet()) {
             switch (entry.getKey()) {
+
                 case "p_print_bool":
                     printBool();
                     break;
@@ -63,7 +65,7 @@ public class PrintUtility {
                     read("char", Utility.getCharPlaceholder(), entry.getValue());
                     break;
                 case "p_check_array_bounds":
-                    p_check_array_bounds(entry.getValue());
+                    p_check_array_bounds();
                     break;
                 case "p_check_null_pointer":
                     p_check_null_pointer();
@@ -87,7 +89,7 @@ public class PrintUtility {
         }
     }
 
-    private void printDefaults() {
+    private static void printDefaults() {
         Utility.addFunction(new ADD(Register.R0, Register.R0, new ImmValue(4)));
         Utility.addFunction(new Branch("L", "printf"));
         Utility.addFunction(new MOV(Register.R0, new ImmValue(0)));
@@ -95,7 +97,7 @@ public class PrintUtility {
         Utility.addFunction(new POP(Register.PC));
     }
 
-    public void printBool() {
+    public static void printBool() {
         Utility.addFunction(new LabelInstr("p_print_bool"));
         Utility.addFunction(new PUSH(Register.LR));
         Utility.addFunction(new CMP(Register.R0, new ImmValue(0)));
@@ -104,7 +106,7 @@ public class PrintUtility {
         printDefaults();
     }
 
-    public void printString() {
+    public static void printString() {
         Utility.addFunction(new LabelInstr("p_print_string"));
         Utility.addFunction(new PUSH(Register.LR));
         //TODO: InterferenceGraph.findRegister("print_string_ldr")
@@ -116,7 +118,7 @@ public class PrintUtility {
         printDefaults();
     }
 
-    public void printInt() {
+    public static void printInt() {
         Utility.addFunction(new LabelInstr("p_print_int"));
         Utility.addFunction(new PUSH(Register.LR));
         Utility.addFunction(new MOV(Register.R1, Register.R0));
@@ -124,7 +126,7 @@ public class PrintUtility {
         printDefaults();
     }
 
-    public void read(String type, String placeholder, Register register) {
+    public static void read(String type, String placeholder, Register register) {
         Utility.addFunction(new LabelInstr("p_read_" + type));
         Utility.addFunction(new PUSH(Register.LR));
         Utility.addFunction(new MOV(Register.R1, register));
@@ -135,7 +137,7 @@ public class PrintUtility {
         Utility.addFunction(new POP(Register.PC));
     }
 
-    public void printlnInstr() {
+    public static void printlnInstr() {
         Utility.addFunction(new LabelInstr("p_print_ln"));
         Utility.addFunction(new PUSH(Register.LR));
         Utility.addFunction(new LOAD(Register.R0, new LabelExpr(Utility.getPrintlnPlaceholder())));
@@ -146,7 +148,7 @@ public class PrintUtility {
         Utility.addFunction(new POP(Register.PC));
     }
 
-    public void printReference() {
+    public static void printReference() {
         Utility.addFunction(new LabelInstr("p_print_reference"));
         Utility.addFunction(new PUSH(Register.LR));
         Utility.addFunction(new MOV(Register.R1, Register.R0));
@@ -154,7 +156,7 @@ public class PrintUtility {
         printDefaults();
     }
 
-    public void p_check_null_pointer() {
+    public static void p_check_null_pointer() {
         CodeGen.functions.add(new LabelInstr("p_check_null_pointer"));
         CodeGen.functions.add(new PUSH(Register.LR));
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
@@ -170,17 +172,17 @@ public class PrintUtility {
         CodeGen.functions.add(new Branch("L", "exit"));
     }
 
-    public static void p_check_array_bounds(Register register) {
+    public static void p_check_array_bounds() {
         CodeGen.functions.add(new LabelInstr("p_check_array_bounds"));
         CodeGen.functions.add(new PUSH(Register.LR));
 
         CodeGen.functions.add(new CMP(Register.R0, new ImmValue(0)));
-        CodeGen.functions.add(new LOAD("LT", InterferenceGraph.findRegister("p_check_array_bounds"), new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsNegative))));
+        CodeGen.functions.add(new LOAD("LT", Register.R0, new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsNegative))));
         CodeGen.functions.add(new Branch("LLT", "p_throw_runtime_error"));
         CodeGen.functions.add(new LOAD(Register.R1, new PreIndex(Register.R1)));
 
         CodeGen.functions.add(new CMP(Register.R0, Register.R1));
-        CodeGen.functions.add(new LOAD("CS", InterferenceGraph.findRegister("p_check_array_bounds"), new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsLarge))));
+        CodeGen.functions.add(new LOAD("CS", Register.R0, new LabelExpr(getErrorMessage(Error.arrayOutOfBoundsLarge))));
         CodeGen.functions.add(new Branch("CS", "p_throw_runtime_error"));
 
         CodeGen.functions.add(new POP(Register.PC));

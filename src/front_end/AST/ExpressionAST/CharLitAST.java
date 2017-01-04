@@ -35,11 +35,6 @@ public class CharLitAST extends ExpressionAST {
         size = 1;
     }
 
-    @Override
-    public void IRepresentation() {
-        defaultIRep("char_" + charac);
-    }
-
     public int getCodePoint() {
         return charac.replace("\'", "").codePointAt(0);
     }

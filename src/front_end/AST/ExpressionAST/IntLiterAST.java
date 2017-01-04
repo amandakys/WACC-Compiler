@@ -40,11 +40,6 @@ public class IntLiterAST extends ExpressionAST {
         size = 1;
     }
 
-    @Override
-    public void IRepresentation() {
-        defaultIRep("int_" + intsign + value);
-    }
-
     public int getValue() {
         return Integer.parseInt(intsign + value);
     }

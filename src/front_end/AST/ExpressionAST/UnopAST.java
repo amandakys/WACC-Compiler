@@ -87,12 +87,13 @@ public class UnopAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
+        if(unop.equals("-")) {
+            //print error message may be caused by integer overflow exception
+            reserveRegForPrintStr();
+        }
+
         expression.IRepresentation();
         IGNode = expression.getIGNode();
-
-        if (unop.equals("-")) {
-            print_stringIR();
-        }
     }
 
     //Extension: Trying evaluation

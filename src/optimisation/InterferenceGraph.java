@@ -17,33 +17,31 @@ public class InterferenceGraph {
                 IGNode next = nodes.get(j);
 
                 //when two IGNodes have overlap live span
-                if(first.getFrom() <= next.getTo() && next.getFrom() <= first.getTo()
-                        && (first.getFrom() != 0 && next.getFrom() != 0
-                        && first.getTo() != 0 && next.getTo() != 0)) {
+                if(doesOverlap(first, next)) {
                     first.addEdge(next);
                 }
             }
         }
     }
 
-    public static Register findRegister(String name) {
-        IGNode node = findIGNode(name);
-        if(node != null) {
-            return node.getRegister();
+    private static boolean doesOverlap(IGNode first, IGNode next) {
+        //guarantee that first IGNode will always be smaller than the next IGNode
+        if(first.getFrom() > next.getFrom()) {
+            IGNode tmp = first;
+            first = next;
+            next = tmp;
         }
 
-        return null;
+        return first.getFrom() <= next.getTo() && next.getFrom() <= first.getTo()
+                && next.getTo() != first.getFrom();
     }
 
     public static IGNode findIGNode(String name) {
         //check every node that is in the Interference Graph
         for(IGNode n : nodes) {
-            //check every identifier in that node
-            for(String ident : n.getIdentifierList()) {
-                //when it has the same name
-                if(ident.equals(name)) {
-                    return n;
-                }
+            //when it has the same name
+            if( n.getIdentifier() != null && n.getIdentifier().equals(name)) {
+                return n;
             }
         }
 

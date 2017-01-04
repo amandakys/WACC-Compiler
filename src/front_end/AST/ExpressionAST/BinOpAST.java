@@ -243,29 +243,17 @@ public class BinOpAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        lhs.IRepresentation();
-
-        //lhs & rhs cannot be stored the same register as they are two separate values
-        String rhsIdent = rhs.getIdent();
-        String toRemove = "";
-        //if they store the same value -> confusion -> remove the confusion
-        for(String ident: lhs.getIGNode().getIdentifierList()) {
-            if(ident.equals(rhsIdent)) {
-                toRemove = ident;
-            }
+        //print error message may be caused by divide by zero exception or integer overflow
+        if(("%/+-*").contains(op)) {
+            reserveRegForPrintStr();
         }
 
-        lhs.getIGNode().getIdentifierList().remove(toRemove);
+        lhs.IRepresentation();
         rhs.IRepresentation();
 
         IGNode = lhs.getIGNode();
         //lhs and rhs must be alive at the same time as they both come from a binOp node
         lhs.getIGNode().addEdge(rhs.getIGNode());
-
-        if(op.equals("+") || op.equals("-") || op.equals("*") ||
-                op.equals("/") || op.equals("%")) {
-            print_stringIR();
-        }
     }
 
     private boolean isNull(ExpressionAST exp) {
@@ -448,10 +436,6 @@ public class BinOpAST extends ExpressionAST {
                 returnType = "bool";
                 break;
         }
-    }
-
-    public String getOp() {
-        return op;
     }
 
     public List<String> getIdents() {

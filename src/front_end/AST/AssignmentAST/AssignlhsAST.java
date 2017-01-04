@@ -1,7 +1,9 @@
 package front_end.AST.AssignmentAST;
 
+import antlr.BasicParser;
 import front_end.AST.Node;
 import main.Visitor;
+import optimisation.IGNode;
 import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.IDENTIFIER;
@@ -20,13 +22,22 @@ public class AssignlhsAST extends Node {
     //case of a Node
     public AssignlhsAST(ParserRuleContext ctx, Node child) {
         super(ctx);
-        this.ident = null;
         this.child = child;
+
+        if(child instanceof ArrayelemAST) {
+            this.ident = ((ArrayelemAST) child).getIdent();
+        } else if(child instanceof PairelemAST) {
+            this.ident = ((PairelemAST) child).getIdent();
+        }
     }
 
     @Override
     public void check() {
-        if (ident != null) {
+        if (child != null) {
+            //child is not null so must be a Node
+            child.checkNode();
+            this.identObj = child.getType();
+        } else {
             //lhs is an ident
             IDENTIFIER N = Visitor.ST.lookUpAll(ident);
 
@@ -36,9 +47,6 @@ public class AssignlhsAST extends Node {
             } else {
                 this.identObj = N;
             }
-        } else { //ident is null so must be a Node
-            child.checkNode();
-            this.identObj = child.getType();
         }
     }
 
@@ -74,11 +82,14 @@ public class AssignlhsAST extends Node {
     }
 
     public String getIdent() {
-        if(ident == null) {
-            return (child instanceof ArrayelemAST) ? ((ArrayelemAST) child).getIdent()
-                    : ((PairelemAST) child).getIdent();
-        }
-
         return ident;
+    }
+
+    @Override
+    public void setIGNode(IGNode node) {
+        IGNode = node;
+        if(child != null) {
+            child.setIGNode(node);
+        }
     }
 }

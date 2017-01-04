@@ -9,7 +9,7 @@ import java.util.List;
     The arbitrary node that represents the number of next register that will be used
  */
 public class IGNode {
-    private List<String> identifierList = new ArrayList<>();
+    private String identifier;
     //represent the designated register that will be used
     private Register register;
     //represent the range in which the object is alive
@@ -17,7 +17,7 @@ public class IGNode {
     private List<IGNode> neighbours = new ArrayList<>();
 
     public IGNode(String identifier) {
-        this.identifierList.add(identifier);
+        this.identifier = identifier;
     }
 
     public Register getRegister() {
@@ -44,27 +44,28 @@ public class IGNode {
         return from;
     }
 
+    public String getIdentifier() {
+        return identifier;
+    }
+
     public void addEdge(IGNode node) {
         if(!neighbours.contains(node) && node != this) {
             neighbours.add(node);
             node.neighbours.add(this);
         }
+
+    }
+
+    public void addAll(IGNode node) {
+        addEdge(node);
+
+        for(IGNode n : neighbours) {
+            n.addEdge(node);
+        }
     }
 
     public List<IGNode> getNeighbours() {
         return neighbours;
-    }
-
-    public List<String> getIdentifierList() {
-        return identifierList;
-    }
-
-    public void setNeighbours(List<IGNode> neighbours) {
-        this.neighbours = neighbours;
-    }
-
-    public void addIdentifier(String identifier) {
-        this.identifierList.add(identifier);
     }
 }
 

@@ -1,21 +1,13 @@
 package front_end.AST.StatementAST;
 
 import back_end.PrintUtility;
-import back_end.Utility;
-import back_end.data_type.*;
 import back_end.data_type.register.Register;
 import back_end.instruction.*;
-import back_end.instruction.condition.CMP;
-import back_end.instruction.data_manipulation.ADD;
 import back_end.instruction.data_manipulation.MOV;
-import back_end.instruction.load_store.LOAD;
-import front_end.AST.AssignmentAST.ArrayelemAST;
-import front_end.AST.AssignmentAST.PairelemAST;
 import front_end.AST.ExpressionAST.*;
 import front_end.symbol_table.ARRAY;
-import front_end.symbol_table.STRING;
 import front_end.symbol_table.TYPE;
-import main.CodeGen;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import static back_end.Utility.*;
@@ -53,12 +45,9 @@ public class PrintAST extends StatementAST {
         IGNode = expression.getIGNode();
 
         if(expression instanceof StringLiterAST) {
-            linkToString();
-            print_stringIR();
-        } else if(!(expression instanceof PairliterAST)){
-            //when expression is not null
-            linkToMessage();
-            newIGNode("p_print_" + findTypeName());
+            reserveRegForPrintStr();
+        } else {
+            reserveRegForPrint();
         }
     }
 

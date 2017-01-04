@@ -42,33 +42,6 @@ public abstract class Node {
         return identObj;
     }
 
-    public void checkType(Node node) {
-
-        if (getType() == null) {
-            //this value cannot be assigned to
-            error("trying to assign to unassignable value");
-        }
-
-        if (!Compare.types(this.getType(), node.getType())) {
-            error("types do not match\nexpected: " + this.getType() + "\nactual: " + node.getType());
-        }
-    }
-
-    public TYPE getType() {
-        return identObj.getType();
-    }
-
-    protected void error(String message) {
-        Visitor.error(ctx, message);
-    }
-
-    protected void checkIfInScope(String name) {
-        IDENTIFIER N = Visitor.ST.lookUpAll(name);
-        if(N != null) {
-            error(name + " has already been declared");
-        }
-    }
-
     //translate node to target language - aiding CodeGen
     public abstract void translate();
 
@@ -96,36 +69,52 @@ public abstract class Node {
         this.IGNode = IGNode;
     }
 
+    public void checkType(Node node) {
+
+        if (getType() == null) {
+            //this value cannot be assigned to
+            error("trying to assign to unassignable value");
+        }
+
+        if (!Compare.types(this.getType(), node.getType())) {
+            error("types do not match\nexpected: " + this.getType() + "\nactual: " + node.getType());
+        }
+    }
+
+    public TYPE getType() {
+        return identObj.getType();
+    }
+
+    protected void error(String message) {
+        Visitor.error(ctx, message);
+    }
+
+    protected void checkIfInScope(String name) {
+        IDENTIFIER N = Visitor.ST.lookUpAll(name);
+        if(N != null) {
+            error(name + " has already been declared");
+        }
+    }
+
     public void defaultIRep(String name) {
         IGNode = InterferenceGraph.findIGNode(name);
         IGNode.setFrom(index);
         IGNode.setTo(index);
     }
 
-    public void newIGNode(String name) {
-        InterferenceGraph.findIGNode(name);
-    }
-
-    public void print_stringIR() {
-        IGNode string_mov = InterferenceGraph.findIGNode("print_string_mov");
-        IGNode string_load = InterferenceGraph.findIGNode("print_string_ldr");
-
-        string_mov.addEdge(string_load);
-        IGNode.addEdge(string_load);
-        IGNode.addEdge(string_mov);
-    }
-
     public void setRegister(Register register) {
         IGNode.setRegister(register);
     }
 
-    public void linkToMessage() {
+    public void reserveRegForPrint() {
        if(GraphColour.startReg < 1) {
            GraphColour.startReg = 1;
        }
     }
 
-    public void linkToString() {
-        GraphColour.startReg = 3;
+    public void reserveRegForPrintStr() {
+        if(GraphColour.startReg < 3) {
+            GraphColour.startReg = 3;
+        }
     }
 }

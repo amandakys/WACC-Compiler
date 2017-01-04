@@ -41,7 +41,7 @@ public class PairelemAST extends AssignrhsAST{
         expression.checkNode();
 
         //expression is an ident - referencing a pair
-        IDENTIFIER type = Visitor.ST.lookUpAll(((IdentAST) expression).getIdent());
+        IDENTIFIER type = Visitor.ST.lookUpAll(expression.getIdent());
 
         if (!(type.getType() instanceof PAIR)) {
             error("can only take pair types, actual: " + expression.getType().getTypeName());
@@ -102,19 +102,23 @@ public class PairelemAST extends AssignrhsAST{
 
     @Override
     public void IRepresentation() {
-        if(ctx.getParent() instanceof BasicParser.PairelementContext) {
-            //when pairelement is on the rhs
-            IGNode = InterferenceGraph.findIGNode(expression.getIdent());
-        } else {
-            //when pairelement is on the lhs
-            IGNode = InterferenceGraph.findIGNode(expression.getIdent() + "_elem");
+        //set the range of IGNode - which associates with lhs of an assignment
+        IGNode = InterferenceGraph.findIGNode(token + " " + expression.getIdent());
+
+        if (IGNode.getFrom() == 0 || IGNode.getFrom() > index) {
+            IGNode.setFrom(index);
         }
 
-        linkToString();
-
-        //set the range of IGNode
-        if(IGNode != null && IGNode.getTo() < index) {
-            IGNode.setTo(index - 1);
+        if (IGNode.getTo() < index) {
+            IGNode.setTo(index);
         }
+
+        IGNode parent = InterferenceGraph.findIGNode(expression.getIdent());
+        if (parent.getTo() < index) {
+            parent.setTo(index);
+        }
+
+        //print error message may be caused by null pointer exception
+        reserveRegForPrintStr();
     }
 }

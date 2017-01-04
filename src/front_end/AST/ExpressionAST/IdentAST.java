@@ -59,8 +59,6 @@ public class IdentAST extends ExpressionAST {
 
         if(IGNode != null && IGNode.getTo() < index) {
             IGNode.setTo(index);
-        } else if(IGNode == null) {
-            defaultIRep(ident);
         }
     }
 

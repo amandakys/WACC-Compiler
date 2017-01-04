@@ -62,8 +62,8 @@ public class FreeAST extends StatementAST {
         expression.IRepresentation();
         IGNode = expression.getIGNode();
 
-        //print string is added as double free runtime error might be thrown
-        print_stringIR();
+        //print error message that might be thrown by double free exception
+        reserveRegForPrintStr();
     }
 
 }

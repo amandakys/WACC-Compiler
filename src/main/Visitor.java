@@ -334,9 +334,13 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         if (ctx.IDENT() != null) {
             lhs = new AssignlhsAST(ctx, ctx.IDENT().getText());
         } else if (ctx.arrayelem() != null){
-            lhs = new AssignlhsAST(ctx, visitArrayelem(ctx.arrayelem()));
+            ArrayelemAST arrayelemAST = visitArrayelem(ctx.arrayelem());
+            arrayelemAST.setIndex(index);
+            lhs = new AssignlhsAST(ctx, arrayelemAST);
         } else {
-            lhs = new AssignlhsAST(ctx, visitPairelem(ctx.pairelem()));
+            PairelemAST pairelemAST = visitPairelem(ctx.pairelem());
+            pairelemAST.setIndex(index);
+            lhs = new AssignlhsAST(ctx, pairelemAST);
         }
 
         lhs.setIndex(index);
