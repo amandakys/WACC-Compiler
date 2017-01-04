@@ -12,6 +12,7 @@ import back_end.instruction.data_manipulation.MOV;
 import front_end.AST.ExpressionAST.ExpressionAST;
 
 import back_end.instruction.load_store.LOAD;
+import front_end.AST.ExpressionAST.IdentAST;
 import front_end.AST.ExpressionAST.IntLiterAST;
 import front_end.AST.Node;
 import front_end.AST.ProgramAST;
@@ -147,7 +148,9 @@ public class ArrayelemAST extends ExpressionAST {
     private String findPosition() {
         String result = "[";
         for(Node e : expressions) {
-            result += ((IntLiterAST) e).getValue() + "]";
+            String value = (e instanceof IdentAST) ? ((IdentAST) e).getIdent()
+                    : String.valueOf(((IntLiterAST) e).getValue());
+            result += value + "]";
         }
 
         return result;
