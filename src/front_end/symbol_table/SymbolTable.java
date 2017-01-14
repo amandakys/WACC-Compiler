@@ -4,6 +4,7 @@ import java.util.*;
 
 import back_end.Utility;
 import back_end.data_type.register.ShiftedReg;
+import optimisation.IGNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,6 +14,7 @@ public class SymbolTable {
     private Map<String, IDENTIFIER> dict;
     private Map<String, ShiftedReg> memoryAddress;
     private int nextAvailableAddress;
+    private List<IGNode> nodes = new ArrayList<>();
 
     public SymbolTable(SymbolTable st) {
         dict = new LinkedHashMap<>();
@@ -104,5 +106,9 @@ public class SymbolTable {
 
     public int getNextAvailableAddress() {
         return nextAvailableAddress;
+    }
+
+    public List<IGNode> getNodes() {
+        return nodes;
     }
 }

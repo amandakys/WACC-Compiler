@@ -14,6 +14,9 @@ import back_end.instruction.load_store.STORE;
 import front_end.AST.Compare;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.FunctionDecl.ArglistAST;
+import front_end.AST.FunctionDecl.ParamAST;
+import front_end.AST.StatementAST.SequenceAST;
+import front_end.AST.StatementAST.StatementAST;
 import main.CodeGen;
 import main.Visitor;
 import optimisation.InterferenceGraph;
@@ -121,10 +124,12 @@ public class CallAST extends AssignrhsAST{
 
     @Override
     public void IRepresentation() {
+        Visitor.ST = ((FUNCTION) identObj).getSymtab();
         IGNode = InterferenceGraph.findIGNode(funcname + "_function");
 
         arglist.setIGNode(IGNode);
         arglist.IRepresentation();
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
     }
 
     public void setReVisited() {

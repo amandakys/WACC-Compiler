@@ -13,6 +13,7 @@ import back_end.instruction.*;
 
 import back_end.instruction.data_manipulation.SUB;
 import front_end.AST.Node;
+import front_end.AST.StatementAST.SequenceAST;
 import front_end.AST.StatementAST.StatementAST;
 import front_end.AST.TypeAST.TypeAST;
 import main.CodeGen;
@@ -172,13 +173,21 @@ public class FunctionDeclAST extends Node {
 
     @Override
     public void IRepresentation() {
+        defaultIRep(funcname + "_function");
         if(parameters != null) {
             parameters.IRepresentation();
         }
 
-        defaultIRep(funcname + "_function");
-
         statement.IRepresentation();
-        IGNode.addEdge(statement.getIGNode());
+
+        for(ParamAST param : parameters.getParams()) {
+            if(statement instanceof SequenceAST) {
+                for(StatementAST stat : ((SequenceAST) statement).getStatements()) {
+                    param.getIGNode().addEdge(stat.getIGNode());
+                }
+            } else {
+                param.getIGNode().addEdge(statement.getIGNode());
+            }
+        }
     }
 }

@@ -61,7 +61,7 @@ public class ArglistAST extends Node {
     @Override
     public void IRepresentation() {
         for(ExpressionAST e : expressions) {
-            e.setIGNode(IGNode);
+            e.IRepresentation();
         }
     }
 }

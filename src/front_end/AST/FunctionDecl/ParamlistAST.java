@@ -18,11 +18,6 @@ public class ParamlistAST extends Node {
         this.parameters = parameters;
     }
 
-    public List<ParamAST> getExpressions() {
-        return parameters;
-    }
-
-
     public List<TYPE> getParamTypes() {
         List<TYPE> paramTypes = new ArrayList<>();
         for(ParamAST n : parameters) {

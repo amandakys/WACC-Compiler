@@ -1,12 +1,13 @@
 package optimisation;
 
 import back_end.data_type.register.Register;
+import main.Visitor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class InterferenceGraph {
-    private static List<IGNode> nodes = new ArrayList<>();
+    private static List<IGNode> nodes = Visitor.ST.getNodes();
 
     public static void checkLiveness() {
         for(int i = 0; i < nodes.size(); i++) {
