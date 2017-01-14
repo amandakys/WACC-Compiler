@@ -180,13 +180,15 @@ public class FunctionDeclAST extends Node {
 
         statement.IRepresentation();
 
-        for(ParamAST param : parameters.getParams()) {
-            if(statement instanceof SequenceAST) {
-                for(StatementAST stat : ((SequenceAST) statement).getStatements()) {
-                    param.getIGNode().addEdge(stat.getIGNode());
+        if(parameters != null) {
+            for(ParamAST param : parameters.getParams()) {
+                if(statement instanceof SequenceAST) {
+                    for(StatementAST stat : ((SequenceAST) statement).getStatements()) {
+                        param.getIGNode().addEdge(stat.getIGNode());
+                    }
+                } else {
+                    param.getIGNode().addEdge(statement.getIGNode());
                 }
-            } else {
-                param.getIGNode().addEdge(statement.getIGNode());
             }
         }
     }
