@@ -124,12 +124,8 @@ public class CallAST extends AssignrhsAST{
 
     @Override
     public void IRepresentation() {
-        Visitor.ST = ((FUNCTION) identObj).getSymtab();
-        IGNode = InterferenceGraph.findIGNode(funcname + "_function");
-
         arglist.setIGNode(IGNode);
         arglist.IRepresentation();
-        Visitor.ST = Visitor.ST.getEncSymbolTable();
     }
 
     public void setReVisited() {

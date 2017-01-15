@@ -78,13 +78,10 @@ public class AssignmentAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        rhs.IRepresentation();
         lhs.IRepresentation();
+        rhs.setIGNode(lhs.getIGNode());
+        rhs.IRepresentation();
         lhs.getIGNode().addAll(rhs.getIGNode());
-
-        if(rhs instanceof CallAST) {
-            rhs.setIGNode(lhs.getIGNode());
-        }
 
         IGNode = lhs.getIGNode();
     }

@@ -3,6 +3,7 @@ package front_end.AST.FunctionDecl;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.Node;
 import optimisation.IGNode;
+import optimisation.InterferenceGraph;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.TYPE;
 
@@ -61,7 +62,7 @@ public class ArglistAST extends Node {
     @Override
     public void IRepresentation() {
         for(ExpressionAST e : expressions) {
-            e.IRepresentation();
+            e.setIGNode(InterferenceGraph.findIGNode(e.getIdent()));
         }
     }
 }
