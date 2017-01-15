@@ -347,20 +347,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         return lhs;
     }
 
-    public AssignrhsAST visitAssignrhs(BasicParser.AssignrhsContext ctx) {
-        if (ctx instanceof BasicParser.ExprContext) {
-            return visitExpr((BasicParser.ExprContext) ctx);
-        } else if (ctx instanceof BasicParser.ArraylitContext) {
-            return visitArraylit((BasicParser.ArraylitContext) ctx);
-        } else if (ctx instanceof BasicParser.NewpairContext) {
-            return visitNewpair((BasicParser.NewpairContext) ctx);
-        } else if (ctx instanceof BasicParser.PairelementContext) {
-            return visitPairelement((BasicParser.PairelementContext) ctx);
-        } else if(ctx instanceof BasicParser.FunctioncallContext) {
-            return visitFunctioncall((BasicParser.FunctioncallContext) ctx);
-        }
-        return null;
-    }
+
 
     @Override
     public ExpressionAST visitExpr(BasicParser.ExprContext ctx) {
@@ -413,6 +400,8 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
          */
         if(ST.lookUp(ctx.IDENT().getText()) == null) {
             toBeVisited.add(call);
+        } else {
+            call.check();
         }
 
         return call;
