@@ -62,7 +62,7 @@ public class ArglistAST extends Node {
     @Override
     public void IRepresentation() {
         for(ExpressionAST e : expressions) {
-            e.setIGNode(InterferenceGraph.findIGNode(e.getIdent()));
+            e.IRepresentation();
         }
     }
 }
