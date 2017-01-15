@@ -82,6 +82,10 @@ public class AssignmentAST extends StatementAST {
         lhs.IRepresentation();
         lhs.getIGNode().addAll(rhs.getIGNode());
 
+        if(rhs instanceof CallAST) {
+            rhs.setIGNode(lhs.getIGNode());
+        }
+
         IGNode = lhs.getIGNode();
     }
 
