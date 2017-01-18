@@ -17,6 +17,7 @@ import front_end.AST.FunctionDecl.ArglistAST;
 import front_end.AST.FunctionDecl.ParamAST;
 import front_end.AST.StatementAST.SequenceAST;
 import front_end.AST.StatementAST.StatementAST;
+import front_end.symbol_table.SymbolTable;
 import main.CodeGen;
 import main.Visitor;
 import optimisation.InterferenceGraph;

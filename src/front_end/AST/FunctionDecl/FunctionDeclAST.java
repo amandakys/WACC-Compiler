@@ -18,6 +18,7 @@ import front_end.AST.StatementAST.StatementAST;
 import front_end.AST.TypeAST.TypeAST;
 import main.CodeGen;
 import main.Visitor;
+import optimisation.GraphColour;
 import org.antlr.v4.runtime.ParserRuleContext;
 import front_end.symbol_table.*;
 
@@ -32,8 +33,6 @@ public class FunctionDeclAST extends Node {
     private String funcname;
     private ParamlistAST parameters;
     private StatementAST statement;
-    private FUNCTION function;
-
 
     public FunctionDeclAST(ParserRuleContext ctx, TypeAST returntype, String funcname) {
         super(ctx);
@@ -175,6 +174,11 @@ public class FunctionDeclAST extends Node {
     public void IRepresentation() {
         defaultIRep(funcname + "_function");
 
+        Visitor.ST = ((FUNCTION) identObj).getSymtab();
         statement.IRepresentation();
+
+        //before closing ST, assign registers
+        GraphColour.colouringGraph();
+        Visitor.ST = Visitor.ST.getEncSymbolTable();
     }
 }

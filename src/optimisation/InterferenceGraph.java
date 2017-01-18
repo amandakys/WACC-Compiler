@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InterferenceGraph {
-    private static List<IGNode> nodes = Visitor.ST.getNodes();
 
     public static void checkLiveness() {
+        List<IGNode> nodes = getNodes();
         for(int i = 0; i < nodes.size(); i++) {
             IGNode first = nodes.get(i);
 
@@ -41,6 +41,7 @@ public class InterferenceGraph {
     }
 
     public static IGNode findIGNode(String name, int index) {
+        List<IGNode> nodes = getNodes();
         //check every node that is in the Interference Graph
         for(IGNode n : nodes) {
             //when it has the same name
@@ -57,6 +58,6 @@ public class InterferenceGraph {
     }
 
     public static List<IGNode> getNodes() {
-        return nodes;
+        return Visitor.ST.getNodes();
     }
 }

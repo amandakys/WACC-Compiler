@@ -268,7 +268,7 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
 
         //components
         ExpressionAST expr = visitExpression(ctx.expression());
-        expr.setIndex(index);
+        setIndex(expr);
         StatementAST statement = (StatementAST) visit(ctx.statement());
         statement.setIndex(index);
 
