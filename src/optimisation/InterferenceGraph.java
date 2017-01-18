@@ -51,6 +51,7 @@ public class InterferenceGraph {
 
         IGNode newNode = new IGNode(name);
         newNode.setFrom(index);
+        newNode.setTo(index);
         nodes.add(newNode);
         return newNode;
     }
