@@ -25,12 +25,15 @@ public class InterferenceGraph {
         }
     }
 
-    private static boolean doesOverlap(IGNode first, IGNode next) {
+    private static boolean doesOverlap(IGNode x, IGNode y) {
+        IGNode first, next;
         //guarantee that first IGNode will always be smaller than the next IGNode
-        if(first.getFrom() > next.getFrom()) {
-            IGNode tmp = first;
-            first = next;
-            next = tmp;
+        if(x.getFrom() > y.getFrom()) {
+            first = x;
+            next = y;
+        } else {
+            first = y;
+            next = x;
         }
 
         return first.getFrom() <= next.getTo() && next.getFrom() <= first.getTo()
