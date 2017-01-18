@@ -174,22 +174,7 @@ public class FunctionDeclAST extends Node {
     @Override
     public void IRepresentation() {
         defaultIRep(funcname + "_function");
-        if(parameters != null) {
-            parameters.IRepresentation();
-        }
 
         statement.IRepresentation();
-
-        if(parameters != null) {
-            for(ParamAST param : parameters.getParams()) {
-                if(statement instanceof SequenceAST) {
-                    for(StatementAST stat : ((SequenceAST) statement).getStatements()) {
-                        param.getIGNode().addEdge(stat.getIGNode());
-                    }
-                } else {
-                    param.getIGNode().addEdge(statement.getIGNode());
-                }
-            }
-        }
     }
 }

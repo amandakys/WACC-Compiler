@@ -34,10 +34,10 @@ public class InterferenceGraph {
         }
 
         return first.getFrom() <= next.getTo() && next.getFrom() <= first.getTo()
-                && next.getTo() != first.getFrom();
+                && next.getFrom() != first.getTo();
     }
 
-    public static IGNode findIGNode(String name) {
+    public static IGNode findIGNode(String name, int index) {
         //check every node that is in the Interference Graph
         for(IGNode n : nodes) {
             //when it has the same name
@@ -47,6 +47,7 @@ public class InterferenceGraph {
         }
 
         IGNode newNode = new IGNode(name);
+        newNode.setFrom(index);
         nodes.add(newNode);
         return newNode;
     }

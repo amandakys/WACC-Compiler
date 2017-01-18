@@ -89,10 +89,10 @@ public class ArraylitAST extends AssignrhsAST {
     @Override
     public void IRepresentation() {
         //IGNode which has the register that stores the array's size
-        IGNode = InterferenceGraph.findIGNode(ident);
+        IGNode = findIGNode(ident);
 
         //IGNode represents the register that is used to store array's elem's values
-        arrayElem = InterferenceGraph.findIGNode(ident + "_elem");
+        arrayElem = findIGNode(ident + "_elem");
 
         IGNode.addEdge(arrayElem);
 

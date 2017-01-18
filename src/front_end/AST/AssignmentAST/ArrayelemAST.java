@@ -118,13 +118,13 @@ public class ArrayelemAST extends ExpressionAST {
 
     @Override
     public void IRepresentation() {
-        IGNode = InterferenceGraph.findIGNode(arrayIdent + findPosition());
+        IGNode = findIGNode(arrayIdent + findPosition());
         if(IGNode.getFrom() == 0 || IGNode.getFrom() > index) {
             IGNode.setFrom(index);
         }
 
         //array_pos is linked to node array_elem in Interference Graph. It's destroyed after we exit array_elem
-        IGNode array_pos = InterferenceGraph.findIGNode("array_pos" + findPosition());
+        IGNode array_pos = findIGNode("array_pos" + findPosition());
         array_pos.addEdge(IGNode);
 
         for(Node n : expressions) {
@@ -139,7 +139,7 @@ public class ArrayelemAST extends ExpressionAST {
             IGNode.setTo(index);
         }
 
-        IGNode parent = InterferenceGraph.findIGNode(ident);
+        IGNode parent = findIGNode(ident);
         if(parent.getTo() < index) {
             parent.setTo(index);
         }

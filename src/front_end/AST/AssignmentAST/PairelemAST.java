@@ -103,7 +103,7 @@ public class PairelemAST extends AssignrhsAST{
     @Override
     public void IRepresentation() {
         //set the range of IGNode - which associates with lhs of an assignment
-        IGNode = InterferenceGraph.findIGNode(expression.getIdent());
+        IGNode = findIGNode(token + " " + expression.getIdent());
 
         if (IGNode.getFrom() == 0 || IGNode.getFrom() > index) {
             IGNode.setFrom(index);
@@ -113,7 +113,7 @@ public class PairelemAST extends AssignrhsAST{
             IGNode.setTo(index);
         }
 
-        IGNode parent = InterferenceGraph.findIGNode(expression.getIdent());
+        IGNode parent = findIGNode(expression.getIdent());
         if (parent.getTo() < index) {
             parent.setTo(index);
         }

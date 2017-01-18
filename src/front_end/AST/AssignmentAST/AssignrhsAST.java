@@ -20,6 +20,6 @@ public abstract class AssignrhsAST extends Node {
     }
 
     public void IRepresentation() {
-        IGNode = InterferenceGraph.findIGNode(ident);
+        IGNode = findIGNode(ident);
     }
 }

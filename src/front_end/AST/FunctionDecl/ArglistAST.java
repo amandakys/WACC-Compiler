@@ -1,5 +1,6 @@
 package front_end.AST.FunctionDecl;
 
+import front_end.AST.ExpressionAST.BinOpAST;
 import front_end.AST.ExpressionAST.ExpressionAST;
 import front_end.AST.Node;
 import optimisation.IGNode;
@@ -62,7 +63,11 @@ public class ArglistAST extends Node {
     @Override
     public void IRepresentation() {
         for(ExpressionAST e : expressions) {
-            e.IRepresentation();
+            if(e instanceof BinOpAST) {
+                e.IRepresentation();
+            } else {
+                e.setIGNode(IGNode);
+            }
         }
     }
 }

@@ -97,7 +97,7 @@ public abstract class Node {
     }
 
     public void defaultIRep(String name) {
-        IGNode = InterferenceGraph.findIGNode(name);
+        IGNode = findIGNode(name);
         IGNode.setFrom(index);
         IGNode.setTo(index);
     }
@@ -116,5 +116,9 @@ public abstract class Node {
         if(GraphColour.startReg < 3) {
             GraphColour.startReg = 3;
         }
+    }
+
+    public IGNode findIGNode(String name) {
+        return InterferenceGraph.findIGNode(name, index);
     }
 }

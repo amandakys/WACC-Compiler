@@ -148,7 +148,7 @@ public class VarDeclAST extends StatementAST {
 
     @Override
     public void IRepresentation() {
-        IGNode = InterferenceGraph.findIGNode(ident);
+        IGNode = findIGNode(ident);
         rhs.setIGNode(IGNode);
         rhs.IRepresentation();
         IGNode.setFrom(index);
