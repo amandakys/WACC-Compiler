@@ -171,6 +171,12 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
         ExpressionAST expressionAST = visitExpression(ctx.expression());
         expressionAST.setIndex(index);
 
+        if(expressionAST instanceof StringLiterAST) {
+            Node.reserveRegForPrintStr();
+        } else {
+            Node.reserveRegForPrint();
+        }
+
         PrintAST print = new PrintAST(ctx, expressionAST);
         print.check();
 
@@ -227,6 +233,8 @@ public class Visitor extends BasicParserBaseVisitor<Node>{
     public PrintlnAST visitPrintln(BasicParser.PrintlnContext ctx) {
         ExpressionAST expressionAST = visitExpression(ctx.expression());
         expressionAST.setIndex(index);
+
+        Node.reserveRegForPrintStr();
 
         PrintlnAST print = new PrintlnAST(ctx, expressionAST);
         print.check();

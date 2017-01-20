@@ -106,13 +106,13 @@ public abstract class Node {
         IGNode.setRegister(register);
     }
 
-    public void reserveRegForPrint() {
+    public static void reserveRegForPrint() {
        if(GraphColour.startReg < 1) {
            GraphColour.startReg = 1;
        }
     }
 
-    public void reserveRegForPrintStr() {
+    public static void reserveRegForPrintStr() {
         if(GraphColour.startReg < 3) {
             GraphColour.startReg = 3;
         }

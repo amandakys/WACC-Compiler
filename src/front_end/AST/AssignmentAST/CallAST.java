@@ -99,7 +99,7 @@ public class CallAST extends AssignrhsAST{
                 Utility.plusJumpSP(argSize);
             }
 
-            addMain(new STORE(getRegister(), stackShift, argSize));
+            addMain(new STORE(arglist.getRegister(), stackShift, argSize));
         }
 
         Utility.resetJumpSP();

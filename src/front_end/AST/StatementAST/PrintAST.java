@@ -43,12 +43,6 @@ public class PrintAST extends StatementAST {
     public void IRepresentation() {
         expression.IRepresentation();
         IGNode = expression.getIGNode();
-
-        if(expression instanceof StringLiterAST) {
-            reserveRegForPrintStr();
-        } else {
-            reserveRegForPrint();
-        }
     }
 
     /*

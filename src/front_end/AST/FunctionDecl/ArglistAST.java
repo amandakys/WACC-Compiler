@@ -62,9 +62,15 @@ public class ArglistAST extends Node {
 
     @Override
     public void IRepresentation() {
+        boolean isSet = false;
         for(ExpressionAST e : expressions) {
             if(e instanceof BinOpAST) {
                 e.IRepresentation();
+
+                if(!isSet) {
+                    IGNode = e.getIGNode();
+                    isSet = true;
+                }
             } else {
                 e.setIGNode(IGNode);
             }
